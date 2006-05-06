@@ -196,6 +196,7 @@ create_handler player_create(struct object *me) {
 		printf("Registering player callback\n");
 		player_hidCookie = Hid::callbackReg(player_hidCallback, NULL);
 	}
+  return 0;
 }
 
 msg_handler player_message(struct object *me, struct object *them, char *message) {
@@ -220,6 +221,7 @@ msg_handler player_message(struct object *me, struct object *them, char *message
 			}
 		}
   }
+  return 0;
 }
 
 void whip(struct object *me, int x, int y, char shape) {
@@ -238,9 +240,6 @@ void whip(struct object *me, int x, int y, char shape) {
 }
 
 update_handler player_update(struct object *me) {
-#ifndef DREAMCAST
-  clock_t delayend;
-#endif
   struct object *obj;
   struct object *under;
   struct board_info_node *brd;
@@ -418,4 +417,5 @@ update_handler player_update(struct object *me) {
 	}*/
 
 	draw_block(me->x,me->y);
+  return 0;
 }

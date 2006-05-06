@@ -28,6 +28,7 @@ update_handler laser_update(struct object *me) {
 	if(me->arg1<=0) {
 		remove_from_board(currentbrd,me);
 	}
+  return 0;
 }
 
 create_handler blink_create(struct object *me) {
@@ -35,6 +36,7 @@ create_handler blink_create(struct object *me) {
   if(me->ystep==65535) me->ystep=-1;
 	me->arg3=me->arg1;
 	//me->cycle=1;
+  return 0;
 }
 
 update_handler blink_update(struct object *me) {
@@ -72,6 +74,7 @@ update_handler blink_update(struct object *me) {
 			}
 		} while(1);
 	}
+  return 0;
 }
 
 create_handler text_create(struct object *me) {
@@ -84,6 +87,7 @@ create_handler text_create(struct object *me) {
     me->bg=(me->type-ZZT_BLUE_TEXT)+1;
     me->color=&me->bg;
   }
+  return 0;
 }
 
 create_handler terrain_create(struct object *me) {
@@ -98,6 +102,7 @@ create_handler terrain_create(struct object *me) {
     me->fg=15;
     me->cycle=1;
   }
+  return 0;
 }
 
 update_handler water_update(struct object *me) {
@@ -132,6 +137,7 @@ update_handler water_update(struct object *me) {
   }
   me->arg2+=me->arg1;
   draw_block(me->x,me->y);
+  return 0;
 }
 
 msg_handler terrain_message(struct object *me, struct object *them, char *message) {
@@ -160,4 +166,5 @@ msg_handler terrain_message(struct object *me, struct object *them, char *messag
       }
     }
   }
+  return 0;
 }

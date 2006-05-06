@@ -28,6 +28,7 @@ msg_handler bomb_message(struct object *me, struct object *them, char *message) 
     me->flags|=F_PUSHABLE;
     draw_block(me->x,me->y);
   }
+  return 0;
 }
 
 update_handler bomb_update(struct object *me) {
@@ -68,10 +69,12 @@ update_handler bomb_update(struct object *me) {
   if(me->arg1<=0) {
     remove_from_board(currentbrd,me);
   }
+  return 0;
 }
 
 create_handler bomb_create(struct object *me) {
   me->arg1=4;
+  return 0;
 }
 
 create_handler explosion_create(struct object *me) {
@@ -83,6 +86,7 @@ create_handler explosion_create(struct object *me) {
   /*currentbrd->board[me->x][me->y].code=I_EMPTY;
   currentbrd->board[me->x][me->y].color=0;
   currentbrd->board[me->x][me->y].solid=0;  */
+  return 0;
 }
 
 update_handler explosion_update(struct object *me) {
@@ -111,4 +115,5 @@ update_handler explosion_update(struct object *me) {
   }
   if(me->arg1>0) me->arg1--;
   draw_block(me->x,me->y);
+  return 0;
 }

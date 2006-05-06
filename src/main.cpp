@@ -120,6 +120,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	play_zzt("tutorial.zzt");
 	
 	Tiki::shutdown();
+  return 0;
 }
 
 extern struct object *player;

@@ -37,6 +37,7 @@ void bullet_sound_init() {
 
 update_handler bullet_update(struct object *myobj) {
   move(myobj,(direction)myobj->arg2);
+  return 0;
 }
 
 msg_handler bullet_message(struct object *me, struct object *them, char *message) {
@@ -48,6 +49,7 @@ msg_handler bullet_message(struct object *me, struct object *them, char *message
 		if(them->type==ZZT_BREAKABLE) remove_from_board(currentbrd,them);
     remove_from_board(currentbrd,me);
   }
+  return 0;
 }
 
 void shoot(struct object *owner, enum direction dir) {

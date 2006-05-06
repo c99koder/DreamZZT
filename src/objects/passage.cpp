@@ -39,8 +39,10 @@ msg_handler passage_message(struct object *me, struct object *them, char *messag
     switchbrd=me->PASSAGE_DEST;
     obj->flags|=F_SLEEPING;
   }
+  return 0;
 }
 
 create_handler passage_create(struct object *me) {
   me->color=&me->bg;
+  return 0;
 }

@@ -18,6 +18,7 @@ using namespace Tiki::Hid;
 #include "object.h"
 
 msg_handler pusher_message(struct object *me, struct object *them, char *message) {
+  return 0;
 }
 
 update_handler pusher_update(struct object *me) {
@@ -25,6 +26,7 @@ update_handler pusher_update(struct object *me) {
   if(me->ystep==1) move(me,DOWN);
   if(me->xstep==-1) move(me,LEFT);
   if(me->ystep==-1) move(me,UP);
+  return 0;
 }
 
 create_handler pusher_create(struct object *me) {
@@ -34,4 +36,5 @@ create_handler pusher_create(struct object *me) {
   if(me->ystep==1) me->shape=0x1f;
   if(me->xstep==-1) me->shape=0x11;
   if(me->ystep==-1) me->shape=0x1e;
+  return 0;
 }

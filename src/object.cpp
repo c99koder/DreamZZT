@@ -128,6 +128,7 @@ update_handler default_update(int me) {
   //struct aoe_object *myobj=get_object(me);
   //myobj->x+=myobj->move_x;
   //myobj->y+=myobj->move_y;
+  return 0;
 }
 
 msg_handler default_msg(int me, int them, char *message) {
@@ -138,4 +139,5 @@ msg_handler default_msg(int me, int them, char *message) {
   //if(!strcmp(message,"shot")) {
     //myobj->shot(me,them);
   //}
+  return 0;
 }

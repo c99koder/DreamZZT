@@ -9,7 +9,7 @@
 //#include "pch.h"
 
 #include "Tiki/Tiki.h"
-#include "ConsoleText.h"
+#include "drawables/ConsoleText.h"
 #include "Tiki/plxcompat.h"
 
 using namespace Tiki::GL;

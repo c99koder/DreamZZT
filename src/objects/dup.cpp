@@ -57,10 +57,12 @@ update_handler duplicator_update(struct object *me) {
     }
   }
   me->arg3%=5;
+  return 0;
 }
 
 create_handler duplicator_create(struct object *me) {
   me->cycle=(10-me->arg2)+2;
   if(me->xstep==65535) me->xstep=-1;
   if(me->ystep==65535) me->ystep=-1;
+  return 0;
 }

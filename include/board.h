@@ -28,7 +28,7 @@ struct board_info_node {
 struct zzt_string {
 	unsigned char len;
 	unsigned char string[20];
-} __attribute ((packed));
+};
 
 struct world_header {
   unsigned short int magic;
@@ -47,7 +47,7 @@ struct world_header {
   struct zzt_string flag[10];
   unsigned short int time;
 	unsigned char saved;
-} __attribute ((packed));
+};
 
 int load_zzt(char *filename, int titleonly);
 void switch_board(int num);

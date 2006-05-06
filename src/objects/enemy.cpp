@@ -28,6 +28,7 @@ update_handler lion_update(struct object *me) {
   } else {
     move(me,(direction)(rand()%4));
   }
+  return 0;
 }
 
 char gun[4] = {27,24,26,25};
@@ -49,6 +50,7 @@ update_handler gun_update(struct object *me) {
       }
     }
   }
+  return 0;
 }
 
 update_handler tiger_update(struct object *me) {
@@ -59,6 +61,7 @@ update_handler tiger_update(struct object *me) {
       shoot(me,toward(me,player));
     }
   }
+  return 0;
 }
 
 msg_handler enemy_message(struct object *me, struct object *them, char *message) {
@@ -70,4 +73,5 @@ msg_handler enemy_message(struct object *me, struct object *them, char *message)
     }
     remove_from_board(currentbrd,me);
   }
+  return 0;
 }

@@ -32,6 +32,7 @@ create_handler teleport_create(struct object *me) {
 	if(me->xstep==-1) { me->shape='<'; me->arg1=4; me->heading=LEFT; }
 	if(me->ystep==1) { me->shape='v'; me->arg1=8; me->heading=DOWN; }
 	if(me->ystep==-1) { me->shape='^'; me->arg1=12; me->heading=UP; }
+  return 0;
 }
 
 char teleport_anim[16]={ '|',')','>',')', '|','(','<','(','-','v','_','v','-','^','~','^' };
@@ -41,6 +42,7 @@ update_handler teleport_update(struct object *me) {
 	me->arg2++;
 	me->arg2%=4;
 	draw_block(me->x,me->y);
+  return 0;
 }
 
 msg_handler teleport_message(struct object *me, struct object *them, char *message) {
@@ -73,6 +75,7 @@ msg_handler teleport_message(struct object *me, struct object *them, char *messa
 			}
 		} while(x>0 && x<BOARD_X && y>0 && y<BOARD_Y);
 	}
+  return 0;
 }
 	
 msg_handler scroll_message(struct object *me, struct object *them, char *message) {
@@ -81,12 +84,14 @@ msg_handler scroll_message(struct object *me, struct object *them, char *message
 		remove_from_board(currentbrd,me);
 		move(them,toward(them,me));
 	}
+  return 0;
 }
 
 update_handler scroll_update(struct object *me) {
 	me->fg++;
 	if(me->fg>15) me->fg=9;
 	draw_block(me->x,me->y);
+  return 0;
 }
 
 msg_handler inv_message(struct object *me, struct object *them, char *message) {
@@ -170,6 +175,7 @@ msg_handler inv_message(struct object *me, struct object *them, char *message) {
     remove_from_board(currentbrd,me);
     //move(them,toward(them,me));
   }
+  return 0;
 }
 
 create_handler inv_create(struct object *me) {
@@ -183,4 +189,5 @@ create_handler inv_create(struct object *me) {
 		if(me->fg<9) me->fg+=9;
 		break;
 	}
+  return 0;
 }

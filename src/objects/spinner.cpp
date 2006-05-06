@@ -161,4 +161,5 @@ update_handler spinner_update(struct object *me) {
       }
     }
   }
+  return 0;
 }

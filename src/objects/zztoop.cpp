@@ -28,6 +28,7 @@ void zzt_goto(struct object *me, char *label);
 create_handler zztoop_create(struct object *me) {
   me->shape=me->arg1;
   me->arg3=5;
+  return 0;
 }
 
 msg_handler zztoop_message(struct object *me, struct object *them, char *message) {
@@ -35,6 +36,7 @@ msg_handler zztoop_message(struct object *me, struct object *them, char *message
   //printf("ZZT-OOP: %s\n",me->prog);
   zzt_goto(me,message);
   //me->update(me);
+  return 0;
 }
 
 extern struct board_info_node *currentbrd;
@@ -792,4 +794,5 @@ update_handler zztoop_update(struct object *myobj) {
     //printf("Moving: %i\n",myobj->arg3);
   }
   //printf("returning..\n");
+  return 0;
 }

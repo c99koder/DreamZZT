@@ -169,7 +169,7 @@ int dist(int x1, int y1, int x2, int y2) {
   int a,b;
   a=(x1-x2)*(x1-x2);
   b=(y1-y2)*(y1-y2);
-  return sqrt(a+b);
+  return sqrt((float)a+b);
 }
 
 void move(struct object *me, enum direction dir) {
