@@ -8,9 +8,10 @@
 
 //#include "pch.h"
 
-#include "Tiki/Tiki.h"
+#include <Tiki/tiki.h>
 #include "drawables/ConsoleText.h"
-#include "Tiki/plxcompat.h"
+#include <Tiki/plxcompat.h>
+#include <stdarg.h>
 
 using namespace Tiki::GL;
 using namespace Tiki::GL::Plxcompat;
