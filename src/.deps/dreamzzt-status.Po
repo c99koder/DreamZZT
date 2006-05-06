@@ -1,0 +1,51 @@
+dreamzzt-status.o dreamzzt-status.o: status.c /usr/include/string.h \
+  /usr/include/features.h /usr/include/sys/cdefs.h \
+  /usr/include/gnu/stubs.h \
+  /usr/lib/gcc-lib/i486-slackware-linux/3.3.4/include/stddef.h \
+  /usr/include/bits/string.h /usr/include/bits/string2.h \
+  /usr/include/endian.h /usr/include/bits/endian.h \
+  /usr/include/bits/types.h /usr/include/bits/wordsize.h \
+  /usr/include/bits/typesizes.h /usr/include/stdlib.h \
+  ../../libc99/include/screen.h ../include/board.h ../include/object.h \
+  ../include/objects/objects.h ../include/objects/terrain.h \
+  ../include/objects/items.h ../include/objects/enemy.h
+
+/usr/include/string.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/lib/gcc-lib/i486-slackware-linux/3.3.4/include/stddef.h:
+
+/usr/include/bits/string.h:
+
+/usr/include/bits/string2.h:
+
+/usr/include/endian.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/stdlib.h:
+
+../../libc99/include/screen.h:
+
+../include/board.h:
+
+../include/object.h:
+
+../include/objects/objects.h:
+
+../include/objects/terrain.h:
+
+../include/objects/items.h:
+
+../include/objects/enemy.h:

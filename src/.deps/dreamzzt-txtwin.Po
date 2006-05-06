@@ -1,0 +1,45 @@
+dreamzzt-txtwin.o dreamzzt-txtwin.o: txtwin.c /usr/include/GL/gl.h \
+  /usr/lib/gcc-lib/i486-slackware-linux/3.3.4/include/stddef.h \
+  /usr/include/GL/glext.h /usr/include/time.h /usr/include/features.h \
+  /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h \
+  /usr/include/bits/time.h /usr/include/bits/types.h \
+  /usr/include/bits/wordsize.h /usr/include/bits/typesizes.h \
+  ../../libc99/include/input.h ../include/board.h ../include/object.h \
+  ../include/objects/objects.h ../include/objects/terrain.h \
+  ../include/objects/items.h ../include/objects/enemy.h
+
+/usr/include/GL/gl.h:
+
+/usr/lib/gcc-lib/i486-slackware-linux/3.3.4/include/stddef.h:
+
+/usr/include/GL/glext.h:
+
+/usr/include/time.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/bits/time.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/bits/typesizes.h:
+
+../../libc99/include/input.h:
+
+../include/board.h:
+
+../include/object.h:
+
+../include/objects/objects.h:
+
+../include/objects/terrain.h:
+
+../include/objects/items.h:
+
+../include/objects/enemy.h:
