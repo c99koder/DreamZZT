@@ -57,7 +57,9 @@ void free_world() {
 					free(current->board[x][y].obj);
 				}
 				if(current->board[x][y].under!=NULL) {
+					printf("Freeing a %s under %i,%i\n",current->board[x][y].under->name,x,y);
 					if(current->board[x][y].under->prog!=NULL) {
+						printf("Freeing program\n");
 						free(current->board[x][y].under->prog);
 					}
 					free(current->board[x][y].under);
@@ -66,6 +68,7 @@ void free_world() {
 	  }
 		prev=current;
 		current=current->next;
+		printf("Freeing board\n");
 		free(prev);		
 	}
 	board_list=NULL;
@@ -391,7 +394,7 @@ void load_objects(File &fd, struct board_info_node *board) {
     curobj=board->board[x][y].obj;
 		if(curobj==NULL) printf("Null object at %i,%i\n",x,y);
     if(proglen>0/* && (curobj->type==ZZT_OBJECT || curobj->type==ZZT_SCROLL)*/) {
-	    tmp=(char *)malloc(proglen+1);
+	    tmp=(char *)malloc(proglen+2);
       /*for(len=0;len<proglen;len++) {
       	tmp[len]=file_read_byte(fd);
 				//if(tmp[len]=='\r') tmp[len]='\n';
