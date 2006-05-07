@@ -150,13 +150,13 @@ void player_hidCallback(const Event & evt, void * data) {
 				case 13:
 					me->flags|=F_SLEEPING;
 					break;
-				case Event::KeyEsc:
+				/*case Event::KeyEsc:
 					TextWindow t("Game Menu",MENU);
 					t.doMenu();
 					
 				if(!strcmp(t.getLabel(),"quit")) {
 					switchbrd=-2;
-				/*} else if(!strcmp(tmp,"hints")) {
+				} else if(!strcmp(tmp,"hints")) {
 					hints_menu();
 					draw_board();
 				} else if(!strcmp(tmp,"save")) {
@@ -167,10 +167,10 @@ void player_hidCallback(const Event & evt, void * data) {
 						vmuify(filename);
 	#endif
 					}
-					draw_board();*/
+					draw_board();
 				} else { 
 					draw_board();
-				}
+				}*/
 			}
 		}
 	}
