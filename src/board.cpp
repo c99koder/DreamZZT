@@ -47,19 +47,19 @@ void free_world() {
 		for(y=0;y<BOARD_Y;y++) {
 			for(x=0;x<BOARD_X;x++) {
 				if(current->board[x][y].obj!=NULL) {
-					printf("Freeing a %s at %i,%i\n",current->board[x][y].obj->name,x,y);
+					//printf("Freeing a %s at %i,%i\n",current->board[x][y].obj->name,x,y);
 					//fflush(NULL);
 					if(current->board[x][y].obj->prog!=NULL) {
-						printf("Freeing program: %s\n",current->board[x][y].obj->prog);
-						fflush(NULL);
+						//printf("Freeing program: %s\n",current->board[x][y].obj->prog);
+						//fflush(NULL);
 						free(current->board[x][y].obj->prog);
 					}
 					free(current->board[x][y].obj);
 				}
 				if(current->board[x][y].under!=NULL) {
-					printf("Freeing a %s under %i,%i\n",current->board[x][y].under->name,x,y);
+					//printf("Freeing a %s under %i,%i\n",current->board[x][y].under->name,x,y);
 					if(current->board[x][y].under->prog!=NULL) {
-						printf("Freeing program\n");
+						//printf("Freeing program\n");
 						free(current->board[x][y].under->prog);
 					}
 					free(current->board[x][y].under);
@@ -370,7 +370,7 @@ void load_objects(File &fd, struct board_info_node *board) {
     fd.read(&x,1); x--;
 		fd.read(&y,1); y--;
 #ifdef DEBUG
-    if((x>=0 && y>=0) && (x<BOARD_X && y<BOARD_Y)) printf("Storing params at: %i,%i (%s)\n",x,y,board->board[x][y].obj->name);
+    //if((x>=0 && y>=0) && (x<BOARD_X && y<BOARD_Y)) printf("Storing params at: %i,%i (%s)\n",x,y,board->board[x][y].obj->name);
 #endif
     fd.readle16(&xstep,1); //xstep 
     fd.readle16(&ystep,1); //ystep
@@ -496,7 +496,7 @@ int load_zzt(char *filename, int titleonly) {
       fd.read(&len,1);
       fd.read(&cod,1);
       fd.read(&col,1);
-			printf("%i %i %i %i\n",len,cod,col, z);
+			//printf("%i %i %i %i\n",len,cod,col, z);
       for(c=0;c<len;c++) {
 	      z++;
 	      if(x>BOARD_X-1) { x=0; y++; }
@@ -672,17 +672,29 @@ void update_brd() {
   }
 }
 
+int flicker = 0;
+
 void draw_block(int x, int y) {
   float a,b;
   struct object *them=currentbrd->board[x][y].obj;
   if(x>=BOARD_X||y>=BOARD_Y||x<0||y<0) return;
   a=((x-player->x)*(x-player->x))/2.0f;
   b=(y-player->y)*(y-player->y);
-
+	
   ct->locate(x,y);
-  if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==25 || sqrt(a+b) > 5))) {
+  if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
     ct->color(8,7);
     ct->printf("%c",(char)177);
+  } else if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+    if(them!=NULL) {
+      ct->color(8, 0);
+      ct->printf("%c",them->shape);
+    }
+  } else if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+    if(them!=NULL) {
+      ct->color(them->fg - 8, 0);
+      ct->printf("%c",them->shape);
+    }
   } else {
     if(them!=NULL) {
       ct->color(them->fg, them->bg);
@@ -693,6 +705,7 @@ void draw_block(int x, int y) {
 
 void draw_board() {
   int x,y;
+	
   for(y=0;y<BOARD_Y;y++) {
     for(x=0;x<BOARD_X;x++) {
       draw_block(x,y);
