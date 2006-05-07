@@ -11,6 +11,8 @@
 #if TIKI_PLAT == TIKI_WIN32
 #include <windows.h>
 
+#include "pch.h"
+
 static char szAppName[] = "DreamZZT";
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 #else
