@@ -251,6 +251,10 @@ void TextWindow::hidCallback(const Event & evt, void * data) {
 }
 
 void TextWindow::processHidEvent(const Hid::Event & evt) { //Key handling for text popup window
+	if (evt.type == Hid::Event::EvtQuit) {
+		retlbl[0]='\0';
+		loop=0;
+	}
 	if (evt.type == Hid::Event::EvtKeypress) {
 		switch(evt.key) {
 			case Event::KeyUp:

@@ -43,6 +43,9 @@ void player_hidCallback(const Event & evt, void * data) {
 	struct board_info_node *brd;
 	struct object *obj;
 	
+	if (evt.type == Hid::Event::EvtQuit) {
+		switchbrd = -2;
+	}
 	if (evt.type == Hid::Event::EvtKeypress) {
 		if(evt.mod & Hid::Event::KeyShift) {
 			switch(evt.key) {
