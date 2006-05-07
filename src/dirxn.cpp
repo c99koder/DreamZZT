@@ -206,6 +206,8 @@ void move(struct object *me, enum direction dir) {
   case DOWN:
     y=me->y+1;
     break;
+	case 5: //Idle
+		break;
   default:
     printf("Unknown direction %i\n",dir);
     break;
@@ -223,6 +225,7 @@ void move(struct object *me, enum direction dir) {
     board->board[x][y].obj=me;
     me->bg=board->board[x][y].under->bg;
     board->board[oldx][oldy].obj=board->board[oldx][oldy].under;
+		board->board[oldx][oldy].under=NULL;
     if(board->board[oldx][oldy].obj==NULL) {
       board->board[oldx][oldy].obj=create_object(ZZT_EMPTY,oldx,oldy);
     }

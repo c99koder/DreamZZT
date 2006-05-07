@@ -394,7 +394,7 @@ void load_objects(File &fd, struct board_info_node *board) {
     curobj=board->board[x][y].obj;
 		if(curobj==NULL) printf("Null object at %i,%i\n",x,y);
     if(proglen>0/* && (curobj->type==ZZT_OBJECT || curobj->type==ZZT_SCROLL)*/) {
-	    tmp=(char *)malloc(proglen+2);
+	    tmp=(char *)malloc(proglen+1);
       /*for(len=0;len<proglen;len++) {
       	tmp[len]=file_read_byte(fd);
 				//if(tmp[len]=='\r') tmp[len]='\n';
