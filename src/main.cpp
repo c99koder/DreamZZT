@@ -94,7 +94,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	//Hid::callbackReg(tkCallback, NULL);
 	
 	//initialize the screen		
-	ct = new ConsoleText(80,25,new Texture("pc-ascii.png", true));
+	ct = new ConsoleText(80,25,new Texture("zzt-ascii.png", true));
 	ct->setSize(640,480);
 	ct->translate(Vector(320,240,0));
 	

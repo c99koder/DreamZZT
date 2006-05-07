@@ -273,7 +273,7 @@ void TextWindow::processHidEvent(const Hid::Event & evt) { //Key handling for te
 					loop=0;
 				}
 				break;
-			case 27:
+			case Event::KeyEsc:
 				retlbl[0]='\0';
 				loop=0;
 				break;
