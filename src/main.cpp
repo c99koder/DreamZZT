@@ -117,7 +117,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	TextWindow t("Main Menu",MAIN_MENU);
 	t.doMenu();*/
 	
-	play_zzt("tutorial.zzt");
+	play_zzt("town.zzt");
 	
 	Tiki::shutdown();
   return 0;

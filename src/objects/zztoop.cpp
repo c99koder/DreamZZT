@@ -19,6 +19,7 @@ using namespace Tiki::Hid;
 #include "word.h"
 #include "board.h"
 #include "status.h"
+#include "http.h"
 
 extern struct world_header world;
 extern struct object *player;
@@ -41,10 +42,6 @@ msg_handler zztoop_message(struct object *me, struct object *them, char *message
 
 extern struct board_info_node *currentbrd;
 
-char *strtolower(char *in) {
-	return in;
-}
-
 struct object *find_zztobj_by_name(int *x, int *y, char *target) {
   struct object *myobj;
   char name[20];
@@ -62,12 +59,14 @@ struct object *find_zztobj_by_name(int *x, int *y, char *target) {
         z=1;
         while(myobj->prog[z]!='\r' && z<myobj->proglen) {
 	        name[z-1]=myobj->prog[z];
+					if(name[z-1]>='A' && name[z-1]<='Z') //convert to lowercase 
+						name[z-1]+=('a'-'A');
 	        z++;
         }
         name[z-1]='\0';
         //strtolower(name);
         printf("Compare: %s and %s\n",target,name);
-        if(!strcmp(name,target)) {
+        if(!strcmp(name,strtolower(target))) {
           *x=i;
           *y=j;
 	        return myobj;
@@ -75,7 +74,7 @@ struct object *find_zztobj_by_name(int *x, int *y, char *target) {
       }
     }
   }
-	printf("No match\n");
+	//printf("No match\n");
   return NULL;
 }
 
@@ -227,19 +226,20 @@ void zzt_goto(struct object *myobj, char *label) {
     case ':':
       x++;
       if(newline==1) {
-	y=0;
-	while(myobj->prog[x+y]!='\r') {
-	  text[y]=myobj->prog[x+y];
-	  y++;
-	}
-	text[y]='\0';
-	if(!strcmp(label,text)) {
-	  myobj->progpos=x+y;
-    //printf("Position set\n");
-	  return;
-	}
-	x+=y;
-	newline=0;
+				y=0;
+				while(myobj->prog[x+y]!='\r') {
+					text[y]=myobj->prog[x+y];
+					y++;
+				}
+				text[y]='\0';
+				printf("Comparing labels: '%s' and '%s'\n",label,text);
+				if(!strcmp(label,text)) {
+					myobj->progpos=x+y;
+					printf("Position set\n");
+					return;
+				}
+				x+=y;
+				newline=0;
       }
       break;
     default:
@@ -314,7 +314,8 @@ update_handler zztoop_update(struct object *myobj) {
 				move(myobj,(direction)x);
 				myobj->progpos+=(y-1);
 			} else {
-				myobj->progpos--;
+				printf("Move failed.\n");
+				myobj->progpos-=2;
 			}
 			break;
     case '\'':
@@ -621,7 +622,12 @@ update_handler zztoop_update(struct object *myobj) {
 				lbl[i]='\0';
 				if(i<strlen(tmp)) {
 					x=0;y=0;
-					zzt_zap(find_zztobj_by_name(&x,&y,lbl),tmp+i+1);
+					theirobj=find_zztobj_by_name(&x,&y,lbl);
+					while(theirobj!=NULL) {
+						zzt_zap(theirobj,tmp+i+1);
+						x++;
+						theirobj=find_zztobj_by_name(&x,&y,lbl);
+					}
 				} else {
       		zzt_zap(myobj,lbl);
 				}

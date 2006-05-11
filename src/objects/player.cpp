@@ -46,7 +46,52 @@ void player_hidCallback(const Event & evt, void * data) {
 	if (evt.type == Hid::Event::EvtQuit) {
 		switchbrd = -2;
 	}
-	if (evt.type == Hid::Event::EvtKeypress) {
+	if (evt.type == Hid::Event::EvtKeyDown) {
+		switch(evt.key) {
+			case 't':
+				if(world.torches>0) {
+					if(currentbrd->dark==1) {
+						world.torch_cycle=200;
+						take_torch(1);
+					} else {
+						set_msg("Don't need torch - room is not dark!");
+					}
+				} else {
+					set_msg("You don't have any torches!");
+				}
+				break;
+			case 13:
+				if(me->flags&F_SLEEPING) {
+					me->flags|=F_SLEEPING;
+				} else {
+					me->flags&=~F_SLEEPING;
+				}
+				break;
+				/*case Event::KeyEsc:
+				TextWindow t("Game Menu",MENU);
+				t.doMenu();
+				
+				if(!strcmp(t.getLabel(),"quit")) {
+					switchbrd=-2;
+				} else if(!strcmp(tmp,"hints")) {
+					hints_menu();
+					draw_board();
+				} else if(!strcmp(tmp,"save")) {
+					filename=select_file(getcwd(NULL,50),"sav",1);
+					if(filename!=NULL) {
+						save_game(filename);
+#ifdef DREAMCAST
+						vmuify(filename);
+#endif
+					}
+					draw_board();
+				} else { 
+					draw_board();
+				}*/		
+		}	
+	} else if (evt.type == Hid::Event::EvtKeypress) {
+		me->flags&=~F_SLEEPING;
+		
 		if(evt.mod & Hid::Event::KeyShift) {
 			switch(evt.key) {
 				case Event::KeyUp:
@@ -127,19 +172,7 @@ void player_hidCallback(const Event & evt, void * data) {
 						me->heading=RIGHT;
 						move(me,RIGHT);
 					}
-					break;
-				case 't':
-					if(world.torches>0) {
-						if(currentbrd->dark==1) {
-							world.torch_cycle=200;
-							take_torch(1);
-						} else {
-							set_msg("Don't need torch - room is not dark!");
-						}
-					} else {
-						set_msg("You don't have any torches!");
-					}
-					break;
+					break;			
 				case 32:
 					if(currentbrd->maxshots==0) {
 						set_msg("Can't shoot in here");
@@ -147,30 +180,6 @@ void player_hidCallback(const Event & evt, void * data) {
 						shoot(me,(direction)me->heading);
 					}
 					break;
-				case 13:
-					me->flags|=F_SLEEPING;
-					break;
-				/*case Event::KeyEsc:
-					TextWindow t("Game Menu",MENU);
-					t.doMenu();
-					
-				if(!strcmp(t.getLabel(),"quit")) {
-					switchbrd=-2;
-				} else if(!strcmp(tmp,"hints")) {
-					hints_menu();
-					draw_board();
-				} else if(!strcmp(tmp,"save")) {
-					filename=select_file(getcwd(NULL,50),"sav",1);
-					if(filename!=NULL) {
-						save_game(filename);
-	#ifdef DREAMCAST
-						vmuify(filename);
-	#endif
-					}
-					draw_board();
-				} else { 
-					draw_board();
-				}*/
 			}
 		}
 	}
@@ -316,7 +325,8 @@ update_handler player_update(struct object *me) {
   int s=0;
 	char *filename;
 	if(me->arg1==1) return 0;
-/*  if(me->flags&F_SLEEPING) {
+  
+	if(me->flags&F_SLEEPING) {
     ct->locate(BOARD_X+4,6);
     ct->color(15,1);
     ct->printf("Pausing...");
@@ -331,21 +341,18 @@ update_handler player_update(struct object *me) {
         ct->printf("%c",currentbrd->board[me->x][me->y].under->shape);
       }
 			draw_msg();
-      video_refresh();
-#ifdef DREAMCAST
-			//delay(0.08);
-#else
-			delayend=clock()+(0.08 * CLOCKS_PER_SEC);
-			while(clock()<delayend) { sys_render_begin(); }
-#endif
-    } while(poll_game_device(0)==0);
-    me->flags&=~F_SLEEPING;
+			Frame::begin();
+			ct->draw(Drawable::Opaque);
+			Frame::transEnable();
+			ct->draw(Drawable::Trans);
+			Frame::finish();
+			Time::sleep(100000);
+    } while(me->flags&F_SLEEPING);
     ct->locate(BOARD_X+4,6);
     ct->color(15,1);
     ct->printf("          ");
     draw_block(me->x,me->y);
-    while(poll_game_device(0)==START_BTN);
-  }*/
+  }
 
 	if(world.energizer_cycle%2==0) {
 		me->shape=2;

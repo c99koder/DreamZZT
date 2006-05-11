@@ -57,7 +57,6 @@ enum direction word_to_direction(struct object *me, int word) {
   direction res=(direction)5;
   if(!strcmp(get_word(word),"opp")||!strcmp(get_word(word),"opposite")) {
     neg=1;
-		printf("Opposite!\n");
     delete_word(word);
   }
   if(!strcmp(get_word(word),"cw")||!strcmp(get_word(word),"opposite")) {
@@ -96,9 +95,7 @@ enum direction word_to_direction(struct object *me, int word) {
     res=str_to_direction(get_word(word));
   }
   if(neg==1) {
-		printf("Before: %i\n",res);
     res=opposite(res);
-		printf("After: %i\n",res);
   }
   if(neg==2) {
     res=clockwise(res);
@@ -264,7 +261,7 @@ void move(struct object *me, enum direction dir) {
       }
     } else {
       //printf("Object %i hit a wall\n",me->id);
-      if(me->message!=NULL) me->message(me,me,"thud");
+      if(me->message!=NULL && !(me->flags & F_SLEEPING)) me->message(me,me,"thud");
     }
   }
 }
@@ -302,6 +299,8 @@ int try_move(struct object *me, enum direction dir) {
   case DOWN:
     y=me->y+1;
     break;
+	case 5:
+		break;
   default:
     printf("Unknown direction %i\n",dir);
     break;

@@ -33,6 +33,7 @@
 		2296D5830A0D470B00BD96D2 /* Tiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2296D5820A0D470B00BD96D2 /* Tiki.framework */; };
 		2296D5860A0D471600BD96D2 /* Tiki.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2296D5820A0D470B00BD96D2 /* Tiki.framework */; };
 		22A983470A0C6C3100835D10 /* town.zzt in Resources */ = {isa = PBXBuildFile; fileRef = 22A983460A0C6C3100835D10 /* town.zzt */; };
+		22AD22CC0A13FAD8003E828E /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -118,6 +119,7 @@
 		2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "zzt-ascii.png"; path = "resources/zzt-ascii.png"; sourceTree = "<group>"; };
 		2296D5820A0D470B00BD96D2 /* Tiki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tiki.framework; path = ../../tiki/osx/build/Development/Tiki.framework; sourceTree = SOURCE_ROOT; };
 		22A983460A0C6C3100835D10 /* town.zzt */ = {isa = PBXFileReference; lastKnownFileType = file; name = town.zzt; path = resources/town.zzt; sourceTree = "<group>"; };
+		22AD22CB0A13FAD8003E828E /* http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = http.cpp; path = src/http.cpp; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -147,6 +149,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				22AD22CB0A13FAD8003E828E /* http.cpp */,
 				2242FE330A0C349300F4BDF2 /* Objects */,
 				2262CA780A019F81002AECE2 /* Drawables */,
 				C4F50ECB0799E1350001D0D0 /* Controller.h */,
@@ -401,6 +404,7 @@
 				224200CC0A0C569300F4BDF2 /* spinner.cpp in Sources */,
 				224200CD0A0C569300F4BDF2 /* player.cpp in Sources */,
 				224202200A0C618B00F4BDF2 /* dirxn.cpp in Sources */,
+				22AD22CC0A13FAD8003E828E /* http.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -68,7 +68,7 @@ void free_world() {
 	  }
 		prev=current;
 		current=current->next;
-		printf("Freeing board\n");
+		//printf("Freeing board\n");
 		free(prev);		
 	}
 	board_list=NULL;
@@ -370,7 +370,7 @@ void load_objects(File &fd, struct board_info_node *board) {
     fd.read(&x,1); x--;
 		fd.read(&y,1); y--;
 #ifdef DEBUG
-    //if((x>=0 && y>=0) && (x<BOARD_X && y<BOARD_Y)) printf("Storing params at: %i,%i (%s)\n",x,y,board->board[x][y].obj->name);
+    if((x>=0 && y>=0) && (x<BOARD_X && y<BOARD_Y)) printf("Storing params at: %i,%i (%s)\n",x,y,board->board[x][y].obj->name);
 #endif
     fd.readle16(&xstep,1); //xstep 
     fd.readle16(&ystep,1); //ystep
@@ -482,7 +482,7 @@ int load_zzt(char *filename, int titleonly) {
     //current->objlist=NULL;
     curobj=NULL;
 		//fd.readle16(&c, 1);
-    printf("Size of board: %i\n",read_zzt_int(fd));//size (in bytes) of the board
+    read_zzt_int(fd);//size (in bytes) of the board
 		fd.read(&len,1);
     fd.read(current->title,34);
     current->title[len]='\0';
@@ -580,11 +580,11 @@ int load_zzt(char *filename, int titleonly) {
 		current->msgcount=0;
 		fd.read(&cod,1);
 		fd.read(&current->message,60);
-		printf("Message: %s\n",current->message);
+		//printf("Message: %s\n",current->message);
 		fd.readle16(&current->time,1);
     for(x=0;x<16;x++) { fd.read(&cod,1); } //more padding
     load_objects(fd,current);
-    printf("q: %i world.board_count: %i\n",q,world.board_count);
+    //printf("q: %i world.board_count: %i\n",q,world.board_count);
     if(q<world.board_count) {
       current->next=(struct board_info_node *)malloc(sizeof(struct board_info_node));
       current=current->next;
