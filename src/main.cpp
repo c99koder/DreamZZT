@@ -84,6 +84,16 @@ void menu_background() {
 	}
 }	
 
+#if TIKI_PLAT == TIKI_DC
+extern uint8 romdisk[];
+KOS_INIT_ROMDISK(romdisk);
+
+pvr_init_params_t params = {
+	{ PVR_BINSIZE_16, PVR_BINSIZE_8, PVR_BINSIZE_16, PVR_BINSIZE_8, PVR_BINSIZE_0 },
+	512*1024,0,0
+};
+#endif
+
 extern "C" int tiki_main(int argc, char **argv) {
   char tmp[50];
 	srand(time(NULL));
@@ -92,6 +102,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 	Tiki::init(argc, argv);
 	Tiki::setName("DreamZZT", NULL);
 	//Hid::callbackReg(tkCallback, NULL);
+
+#if TIKI_PLAT == TIKI_DC
+	fs_chdir("/rd");
+	
+	pvr_init(&params);
+#endif
 	
 	//initialize the screen		
 	ct = new ConsoleText(80,25,new Texture("zzt-ascii.png", true));
@@ -166,7 +182,7 @@ void play_zzt(char *filename) {
 		Frame::transEnable();
 		ct->draw(Drawable::Trans);
 		Frame::finish();
-		Time::sleep(100000);
+		//Time::sleep(100000);
 	} while(0);//poll_game_device(0)!=START_BTN);
 	//while(poll_game_device(0)==START_BTN);
 	printf("%s\n",filename);

@@ -35,8 +35,10 @@ ConsoleText::ConsoleText(int cols, int rows, Texture * texture) {
 	
 	m_texture->select();
 	
+#if TIKI_PLAT != TIKI_DC	
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+#endif
 	
 	m_cursor_x = 0;
 	m_cursor_y = 0;
@@ -109,7 +111,7 @@ void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned c
 	w *= sv.x;
 	h *= sv.y;
 	
-	const Vector & tv = getPosition() + Vector(x, y, -0.0001);
+	const Vector & tv = getPosition() + Vector(x, y, 0.01);
 
 	m_texture->select();
 
@@ -154,7 +156,7 @@ void ConsoleText::renderBackground(float x, float y, float w, float h, int color
 	w *= sv.x;
 	h *= sv.y;
 	
-	const Vector & tv = getPosition() + Vector(x, y, 0);
+	const Vector & tv = getPosition() + Vector(x, y, -0.01);
 	
 	m_texture->deselect();
 	
