@@ -14,7 +14,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "drawables/ConsoleText.h"
+#include <Tiki/drawables/console.h>
 #include "board.h"
 #include "status.h"
 

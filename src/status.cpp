@@ -20,7 +20,7 @@ using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
 
-#include "drawables/ConsoleText.h"
+#include <Tiki/drawables/console.h>
 #include "board.h"
 #include "object.h"
 
@@ -59,19 +59,19 @@ void draw_msg() {
 
 void dzzt_logo() {
   ct->locate(BOARD_X+5,1);
-  ct->color(15,1);
+  ct->color(GREY | HIGH_INTENSITY, BLUE);
   ct->printf("- - - - -");
   ct->locate(BOARD_X+2,2);
-  ct->color(0,7);
+  ct->color(BLACK, GREY);
   ct->printf("    DreamZZT    ");
   ct->locate(BOARD_X+5,3);
-  ct->color(15,1);
+  ct->color(GREY | HIGH_INTENSITY, BLUE);
   ct->printf("- - - - -");
 }
 
 void draw_time() {
   ct->locate(BOARD_X+2,7);
-  ct->color(14,1);
+  ct->color(YELLOW | HIGH_INTENSITY , BLUE);
 	if(world.time>0) {
   	ct->printf("     Time:%i  ",world.time);
 	} else {
@@ -80,8 +80,9 @@ void draw_time() {
 }
 
 void take_time(int count) {
-  world.time-=count;
-  if(world.time<0) world.time=0;
+  if(count > world.time) 
+		world.time=0;
+  else world.time-=count;
   draw_time();
 }
 
@@ -91,37 +92,39 @@ void give_time(int count) {
 }
 
 void draw_ammo() {
-  ct->locate(BOARD_X+2,9);
-  ct->color(11,1);
-  ct->printf("%c",0x84);
+	ct->putColor(BOARD_X+2,9, HIGH_INTENSITY | CYAN | (BLUE << 8));
+	ct->putChar(BOARD_X+2,9,0x84);
+
+	ct->locate(BOARD_X+3, 9);
   ct->color(14,1);
   ct->printf("    Ammo:%i   ",world.ammo);
 }
 
 void take_ammo(int count) {
-  //printf("Taking %i ammo from %i\n",count,world.ammo);
-  world.ammo-=count;
-  if(world.ammo<0) world.ammo=0;
+  if(count > world.ammo)
+		world.ammo=0;
+	else world.ammo-=count;
   draw_ammo();
 }
 
 void give_ammo(int count) {
-  //printf("Giving %i ammo to %i\n",count,world.ammo);
   world.ammo+=count;
   draw_ammo();
 }
 
 void draw_health() {
-  ct->locate(BOARD_X+2,8);
-  ct->color(15,1);
-  ct->printf("%c",2);
+	ct->putColor(BOARD_X+3,8, HIGH_INTENSITY | WHITE | (BLUE << 8));
+	ct->putChar(BOARD_X+3,8,0x02);
+
+  ct->locate(BOARD_X+3,8);
   ct->color(14,1);
   ct->printf("  Health:%i  ",world.health);
 }
 
 void take_health(int count) {
-  if(world.health-count<0) world.health=0;
-		else world.health-=count;
+  if(world.health<count) 
+		world.health=0;
+	else world.health-=count;
   draw_health();
 }
 
@@ -132,12 +135,15 @@ void give_health(int count) {
 
 void draw_torch() {
 	int x;
-  ct->locate(BOARD_X+2,10);
-  ct->color(6,1);
-  ct->printf("%c",0x9d);
+	
+	ct->putColor(BOARD_X+2,10, YELLOW | (BLUE << 8));
+	ct->putChar(BOARD_X+2,10,0x9d);
+
+  ct->locate(BOARD_X+3,10);
   ct->color(14,1);
   ct->printf(" Torches:%i  ",world.torches);
 	ct->locate(BOARD_X+15,10);
+
 	if(world.torch_cycle>0) {
 		ct->color(6,6);
 		for(x=0;x<world.torch_cycle/50;x++) {
@@ -153,50 +159,48 @@ void draw_torch() {
 }
 
 void take_torch(int count) {
-  world.torches-=count;
-  if(world.torches<0) world.torches=0;
+  if(world.torches < count) 
+		world.torches=0;
+	else world.torches-=count;
   draw_torch();
 }
 
 void give_torch(int count) {
-  //printf("Giving %i torches to %i\n",count,world.torches);
   world.torches+=count;
   draw_torch();
 }
 
 void draw_gems() {
-  ct->locate(BOARD_X+2,11);
-  ct->color(12,1);
-  ct->printf("%c",0x04);
+	ct->putColor(BOARD_X+2,11, HIGH_INTENSITY | RED | (BLUE << 8));
+	ct->putChar(BOARD_X+2,11,0x04);
+
+  ct->locate(BOARD_X+3,11);
   ct->color(14,1);
   ct->printf("    Gems:%i  ",world.gems);
-  //printf("Drawing gems: %i\n",world.gems);
 }
 
 void take_gems(int count) {
-  //printf("Taking %i gems from %i\n",count,world.gems);
-  world.gems-=count;
-  if(world.gems<0) world.gems=0;
+  if(world.gems < count) 
+		world.gems = 0;
+	else world.gems-=count;
   draw_gems();
 }
 
 void give_gems(int count) {
-  //printf("Giving %i gems to %i\n",count,world.gems);
   world.gems+=count;
   draw_gems();
 }
 
 void draw_score() {
-  ct->locate(BOARD_X+2,12);
-  ct->color(15,1);
-  ct->printf(" ");
+  ct->locate(BOARD_X+3,12);
   ct->color(14,1);
   ct->printf("   Score:%i  ",world.score);
 }
 
 void take_score(int count) {
-  world.score-=count;
-  if(world.score<0) world.score=0;
+	if(world.score < count)
+		world.score = 0;
+	else world.score-=count;
   draw_score();
 }
 
@@ -206,18 +210,22 @@ void give_score(int count) {
 }
 
 void draw_keys() {
-  int x;
-  ct->locate(BOARD_X+2,13);
-  ct->color(15,1);
-  ct->printf("%c",0x0c);
+  int x=0,i;
+	ct->putColor(BOARD_X+2,13, HIGH_INTENSITY | GREY | (BLUE << 8));
+	ct->putChar(BOARD_X+2,13,0x0c);
+
+  ct->locate(BOARD_X+3,13);
   ct->color(14,1);
   ct->printf("    Keys:");
-  for(x=0;x<7;x++) {
+
+  for(i=0;i<7;i++) {
+		ct->putColor(BOARD_X+12+x,13, HIGH_INTENSITY | (x+1) | (BLUE << 8));
+
     if(world.keys[x]==1) {
-      ct->color(9+x,1);
-      ct->printf("%c",0x0c);
+			ct->putChar(BOARD_X+12+x,13,0x0c);
+			x++;
     } else {
-      ct->printf(" ");
+			ct->putChar(BOARD_X+12+x,13,' ');
     }
   }
 }

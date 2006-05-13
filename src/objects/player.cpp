@@ -17,7 +17,7 @@ using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
 
-#include "drawables/ConsoleText.h"
+#include <Tiki/drawables/console.h>
 #include "object.h"
 #include "board.h"
 #include "http.h"

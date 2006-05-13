@@ -17,7 +17,7 @@ using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
 
-#include "drawables/ConsoleText.h"
+#include <Tiki/drawables/console.h>
 #include "status.h"
 
 extern ConsoleText *ct;
@@ -153,10 +153,17 @@ TextWindow::TextWindow(char *title,char *text) {
   y=-7;
 }
 
+extern int player_hidCookie;
+extern struct object *player;
+void player_hidCallback(const Event & evt, void * data);
+
 void TextWindow::doMenu() {
 	int x,u;
 	
 	m_hidCookie = Hid::callbackReg(hidCallback, this);
+	if(player) {
+		Hid::callbackUnreg(player_hidCookie);
+	}
 	
   while(loop) {
 		Frame::begin();
@@ -174,42 +181,14 @@ void TextWindow::doMenu() {
           for(u=0;u<42;u++) ct->printf(" ");
         }
         if(x+y==-4) {
-          ct->color(11,1);
-          ct->printf("Use ");
-          ct->color(15,1);
-          ct->printf("%c ",24);
-          ct->color(11,1);
-          ct->printf("and ");
-          ct->color(15,1);
-          ct->printf("%c ",25);
-          ct->color(11,1);
-          ct->printf("to scroll and press ");
-          ct->color(15,1);
-					#ifdef DREAMCAST
-          ct->printf("start ");
-					#else
-					ct->printf("enter ");
-					#endif
-          ct->color(11,1);
-          ct->printf("or");
+					ct->setANSI(true);
+					*ct << "\x1b[1;36mUse \x1b[37m\x18 \x1b[36mand \x1b[37m\x19 \x1b[36mto scroll and press " << ((TIKI_PLAT == TIKI_DC) ? "start " : "enter ") << "\x1b[36mor";
+					ct->setANSI(false);
         }
         if(x+y==-3) {
-          ct->color(15,1);
-					#ifdef DREAMCAST
-          ct->printf("fire ");
-					#else
-					ct->printf("space ");
-					#endif
-          ct->color(11,1);
-          ct->printf("to select.  Press ");
-					ct->color(15,1);
-					#ifdef DREAMCAST
-					ct->printf(" B  ");
-					#else
-					ct->printf("ESC ");
-					#endif
-					ct->color(11,1);
-					ct->printf("to close.     ");
+					ct->setANSI(true);
+          *ct << "\x1b[1;37m" << ((TIKI_PLAT == TIKI_DC) ? "fire " : "space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? " B  " : "ESC ") << "\x1b[36mto close.    ";
+					ct->setANSI(false);
         }
         if(x+y==-1 || x+y==maxy+1) {
           for(u=0;u<42;u++) {
@@ -243,6 +222,10 @@ void TextWindow::doMenu() {
   }
 	
 	Hid::callbackUnreg(m_hidCookie);
+	if(player) {
+		printf("Registering player callback\n");
+		player_hidCookie = Hid::callbackReg(player_hidCallback, NULL);
+	}
 }
 
 void TextWindow::hidCallback(const Event & evt, void * data) {

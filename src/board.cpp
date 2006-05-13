@@ -20,7 +20,7 @@ using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
 
-#include "drawables/ConsoleText.h"
+#include <Tiki/drawables/console.h>
 #include "object.h"
 #include "board.h"
 #include "status.h"
@@ -681,24 +681,23 @@ void draw_block(int x, int y) {
   a=((x-player->x)*(x-player->x))/2.0f;
   b=(y-player->y)*(y-player->y);
 	
-  ct->locate(x,y);
   if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
-    ct->color(8,7);
-    ct->printf("%c",(char)177);
+    ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+		ct->putChar(x,y,177);
   } else if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
     if(them!=NULL) {
-      ct->color(8, 0);
-      ct->printf("%c",them->shape);
+      ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+      ct->putChar(x,y,them->shape);
     }
   } else if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
     if(them!=NULL) {
-      ct->color(them->fg - 8, 0);
-      ct->printf("%c",them->shape);
+      ct->putColor(x,y,them->fg%8);
+			ct->putChar(x,y,them->shape);
     }
   } else {
     if(them!=NULL) {
-      ct->color(them->fg, them->bg);
-      ct->printf("%c",them->shape);
+			ct->putColor(x,y,((them->fg > 7) ? HIGH_INTENSITY : 0) | (them->fg%8) | (them->bg << 8));
+      ct->putChar(x,y,them->shape);
     }
   }
 }
