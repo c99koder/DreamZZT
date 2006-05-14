@@ -23,7 +23,7 @@ ZZTMusicStream::ZZTMusicStream() {
 	setChannelCount(1);
 	
 	for(int x=0; x<128; x++) {
-		m_note_table[x] = 8.1758 * pow(2,float((float)x/12.0f));
+		m_note_table[x] = 8.1758 * pow((float)2,float((float)x/12.0f));
 	}
 	
 	osc = 1;

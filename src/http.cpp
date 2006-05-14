@@ -3,7 +3,6 @@
 #include <winsock.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#define NET
 #define uint32_t u_long
 #endif
 #ifdef UNIX
@@ -15,7 +14,6 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #define SOCKET int
-#define NET
 #endif
 #ifdef DREAMCAST
 #include <kos.h>
@@ -105,6 +103,8 @@ char *strtolower(char *str) {
   return buf;
 }
 
+#ifdef NET
+
 #ifdef WIN32
 uint32_t resolve(char *name) {
   char tmp[200];
@@ -149,6 +149,8 @@ uint32 resolve(char *name) {
   status_callback(msg);
   return htonl(host_ip);
 }
+#endif
+
 #endif
 
 #ifdef NET

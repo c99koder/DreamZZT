@@ -42,6 +42,7 @@ update_handler ruffian_update(struct object *me) {
 	//arg1 = intel
 	//arg2 = rest time
 	//arg3 = 
+	return 0;
 }
 
 char gun[4] = {27,24,26,25};

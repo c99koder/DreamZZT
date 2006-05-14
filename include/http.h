@@ -1,6 +1,7 @@
 #ifndef WIN32
 #define SOCKET int
 #else
+#include <windows.h>
 #define uint32_t unsigned long
 #endif
 typedef void (http_status_callback)(char *msg);

@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -68,7 +68,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
@@ -81,6 +81,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/DreamZZT.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\Release&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -125,10 +126,16 @@
 				RelativePath=".\src\DreamZZT.cpp">
 			</File>
 			<File
+				RelativePath=".\src\http.cpp">
+			</File>
+			<File
 				RelativePath=".\src\main.cpp">
 			</File>
 			<File
 				RelativePath=".\src\object.cpp">
+			</File>
+			<File
+				RelativePath=".\src\sound.cpp">
 			</File>
 			<File
 				RelativePath=".\src\status.cpp">
@@ -176,13 +183,6 @@
 					RelativePath=".\src\objects\zztoop.cpp">
 				</File>
 			</Filter>
-			<Filter
-				Name="Drawables"
-				Filter="">
-				<File
-					RelativePath=".\src\Drawables\ConsoleText.cpp">
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -199,6 +199,9 @@
 			</File>
 			<File
 				RelativePath=".\include\object.h">
+			</File>
+			<File
+				RelativePath=".\include\sound.h">
 			</File>
 			<File
 				RelativePath=".\include\status.h">
@@ -223,13 +226,6 @@
 				</File>
 				<File
 					RelativePath=".\include\objects\terrain.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="Drawables"
-				Filter="">
-				<File
-					RelativePath=".\include\drawables\ConsoleText.h">
 				</File>
 			</Filter>
 		</Filter>
