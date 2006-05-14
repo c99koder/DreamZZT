@@ -17,6 +17,7 @@
 #include <Tiki/drawables/console.h>
 #include "board.h"
 #include "status.h"
+#include <Tiki/oggvorbis.h>
 
 using namespace Tiki;
 using namespace Tiki::GL;
@@ -88,8 +89,8 @@ void menu_background() {
 }	
 
 #if TIKI_PLAT == TIKI_DC
-extern uint8 romdisk[];
-KOS_INIT_ROMDISK(romdisk);
+//extern uint8 romdisk[];
+//KOS_INIT_ROMDISK(romdisk);
 
 pvr_init_params_t params = {
 	{ PVR_BINSIZE_16, PVR_BINSIZE_8, PVR_BINSIZE_16, PVR_BINSIZE_8, PVR_BINSIZE_0 },
@@ -109,12 +110,14 @@ extern "C" int tiki_main(int argc, char **argv) {
 	//Hid::callbackReg(tkCallback, NULL);
 	
 #if TIKI_PLAT == TIKI_DC
-	fs_chdir("/rd");
+	fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
 	
 	pvr_init(&params);
 #endif
-	
+
 	zm = new ZZTMusicStream;
+	zm->setTune("cdefgab+c");
+	zm->start();
 	
 	//initialize the screen		
 	ct = new ConsoleText(80,25,new Texture("zzt-ascii.png", true));
@@ -143,7 +146,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	TextWindow t("Main Menu",MAIN_MENU);
 	t.doMenu();*/
 	
-	play_zzt("town.zzt");
+	play_zzt("tutorial.zzt");
 	if(zm!=NULL && zm->isPlaying()) zm->stop();
 	Tiki::shutdown();
   return 0;

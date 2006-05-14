@@ -2,10 +2,10 @@ TIKI_DIR = ../../tiki
 TIKI_PLAT = dc
 
 CFLAGS=-I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -Iinclude -DDEBUG
-OBJS = src/DreamZZT.o src/Drawables/ConsoleText.o src/http.o src/word.o src/main.o src/txtwin.o src/board.o src/dirxn.o src/status.o src/object.o \
+OBJS = src/DreamZZT.o src/sound.o src/http.o src/word.o src/main.o src/txtwin.o src/board.o src/dirxn.o src/status.o src/object.o \
 src/objects/passage.o src/objects/terrain.o src/objects/bullet.o src/objects/enemy.o \
 src/objects/dup.o src/objects/zztoop.o src/objects/pusher.o src/objects/bomb.o src/objects/items.o \
-src/objects/spinner.o src/objects/player.o romdisk.o
+src/objects/spinner.o src/objects/player.o #romdisk.o
 
 all: $(OBJS)
 	kos-c++ -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -o dreamzzt
@@ -16,7 +16,7 @@ clean:
 include $(TIKI_DIR)/$(TIKI_PLAT)/Makefile.rules
 
 romdisk.img:
-	$(KOS_GENROMFS) -f romdisk.img -d resources -v -x .svn
+	$(KOS_GENROMFS) -f romdisk.img -d romdisk -v -x .svn
 
 romdisk.o: romdisk.img
 	$(KOS_BASE)/utils/bin2o/bin2o romdisk.img romdisk romdisk.o

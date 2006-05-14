@@ -69,7 +69,7 @@ struct object *find_zztobj_by_name(int *x, int *y, char *target) {
         }
         name[z-1]='\0';
         //strtolower(name);
-        printf("Compare: %s and %s\n",target,name);
+        //printf("Compare: %s and %s\n",target,name);
         if(!strcmp(name,strtolower(target))) {
           *x=i;
           *y=j;
@@ -236,10 +236,10 @@ void zzt_goto(struct object *myobj, char *label) {
 					y++;
 				}
 				text[y]='\0';
-				printf("Comparing labels: '%s' and '%s'\n",label,text);
+				//printf("Comparing labels: '%s' and '%s'\n",label,text);
 				if(!strcmp(label,text)) {
 					myobj->progpos=x+y;
-					printf("Position set\n");
+					//printf("Position set\n");
 					return;
 				}
 				x+=y;
@@ -790,7 +790,7 @@ update_handler zztoop_update(struct object *myobj) {
 					}
 	        if(text[0]!=':') {
 	          if(linecount>1) {
-              printf("%s\n%s\n",myobj->name,text);
+              //printf("%s\n%s\n",myobj->name,text);
               lbl[0]='\0';
 							if(zm!=NULL) zm->start();
 	            TextWindow t(get_zztobj_name(myobj),text);
@@ -798,7 +798,7 @@ update_handler zztoop_update(struct object *myobj) {
               draw_board();
               if(t.getLabel()!='\0') { zzt_goto(myobj,t.getLabel()); }
 	          } else {
-							printf("%s\n",text);
+							//printf("%s\n",text);
 	            set_msg(text);
 	            goagain=1;
 	          }
