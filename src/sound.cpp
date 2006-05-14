@@ -62,8 +62,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 	
 	if(m_tune_idx >= m_tune.length()) {
 		m_tune = "";
-		stop();
-		return GDSuccess;
+		return GDEOS;
 	}
 	
 	for(int i = 0; i < *numSamples; i++) {
