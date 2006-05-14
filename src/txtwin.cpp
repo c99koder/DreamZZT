@@ -25,32 +25,41 @@ extern ConsoleText *ct;
 void draw_shadow(int x, int y) {
   int fg=(ct->getColor(x,y)/16)-8;
   if(fg<0) fg=8;
-  ct->color(fg,0);
-  ct->locate(x,y);
-  ct->printf("%c",ct->getChar(x,y));
+	ct->putColor(x,y, fg);
 }
 
 void pc_box(int x, int y,int w,int h,int fg,int bg) {
   int i,j,f;
   //draw a box using IBM extended ASCII
-  ct->locate(x,y);
-  ct->color(fg,bg);
-  ct->printf("%c",218);
-  for(i=0;i<w;i++)
-		ct->printf("%c",196);
-  ct->printf("%c",191);
-  for(i=0;i<h;i++) {
-    ct->locate(x,y+i+1);
-    ct->printf("%c",179);
+  ct->putColor(x,y,fg | (bg << 8));
+	ct->putChar(x,y,218);
+
+  for(i=0;i<w;i++) {
+		ct->putColor(x+i+1,y,fg | (bg << 8));
+		ct->putChar(x+i+1,y,196);
+  }
+
+	ct->putColor(x+w+1,y,fg | (bg << 8));
+	ct->putChar(x+w+1,y,191);
+  
+	for(i=0;i<h;i++) {
+		ct->putColor(x,y+i+1,fg | (bg << 8));
+		ct->putChar(x,y+i+1,179);
+
     for(j=0;j<w;j++) {
-      ct->printf(" ");
+			ct->putColor(x+j+1,y+i+1,fg | (bg << 8));
+			ct->putChar(x+j+1,y+i+1,' ');
     }
-    ct->printf("%c",179);
+    
+		ct->putColor(x+j+1,y+i+1,fg | (bg << 8));
+		ct->putChar(x+j+1,y+i+1,179);
+
     draw_shadow(x+w+2,y+i+1);
     draw_shadow(x+w+3,y+i+1);
     ct->color(fg,bg);
   }
-  ct->locate(x,y+h+1);
+  
+	ct->locate(x,y+h+1);
   ct->printf("%c",192);
   for(i=0;i<w;i++)
     ct->printf("%c",196);
@@ -209,7 +218,10 @@ void TextWindow::doMenu() {
 							color(7,1);
 						}*/
 					}
-					ct->printf("%s",txt[x+y]);
+					for(u=0; u<42 && txt[x+y][u] != '\0'; u++) {
+						ct->putColor(((txt[x+y][44]=='!')?15:9)+u, 6+x, HIGH_INTENSITY | ((txt[x+y][44]=='$' || txt[x+y][44]=='!') ? WHITE : YELLOW) | (BLUE << 8));
+						ct->putChar(((txt[x+y][44]=='!')?15:9)+u,6+x,txt[x+y][u]);
+					}
 				}
       }
       ct->color(12,1);

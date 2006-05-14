@@ -21,6 +21,9 @@
 using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
+
+#include "sound.h"
 
 extern struct world_header world;
 
@@ -94,6 +97,8 @@ pvr_init_params_t params = {
 };
 #endif
 
+ZZTMusicStream *zm = NULL;
+
 extern "C" int tiki_main(int argc, char **argv) {
   char tmp[50];
 	srand(time(NULL));
@@ -102,12 +107,14 @@ extern "C" int tiki_main(int argc, char **argv) {
 	Tiki::init(argc, argv);
 	Tiki::setName("DreamZZT", NULL);
 	//Hid::callbackReg(tkCallback, NULL);
-
+	
 #if TIKI_PLAT == TIKI_DC
 	fs_chdir("/rd");
 	
 	pvr_init(&params);
 #endif
+	
+	zm = new ZZTMusicStream;
 	
 	//initialize the screen		
 	ct = new ConsoleText(80,25,new Texture("zzt-ascii.png", true));
@@ -120,6 +127,9 @@ extern "C" int tiki_main(int argc, char **argv) {
   dzzt_logo();
 	menu_background();
 	
+	//TextWindow t("Main Menu",MAIN_MENU);
+	//t.doMenu();
+
 	/*menu_background();
 	
 	Frame::begin();
@@ -133,8 +143,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	TextWindow t("Main Menu",MAIN_MENU);
 	t.doMenu();*/
 	
-	play_zzt("town.zzt");
-	
+	play_zzt(/*"town.zzt"*/"/users/sam/desktop/zztsound.zzt");
+	if(zm!=NULL && zm->isPlaying()) zm->stop();
 	Tiki::shutdown();
   return 0;
 }

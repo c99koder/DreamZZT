@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		223227F60A16663E0035025E /* Tiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223227F50A16663E0035025E /* Tiki.framework */; };
 		2232280F0A1666EE0035025E /* Tiki.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 223227F50A16663E0035025E /* Tiki.framework */; };
+		223229BD0A16C63C0035025E /* sound.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 223229BB0A16C63C0035025E /* sound.h */; };
+		223229BE0A16C63C0035025E /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223229BC0A16C63C0035025E /* sound.cpp */; };
 		224200C30A0C569300F4BDF2 /* passage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B80A0C569300F4BDF2 /* passage.cpp */; };
 		224200C40A0C569300F4BDF2 /* terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B90A0C569300F4BDF2 /* terrain.cpp */; };
 		224200C50A0C569300F4BDF2 /* bullet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200BA0A0C569300F4BDF2 /* bullet.cpp */; };
@@ -74,6 +76,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				2232280F0A1666EE0035025E /* Tiki.framework in CopyFiles */,
+				223229BD0A16C63C0035025E /* sound.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +86,8 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		223227F50A16663E0035025E /* Tiki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tiki.framework; path = ../../tiki/osx/build/Development/Tiki.framework; sourceTree = SOURCE_ROOT; };
+		223229BB0A16C63C0035025E /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sound.h; path = src/sound.h; sourceTree = "<group>"; };
+		223229BC0A16C63C0035025E /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sound.cpp; path = src/sound.cpp; sourceTree = "<group>"; };
 		224200B80A0C569300F4BDF2 /* passage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = passage.cpp; path = src/objects/passage.cpp; sourceTree = "<group>"; };
 		224200B90A0C569300F4BDF2 /* terrain.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = terrain.cpp; path = src/objects/terrain.cpp; sourceTree = "<group>"; };
 		224200BA0A0C569300F4BDF2 /* bullet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = bullet.cpp; path = src/objects/bullet.cpp; sourceTree = "<group>"; };
@@ -157,6 +162,8 @@
 				2242021F0A0C618B00F4BDF2 /* dirxn.cpp */,
 				2242FDD40A0C312500F4BDF2 /* status.cpp */,
 				2242FDE90A0C31F100F4BDF2 /* object.cpp */,
+				223229BB0A16C63C0035025E /* sound.h */,
+				223229BC0A16C63C0035025E /* sound.cpp */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -391,6 +398,7 @@
 				224200CD0A0C569300F4BDF2 /* player.cpp in Sources */,
 				224202200A0C618B00F4BDF2 /* dirxn.cpp in Sources */,
 				22AD22CC0A13FAD8003E828E /* http.cpp in Sources */,
+				223229BE0A16C63C0035025E /* sound.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
