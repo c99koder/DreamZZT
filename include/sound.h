@@ -19,10 +19,8 @@ public:
 			ZZTMusicStream();
 			virtual ~ZZTMusicStream();
 				
-			virtual void stop();
-			virtual void start();
-			
 			void setTune(std::string tune);
+			void appendTune(std::string tune);
 			
 protected:
 			virtual GetDataResult getData(uint16 * buffer, int * numSamples);
@@ -30,8 +28,9 @@ protected:
 			float m_note_table[128];
 			
 private:
-			long m_note_len;
-			int m_note_freq;
+			double m_note_len;
+			float m_note_freq;
+			float m_note_duration;
 			int m_octave;
 			int osc;
 			std::string m_tune;

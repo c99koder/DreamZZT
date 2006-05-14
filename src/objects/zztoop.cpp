@@ -269,6 +269,7 @@ update_handler zztoop_update(struct object *myobj) {
   int x=0,y=0,z,newline=0,linecount=0,goagain=1,tx=0,ty=0,i,j;
   int neg,res;
 	if(myobj->proglen<1) return 0;
+	int playedLast=0;
   //printf("%s: --CYCLE--\n",myobj->name);
   while(goagain) {
     goagain=0;
@@ -374,11 +375,20 @@ update_handler zztoop_update(struct object *myobj) {
       }
 			else if(!strcmp("play",get_word(0))) {
 				if(zm != NULL) {
-					printf("Playing: %s\n", text + 5);
-					zm->setTune(text + 5);
-					if(!zm->isPlaying()) zm->start();
+					if(zm->isPlaying()) {
+						printf("Waiting for sound to finish...\n");
+						myobj->progpos-=(strlen(text)+2);
+					} else {
+						printf("Playing: %s\n", text + 5);
+						if(playedLast==0) {
+							zm->setTune(text + 5);
+						} else {
+							zm->appendTune(text + 5);
+						}
+						goagain = 1;
+						playedLast = 1;
+					}
 				}
-				goagain = 1;
 			}
       else if(!strcmp("try",get_word(0))) {
         res=word_to_direction(myobj,1);
@@ -811,6 +821,7 @@ update_handler zztoop_update(struct object *myobj) {
     move(myobj,(direction)myobj->arg3);
     //printf("Moving: %i\n",myobj->arg3);
   }
+	if(zm!=NULL) zm->start();
   //printf("returning..\n");
   return 0;
 }
