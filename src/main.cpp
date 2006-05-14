@@ -143,7 +143,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	TextWindow t("Main Menu",MAIN_MENU);
 	t.doMenu();*/
 	
-	play_zzt(/*"town.zzt"*/"/users/sam/dos/zzt/demo.zzt");
+	play_zzt("town.zzt");
 	if(zm!=NULL && zm->isPlaying()) zm->stop();
 	Tiki::shutdown();
   return 0;
