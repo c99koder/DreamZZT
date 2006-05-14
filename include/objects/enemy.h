@@ -12,6 +12,13 @@
 #define ZZT_BEAR_NAME "bear"
 #define ZZT_BEAR_FLAGS F_PUSHABLE|F_ENEMY|F_OBJECT
 
+#define ZZT_RUFFIAN_UPDATE (update_handler)ruffian_update
+#define ZZT_RUFFIAN_MESSAGE (msg_handler)enemy_message
+#define ZZT_RUFFIAN_CREATE NULL
+#define ZZT_RUFFIAN_SHAPE 0x05
+#define ZZT_RUFFIAN_NAME "ruffian"
+#define ZZT_RUFFIAN_FLAGS F_PUSHABLE|F_ENEMY|F_OBJECT
+
 #define ZZT_TIGER_UPDATE (update_handler)tiger_update
 #define ZZT_TIGER_MESSAGE (msg_handler)enemy_message
 #define ZZT_TIGER_CREATE NULL
@@ -29,5 +36,6 @@
 update_handler gun_update(struct object *me);
 update_handler lion_update(struct object *me);
 update_handler bear_update(struct object *me);
+update_handler ruffian_update(struct object *me);
 update_handler tiger_update(struct object *me);
 msg_handler enemy_message(struct object *me, struct object *them, char *message);

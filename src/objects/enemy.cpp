@@ -14,10 +14,14 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include "object.h"
 #include "board.h"
 #include "status.h"
+#include "sound.h"
+
+extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
 extern struct object *player;
@@ -41,7 +45,21 @@ update_handler bear_update(struct object *me) {
 update_handler ruffian_update(struct object *me) {
 	//arg1 = intel
 	//arg2 = rest time
-	//arg3 = 
+	//arg3 = restCounter
+	//arg4 = moveCounter
+	
+	if(me->arg4-- > 0) {
+		move(me,(direction)me->heading);
+	} else if(me->arg3-- <= 0) {
+		if(rand()%9 < me->arg1) {
+			me->heading = toward(me,player);
+		} else {
+			me->heading = rand() % 4;
+		}
+		me->arg4 = rand() % 10;
+	} else if(me->arg4 <= 0) {
+		me->arg3 = 6 + (rand() % me->arg2);
+	}
 	return 0;
 }
 
@@ -90,6 +108,8 @@ msg_handler enemy_message(struct object *me, struct object *them, char *message)
 	if(me->type == ZZT_BEAR && them->type == ZZT_BREAKABLE) {
 		remove_from_board(currentbrd,them);
 		remove_from_board(currentbrd,me);
+		zm->setTune("t+c-c-c");
+		zm->start();
 	}
   return 0;
 }
