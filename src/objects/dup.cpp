@@ -14,11 +14,15 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include <stdlib.h>
 #include "object.h"
 #include "board.h"
 #include "dirxn.h"
+#include "sound.h"
+
+extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
 
@@ -54,6 +58,8 @@ update_handler duplicator_update(struct object *me) {
       obj2->cycle=obj->cycle;
       if(obj2->create!=NULL) obj2->create(obj2);
       draw_block(x,y);
+			zm->setTune("scdefg");
+			zm->start();			
     }
   }
   me->arg3%=5;

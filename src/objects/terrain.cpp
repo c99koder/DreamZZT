@@ -14,11 +14,15 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include "status.h"
 #include "object.h"
 #include "board.h"
 #include "dirxn.h"
+#include "sound.h"
+
+extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
 int forestmsg=0,invismsg=0,watermsg=0;
@@ -148,6 +152,8 @@ msg_handler terrain_message(struct object *me, struct object *them, char *messag
         set_msg("A path is cleared through the forest.");
         forestmsg=1;
       }
+			zm->setTune("ta");
+			zm->start();
       remove_from_board(currentbrd,me);
       move(them,toward(them,me));      
       break;
@@ -156,6 +162,9 @@ msg_handler terrain_message(struct object *me, struct object *them, char *messag
         set_msg("You are blocked by an invisible wall.");
         invismsg=1;
       }
+			zm->setTune("t--dc");
+			zm->start();
+			me->type=ZZT_NORMAL;
       me->shape=ZZT_NORMAL_SHAPE;
       draw_block(me->x,me->y);
       break;
@@ -164,6 +173,8 @@ msg_handler terrain_message(struct object *me, struct object *them, char *messag
         set_msg("Your path is blocked by water.");
         watermsg=1;
       }
+			zm->setTune("t+c+c");
+			zm->start();
     }
   }
   return 0;

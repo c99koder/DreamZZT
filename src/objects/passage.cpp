@@ -14,11 +14,15 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include "object.h"
 #include "board.h"
+#include "sound.h"
 
 extern int switchbrd;
+
+extern ZZTMusicStream *zm;
 
 msg_handler passage_message(struct object *me, struct object *them, char *message) {
 	struct object *obj;
@@ -38,6 +42,8 @@ msg_handler passage_message(struct object *me, struct object *them, char *messag
     /*obj->flags|=F_SLEEPING;*/
     switchbrd=me->PASSAGE_DEST;
     obj->flags|=F_SLEEPING;
+		zm->setTune("tceg tc#fg# tdf#a td#ga# teg#+c");
+		zm->start();
   }
   return 0;
 }

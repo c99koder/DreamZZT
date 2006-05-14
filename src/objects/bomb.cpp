@@ -15,10 +15,13 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include "board.h"
 #include "object.h"
+#include "sound.h"
 
+extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
 
@@ -27,6 +30,8 @@ msg_handler bomb_message(struct object *me, struct object *them, char *message) 
     me->shape='9';
     me->flags|=F_PUSHABLE;
     draw_block(me->x,me->y);
+		zm->setTune("tcf+cf+c");
+		zm->start();
   }
   return 0;
 }

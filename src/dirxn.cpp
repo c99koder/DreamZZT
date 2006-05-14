@@ -14,13 +14,16 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include "object.h"
 #include "board.h"
 #include "word.h"
+#include "sound.h"
 
 extern int zztascii[];
 extern struct object *player;
+extern ZZTMusicStream *zm;
 
 enum direction opposite(enum direction dir) {
   if(dir==LEFT) { return RIGHT; }
@@ -250,6 +253,8 @@ void move(struct object *me, enum direction dir) {
             //printf("Success!\n");
             //move(me,dir);
             suc=1;
+						//zm->setTune("t--f");
+						//zm->start();
           }
         }
       }

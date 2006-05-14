@@ -143,7 +143,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	TextWindow t("Main Menu",MAIN_MENU);
 	t.doMenu();*/
 	
-	play_zzt(/*"town.zzt"*/"/users/sam/desktop/zztsound.zzt");
+	play_zzt(/*"town.zzt"*/"/users/sam/dos/zzt/demo.zzt");
 	if(zm!=NULL && zm->isPlaying()) zm->stop();
 	Tiki::shutdown();
   return 0;
@@ -219,7 +219,7 @@ void play_zzt(char *filename) {
 		Frame::transEnable();
 		ct->draw(Drawable::Trans);
 		Frame::finish();
-		Time::sleep(100000);
+		Time::sleep(80000);
     
 		if(switchbrd>-1) {
       switch_board(switchbrd);

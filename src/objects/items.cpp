@@ -14,10 +14,14 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include "board.h"
 #include "object.h"
 #include "status.h"
+#include "sound.h"
+
+extern ZZTMusicStream *zm;
 
 extern struct world_header world;
 extern struct board_info_node *currentbrd;
@@ -80,6 +84,8 @@ msg_handler teleport_message(struct object *me, struct object *them, char *messa
 	
 msg_handler scroll_message(struct object *me, struct object *them, char *message) {
 	if(!strcmp(message,"get")) {
+		zm->setTune("tc-c+d-d+e-e+f-f+g-g");
+		zm->start();
 		zztoop_update(me);
 		remove_from_board(currentbrd,me);
 		move(them,toward(them,me));
@@ -106,6 +112,8 @@ msg_handler inv_message(struct object *me, struct object *them, char *message) {
         enermsg=1;
         set_msg("Energizer - You are invincible!");
       }
+			zm->setTune("s.-cd#e");
+			zm->start();
       break;
     case ZZT_GEM:
       give_gems(1);
@@ -115,6 +123,8 @@ msg_handler inv_message(struct object *me, struct object *them, char *message) {
         gemmsg=1;
         set_msg("Gems give you Health!");
       }
+			zm->setTune("t+c-gec");
+			zm->start();
       break;
     case ZZT_AMMO:
       give_ammo(5);
@@ -122,6 +132,8 @@ msg_handler inv_message(struct object *me, struct object *them, char *message) {
         ammomsg=1;
         set_msg("Ammunition - 5 shots per container.");
       }
+			zm->setTune("tcc#d");
+			zm->start();
       break;
     case ZZT_TORCH:
       give_torch(1);
@@ -129,6 +141,8 @@ msg_handler inv_message(struct object *me, struct object *them, char *message) {
         torchmsg=1;
         set_msg("Torch - used for lighting in the underground.");
       }
+			zm->setTune("tcase");
+			zm->start();
       break;
     case ZZT_KEY:
       if(world.keys[me->fg-9]==1) {
@@ -139,6 +153,8 @@ msg_handler inv_message(struct object *me, struct object *them, char *message) {
 				printf("world.keys[%i]=%i\n",me->fg-9,world.keys[me->fg-9]);
         sprintf(tmp,"You now have the %s key",int_to_color(*me->color));
         draw_keys();
+				zm->setTune("t+cegcegceg+sc");
+				zm->start();
       }
       set_msg(tmp);
       break;
@@ -162,10 +178,14 @@ msg_handler inv_message(struct object *me, struct object *them, char *message) {
           draw_keys();
           remove_from_board(currentbrd, me);
           move(them,toward(them,me));
+					zm->setTune("tcgbcgb+ic");
+					zm->start();					
         } else {
           sprintf(tmp,"The %s door is locked.",int_to_color(*me->color));
           set_msg(tmp);
           ok=0;
+					zm->setTune("t--gc");
+					zm->start();
         }
       }
       break;

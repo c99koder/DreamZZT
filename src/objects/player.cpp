@@ -16,13 +16,16 @@
 using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include <Tiki/drawables/console.h>
 #include "object.h"
 #include "board.h"
 #include "http.h"
 #include "status.h"
+#include "sound.h"
 
+extern ZZTMusicStream *zm;
 extern ConsoleText *ct;
 
 extern int switchbrd;
@@ -281,6 +284,8 @@ msg_handler player_message(struct object *me, struct object *them, char *message
 			take_health(10);
 			if(strcmp(message,"time")) {
 				set_msg("Ouch!");
+				zm->setTune("t--ct+cd#");
+				zm->start();
 			}
 			if(currentbrd->reenter && world.health>0) {
 				world.time=currentbrd->time;
@@ -362,6 +367,7 @@ update_handler player_update(struct object *me) {
 		me->shape=1;
 		me->fg=15;
 		me->bg=5;
+		//zm->appendTune("s.-f+fd#c+c-d#ef+f-fd#c+c-d#e");
 	}
 	/*x=poll_game_device(0);	
 	if(world.health>0) {

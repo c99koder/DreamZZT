@@ -14,15 +14,14 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include "object.h"
 #include "board.h"
 #include "status.h"
-#ifdef DREAMCAST
-#include <mp3/sfxmgr.h>
-#endif
+#include "sound.h"
 
-int sound_id=-1;
+extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
 extern struct world_header world;
@@ -46,7 +45,11 @@ msg_handler bullet_message(struct object *me, struct object *them, char *message
     if(me->arg1==0 && them->type!=ZZT_PLAYER || me->arg1==1 && them->type==ZZT_PLAYER) {
       if(them->message!=NULL) them->message(them,me,"shot");
     } 
-		if(them->type==ZZT_BREAKABLE) remove_from_board(currentbrd,them);
+		if(them->type==ZZT_BREAKABLE) {
+			remove_from_board(currentbrd,them);
+			zm->setTune("t-c");
+			zm->start();
+		}
     remove_from_board(currentbrd,me);
   }
   return 0;
@@ -88,6 +91,8 @@ void shoot(struct object *owner, enum direction dir) {
 	  bullet->flags=F_NONE;
     currentbrd->board[bullet->x][bullet->y].obj=currentbrd->board[bullet->x][bullet->y].under;
     currentbrd->board[bullet->x][bullet->y].obj=bullet;
+		zm->setTune("t+c-c-c");
+		zm->start();
   } else {
     if(currentbrd->board[owner->x+dx][owner->y+dy].obj!=NULL) {
       if(currentbrd->board[owner->x+dx][owner->y+dy].obj->message!=NULL) {

@@ -19,11 +19,15 @@
 using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include <Tiki/drawables/console.h>
 #include "object.h"
 #include "board.h"
 #include "status.h"
+#include "sound.h"
+
+extern ZZTMusicStream *zm;
 
 extern ConsoleText *ct;
 
@@ -625,6 +629,10 @@ void update_brd() {
 		
 		if(world.energizer_cycle>0) {
 			world.energizer_cycle--;
+			if(world.energizer_cycle==0) {
+				zm->setTune("s.-c-a#gf#fd#c");
+				zm->start();
+			}
 		}
 		
 		if(world_sec==0 && currentbrd->time>0) {

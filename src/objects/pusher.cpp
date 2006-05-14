@@ -14,8 +14,12 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
 #include "object.h"
+#include "sound.h"
+
+extern ZZTMusicStream *zm;
 
 msg_handler pusher_message(struct object *me, struct object *them, char *message) {
   return 0;
@@ -26,6 +30,8 @@ update_handler pusher_update(struct object *me) {
   if(me->ystep==1) move(me,DOWN);
   if(me->xstep==-1) move(me,LEFT);
   if(me->ystep==-1) move(me,UP);
+	//zm->setTune("t--f");
+	//zm->start();
   return 0;
 }
 

@@ -792,6 +792,7 @@ update_handler zztoop_update(struct object *myobj) {
 	          if(linecount>1) {
               printf("%s\n%s\n",myobj->name,text);
               lbl[0]='\0';
+							if(zm!=NULL) zm->start();
 	            TextWindow t(get_zztobj_name(myobj),text);
 							t.doMenu();
               draw_board();
