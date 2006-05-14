@@ -31,6 +31,19 @@ update_handler lion_update(struct object *me) {
   return 0;
 }
 
+update_handler bear_update(struct object *me) {
+  if(dist_x(player,me) < (9-me->arg1) || dist_y(player,me) < (9-me->arg1)) {
+    move(me,toward(me,player));
+  }
+  return 0;
+}
+
+update_handler ruffian_update(struct object *me) {
+	//arg1 = intel
+	//arg2 = rest time
+	//arg3 = 
+}
+
 char gun[4] = {27,24,26,25};
 
 update_handler gun_update(struct object *me) {
@@ -38,14 +51,14 @@ update_handler gun_update(struct object *me) {
   me->arg3%=4;
   me->shape=gun[me->arg3];
   draw_block(me->x,me->y);
-  if(rand()%30<me->arg2) {
+  if(rand()%10<me->arg2) {
     if(rand()%10<me->arg1) {
-      if((me->x>=player->x-1 && me->x<=player->x+1) ||
-        (me->y>=player->y-1 && me->y<=player->y+1)) {
+      if((me->x>=player->x-2 && me->x<=player->x+2) ||
+        (me->y>=player->y-2 && me->y<=player->y+2)) {
         shoot(me,toward(me,player));
       }
     } else {
-      if(rand()%(me->arg1+1)==0) {
+      if(rand()%(me->arg1+2)==0) {
         shoot(me,toward(me,player));
       }
     }
@@ -73,5 +86,9 @@ msg_handler enemy_message(struct object *me, struct object *them, char *message)
     }
     remove_from_board(currentbrd,me);
   }
+	if(me->type == ZZT_BEAR && them->type == ZZT_BREAKABLE) {
+		remove_from_board(currentbrd,them);
+		remove_from_board(currentbrd,me);
+	}
   return 0;
 }

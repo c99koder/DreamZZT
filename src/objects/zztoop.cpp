@@ -14,7 +14,9 @@
 
 using namespace Tiki;
 using namespace Tiki::Hid;
+using namespace Tiki::Audio;
 
+#include "sound.h"
 #include "object.h"
 #include "word.h"
 #include "board.h"
@@ -23,6 +25,8 @@ using namespace Tiki::Hid;
 
 extern struct world_header world;
 extern struct object *player;
+
+extern ZZTMusicStream *zm;
 
 void zzt_goto(struct object *me, char *label);
 
@@ -368,6 +372,14 @@ update_handler zztoop_update(struct object *myobj) {
         myobj->arg3=word_to_direction(myobj,1);
         if(myobj->arg3==5) goagain=1;
       }
+			else if(!strcmp("play",get_word(0))) {
+				if(zm != NULL) {
+					printf("Playing: %s\n", text + 5);
+					zm->setTune(text + 5);
+					if(!zm->isPlaying()) zm->start();
+				}
+				goagain = 1;
+			}
       else if(!strcmp("try",get_word(0))) {
         res=word_to_direction(myobj,1);
         if(try_move(myobj,(direction)res)) {

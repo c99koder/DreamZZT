@@ -620,7 +620,7 @@ void update_brd() {
 	
 		world_sec--;
 		if(world.health==0 && world_sec==0) {
-			set_msg("Game Over - Press Menu");
+			set_msg("Game Over - Press ESC");
 		}
 		
 		if(world.energizer_cycle>0) {

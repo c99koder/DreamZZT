@@ -1,5 +1,5 @@
 void objects_init() {
-  //Generated on Sun Dec 28 16:38:37 EST 2003 by chip
+  //Generated on Sat May 13 17:31:01 EDT 2006 by sam
   int x;
   for(x=0;x<ZZT_TYPE_COUNT;x++) {
     object_templates[x].create=NULL;
@@ -422,6 +422,16 @@ void objects_init() {
   object_templates[ZZT_LION].name=NULL;
   set_name(&object_templates[ZZT_LION],ZZT_LION_NAME);
   object_templates[ZZT_LION].flags=ZZT_LION_FLAGS;
+  //BEAR
+  object_templates[ZZT_BEAR].update=ZZT_BEAR_UPDATE;
+  object_templates[ZZT_BEAR].message=ZZT_BEAR_MESSAGE;
+  object_templates[ZZT_BEAR].create=ZZT_BEAR_CREATE;
+  object_templates[ZZT_BEAR].shape=ZZT_BEAR_SHAPE;
+  object_templates[ZZT_BEAR].fg=15;
+  object_templates[ZZT_BEAR].bg=0;
+  object_templates[ZZT_BEAR].name=NULL;
+  set_name(&object_templates[ZZT_BEAR],ZZT_BEAR_NAME);
+  object_templates[ZZT_BEAR].flags=ZZT_BEAR_FLAGS;
   //TIGER
   object_templates[ZZT_TIGER].update=ZZT_TIGER_UPDATE;
   object_templates[ZZT_TIGER].message=ZZT_TIGER_MESSAGE;
