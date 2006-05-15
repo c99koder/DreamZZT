@@ -72,7 +72,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 	}
 	
 	if(m_tune_idx >= m_tune.length()) {
-		printf("NO MORE STREAM!\n");
+		//printf("NO MORE STREAM!\n");
 		m_tune = "";
 		return GDSuccess;
 	}
@@ -81,7 +81,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 		if(m_note_len--<=0) {
 			if(m_tune_idx >= m_tune.length()) {
 				*numSamples = (i / 2);
-				printf("End of stream reached, %i samples\n", i);
+				//printf("End of stream reached, %i samples\n", i);
 				return GDSuccess;
 				//buffer[i] = 0;
 				//continue;
@@ -185,7 +185,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 			//printf("\n");
 			m_note_freq = m_note_table[note];
 			m_note_len = (float)m_freq*2.0f / (float)(m_note_duration);
-			printf("Octave: %i Note: %i Freq: %f Len: %f Duration: %f\n",m_octave, note, m_note_freq, m_note_len, m_note_duration);
+			//printf("Octave: %i Note: %i Freq: %f Len: %f Duration: %f\n",m_octave, note, m_note_freq, m_note_len, m_note_duration);
 		}
 		
 		m_hfreq = m_freq / m_note_freq / 2.0f;
@@ -200,6 +200,6 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 			buffer[i] = U16_0;
 		}
 	}
-	printf("Buffer filled\n");
+	//printf("Buffer filled\n");
 	return GDSuccess;
 }

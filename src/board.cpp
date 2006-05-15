@@ -244,6 +244,7 @@ void save_game(char *filename) {
 }*/
 
 int is_empty(struct board_info_node *curbrd, int x, int y) {
+	if(x<0 || y<0 || x>=BOARD_X || y >= BOARD_Y) return 0;
   if(curbrd->board[x][y].obj!=NULL && !(curbrd->board[x][y].obj->flags&F_EMPTY)) {
     return 0;
   }

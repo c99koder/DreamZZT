@@ -611,7 +611,7 @@ update_handler zztoop_update(struct object *myobj) {
 						for(i=0;i<10;i++) {
 							//printf("Flag %i: %s\n",i,world.flag[i].string);
 							if(!strcmp((char *)world.flag[i].string,get_word(1))) {
-								printf("Matched!");
+								//printf("Matched!");
 								res=1;
 								break;
 							}
