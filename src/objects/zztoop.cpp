@@ -301,6 +301,7 @@ update_handler zztoop_update(struct object *myobj) {
 #ifdef DEBUG
       printf("%s executing: ?%s\n",myobj->name,text);
 #endif
+			debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name(myobj), text);
 			move(myobj,word_to_direction(myobj,0));
 			goagain=0;
 			break;
@@ -316,6 +317,7 @@ update_handler zztoop_update(struct object *myobj) {
 #ifdef DEBUG
       printf("%s executing: /%s\n",myobj->name,text);
 #endif
+			debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name(myobj), text);
 			x=word_to_direction(myobj,0);
 			if(try_move(myobj,(direction)x)||x==5) {
 				move(myobj,(direction)x);
