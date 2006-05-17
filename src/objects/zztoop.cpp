@@ -22,6 +22,7 @@ using namespace Tiki::Audio;
 #include "board.h"
 #include "status.h"
 #include "http.h"
+#include "debug.h"
 
 extern struct world_header world;
 extern struct object *player;
@@ -222,6 +223,7 @@ void zzt_goto(struct object *myobj, char *label) {
       label[x]=label[x+1];
     }
   }
+	debug("\x1b[1;37m%s\x1b[0;37m recieved \x1b[1;37m%s\n",get_zztobj_name(myobj), label);
   for(x=0;x<myobj->proglen;x++) {
     switch(myobj->prog[x]) {
     case '\r':
@@ -357,8 +359,9 @@ update_handler zztoop_update(struct object *myobj) {
       text[y]='\0';
       wordify(strtolower(text),' ');
 #ifdef DEBUG
-      printf("%s executing: %s\n",myobj->name,text);
+      printf("%s executing: %s\n",get_zztobj_name(myobj),text);
 #endif
+			debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name(myobj), text);
       strcpy(tmp,get_word(0));
 			if(!strcmp("go",get_word(0))) {
 				res=word_to_direction(myobj,1);

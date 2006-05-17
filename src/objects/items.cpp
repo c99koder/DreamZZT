@@ -20,6 +20,7 @@ using namespace Tiki::Audio;
 #include "object.h"
 #include "status.h"
 #include "sound.h"
+#include "debug.h"
 
 extern ZZTMusicStream *zm;
 
@@ -159,6 +160,7 @@ msg_handler inv_message(struct object *me, struct object *them, char *message) {
       set_msg(tmp);
       break;
     }
+		if(ok) debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was picked up.\n",me->name);
   } else if(!strcmp(message,"shot")) {
     switch(me->type) {
     case ZZT_GEM:

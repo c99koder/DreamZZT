@@ -27,6 +27,7 @@ using namespace Tiki::Audio;
 
 extern ZZTMusicStream *zm;
 extern ConsoleText *ct;
+extern ConsoleText *dt;
 
 extern int switchbrd;
 extern struct world_header world;
@@ -45,6 +46,8 @@ void player_hidCallback(const Event & evt, void * data) {
 	struct object *me=player;
 	struct board_info_node *brd;
 	struct object *obj;
+	
+	if(me==NULL) return;
 	
 	if (evt.type == Hid::Event::EvtQuit) {
 		switchbrd = -2;
@@ -348,8 +351,10 @@ update_handler player_update(struct object *me) {
 			draw_msg();
 			Frame::begin();
 			ct->draw(Drawable::Opaque);
+			dt->draw(Drawable::Opaque);
 			Frame::transEnable();
 			ct->draw(Drawable::Trans);
+			dt->draw(Drawable::Trans);
 			Frame::finish();
 			Time::sleep(100000);
     } while(me->flags&F_SLEEPING);

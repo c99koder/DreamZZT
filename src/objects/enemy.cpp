@@ -20,6 +20,7 @@ using namespace Tiki::Audio;
 #include "board.h"
 #include "status.h"
 #include "sound.h"
+#include "debug.h"
 
 extern ZZTMusicStream *zm;
 
@@ -102,7 +103,8 @@ msg_handler enemy_message(struct object *me, struct object *them, char *message)
     draw_score();
     if(!strcmp(message,"touch") || !strcmp(message,"thud")) {
       them->message(them,me,"shot");
-    }
+    } 
+		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",me->name);
     remove_from_board(currentbrd,me);
   }
 	if(me->type == ZZT_BEAR && them->type == ZZT_BREAKABLE) {

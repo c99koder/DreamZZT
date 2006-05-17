@@ -17,6 +17,7 @@
 #include <Tiki/drawables/console.h>
 #include "board.h"
 #include "status.h"
+#include "debug.h"
 #include <Tiki/oggvorbis.h>
 
 using namespace Tiki;
@@ -74,6 +75,7 @@ void play_zzt(char *filename);
 void net_menu();
 
 ConsoleText *ct;
+extern ConsoleText *dt;
 extern struct board_info_node *board_list;
 int switchbrd=-1;
 
@@ -123,6 +125,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	ct = new ConsoleText(80,25,new Texture("zzt-ascii.png", true));
 	ct->setSize(640,480);
 	ct->translate(Vector(320,240,0));
+	
+	debug_init();
 	
   objects_init();
   ct->color(15,1);
@@ -192,8 +196,10 @@ void play_zzt(char *filename) {
 		draw_msg();
 		Frame::begin();
 		ct->draw(Drawable::Opaque);
+		dt->draw(Drawable::Opaque);
 		Frame::transEnable();
 		ct->draw(Drawable::Trans);
+		dt->draw(Drawable::Trans);
 		Frame::finish();
 		//Time::sleep(100000);
 	} while(0);//poll_game_device(0)!=START_BTN);
@@ -219,13 +225,16 @@ void play_zzt(char *filename) {
 		
 		Frame::begin();
 		ct->draw(Drawable::Opaque);
+		dt->draw(Drawable::Opaque);
 		Frame::transEnable();
 		ct->draw(Drawable::Trans);
+		dt->draw(Drawable::Trans);
 		Frame::finish();
 		Time::sleep(80000);
     
 		if(switchbrd>-1) {
       switch_board(switchbrd);
+			debug("\x1b[0;37mWarping to \x1b[1;37m%s\n",currentbrd->title);
       draw_board();
 			redraw_status();
       if(player->flags&F_SLEEPING) player->update(player);

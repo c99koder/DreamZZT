@@ -21,6 +21,7 @@ using namespace Tiki::Hid;
 #include "status.h"
 
 extern ConsoleText *ct;
+extern ConsoleText *dt;
 
 void draw_shadow(int x, int y) {
   int fg=(ct->getColor(x,y)/16)-8;
@@ -177,8 +178,10 @@ void TextWindow::doMenu() {
   while(loop) {
 		Frame::begin();
 		ct->draw(Drawable::Opaque);
+		dt->draw(Drawable::Opaque);
 		Frame::transEnable();
 		ct->draw(Drawable::Trans);
+		dt->draw(Drawable::Trans);
 		Frame::finish();
 		
     if(dirty) {
