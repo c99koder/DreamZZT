@@ -34,29 +34,30 @@ void bullet_sound_init() {
 #endif
 }
 
-update_handler bullet_update(struct object *myobj) {
-  move(myobj,(direction)myobj->arg2);
-  return 0;
+void Bullet::setParam(int arg,int value) {
+	if(arg == 1) m_owner = value;
 }
 
-msg_handler bullet_message(struct object *me, struct object *them, char *message) {
+void Bullet::update() {
+  move(m_heading);
+}
 
-  if(!strcmp(message,"thud")) {
-    if(me->arg1==0 && them->type!=ZZT_PLAYER || me->arg1==1 && them->type==ZZT_PLAYER) {
-      if(them->message!=NULL) them->message(them,me,"shot");
+void Bullet::message(ZZTObject *them, std::string message) {
+  if(message == "thud") {
+    if(m_owner == 0 && them->getType()!=ZZT_PLAYER || m_owner == 1 && them->getType()==ZZT_PLAYER) {
+      them->message(this,"shot");
     } 
-		if(them->type==ZZT_BREAKABLE) {
+		if(them->getType()==ZZT_BREAKABLE) {
 			remove_from_board(currentbrd,them);
 			zm->setTune("t-c");
 			zm->start();
 		}
-    remove_from_board(currentbrd,me);
+    remove_from_board(currentbrd,this);
   }
-  return 0;
 }
 
-void shoot(struct object *owner, enum direction dir) {
-	struct object *bullet=NULL;
+void ZZTObject::shoot(enum direction dir) {
+	ZZTObject *bullet=NULL;
 	int dx,dy;
 	char buf[100];
 
@@ -73,35 +74,37 @@ void shoot(struct object *owner, enum direction dir) {
     case RIGHT:
      dx=1; dy=0;
      break;
+		case IDLE:
+			return;
 	}
-  if(owner->type==ZZT_PLAYER) {
+	
+  if(m_type==ZZT_PLAYER) {
     if(world.ammo<1) {
 			//sprintf(buf,"You don't have any %s",ammo_name);
       set_msg("You don't have any ammo");
       return;
     }
   }
-  if(is_empty(currentbrd,owner->x+dx,owner->y+dy)) {
-    if(owner->type==ZZT_PLAYER) world.ammo--;
+  if(is_empty(dir)) {
+    if(m_type==ZZT_PLAYER) world.ammo--;
     draw_ammo();
-    bullet=create_object(ZZT_BULLET,owner->x+dx,owner->y+dy);
-    bullet->arg1=owner->type==ZZT_PLAYER?0:1;
-    bullet->arg2=dir;
-	  bullet->cycle=1;
-	  bullet->flags=F_NONE;
-    currentbrd->board[bullet->x][bullet->y].obj=currentbrd->board[bullet->x][bullet->y].under;
-    currentbrd->board[bullet->x][bullet->y].obj=bullet;
+    bullet=create_object(ZZT_BULLET,dir);
+    bullet->setParam(1,m_type==ZZT_PLAYER?0:1);
+    bullet->setHeading(dir);
+	  bullet->setCycle(1);
+    currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].under;
+    currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=bullet;
 		zm->setTune("t+c-c-c");
 		zm->start();
   } else {
-    if(currentbrd->board[owner->x+dx][owner->y+dy].obj!=NULL) {
-      if(currentbrd->board[owner->x+dx][owner->y+dy].obj->message!=NULL) {
-				currentbrd->board[owner->x+dx][owner->y+dy].obj->message(currentbrd->board[owner->x+dx][owner->y+dy].obj,owner,"shot");
-			} else if(currentbrd->board[owner->x+dx][owner->y+dy].obj->type==ZZT_BREAKABLE) {
-				remove_from_board(currentbrd,currentbrd->board[owner->x+dx][owner->y+dy].obj);
-			}
-			if(is_empty(currentbrd,owner->x+dx,owner->y+dy)) {
-				if(owner->type==ZZT_PLAYER) world.ammo--;
+    if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj!=NULL) {
+			if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->getType()==ZZT_BREAKABLE) {
+				remove_from_board(currentbrd,currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj);
+			} else {
+				currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->message(this,"shot");
+			} 
+			if(is_empty(dir)) {
+				if(m_type==ZZT_PLAYER) world.ammo--;
 				draw_ammo();
 			}
     }

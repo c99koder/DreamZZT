@@ -4,8 +4,8 @@
 #define BOARD_Y 25
 
 struct board_data {
-  struct object *obj;
-  struct object *under;
+  ZZTObject *obj;
+  ZZTObject *under;
 };
 
 struct board_info_node {
@@ -59,13 +59,15 @@ void draw_block(int x, int y);
 void draw_board();
 struct world_header *get_world();
 unsigned char block_code(int x, int y);
-void remove_from_board(struct board_info_node *brd, struct object *me);
+void remove_from_board(struct board_info_node *brd, ZZTObject *me);
 struct board_info_node *get_board(int num);
 struct board_info_node *get_board_list();
-struct object *get_obj_by_type(struct board_info_node *board, int type);
-struct board_data *get_block_by_type(char *type, int *x, int *y);
+struct board_data *get_block_by_type(int type, int &x, int &y);
+ZZTObject *get_obj_by_type(struct board_info_node *board, int type);
+ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color);
 struct board_info_node *get_current_board();
 int board_up();
 int board_down();
 int board_left();
 int board_right();
+void render();

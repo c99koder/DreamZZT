@@ -1,45 +1,100 @@
 #ifndef _OBJECT_H
 #define _OBJECT_H
 
-#include "dirxn.h"
+#include <Tiki/vector.h>
+#include <Tiki/file.h>
+using namespace Tiki::Math;
 
-typedef void (*update_handler)(struct object *me);
-typedef void (*msg_handler)(struct object *me, struct object *them, char *msg); //universal messaging
-typedef void (*create_handler)(struct object *me);
+enum direction { LEFT, RIGHT, UP, DOWN, IDLE };
 
-struct object {
-  char x;
-  char y;
-  short xstep;
-  short ystep;
-  short cycle;
-  int tick;
-  int fg;
-  int bg;
-  int *color;
-  int board;
-  int heading;
-  char type;
-  unsigned char shape;
-  char *name; 
-  char arg1;
-  char arg2;
-  char arg3;
-  int arg4;
-  int arg5;
-  int flags;
-  char *prog;
-  short proglen;
-  short progpos;
-  int updated;
-  void (*update)(struct object *me);
-  void (*message)(struct object *me, struct object *them, char *message);
-  void (*create)(struct object *me);
+class ZZTObject {
+public:
+	ZZTObject(int type, int x, int y, int shape, int flags, std::string name);
+	~ZZTObject() { m_isValid = false; }
+	
+	
+	direction opposite(enum direction dir);
+	direction toward(ZZTObject *them);
+	direction clockwise(direction dir);
+	direction str_to_direction(std::string s);
+	
+	bool isValid() { return m_isValid; }
+	
+	int str_to_color(std::string color);
+	std::string int_to_color(int color);
+	
+	int distance(ZZTObject *them);
+	int dist_x(ZZTObject *them);
+	int dist_y(ZZTObject *them);
+	bool move(direction d, bool trying=false);
+	bool is_empty(direction d);
+	ZZTObject *create_object(int type, direction d);
+	
+	Vector getPosition() { return m_position; }
+	void setPosition(Vector p) { m_position = p; }
+	Vector getStep() { return m_step; }
+	void setStep(Vector s) { m_step = s; }
+	char getShape() { return m_shape; }
+	void setShape(int s) { m_shape = s; }
+	int getColor() { return *m_color; }
+	void setColor(int c) { *m_color = c; }
+	int getType() { return m_type; }
+	int getFg() { return m_fg; }
+	void setFg(int f) { m_fg = f; }
+	int getBg() { return m_bg; }
+	void setBg(int b) { m_bg = b; }
+	std::string getName() { return m_name; }
+	bool getUpdated() { return m_updated; }
+	void setUpdated(bool u) { m_updated = u; }
+	bool getPushed() { return m_pushed; }
+	void setPushed(bool p) { m_pushed = p; }
+	short getCycle() { return m_cycle; }
+	void setCycle(short c) { m_cycle = c; }
+	int getTick() { return m_tick; }
+	void setTick(int t) { m_tick = t; }
+	int getFlags() { return m_flags; }
+	void setFlag(int flag) { m_flags |= flag; }
+	void setFlags(int flags) { m_flags = flags; }
+	void setProg(std::string prog, int len, int pos) { m_prog=prog; m_proglen = len; m_progpos = pos; }
+	void setHeading(direction h) { m_heading = h; }
+	direction getHeading() { return m_heading; }
+	std::string getProg() { return m_prog; }
+	int getProgLen() { return m_proglen; }
+	
+	void draw();
+	//void load(Tiki::File &f);
+	//void save(Tiki::File &f);
+	
+	virtual void setParam(int arg, int value) { };
+	virtual void update() { };
+	virtual void message(ZZTObject *from, std::string msg) { };
+	virtual void create() { };
+	
+	void shoot(direction d);
+	
+protected:
+	Vector m_position;
+	Vector m_step;
+  short m_cycle;
+  int m_tick;
+  int m_fg;
+  int m_bg;
+  int *m_color;
+  int m_board;
+  direction m_heading;
+  int m_type;
+  unsigned char m_shape;
+	std::string m_name; 
+  int m_flags;
+	std::string m_prog;
+  short m_proglen;
+  short m_progpos;
+	bool m_updated;
+	bool m_pushed;
+	
+private:
+	bool m_isValid;
 };
-
-void null_handler();
-update_handler default_update();
-msg_handler default_msg();
 
 #define ZZT_TYPE_COUNT 0x3e
 #define ZZT_EMPTY 0x00
@@ -57,8 +112,8 @@ msg_handler default_msg();
 #define ZZT_BOMB 0x0D
 #define ZZT_ENERGIZER 0x0E
 #define ZZT_STAR 0x0F
-#define ZZT_SPINNER_CW 0x10
-#define ZZT_SPINNER_CCW 0x11
+#define ZZT_CONVEYER_CW 0x10
+#define ZZT_CONVEYER_CCW 0x11
 #define ZZT_BULLET 0x12
 #define ZZT_WATER 0x13
 #define ZZT_FOREST 0x14
@@ -118,12 +173,9 @@ msg_handler default_msg();
 #include "objects/items.h"
 #include "objects/enemy.h"
 
-void objects_init();
-struct object *create_object(int type, int x, int y);
-void set_name(struct object *obj, char *name);
-struct object *get_obj_by_id(int id);
-struct object *get_obj_by_color(struct board_info_node *board, int type, int color);
-int str_to_obj(char *str);
+ZZTObject *create_object(int type, int x, int y);
+ZZTObject *create_copy(ZZTObject *source);
+int str_to_obj(std::string str);
 int str_to_color(char *color);
-char *int_to_color(int col);
+std::string int_to_color(int col);
 #endif

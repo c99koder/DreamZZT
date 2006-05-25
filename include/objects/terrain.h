@@ -1,166 +1,159 @@
 //BOULDER
-#define ZZT_BOULDER_UPDATE NULL
-#define ZZT_BOULDER_MESSAGE NULL
-#define ZZT_BOULDER_CREATE NULL
 #define ZZT_BOULDER_SHAPE 0xFE
 #define ZZT_BOULDER_NAME "boulder"
 #define ZZT_BOULDER_FLAGS F_PUSHABLE
+#define ZZT_BOULDER_CLASS Terrain
 
 //LINE
-#define ZZT_LINE_UPDATE NULL
-#define ZZT_LINE_MESSAGE NULL
-#define ZZT_LINE_CREATE NULL
 #define ZZT_LINE_SHAPE 206
 #define ZZT_LINE_NAME "line"
 #define ZZT_LINE_FLAGS F_NONE
+#define ZZT_LINE_CLASS Terrain
 
 //NORMAL
-#define ZZT_NORMAL_UPDATE NULL
-#define ZZT_NORMAL_MESSAGE NULL
-#define ZZT_NORMAL_CREATE NULL
 #define ZZT_NORMAL_SHAPE 0xB2
 #define ZZT_NORMAL_NAME "normal"
 #define ZZT_NORMAL_FLAGS F_NONE
+#define ZZT_NORMAL_CLASS Terrain
 
 //SOLID
-#define ZZT_SOLID_UPDATE NULL
-#define ZZT_SOLID_MESSAGE NULL
-#define ZZT_SOLID_CREATE NULL
 #define ZZT_SOLID_SHAPE 0xDB
 #define ZZT_SOLID_NAME "solid"
 #define ZZT_SOLID_FLAGS F_NONE
+#define ZZT_SOLID_CLASS Terrain
 
 //EMPTY
-#define ZZT_EMPTY_UPDATE NULL
-#define ZZT_EMPTY_MESSAGE NULL
-#define ZZT_EMPTY_CREATE (create_handler)terrain_create
 #define ZZT_EMPTY_SHAPE 32
 #define ZZT_EMPTY_NAME "empty"
 #define ZZT_EMPTY_FLAGS F_EMPTY
-create_handler terrain_create(struct object *me);
+#define ZZT_EMPTY_CLASS Terrain
 
 //FAKE
-#define ZZT_FAKE_UPDATE NULL
-#define ZZT_FAKE_MESSAGE NULL
-#define ZZT_FAKE_CREATE NULL
 #define ZZT_FAKE_SHAPE 0xB2
 #define ZZT_FAKE_NAME "fake"
 #define ZZT_FAKE_FLAGS F_EMPTY
+#define ZZT_FAKE_CLASS Terrain
 
 //BREAKABLE
-#define ZZT_BREAKABLE_UPDATE NULL
-#define ZZT_BREAKABLE_MESSAGE NULL
-#define ZZT_BREAKABLE_CREATE NULL
 #define ZZT_BREAKABLE_SHAPE 0xB1
 #define ZZT_BREAKABLE_NAME "breakable"
 #define ZZT_BREAKABLE_FLAGS F_NONE
+#define ZZT_BREAKABLE_CLASS Terrain
 
 //FOREST
-#define ZZT_FOREST_UPDATE NULL
-#define ZZT_FOREST_MESSAGE (msg_handler)terrain_message
-#define ZZT_FOREST_CREATE NULL
 #define ZZT_FOREST_SHAPE 0xb0
 #define ZZT_FOREST_NAME "forest"
 #define ZZT_FOREST_FLAGS F_NONE
+#define ZZT_FOREST_CLASS Terrain
 
 //WATER
-#define ZZT_WATER_UPDATE (update_handler)water_update
-#define ZZT_WATER_MESSAGE (msg_handler)terrain_message
-#define ZZT_WATER_CREATE (create_handler)terrain_create
 #define ZZT_WATER_SHAPE 0xb1
 #define ZZT_WATER_NAME "water"
 #define ZZT_WATER_FLAGS F_NONE
-update_handler water_update(struct object *me);
+#define ZZT_WATER_CLASS Water
 
 //INVISIBLE
-#define ZZT_INVISIBLE_UPDATE NULL
-#define ZZT_INVISIBLE_MESSAGE (msg_handler)terrain_message
-#define ZZT_INVISIBLE_CREATE NULL
 #define ZZT_INVISIBLE_SHAPE ' '
 #define ZZT_INVISIBLE_NAME "invisible"
 #define ZZT_INVISIBLE_FLAGS F_NONE
-msg_handler terrain_message(struct object *me, struct object *them, char *message);
+#define ZZT_INVISIBLE_CLASS Terrain
 
 //BLINK
-#define ZZT_BLINK_UPDATE (update_handler)blink_update
-#define ZZT_BLINK_MESSAGE NULL
-#define ZZT_BLINK_CREATE (create_handler)blink_create
 #define ZZT_BLINK_SHAPE 206
 #define ZZT_BLINK_NAME "blink"
 #define ZZT_BLINK_FLAGS F_OBJECT
-create_handler blink_create(struct object *me);
-update_handler blink_update(struct object *me);
+#define ZZT_BLINK_CLASS Blink
 
 //VERTICAL LASER
-#define ZZT_VERTICAL_BLINK_UPDATE (update_handler)laser_update
-#define ZZT_VERTICAL_BLINK_MESSAGE NULL
-#define ZZT_VERTICAL_BLINK_CREATE NULL
 #define ZZT_VERTICAL_BLINK_SHAPE 0xBA
 #define ZZT_VERTICAL_BLINK_NAME "vertical blink"
 #define ZZT_VERTICAL_BLINK_FLAGS F_NONE
-update_handler laser_update(struct object *me);
+#define ZZT_VERTICAL_BLINK_CLASS Laser
 
 //HORIZONTAL LASER
-#define ZZT_HORIZONTAL_BLINK_UPDATE (update_handler)laser_update
-#define ZZT_HORIZONTAL_BLINK_MESSAGE NULL
-#define ZZT_HORIZONTAL_BLINK_CREATE NULL
 #define ZZT_HORIZONTAL_BLINK_SHAPE 0xCD
 #define ZZT_HORIZONTAL_BLINK_NAME "horizontal blink"
 #define ZZT_HORIZONTAL_BLINK_FLAGS F_NONE
+#define ZZT_HORIZONTAL_BLINK_CLASS Laser
 
 //BLUE
-#define ZZT_BLUE_TEXT_UPDATE NULL
-#define ZZT_BLUE_TEXT_MESSAGE NULL
-#define ZZT_BLUE_TEXT_CREATE (create_handler)text_create
 #define ZZT_BLUE_TEXT_SHAPE 0xB2
 #define ZZT_BLUE_TEXT_NAME "text"
 #define ZZT_BLUE_TEXT_FLAGS F_NONE
+#define ZZT_BLUE_TEXT_CLASS Text
 
 //GREEN
-#define ZZT_GREEN_TEXT_UPDATE NULL
-#define ZZT_GREEN_TEXT_MESSAGE NULL
-#define ZZT_GREEN_TEXT_CREATE (create_handler)text_create
 #define ZZT_GREEN_TEXT_SHAPE 0xB2
 #define ZZT_GREEN_TEXT_NAME "text"
 #define ZZT_GREEN_TEXT_FLAGS F_NONE
+#define ZZT_GREEN_TEXT_CLASS Text
 
 //CYAN
-#define ZZT_CYAN_TEXT_UPDATE NULL
-#define ZZT_CYAN_TEXT_MESSAGE NULL
-#define ZZT_CYAN_TEXT_CREATE (create_handler)text_create
 #define ZZT_CYAN_TEXT_SHAPE 0xB2
 #define ZZT_CYAN_TEXT_NAME "text"
 #define ZZT_CYAN_TEXT_FLAGS F_NONE
+#define ZZT_CYAN_TEXT_CLASS Text
 
 //RED
-#define ZZT_RED_TEXT_UPDATE NULL
-#define ZZT_RED_TEXT_MESSAGE NULL
-#define ZZT_RED_TEXT_CREATE (create_handler)text_create
 #define ZZT_RED_TEXT_SHAPE 0xB2
 #define ZZT_RED_TEXT_NAME "text"
 #define ZZT_RED_TEXT_FLAGS F_NONE
+#define ZZT_RED_TEXT_CLASS Text
 
 //PURPLE
-#define ZZT_PURPLE_TEXT_UPDATE NULL
-#define ZZT_PURPLE_TEXT_MESSAGE NULL
-#define ZZT_PURPLE_TEXT_CREATE (create_handler)text_create
 #define ZZT_PURPLE_TEXT_SHAPE 0xB2
 #define ZZT_PURPLE_TEXT_NAME "text"
 #define ZZT_PURPLE_TEXT_FLAGS F_NONE
+#define ZZT_PURPLE_TEXT_CLASS Text
 
 //YELLOW
-#define ZZT_YELLOW_TEXT_UPDATE NULL
-#define ZZT_YELLOW_TEXT_MESSAGE NULL
-#define ZZT_YELLOW_TEXT_CREATE (create_handler)text_create
 #define ZZT_YELLOW_TEXT_SHAPE 0xB2
 #define ZZT_YELLOW_TEXT_NAME "text"
 #define ZZT_YELLOW_TEXT_FLAGS F_NONE
+#define ZZT_YELLOW_TEXT_CLASS Text
 
 //WHITE
-#define ZZT_WHITE_TEXT_UPDATE NULL
-#define ZZT_WHITE_TEXT_MESSAGE NULL
-#define ZZT_WHITE_TEXT_CREATE (create_handler)text_create
 #define ZZT_WHITE_TEXT_SHAPE 0xB2
 #define ZZT_WHITE_TEXT_NAME "text"
 #define ZZT_WHITE_TEXT_FLAGS F_NONE
-create_handler text_create(struct object *me);
+#define ZZT_WHITE_TEXT_CLASS Text
+
+class Terrain : public ZZTObject {
+public:
+	Terrain(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	void create();
+	void message(ZZTObject *them, std::string msg);
+};
+
+class Water : public Terrain {
+public:
+	Water(int type, int x, int y, int shape, int flags, std::string name) : Terrain(type, x, y, shape, flags, name) { }
+	void update();
+private:
+	int m_counter, m_cstep;
+};
+
+class Blink : public ZZTObject {
+public:
+	Blink(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	void setParam(int arg, int val);
+	void create();
+	void update();
+private:
+	int m_start, m_fire, m_counter;
+};
+
+class Laser : public ZZTObject {
+public:
+	Laser(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	void setParam(int arg, int val);
+	void update();
+private:
+	int m_time;
+};
+
+class Text : public ZZTObject {
+public:
+	Text(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	void create();
+};

@@ -25,100 +25,93 @@ extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
 
-msg_handler bomb_message(struct object *me, struct object *them, char *message) {
-  if(them->type==ZZT_PLAYER && !strcmp(message,"touch") && me->shape==ZZT_BOMB_SHAPE) {
-    me->shape='9';
-    me->flags|=F_PUSHABLE;
-    draw_block(me->x,me->y);
+void Bomb::message(ZZTObject *them, std::string message) {
+  if(them->getType()==ZZT_PLAYER && message == "touch" && m_shape==ZZT_BOMB_SHAPE) {
+    m_shape='9';
+    m_flags|=F_PUSHABLE;
+    draw();
 		zm->setTune("tcf+cf+c");
 		zm->start();
   }
-  return 0;
 }
 
-update_handler bomb_update(struct object *me) {
+void Bomb::update() {
   int x,y;
   double a,b;
-  struct object *them;
-  if(me->shape <= '9' && me->shape >= '1') {
-    me->shape--;
-    me->cycle=4;
-    me->arg1=4;
-    draw_block(me->x,me->y);
+  ZZTObject *them;
+
+  if(m_shape <= '9' && m_shape >= '1') {
+    m_shape--;
+    m_cycle=4;
+    m_counter=4;
+    draw();
   }
-  if(me->shape=='0' && me->arg1>0) {
-    me->arg1--;
-    me->cycle=1;
-    //remove_from_board(me);
+	
+  if(m_shape=='0' && m_counter>0) {
+    m_counter--;
+    m_cycle=1;
 
-    for(y=me->y-4;y<=me->y+4;y++) {
-      for(x=me->x-7;x<=me->x+7;x++) {
-        a=((x-me->x)*(x-me->x))/2.0f;
-        b=(y-me->y)*(y-me->y);
+    for(y=m_position.y-4;y<=m_position.y+4;y++) {
+      for(x=m_position.x-7;x<=m_position.x+7;x++) {
+        a=((x-m_position.x)*(x-m_position.x))/2.0f;
+        b=(y-m_position.y)*(y-m_position.y);
 
-        if((int)sqrt(a+b) == 4-me->arg1) {
+        if((int)sqrt(a+b) == 4-m_counter) {
           if(x>=0 && y >= 0 && x<BOARD_X && y<BOARD_Y) {
             them=currentbrd->board[x][y].obj;
-            if(them->type==ZZT_BREAKABLE || is_empty(currentbrd,x,y)) {
-              currentbrd->board[x][y].obj=create_object(ZZT_EXPLOSION,x,y);
-              currentbrd->board[x][y].obj->create(currentbrd->board[x][y].obj);
+            if(them->getType()==ZZT_BREAKABLE || ::is_empty(currentbrd,x,y)) {
+              currentbrd->board[x][y].obj=::create_object(ZZT_EXPLOSION,x,y);
+              currentbrd->board[x][y].obj->create();
               draw_block(x,y);
-            } else if(them!=NULL && them->message!=NULL) {
-              them->message(them,me,"bombed");
+            } else if(them!=NULL) {
+              them->message(this,"bombed");
             }
           }
         }
       }
     }
   }
-  if(me->arg1<=0) {
-    remove_from_board(currentbrd,me);
+  if(m_counter<=0) {
+    remove_from_board(currentbrd,this);
   }
-  return 0;
 }
 
-create_handler bomb_create(struct object *me) {
-  me->arg1=4;
-  return 0;
+void Bomb::create() {
+  m_counter=4;
 }
 
-create_handler explosion_create(struct object *me) {
-  me->arg1=4;
-  me->shape=176;
-  me->fg=7;
-  me->bg=0;
-  me->cycle=1;
-  /*currentbrd->board[me->x][me->y].code=I_EMPTY;
-  currentbrd->board[me->x][me->y].color=0;
-  currentbrd->board[me->x][me->y].solid=0;  */
-  return 0;
+void Explosion::create() {
+  m_counter=4;
+  m_shape=176;
+  m_fg=7;
+  m_bg=0;
+  m_cycle=1;
 }
 
-update_handler explosion_update(struct object *me) {
-  switch(me->arg1) {
+void Explosion::update() {
+  switch(m_counter) {
   case 4:
-    me->fg=7;
-    me->bg=0;
+    m_fg=7;
+    m_bg=0;
     break;
   case 3:
-    me->fg=15;
-    me->bg=0;
+    m_fg=15;
+    m_bg=0;
     break;
   case 2:
-    me->fg=14;
-    me->bg=0;
+    m_fg=14;
+    m_bg=0;
     break;
   case 1:
-    me->fg=12;
-    me->bg=0;
+    m_fg=12;
+    m_bg=0;
     break;
   case 0:
-    me->fg=0;
-    me->bg=0;
-    remove_from_board(currentbrd,me);
+    m_fg=0;
+    m_bg=0;
+    remove_from_board(currentbrd,this);
     break;
   }
-  if(me->arg1>0) me->arg1--;
-  draw_block(me->x,me->y);
-  return 0;
+  m_counter--;
+  draw();
 }

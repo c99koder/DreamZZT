@@ -1,6 +1,6 @@
 /*
- *  spinner.cpp
- *  ZZT Spinner
+ *  conveyer.cpp
+ *  ZZT Conveyer
  *
  *  Copyright 2000 - 2006 Sam Steele. All rights reserved.
  *
@@ -23,53 +23,53 @@ extern struct board_info_node *currentbrd;
 extern char spin_anim[4];
 char moved[3][3];
 
-int spin_cw(struct object *me, struct object *them) {
-  if(!(them->flags&F_PUSHABLE) || them->pushed) return 0;
+int Conveyer::cw(ZZTObject *them) {
+  if(!(them->getFlags()&F_PUSHABLE) || them->getPushed()) return 0;
 
-  if(them->y==me->y-1 && (them->x==me->x-1||them->x==me->x)) {
-    if(is_empty(currentbrd,them->x+1,them->y)) {
-      move(them,RIGHT);
-      moved[(them->x-me->x)+1][(them->y-me->y)+1]=1;
+  if((int)them->getPosition().y==(int)m_position.y-1 && ((int)them->getPosition().x==(int)m_position.x-1||(int)them->getPosition().x==(int)m_position.x)) {
+    if(::is_empty(currentbrd,(int)them->getPosition().x+1,(int)them->getPosition().y)) {
+      them->move(RIGHT);
+      moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
       return 1;
     } else {
-      if(currentbrd->board[them->x+1][them->y].obj!=NULL) {
-        return spin_cw(me,currentbrd->board[them->x+1][them->y].obj);
+      if(currentbrd->board[(int)them->getPosition().x+1][(int)them->getPosition().y].obj!=NULL) {
+        return cw(currentbrd->board[(int)them->getPosition().x+1][(int)them->getPosition().y].obj);
       } else {
         return 0;
       }
     }
-  } else if(them->x==me->x+1 && (them->y==me->y-1 || them->y==me->y)) {
-    if(is_empty(currentbrd,them->x,them->y+1)) {
-      move(them,DOWN);
-      moved[(them->x-me->x)+1][(them->y-me->y)+1]=1;
+  } else if((int)them->getPosition().x==(int)m_position.x+1 && ((int)them->getPosition().y==(int)m_position.y-1 || (int)them->getPosition().y==(int)m_position.y)) {
+    if(::is_empty(currentbrd,(int)them->getPosition().x,(int)them->getPosition().y+1)) {
+      them->move(DOWN);
+      moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
       return 1;
     } else {
-      if(currentbrd->board[them->x][them->y+1].obj!=NULL) {
-        return spin_cw(me,currentbrd->board[them->x][them->y+1].obj);
+      if(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y+1].obj!=NULL) {
+        return cw(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y+1].obj);
       } else {
         return 0;
       }
     }
-  } else if(them->y==me->y+1 && (them->x==me->x+1 || them->x==me->x)) {
-    if(is_empty(currentbrd,them->x-1,them->y)) {
-      move(them,LEFT);
-      moved[(them->x-me->x)+1][(them->y-me->y)+1]=1;
+  } else if((int)them->getPosition().y==(int)m_position.y+1 && ((int)them->getPosition().x==(int)m_position.x+1 || (int)them->getPosition().x==(int)m_position.x)) {
+    if(::is_empty(currentbrd,(int)them->getPosition().x-1,(int)them->getPosition().y)) {
+      them->move(LEFT);
+      moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
       return 1;
     } else {
-      if(currentbrd->board[them->x-1][them->y].obj!=NULL) {
-        return spin_cw(me,currentbrd->board[them->x-1][them->y].obj);
+      if(currentbrd->board[(int)them->getPosition().x-1][(int)them->getPosition().y].obj!=NULL) {
+        return cw(currentbrd->board[(int)them->getPosition().x-1][(int)them->getPosition().y].obj);
       } else {
         return 0;
       }
     }
-  } else if(them->x==me->x-1 && (them->y==me->y+1 || them->y==me->y)) {
-    if(is_empty(currentbrd,them->x,them->y-1)) {
-      move(them,UP);
-      moved[(them->x-me->x)+1][(them->y-me->y)+1]=1;
+  } else if((int)them->getPosition().x==(int)m_position.x-1 && ((int)them->getPosition().y==(int)m_position.y+1 || (int)them->getPosition().y==(int)m_position.y)) {
+    if(::is_empty(currentbrd,(int)them->getPosition().x,(int)them->getPosition().y-1)) {
+      them->move(UP);
+      moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
       return 1;
     } else {
-      if(currentbrd->board[them->x][them->y-1].obj!=NULL) {
-        return spin_cw(me,currentbrd->board[them->x][them->y-1].obj);
+      if(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y-1].obj!=NULL) {
+        return cw(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y-1].obj);
       } else {
         return 0;
       }
@@ -78,53 +78,53 @@ int spin_cw(struct object *me, struct object *them) {
   return 0;
 }
 
-int spin_ccw(struct object *me, struct object *them) {
-  if(!(them->flags&F_PUSHABLE) || them->pushed) return 0;
+int Conveyer::ccw(ZZTObject *them) {
+  if(!(them->getFlags()&F_PUSHABLE) || them->getPushed()) return 0;
 
-  if(them->y==me->y-1 && (them->x==me->x+1||them->x==me->x)) {
-    if(is_empty(currentbrd,them->x-1,them->y)) {
-      move(them,LEFT);
-      moved[(them->x-me->x)+1][(them->y-me->y)+1]=1;
+  if((int)them->getPosition().y==(int)m_position.y-1 && ((int)them->getPosition().x==(int)m_position.x+1||(int)them->getPosition().x==(int)m_position.x)) {
+    if(::is_empty(currentbrd,(int)them->getPosition().x-1,(int)them->getPosition().y)) {
+      them->move(LEFT);
+      moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
       return 1;
     } else {
-      if(currentbrd->board[them->x-1][them->y].obj!=NULL) {
-        return spin_cw(me,currentbrd->board[them->x-1][them->y].obj);
+      if(currentbrd->board[(int)them->getPosition().x-1][(int)them->getPosition().y].obj!=NULL) {
+        return ccw(currentbrd->board[(int)them->getPosition().x-1][(int)them->getPosition().y].obj);
       } else {
         return 0;
       }
     }
-  } else if(them->x==me->x+1 && (them->y==me->y+1 || them->y==me->y)) {
-    if(is_empty(currentbrd,them->x,them->y-1)) {
-      move(them,UP);
-      moved[(them->x-me->x)+1][(them->y-me->y)+1]=1;
+  } else if((int)them->getPosition().x==(int)m_position.x+1 && ((int)them->getPosition().y==(int)m_position.y+1 || (int)them->getPosition().y==(int)m_position.y)) {
+    if(::is_empty(currentbrd,(int)them->getPosition().x,(int)them->getPosition().y-1)) {
+      them->move(UP);
+      moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
       return 1;
     } else {
-      if(currentbrd->board[them->x][them->y-1].obj!=NULL) {
-        return spin_cw(me,currentbrd->board[them->x][them->y-1].obj);
+      if(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y-1].obj!=NULL) {
+        return ccw(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y-1].obj);
       } else {
         return 0;
       }
     }
-  } else if(them->y==me->y+1 && (them->x==me->x-1 || them->x==me->x)) {
-    if(is_empty(currentbrd,them->x+1,them->y)) {
-      move(them,RIGHT);
-      moved[(them->x-me->x)+1][(them->y-me->y)+1]=1;
+  } else if((int)them->getPosition().y==(int)m_position.y+1 && ((int)them->getPosition().x==(int)m_position.x-1 || (int)them->getPosition().x==(int)m_position.x)) {
+    if(::is_empty(currentbrd,(int)them->getPosition().x+1,(int)them->getPosition().y)) {
+      them->move(RIGHT);
+      moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
       return 1;
     } else {
-      if(currentbrd->board[them->x+1][them->y].obj!=NULL) {
-        return spin_cw(me,currentbrd->board[them->x+1][them->y].obj);
+      if(currentbrd->board[(int)them->getPosition().x+1][(int)them->getPosition().y].obj!=NULL) {
+        return ccw(currentbrd->board[(int)them->getPosition().x+1][(int)them->getPosition().y].obj);
       } else {
         return 0;
       }
     }
-  } else if(them->x==me->x-1 && (them->y==me->y-1 || them->y==me->y)) {
-    if(is_empty(currentbrd,them->x,them->y+1)) {
-      move(them,DOWN);
-      moved[(them->x-me->x)+1][(them->y-me->y)+1]=1;
+  } else if((int)them->getPosition().x==(int)m_position.x-1 && ((int)them->getPosition().y==(int)m_position.y-1 || (int)them->getPosition().y==(int)m_position.y)) {
+    if(::is_empty(currentbrd,(int)them->getPosition().x,(int)them->getPosition().y+1)) {
+      them->move(DOWN);
+      moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
       return 1;
     } else {
-      if(currentbrd->board[them->x][them->y+1].obj!=NULL) {
-        return spin_cw(me,currentbrd->board[them->x][them->y+1].obj);
+      if(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y+1].obj!=NULL) {
+        return ccw(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y+1].obj);
       } else {
         return 0;
       }
@@ -133,17 +133,17 @@ int spin_ccw(struct object *me, struct object *them) {
   return 0;
 }
 
-update_handler spinner_update(struct object *me) {
+void Conveyer::update() {
   int x,y;
-  if(me->type==ZZT_SPINNER_CW) {
-    me->arg1++;
-    me->arg1%=4;
+  if(m_type==ZZT_CONVEYER_CW) {
+    m_animIndex++;
+    m_animIndex%=4;
   } else {
-    me->arg1--;
-    if(me->arg1<0) me->arg1=3;
+    m_animIndex--;
+    if(m_animIndex<0) m_animIndex=3;
   }
-  me->shape=spin_anim[me->arg1];
-  draw_block(me->x,me->y);
+  m_shape=spin_anim[m_animIndex];
+  draw();
 	
   for(y=0;y<3;y++) {
     for(x=0;x<3;x++) {
@@ -154,16 +154,15 @@ update_handler spinner_update(struct object *me) {
   for(y=0;y<3;y++) {
     for(x=0;x<3;x++) {
       if(moved[x][y]==0 && !(x==1 && y==1)) {
-        if(currentbrd->board[me->x+(x-1)][me->y+(y-1)].obj!=NULL) {
-          if(me->type==ZZT_SPINNER_CW) {
-						if(spin_cw(me,currentbrd->board[me->x+(x-1)][me->y+(y-1)].obj)) currentbrd->board[me->x+(x-1)][me->y+(y-1)].obj->pushed=1;
+        if(currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj!=NULL) {
+          if(m_type==ZZT_CONVEYER_CW) {
+						if(cw(currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj)) currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj->setPushed(1);
 					}
-          else if(me->type==ZZT_SPINNER_CCW) {
-						if(spin_ccw(me,currentbrd->board[me->x+(x-1)][me->y+(y-1)].obj)) currentbrd->board[me->x+(x-1)][me->y+(y-1)].obj->pushed=1;
+          else if(m_type==ZZT_CONVEYER_CCW) {
+						if(ccw(currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj)) currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj->setPushed(1);
 					}
         }
       }
     }
   }
-  return 0;
 }

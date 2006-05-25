@@ -11,6 +11,7 @@
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/tikitime.h>
+#include <Tiki/thread.h>
 #include <string.h>
 #include <time.h>
 
@@ -24,8 +25,11 @@ using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
 using namespace Tiki::Audio;
+using namespace Tiki::Thread;
 
 #include "sound.h"
+
+Mutex zzt_screen_mutex;
 
 extern struct world_header world;
 
@@ -101,6 +105,19 @@ pvr_init_params_t params = {
 #endif
 
 ZZTMusicStream *zm = NULL;
+Thread::Thread *render_thread;
+
+void render() {
+	zzt_screen_mutex.lock();
+	Frame::begin();
+	ct->draw(Drawable::Opaque);
+	dt->draw(Drawable::Opaque);
+	Frame::transEnable();
+	ct->draw(Drawable::Trans);
+	dt->draw(Drawable::Trans);
+	Frame::finish();
+	zzt_screen_mutex.unlock();
+}
 
 extern "C" int tiki_main(int argc, char **argv) {
   char tmp[50];
@@ -120,6 +137,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zm = new ZZTMusicStream;
 	zm->setTune("cdefgab+c");
 	zm->start();
+	zm->setVolume(100);
 	
 	//initialize the screen		
 	ct = new ConsoleText(80,25,new Texture("zzt-ascii.png", true));
@@ -128,7 +146,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 	
 	debug_init();
 	
-  objects_init();
   ct->color(15,1);
   ct->clear();
   dzzt_logo();
@@ -156,26 +173,28 @@ extern "C" int tiki_main(int argc, char **argv) {
   return 0;
 }
 
-extern struct object *player;
+extern Player *player;
 extern struct board_info_node *currentbrd;
+bool gameFrozen;
+extern bool playerInputActive;
 
 void play_zzt(char *filename) {
 	int start;
 	char tmp[50];
 
+	gameFrozen = false;
+	playerInputActive = true;
+	
 	switchbrd=-1;
   if(load_zzt(filename,1)==-1) {
-		TextWindow t("Error","Unable to load world\r\r!ok;Ok");
+		TextWindow t(ct,"Error","Unable to load world\r\r!ok;Ok");
 		t.doMenu();
 		return;
 	}
 	start=world.start;
-	printf("%s\n",filename);
 	switch_board(0);
-	printf("%s\n",filename);
 	remove_from_board(currentbrd,player);
-	printf("%s\n",filename);
-	player->arg1=1;
+	//player->arg1=1;
 	ct->locate(BOARD_X+2,7);
   ct->color(14,1);
 	ct->printf("   World: ");
@@ -191,22 +210,14 @@ void play_zzt(char *filename) {
 	ct->printf("    to begin!");
 	draw_board();
 	do {
-		update_brd();
+		if(!gameFrozen) update_brd();
 		draw_board();
 		draw_msg();
-		Frame::begin();
-		ct->draw(Drawable::Opaque);
-		dt->draw(Drawable::Opaque);
-		Frame::transEnable();
-		ct->draw(Drawable::Trans);
-		dt->draw(Drawable::Trans);
-		Frame::finish();
+		render();
 		//Time::sleep(100000);
 	} while(0);//poll_game_device(0)!=START_BTN);
 	//while(poll_game_device(0)==START_BTN);
-	printf("%s\n",filename);
 	free_world();
-	printf("%s\n",filename);
 	load_zzt(filename,0);
 	start=world.start;
 	ct->color(15,1);
@@ -216,20 +227,13 @@ void play_zzt(char *filename) {
   switch_board(start);
   srand(time(0));
   draw_board();
-  player->flags|=F_SLEEPING;
-  player->update(player);
+  player->setFlag(F_SLEEPING);
+  player->update();
   while(1) {
-    update_brd();
+    if(!gameFrozen) update_brd();
 		draw_board();
     draw_msg();
-		
-		Frame::begin();
-		ct->draw(Drawable::Opaque);
-		dt->draw(Drawable::Opaque);
-		Frame::transEnable();
-		ct->draw(Drawable::Trans);
-		dt->draw(Drawable::Trans);
-		Frame::finish();
+		render();
 		Time::sleep(80000);
     
 		if(switchbrd>-1) {
@@ -237,7 +241,7 @@ void play_zzt(char *filename) {
 			debug("\x1b[0;37mWarping to \x1b[1;37m%s\n",currentbrd->title);
       draw_board();
 			redraw_status();
-      if(player->flags&F_SLEEPING) player->update(player);
+      if(player->getFlags()&F_SLEEPING) player->update();
       switchbrd=-1;
     } else if(switchbrd==-2) {
 			break;

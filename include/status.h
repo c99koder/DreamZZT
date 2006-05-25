@@ -1,6 +1,8 @@
 #ifndef _STATUS_H
 #define _STATUS_H
 
+#include <Tiki/drawables/console.h>
+
 void set_msg(char *text);
 void redraw_status();
 void draw_msg();
@@ -28,10 +30,12 @@ void draw_hud_ingame();
 
 class TextWindow {
 public:
-	TextWindow(char *title,char *text);
+	TextWindow(Tiki::GL::ConsoleText *c,std::string title,const char *text);
 
 	char *getLabel() { return retlbl; }
 	void doMenu();
+	void pc_box(int x, int y,int w,int h,int fg,int bg);
+	void draw_shadow(int x, int y);
 
 private:
 	// HID input callback.
@@ -45,5 +49,6 @@ private:
   int lblidx[150];
   int q,lblcnt;	
 	char retlbl[20];
+	Tiki::GL::ConsoleText *console;
 };
 #endif

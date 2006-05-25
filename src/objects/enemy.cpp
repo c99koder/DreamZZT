@@ -25,93 +25,102 @@ using namespace Tiki::Audio;
 extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
-extern struct object *player;
+extern Player *player;
 
-update_handler lion_update(struct object *me) {
-  if(rand()%10<me->arg1) {
-    move(me,toward(me,player));
+void Lion::update() {
+  if(rand()%10<m_intel) {
+    move(toward(player));
   } else {
-    move(me,(direction)(rand()%4));
+    move((direction)(rand()%4));
   }
-  return 0;
 }
 
-update_handler bear_update(struct object *me) {
-  if(dist_x(player,me) < (9-me->arg1) || dist_y(player,me) < (9-me->arg1)) {
-    move(me,toward(me,player));
+void Bear::update() {
+  if(dist_x(player) < (9-m_intel) || dist_y(player) < (9-m_intel)) {
+    move(toward(player));
   }
-  return 0;
 }
 
-update_handler ruffian_update(struct object *me) {
-	//arg1 = intel
-	//arg2 = rest time
-	//arg3 = restCounter
-	//arg4 = moveCounter
-	
-	if(me->arg4-- > 0) {
-		move(me,(direction)me->heading);
-	} else if(me->arg3-- <= 0) {
-		if(rand()%9 < me->arg1) {
-			me->heading = toward(me,player);
+void Ruffian::setParam(int arg, int val) {
+	if(arg == 2) m_rest = val;
+
+	Enemy::setParam(arg,val);
+}
+
+void Ruffian::update() {
+	if(m_moveCounter-- > 0) {
+		move(m_heading);
+	} else if(m_restCounter-- <= 0) {
+		if(rand()%9 < m_intel) {
+			m_heading = toward(player);
 		} else {
-			me->heading = rand() % 4;
+			m_heading = (direction)(rand() % 4);
 		}
-		me->arg4 = rand() % 10;
-	} else if(me->arg4 <= 0) {
-		me->arg3 = 6 + (rand() % me->arg2);
+		m_moveCounter = rand() % 10;
+	} else if(m_moveCounter <= 0) {
+		m_restCounter = 6 + (rand() % m_rest);
 	}
-	return 0;
 }
 
 char gun[4] = {27,24,26,25};
 
-update_handler gun_update(struct object *me) {
-  me->arg3++;
-  me->arg3%=4;
-  me->shape=gun[me->arg3];
-  draw_block(me->x,me->y);
-  if(rand()%10<me->arg2) {
-    if(rand()%10<me->arg1) {
-      if((me->x>=player->x-2 && me->x<=player->x+2) ||
-        (me->y>=player->y-2 && me->y<=player->y+2)) {
-        shoot(me,toward(me,player));
+void SpinningGun::setParam(int arg, int val) {
+	if(arg == 2) m_rate = val;
+	
+	Enemy::setParam(arg,val);	
+}
+
+void SpinningGun::update() {
+  m_animIndex++;
+  m_animIndex%=4;
+  m_shape=gun[m_animIndex];
+  draw();
+	
+  if(rand()%10<m_rate) {
+    if(rand()%10<m_intel) {
+      if(((m_position - player->getPosition()).x >= -2 && (m_position - player->getPosition()).x <= 2) ||
+        ((m_position - player->getPosition()).y >= -2 && (m_position - player->getPosition()).y <= 2)) {
+        shoot(toward(player));
       }
     } else {
-      if(rand()%(me->arg1+2)==0) {
-        shoot(me,toward(me,player));
+      if(rand()%(m_intel+2)==0) {
+        shoot(toward(player));
       }
     }
   }
-  return 0;
 }
 
-update_handler tiger_update(struct object *me) {
-  lion_update(me);
-  if(rand()%10<me->arg2) {
-    if((me->x>=player->x-1 && me->x<=player->x+1) ||
-      (me->y>=player->y-1 && me->y<=player->y+1)) {
-      shoot(me,toward(me,player));
-    }
+void Tiger::setParam(int arg, int val) {
+	if(arg == 2) m_rate = val;
+	
+	Enemy::setParam(arg,val);
+}
+
+void Tiger::update() {
+	Lion::update();
+
+  if(rand()%10<m_rate) {
+		if(((m_position - player->getPosition()).x >= -1 && (m_position - player->getPosition()).x <= 1) ||
+			 ((m_position - player->getPosition()).y >= -1 && (m_position - player->getPosition()).y <= 1)) {
+			shoot(toward(player));
+		}
   }
-  return 0;
 }
 
-msg_handler enemy_message(struct object *me, struct object *them, char *message) {
-  if(!strcmp(message,"shot") || them->type==ZZT_PLAYER || !strcmp(message,"bombed")) {
+void Enemy::message(ZZTObject *them, std::string message) {
+  if(message == "shot" || them->getType()==ZZT_PLAYER || message == "bombed") {
     give_score(2);
     draw_score();
-    if(!strcmp(message,"touch") || !strcmp(message,"thud")) {
-      them->message(them,me,"shot");
+    if(message == "touch" || message == "thud") {
+      them->message(this,"shot");
     } 
-		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",me->name);
-    remove_from_board(currentbrd,me);
+		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
+    remove_from_board(currentbrd,this);
   }
-	if(me->type == ZZT_BEAR && them->type == ZZT_BREAKABLE) {
+	if(m_type == ZZT_BEAR && them->getType() == ZZT_BREAKABLE) {
 		remove_from_board(currentbrd,them);
-		remove_from_board(currentbrd,me);
+		remove_from_board(currentbrd,this);
 		zm->setTune("t+c-c-c");
 		zm->start();
 	}
-  return 0;
 }

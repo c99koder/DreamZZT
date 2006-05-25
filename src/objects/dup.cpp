@@ -19,7 +19,6 @@ using namespace Tiki::Audio;
 #include <stdlib.h>
 #include "object.h"
 #include "board.h"
-#include "dirxn.h"
 #include "sound.h"
 
 extern ZZTMusicStream *zm;
@@ -28,47 +27,40 @@ extern struct board_info_node *currentbrd;
 
 char dupanim[5]={'.',7,'o','O','.' };
 
-update_handler duplicator_update(struct object *me) {
-  struct object *obj;
-  struct object *obj2;
-  int x=me->x+(me->xstep*-1),y=me->y+(me->ystep*-1);
+void Duplicator::setParam(int arg, int val) {
+	if(arg==2) m_rate = val;
+}
 
-  me->shape=dupanim[me->arg3++];
-  draw_block(me->x,me->y);
-  if(me->arg3==5) {
-    obj=currentbrd->board[me->x+me->xstep][me->y+me->ystep].obj;
-    if(currentbrd->board[x][y].obj->flags&F_PUSHABLE) {
-      if(me->xstep==-1) move(currentbrd->board[x][y].obj,RIGHT);
-      if(me->xstep==1) move(currentbrd->board[x][y].obj,LEFT);
-      if(me->ystep==-1) move(currentbrd->board[x][y].obj,DOWN);
-      if(me->ystep==1) move(currentbrd->board[x][y].obj,UP);
+void Duplicator::update() {
+  ZZTObject *obj;
+  ZZTObject *obj2;
+  int x=m_position.x - m_step.x ,y=m_position.y - m_step.y;
+
+  m_shape=dupanim[m_animIndex++];
+  draw();
+	
+  if(m_animIndex==5) {
+    obj=currentbrd->board[(int)(m_position.x + m_step.x)][(int)(m_position.x + m_step.x)].obj;
+    if(currentbrd->board[x][y].obj->getFlags()&F_PUSHABLE) {
+      if(m_step.x==-1) currentbrd->board[x][y].obj->move(RIGHT);
+      if(m_step.x==1) currentbrd->board[x][y].obj->move(LEFT);
+      if(m_step.y==-1) currentbrd->board[x][y].obj->move(DOWN);
+      if(m_step.y==1) currentbrd->board[x][y].obj->move(UP);
     }
-    if(is_empty(currentbrd,x,y)) {
+    if(::is_empty(currentbrd,x,y)) {
       currentbrd->board[x][y].under=currentbrd->board[x][y].obj;
-      currentbrd->board[x][y].obj=create_object(obj->type,x,y);
+      currentbrd->board[x][y].obj=create_copy(obj);
       obj2=currentbrd->board[x][y].obj;
-      obj2->arg1=obj->arg1;
-      obj2->arg2=obj->arg2;
-      obj2->arg3=obj->arg3;
-      obj2->arg4=obj->arg4;
-      obj2->arg5=obj->arg5;
-      obj2->shape=obj->shape;
-      obj2->fg=obj->fg;
-      obj2->bg=obj->bg;
-      obj2->cycle=obj->cycle;
-      if(obj2->create!=NULL) obj2->create(obj2);
+			obj2->setPosition(Vector(x,y,0));
+      obj2->create();
       draw_block(x,y);
 			zm->setTune("scdefg");
 			zm->start();			
     }
   }
-  me->arg3%=5;
-  return 0;
+  m_animIndex%=5;
 }
 
-create_handler duplicator_create(struct object *me) {
-  me->cycle=(10-me->arg2)+2;
-  if(me->xstep==65535) me->xstep=-1;
-  if(me->ystep==65535) me->ystep=-1;
-  return 0;
+void Duplicator::create() {
+  m_cycle=(10-m_rate)+2;
 }

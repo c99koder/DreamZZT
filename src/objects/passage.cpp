@@ -24,31 +24,37 @@ extern int switchbrd;
 
 extern ZZTMusicStream *zm;
 
-msg_handler passage_message(struct object *me, struct object *them, char *message) {
-	struct object *obj;
-  struct object *obj2;
-  struct board_info_node *brd=get_board(me->PASSAGE_DEST);
-  //printf("Warping to %i\n",me->arg1);
-  if(!strcmp(message,"touch")&&them->type==ZZT_PLAYER) {
+void Passage::setParam(int arg, int val) {
+	if(arg==3) m_dest = val;
+}
+
+void Passage::message(ZZTObject *them, std::string message) {
+	ZZTObject *obj;
+  ZZTObject *obj2;
+  board_info_node *brd=get_board(m_dest);
+  Vector pos;
+	
+  if(message == "touch" && them->getType()==ZZT_PLAYER) {
     obj=get_obj_by_type(brd,ZZT_PLAYER);
-    obj2=get_obj_by_color(brd,ZZT_PASSAGE,*me->color);
-    if(obj2!=NULL) {
-      brd->board[obj->x][obj->y].obj=brd->board[obj->x][obj->y].under;
-      obj->x=obj2->x;
-      obj->y=obj2->y;
-      brd->board[obj->x][obj->y].under=obj2;
-      brd->board[obj->x][obj->y].obj=obj;
+    obj2=get_obj_by_color(brd,ZZT_PASSAGE,*m_color);
+		pos = obj->getPosition();
+		
+		if(obj2!=NULL) {
+      brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
+			brd->board[(int)pos.x][(int)pos.y].under=NULL;
+			pos = obj2->getPosition();
+      obj->setPosition(pos);
+      brd->board[(int)pos.x][(int)pos.y].under=obj2;
+      brd->board[(int)pos.x][(int)pos.y].obj=obj;
     }
-    /*obj->flags|=F_SLEEPING;*/
-    switchbrd=me->PASSAGE_DEST;
-    obj->flags|=F_SLEEPING;
+
+    switchbrd=m_dest;
+    obj->setFlag(F_SLEEPING);
 		zm->setTune("tceg tc#fg# tdf#a td#ga# teg#+c");
 		zm->start();
   }
-  return 0;
 }
 
-create_handler passage_create(struct object *me) {
-  me->color=&me->bg;
-  return 0;
+void Passage::create() {
+  m_color=&m_bg;
 }

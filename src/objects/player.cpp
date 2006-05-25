@@ -11,12 +11,14 @@
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/tikitime.h>
+#include <Tiki/thread.h>
 #include <string.h>
 
 using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
 using namespace Tiki::Audio;
+using namespace Tiki::Thread;
 
 #include <Tiki/drawables/console.h>
 #include "object.h"
@@ -28,10 +30,11 @@ using namespace Tiki::Audio;
 extern ZZTMusicStream *zm;
 extern ConsoleText *ct;
 extern ConsoleText *dt;
+extern Mutex zzt_screen_mutex;
 
 extern int switchbrd;
 extern struct world_header world;
-struct object *player=NULL;
+Player *player=NULL;
 extern struct board_info_node *currentbrd;
 void status(char *text);
 
@@ -42,12 +45,18 @@ void status(char *text);
 
 int player_hidCookie=-1;
 
+bool playerInputActive;
+
 void player_hidCallback(const Event & evt, void * data) {
-	struct object *me=player;
+	//((Player *)data)->processEvent(evt);
+	player->processEvent(evt);
+}
+
+void Player::processEvent(const Event & evt) {
 	struct board_info_node *brd;
-	struct object *obj;
+	ZZTObject *obj;
 	
-	if(me==NULL) return;
+	if(!playerInputActive) return;
 	
 	if (evt.type == Hid::Event::EvtQuit) {
 		switchbrd = -2;
@@ -67,10 +76,10 @@ void player_hidCallback(const Event & evt, void * data) {
 				}
 				break;
 			case 13:
-				if(me->flags&F_SLEEPING) {
-					me->flags|=F_SLEEPING;
+				if(m_flags&F_SLEEPING) {
+					m_flags|=F_SLEEPING;
 				} else {
-					me->flags&=~F_SLEEPING;
+					m_flags&=~F_SLEEPING;
 				}
 				break;
 				/*case Event::KeyEsc:
@@ -96,94 +105,94 @@ void player_hidCallback(const Event & evt, void * data) {
 				}*/		
 		}	
 	} else if (evt.type == Hid::Event::EvtKeypress) {
-		me->flags&=~F_SLEEPING;
+		m_flags&=~F_SLEEPING;
 		
 		if(evt.mod & Hid::Event::KeyShift) {
 			switch(evt.key) {
 				case Event::KeyUp:
-					shoot(me,UP);
-					me->heading=UP;
+					shoot(UP);
+					m_heading=UP;
 					break;
 				case Event::KeyDown:
-					shoot(me,DOWN);
-					me->heading=DOWN;
+					shoot(DOWN);
+					m_heading=DOWN;
 					break;
 				case Event::KeyLeft:
-					shoot(me,LEFT);
-					me->heading=LEFT;
+					shoot(LEFT);
+					m_heading=LEFT;
 					break;
 				case Event::KeyRight:
-					shoot(me,RIGHT);
-					me->heading=RIGHT;
+					shoot(RIGHT);
+					m_heading=RIGHT;
 					break;
 			}					
 		} else {
 			switch(evt.key) {
 				case Event::KeyUp:
-					if(me->y==0&&board_up()>0) {
+					m_heading=UP;
+					if(m_position.y==0&&board_up()>0) {
 						brd=get_board(board_up());
 						obj=get_obj_by_type(brd,ZZT_PLAYER);
-						brd->board[obj->x][obj->y].obj=brd->board[obj->x][obj->y].under;
-						obj->x=me->x;
-						obj->y=BOARD_Y-1;
-						brd->board[obj->x][obj->y].under=brd->board[obj->x][obj->y].obj;
-						brd->board[obj->x][obj->y].obj=obj;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under = NULL;
+						obj->setPosition(Vector(m_position.x, BOARD_Y-1,0));
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
 						switchbrd=board_up();
 					} else {
-						me->heading=UP;
-						move(me,UP);
+						move(UP);
 					}
 					break;
 				case Event::KeyDown:
-					if(me->y>=BOARD_Y-1&&board_down()>=0) {
+					m_heading=DOWN;
+					if(m_position.y>=BOARD_Y-1&&board_down()>=0) {
 						brd=get_board(board_down());
 						obj=get_obj_by_type(brd,ZZT_PLAYER);
-						brd->board[obj->x][obj->y].obj=brd->board[obj->x][obj->y].under;
-						obj->x=me->x;
-						obj->y=0;
-						brd->board[obj->x][obj->y].under=brd->board[obj->x][obj->y].obj;
-						brd->board[obj->x][obj->y].obj=obj;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under = NULL;
+						obj->setPosition(Vector(m_position.x,0,0));
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
 						switchbrd=board_down();
 					} else {
-						me->heading=DOWN;
-						move(me,DOWN);
+						move(DOWN);
 					}
 					break;
 				case Event::KeyLeft:
-					if(me->x==0&&board_left()>=0) {
+					m_heading=LEFT;
+					if(m_position.x==0&&board_left()>=0) {
 						brd=get_board(board_left());
 						obj=get_obj_by_type(brd,ZZT_PLAYER);
-						brd->board[obj->x][obj->y].obj=brd->board[obj->x][obj->y].under;
-						obj->x=BOARD_X-1;
-						obj->y=me->y;
-						brd->board[obj->x][obj->y].under=brd->board[obj->x][obj->y].obj;
-						brd->board[obj->x][obj->y].obj=obj;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under = NULL;
+						obj->setPosition(Vector(BOARD_X-1, m_position.y,0));
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
 						switchbrd=board_left();
 					} else {
-						me->heading=LEFT;
-						move(me,LEFT);
+						move(LEFT);
 					}
 					break;
 				case Event::KeyRight:
-					if(me->x>=BOARD_X-1&&board_right()>=0) {
+					m_heading=RIGHT;
+					if(m_position.x>=BOARD_X-1&&board_right()>=0) {
 						brd=get_board(board_right());
 						obj=get_obj_by_type(brd,ZZT_PLAYER);
-						brd->board[obj->x][obj->y].obj=brd->board[obj->x][obj->y].under;
-						obj->x=0;
-						obj->y=me->y;
-						brd->board[obj->x][obj->y].under=brd->board[obj->x][obj->y].obj;
-						brd->board[obj->x][obj->y].obj=obj;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under = NULL;
+						obj->setPosition(Vector(0,m_position.y,0));
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj;
+						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
 						switchbrd=board_right();
 					} else {
-						me->heading=RIGHT;
-						move(me,RIGHT);
+						move(RIGHT);
 					}
 					break;			
 				case 32:
 					if(currentbrd->maxshots==0) {
 						set_msg("Can't shoot in here");
 					} else {
-						shoot(me,(direction)me->heading);
+						shoot(m_heading);
 					}
 					break;
 			}
@@ -269,19 +278,19 @@ try again.\r\r\
 #endif
 }
 
-create_handler player_create(struct object *me) {
-  me->shape=2;
-  me->fg=15;
-  me->bg=1;
+void Player::create() {
+  m_shape=2;
+  m_fg=15;
+  m_bg=1;
 	
 	if(player_hidCookie == -1) {
 		printf("Registering player callback\n");
-		player_hidCookie = Hid::callbackReg(player_hidCallback, NULL);
+		player_hidCookie = Hid::callbackReg(player_hidCallback, this);
 	}
-  return 0;
 }
 
-msg_handler player_message(struct object *me, struct object *them, char *message) {
+void Player::message(ZZTObject *them, std::string message) {
+#if 0
   if(!strcmp(message,"shot") || !strcmp(message,"bombed") || !strcmp(message,"time")) {
 		if(world.energizer_cycle==0) {
 			take_health(10);
@@ -293,19 +302,20 @@ msg_handler player_message(struct object *me, struct object *them, char *message
 			if(currentbrd->reenter && world.health>0) {
 				world.time=currentbrd->time;
 				draw_time();
-				currentbrd->board[me->x][me->y].obj=currentbrd->board[me->x][me->y].under;
-				draw_block(me->x,me->y);
-				me->x=me->xstep;
-				me->y=me->ystep;
-				currentbrd->board[me->x][me->y].under=currentbrd->board[me->x][me->y].obj;
-				currentbrd->board[me->x][me->y].obj=me;
-				draw_block(me->x,me->y);
-				me->flags|=F_SLEEPING;
-				me->update(me);
+				currentbrd->board[m_position.x][m_position.y].obj=currentbrd->board[m_position.x][m_position.y].under;
+				draw_block(m_position.x,m_position.y);
+				m_position.x=m_position.xstep;
+				m_position.y=m_position.ystep;
+				currentbrd->board[m_position.x][m_position.y].under=currentbrd->board[m_position.x][m_position.y].obj;
+				currentbrd->board[m_position.x][m_position.y].obj=me;
+				draw_block(m_position.x,m_position.y);
+				m_flags|=F_SLEEPING;
+				m_update(me);
 			}
 		}
   }
   return 0;
+#endif
 }
 
 void whip(struct object *me, int x, int y, char shape) {
@@ -323,184 +333,54 @@ void whip(struct object *me, int x, int y, char shape) {
   draw_block(x,y);*/
 }
 
-update_handler player_update(struct object *me) {
-  struct object *obj;
+void Player::update() {
+#if 0 
+	struct object *obj;
   struct object *under;
   struct board_info_node *brd;
-  int oldx=me->x,oldy=me->y;
+  int oldx=m_position.x,oldy=m_position.y;
   char tmp[50];
   int x;
   int s=0;
 	char *filename;
-	if(me->arg1==1) return 0;
+	if(m_arg1==1) return 0;
   
-	if(me->flags&F_SLEEPING) {
+	if(m_flags&F_SLEEPING) {
     ct->locate(BOARD_X+4,6);
     ct->color(15,1);
     ct->printf("Pausing...");
     do {
       if(s==0) {
-        draw_block(me->x,me->y);
+        draw_block(m_position.x,m_position.y);
         s++;
       } else {
         s=0;
-        ct->locate(me->x,me->y);
-        ct->color(currentbrd->board[me->x][me->y].under->fg,currentbrd->board[me->x][me->y].under->bg);
-        ct->printf("%c",currentbrd->board[me->x][me->y].under->shape);
+        ct->locate(m_position.x,m_position.y);
+        ct->color(currentbrd->board[m_position.x][m_position.y].under->fg,currentbrd->board[m_position.x][m_position.y].under->bg);
+        ct->printf("%c",currentbrd->board[m_position.x][m_position.y].under->shape);
       }
 			draw_msg();
-			Frame::begin();
-			ct->draw(Drawable::Opaque);
-			dt->draw(Drawable::Opaque);
-			Frame::transEnable();
-			ct->draw(Drawable::Trans);
-			dt->draw(Drawable::Trans);
-			Frame::finish();
+			render();
 			Time::sleep(100000);
-    } while(me->flags&F_SLEEPING);
+    } while(m_flags&F_SLEEPING);
     ct->locate(BOARD_X+4,6);
     ct->color(15,1);
     ct->printf("          ");
-    draw_block(me->x,me->y);
+    draw_block(m_position.x,m_position.y);
   }
 
 	if(world.energizer_cycle%2==0) {
-		me->shape=2;
-		me->bg=1;
-		me->fg=15;
+		m_shape=2;
+		m_bg=1;
+		m_fg=15;
 	} else {
-		me->shape=1;
-		me->fg=15;
-		me->bg=5;
+		m_shape=1;
+		m_fg=15;
+		m_bg=5;
 		//zm->appendTune("s.-f+fd#c+c-d#ef+f-fd#c+c-d#e");
 	}
-	/*x=poll_game_device(0);	
-	if(world.health>0) {
-		switch(x) {
-		case FIRE_UP:
-			shoot(me,UP);
-			me->heading=UP;
-			break;
-		case FIRE_DOWN:
-			shoot(me,DOWN);
-			me->heading=DOWN;
-			break;
-		case FIRE_LEFT:
-			shoot(me,LEFT);
-			me->heading=LEFT;
-			break;
-		case FIRE_RIGHT:
-			shoot(me,RIGHT);
-			me->heading=RIGHT;
-			break;
-		case MOVE_UP:
-			if(me->y==0&&board_up()>0) {
-				brd=get_board(board_up());
-				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[obj->x][obj->y].obj=brd->board[obj->x][obj->y].under;
-				obj->x=me->x;
-				obj->y=BOARD_Y-1;
-				brd->board[obj->x][obj->y].under=brd->board[obj->x][obj->y].obj;
-				brd->board[obj->x][obj->y].obj=obj;
-				switchbrd=board_up();
-			} else {
-				me->heading=UP;
-				move(me,UP);
-			}
-			break;
-		case MOVE_DOWN:
-			if(me->y>=BOARD_Y-1&&board_down()>=0) {
-				brd=get_board(board_down());
-				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[obj->x][obj->y].obj=brd->board[obj->x][obj->y].under;
-				obj->x=me->x;
-				obj->y=0;
-				brd->board[obj->x][obj->y].under=brd->board[obj->x][obj->y].obj;
-				brd->board[obj->x][obj->y].obj=obj;
-				switchbrd=board_down();
-			} else {
-				me->heading=DOWN;
-				move(me,DOWN);
-			}
-			break;
-		case MOVE_LEFT:
-			if(me->x==0&&board_left()>=0) {
-				brd=get_board(board_left());
-				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[obj->x][obj->y].obj=brd->board[obj->x][obj->y].under;
-				obj->x=BOARD_X-1;
-				obj->y=me->y;
-				brd->board[obj->x][obj->y].under=brd->board[obj->x][obj->y].obj;
-				brd->board[obj->x][obj->y].obj=obj;
-				switchbrd=board_left();
-			} else {
-				me->heading=LEFT;
-				move(me,LEFT);
-			}
-			break;
-		case MOVE_RIGHT:
-			if(me->x>=BOARD_X-1&&board_right()>=0) {
-				brd=get_board(board_right());
-				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[obj->x][obj->y].obj=brd->board[obj->x][obj->y].under;
-				obj->x=0;
-				obj->y=me->y;
-				brd->board[obj->x][obj->y].under=brd->board[obj->x][obj->y].obj;
-				brd->board[obj->x][obj->y].obj=obj;
-				switchbrd=board_right();
-			} else {
-				me->heading=RIGHT;
-				move(me,RIGHT);
-			}
-			break;
-		case BUTTON_X:
-			if(world.torches>0) {
-				if(currentbrd->dark==1) {
-				world.torch_cycle=200;
-				take_torch(1);
-				} else {
-					set_msg("Don't need torch - room is not dark!");
-				}
-			} else {
-				set_msg("You don't have any torches!");
-			}
-			break;
-		case FIRE_BTN:
-			//printf("Breakpoint!\n");
-			if(currentbrd->maxshots==0) {
-				set_msg("Can't shoot in here");
-			} else {
-				shoot(me,me->heading);
-			}
-			break;
-		case START_BTN:
-			me->flags|=F_SLEEPING;
-			while(poll_game_device(0)==START_BTN);
-			break;
-		}
-	}		
-	if(x==QUIT_BTN) {
-		while(poll_game_device(0)==QUIT_BTN);
-		text_window("Game Menu",MENU,tmp);
-		if(!strcmp(tmp,"quit")) {
-			switchbrd=-2;
-		} else if(!strcmp(tmp,"hints")) {
-			hints_menu();
-			draw_board();
-		} else if(!strcmp(tmp,"save")) {
-			filename=select_file(getcwd(NULL,50),"sav",1);
-			if(filename!=NULL) {
-				save_game(filename);
-#ifdef DREAMCAST
-				vmuify(filename);
-#endif
-			}
-			draw_board();
-		} else { 
-			draw_board();
-		}
-	}*/
 
-	draw_block(me->x,me->y);
+	draw_block(m_position.x,m_position.y);
   return 0;
+#endif
 }

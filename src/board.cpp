@@ -30,11 +30,12 @@ using namespace Tiki::Audio;
 extern ZZTMusicStream *zm;
 
 extern ConsoleText *ct;
+extern ConsoleText *dt;
 
 struct world_header world;
 struct board_info_node *board_list=NULL;
 struct board_info_node *currentbrd=NULL;
-extern struct object *player;
+extern Player *player;
 void delay(long ms);
 
 struct board_info_node *get_current_board() { return currentbrd; }
@@ -50,30 +51,23 @@ void free_world() {
 	while(current!=NULL) {
 		for(y=0;y<BOARD_Y;y++) {
 			for(x=0;x<BOARD_X;x++) {
-				if(current->board[x][y].obj!=NULL) {
-					//printf("Freeing a %s at %i,%i\n",current->board[x][y].obj->name,x,y);
-					//fflush(NULL);
-					if(current->board[x][y].obj->prog!=NULL) {
-						//printf("Freeing program: %s\n",current->board[x][y].obj->prog);
-						//fflush(NULL);
-						free(current->board[x][y].obj->prog);
-					}
-					free(current->board[x][y].obj);
+				if(current->board[x][y].obj!=NULL && current->board[x][y].obj->isValid()) {
+					delete current->board[x][y].obj;
+				} else {
+					printf("Invalid object on %s at %i, %i (%s)\n",current->title,x,y,current->board[x][y].obj->getName().c_str());
 				}
 				if(current->board[x][y].under!=NULL) {
-					//printf("Freeing a %s under %i,%i\n",current->board[x][y].under->name,x,y);
-					if(current->board[x][y].under->prog!=NULL) {
-						//printf("Freeing program\n");
-						free(current->board[x][y].under->prog);
+					if(current->board[x][y].under->isValid()) {
+						delete current->board[x][y].under;
+					} else {
+						printf("Invalid object on %s under %i, %i (%s)\n",current->title,x,y,current->board[x][y].under->getName().c_str());
 					}
-					free(current->board[x][y].under);
 				}
 			}
 	  }
 		prev=current;
 		current=current->next;
-		//printf("Freeing board\n");
-		free(prev);		
+		delete prev;		
 	}
 	board_list=NULL;
 	currentbrd=NULL;
@@ -86,12 +80,7 @@ void spinner(char *text) {
   ct->printf("%s %c...",text,spin_anim[x]);
   x++;
   x%=4;
-	
-	Frame::begin();
-	ct->draw(Drawable::Opaque);
-	Frame::transEnable();
-	ct->draw(Drawable::Trans);
-	Frame::finish();
+	render();
 }
 
 void spinner_clear() {
@@ -168,7 +157,7 @@ void save_game(char *filename) {
 			write(fd,"\0",1);
 		}
 		c=0;
-		code=curbrd->board[0][0].obj->type;
+		code=curbrd->board[0][0].obj->getType();
 		if(code>=ZZT_BLUE_TEXT && code <=ZZT_WHITE_TEXT) {
 			color=curbrd->board[0][0].obj->shape;
 		} else {
@@ -177,7 +166,7 @@ void save_game(char *filename) {
 		z=0;
 		for(y=0;y<BOARD_Y;y++) {
 			for(x=0;x<BOARD_X;x++) {
-				code2=curbrd->board[x][y].obj->type;
+				code2=curbrd->board[x][y].obj->getType();
 				if(code2>=ZZT_BLUE_TEXT && code2<=ZZT_WHITE_TEXT) {
 					color2=curbrd->board[x][y].obj->shape;
 				} else {
@@ -189,7 +178,7 @@ void save_game(char *filename) {
 					write(fd,&color,1);
 					//printf("Writing %i of %i (%i)\n",c,code,color);
 					z+=c; c=0;
-					code=curbrd->board[x][y].obj->type;
+					code=curbrd->board[x][y].obj->getType();
 					if(code>=ZZT_BLUE_TEXT && code <=ZZT_WHITE_TEXT) {
 						color=curbrd->board[x][y].obj->shape;
 					} else {
@@ -225,7 +214,7 @@ void save_game(char *filename) {
 					//printf("Object: %s\n",curbrd->board[x][y].obj->name);
 					z++;
 				}
-				if(curbrd->board[x][y].obj->type==ZZT_PLAYER) curplayer=curbrd->board[x][y].obj;
+				if(curbrd->board[x][y].obj->getType()==ZZT_PLAYER) curplayer=curbrd->board[x][y].obj;
 			}
 		}
 		z--;
@@ -234,7 +223,7 @@ void save_game(char *filename) {
 		write_object(fd,curplayer,curbrd->board[curplayer->x][curplayer->y].under);
 		for(y=0;y<BOARD_Y;y++) {
 			for(x=0;x<BOARD_X;x++) {
-				if(curbrd->board[x][y].obj->type!=ZZT_PLAYER && curbrd->board[x][y].obj->flags&F_OBJECT) write_object(fd,curbrd->board[x][y].obj,curbrd->board[x][y].under);
+				if(curbrd->board[x][y].obj->getType()!=ZZT_PLAYER && curbrd->board[x][y].obj->flags&F_OBJECT) write_object(fd,curbrd->board[x][y].obj,curbrd->board[x][y].under);
 			}
 		}		
 		curbrd=curbrd->next;
@@ -245,23 +234,21 @@ void save_game(char *filename) {
 
 int is_empty(struct board_info_node *curbrd, int x, int y) {
 	if(x<0 || y<0 || x>=BOARD_X || y >= BOARD_Y) return 0;
-  if(curbrd->board[x][y].obj!=NULL && !(curbrd->board[x][y].obj->flags&F_EMPTY)) {
+  if(curbrd->board[x][y].obj!=NULL && !(curbrd->board[x][y].obj->getFlags()&F_EMPTY)) {
     return 0;
   }
   return 1;
 }
 
-struct board_data *get_block_by_type(char *type, int *x, int *y) {
+struct board_data *get_block_by_type(int type, int &x, int &y) {
   int i,j;
-  for(j=*y;j<BOARD_Y;j++) {
+  for(j=y;j<BOARD_Y;j++) {
     for(i=0;i<BOARD_X;i++) {
-      if(i==0&&j==*y) i=*x;
+      if(i==0&&j==y) i=x;
       if(i>=BOARD_X) { i=0; j++; }
 			if(currentbrd->board[i][j].obj!=NULL) {
-				if(currentbrd->board[i][j].obj->name==NULL) {
-					//printf("Invalid object name: (%i,%i)=%i\n",i,j,currentbrd->board[i][j].obj->type);
-				} else if (!strcmp(currentbrd->board[i][j].obj->name,type)) {
-					*x=i; *y=j;
+				if(currentbrd->board[i][j].obj->getType() == type) {
+					x=i; y=j;
 					return &currentbrd->board[i][j];
 				}
 			}
@@ -270,38 +257,54 @@ struct board_data *get_block_by_type(char *type, int *x, int *y) {
   return NULL;
 }
 
-struct object *get_obj_by_color(struct board_info_node *board, int type, int color) {
-  int x,y;
-  struct object *curobj;
-
-  for(y=0;y<BOARD_Y;y++) {
-    for(x=0;x<BOARD_X;x++) {
-      curobj=board->board[x][y].obj;
-      if(curobj->type==type && *curobj->color==color) return curobj;
+ZZTObject *get_obj_by_type(int type, int &x, int &y) {
+  int i,j;
+  for(j=y;j<BOARD_Y;j++) {
+    for(i=0;i<BOARD_X;i++) {
+      if(i==0&&j==y) i=x;
+      if(i>=BOARD_X) { i=0; j++; }
+			if(currentbrd->board[i][j].obj!=NULL) {
+				if(currentbrd->board[i][j].obj->getType() == type) {
+					x=i; y=j;
+					return currentbrd->board[i][j].obj;
+				}
+			}
     }
   }
   return NULL;
 }
 
-struct object *get_obj_by_type(struct board_info_node *board, int type) {
+ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color) {
   int x,y;
 
   for(y=0;y<BOARD_Y;y++) {
     for(x=0;x<BOARD_X;x++) {
-      if(board->board[x][y].obj!=NULL && board->board[x][y].obj->type==type) return board->board[x][y].obj;
+      if(board->board[x][y].obj->getType()==type && board->board[x][y].obj->getColor()==color) return board->board[x][y].obj;
     }
   }
   return NULL;
 }
 
-void remove_from_board(struct board_info_node *brd, struct object *me) {  
-  brd->board[me->x][me->y].obj=brd->board[me->x][me->y].under;
-  if(brd->board[me->x][me->y].obj==NULL) {
-    brd->board[me->x][me->y].obj=create_object(ZZT_EMPTY,me->x,me->y);
+ZZTObject *get_obj_by_type(struct board_info_node *board, int type) {
+  int x,y;
+
+  for(y=0;y<BOARD_Y;y++) {
+    for(x=0;x<BOARD_X;x++) {
+      if(board->board[x][y].obj!=NULL && board->board[x][y].obj->getType()==type) return board->board[x][y].obj;
+    }
   }
-  brd->board[me->x][me->y].under=NULL;
-  me->flags|=F_DELETED;
-  draw_block(me->x,me->y);
+  return NULL;
+}
+
+void remove_from_board(struct board_info_node *brd, ZZTObject *me) {  
+	Vector pos = me->getPosition();
+  brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
+  if(brd->board[(int)pos.x][(int)pos.y].obj==NULL) {
+    brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY,pos.x,pos.y);
+  }
+  brd->board[(int)pos.x][(int)pos.y].under=NULL;
+  me->setFlags(F_DELETED);
+  draw_block((int)pos.x,(int)pos.y);
 }
 
 struct board_info_node *get_board_list() {
@@ -316,15 +319,170 @@ struct board_info_node *get_board(int num) {
   return NULL;
 }
 
+void boardTransition(direction d, board_info_node *newbrd) {
+	int i,x,y;
+	ZZTObject *o;
+	float a,b;
+	Vector dist;
+	
+	switch(d) {
+		case UP:
+			for(i=1; i< BOARD_Y; i+=2) {
+				for(y=0; y<BOARD_Y; y++) {
+					for(x=0; x<BOARD_X; x++) {
+						if(y < i) {
+							o=newbrd->board[x][BOARD_Y+y-i].obj;
+						} else {
+							o=currentbrd->board[x][y-i].obj;
+							if(o->getType() == ZZT_PLAYER) o=currentbrd->board[x][y-i].under;
+						}
+						
+						dist = o->getPosition() - player->getPosition();
+						
+						a=(dist.x)*(dist.x)/2.0f;
+						b=(dist.y)*(dist.y);
+						
+						if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+							ct->putChar(x,y,177);
+						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+							ct->putChar(x,y,o->getShape());
+						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+							ct->putColor(x,y,o->getFg()%8);
+							ct->putChar(x,y,o->getShape());
+						} else {
+							ct->putColor(x,y,((o->getFg() > 7) ? HIGH_INTENSITY : 0) | (o->getFg()%8) | (o->getBg() << 8));
+							ct->putChar(x,y,o->getShape());
+						}
+					}
+				}
+				render();
+				Time::sleep(1000);
+			}
+			break;
+		case DOWN:
+			for(i=BOARD_Y-1; i > 0; i-=2) {
+				for(y=0; y<BOARD_Y; y++) {
+					for(x=0; x<BOARD_X; x++) {
+						if(y < i) {
+							o=currentbrd->board[x][BOARD_Y+y-i].obj;
+							if(o->getType() == ZZT_PLAYER) o=currentbrd->board[x][BOARD_Y+y-i].under;
+						} else {
+							o=newbrd->board[x][y-i].obj;
+						}
+						
+						dist = o->getPosition() - player->getPosition();
+						
+						a=(dist.x)*(dist.x)/2.0f;
+						b=(dist.y)*(dist.y);
+						
+						if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+							ct->putChar(x,y,177);
+						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+							ct->putChar(x,y,o->getShape());
+						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+							ct->putColor(x,y,o->getFg()%8);
+							ct->putChar(x,y,o->getShape());
+						} else {
+							ct->putColor(x,y,((o->getFg() > 7) ? HIGH_INTENSITY : 0) | (o->getFg()%8) | (o->getBg() << 8));
+							ct->putChar(x,y,o->getShape());
+						}
+					}
+				}
+				render();
+				Time::sleep(1000);
+			}
+		break;
+		case LEFT:
+			for(i=1; i< BOARD_X; i+=4) {
+				for(y=0; y<BOARD_Y; y++) {
+					for(x=0; x<BOARD_X; x++) {
+						if(x < i) {
+							o=newbrd->board[BOARD_X+x-i][y].obj;
+						} else {
+							o=currentbrd->board[x-i][y].obj;
+							if(o->getType() == ZZT_PLAYER) o=currentbrd->board[x-i][y].under;
+						}
+						
+						dist = o->getPosition() - player->getPosition();
+						
+						a=(dist.x)*(dist.x)/2.0f;
+						b=(dist.y)*(dist.y);
+						
+						if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+							ct->putChar(x,y,177);
+						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+							ct->putChar(x,y,o->getShape());
+						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+							ct->putColor(x,y,o->getFg()%8);
+							ct->putChar(x,y,o->getShape());
+						} else {
+							ct->putColor(x,y,((o->getFg() > 7) ? HIGH_INTENSITY : 0) | (o->getFg()%8) | (o->getBg() << 8));
+							ct->putChar(x,y,o->getShape());
+						}
+					}
+				}
+				render();
+				Time::sleep(1000);
+			}
+			break;
+		case RIGHT:
+			for(i=BOARD_X-1; i > 0; i-=4) {
+				for(y=0; y<BOARD_Y; y++) {
+					for(x=0; x<BOARD_X; x++) {
+						if(x < i) {
+							o=currentbrd->board[BOARD_X+x-i][y].obj;
+							if(o->getType() == ZZT_PLAYER) o=currentbrd->board[BOARD_X+x-i][y].under;
+						} else {
+							o=newbrd->board[x-i][y].obj;
+						}
+						
+						dist = o->getPosition() - player->getPosition();
+						
+						a=(dist.x)*(dist.x)/2.0f;
+						b=(dist.y)*(dist.y);
+						
+						if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+							ct->putChar(x,y,177);
+						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+							ct->putChar(x,y,o->getShape());
+						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+							ct->putColor(x,y,o->getFg()%8);
+							ct->putChar(x,y,o->getShape());
+						} else {
+							ct->putColor(x,y,((o->getFg() > 7) ? HIGH_INTENSITY : 0) | (o->getFg()%8) | (o->getBg() << 8));
+							ct->putChar(x,y,o->getShape());
+						}
+					}
+				}
+				render();
+				Time::sleep(1000);
+			}
+			break;
+	}
+}
+
 void switch_board(int num) {
+	direction h = (player==NULL)?IDLE:player->getHeading();
+	
   world.start=num;
+	player=(Player *)get_obj_by_type(get_board(num),ZZT_PLAYER);
+	player->setStep(player->getPosition());
+
+	if(player!=NULL && currentbrd!=NULL) boardTransition(h,get_board(num));
+	
   currentbrd=get_board(num);
 	world.time=currentbrd->time;
 	world_sec=10;
 	draw_time();
-  player=get_obj_by_type(currentbrd,ZZT_PLAYER);
-  player->xstep=player->x;
-  player->ystep=player->y;
+	
   if(currentbrd->dark && world.torch_cycle<1) {
     set_msg("Room is dark - you need to light a torch!");
   }
@@ -364,7 +522,7 @@ void load_objects(File &fd, struct board_info_node *board) {
   short int xstep,ystep,cycle,dumb,progpos,leader,follower;
   char *tmp;
 	char pad[20];
-	struct object *curobj=NULL;
+	ZZTObject *curobj=NULL;
 	
 	cnt = read_zzt_int(fd);
   //fd.readle16(&cnt,1); //number of objects
@@ -375,7 +533,7 @@ void load_objects(File &fd, struct board_info_node *board) {
     fd.read(&x,1); x--;
 		fd.read(&y,1); y--;
 #ifdef DEBUG
-    if((x>=0 && y>=0) && (x<BOARD_X && y<BOARD_Y)) printf("Storing params at: %i,%i (%s)\n",x,y,board->board[x][y].obj->name);
+    //if((x>=0 && y>=0) && (x<BOARD_X && y<BOARD_Y)) printf("Storing params at: %i,%i (%s)\n",x,y,board->board[x][y].obj->getName().c_str());
 #endif
     fd.readle16(&xstep,1); //xstep 
     fd.readle16(&ystep,1); //ystep
@@ -398,7 +556,7 @@ void load_objects(File &fd, struct board_info_node *board) {
 		}
     curobj=board->board[x][y].obj;
 		if(curobj==NULL) printf("Null object at %i,%i\n",x,y);
-    if(proglen>0/* && (curobj->type==ZZT_OBJECT || curobj->type==ZZT_SCROLL)*/) {
+    if(proglen>0/* && (curobj->getType()==ZZT_OBJECT || curobj->getType()==ZZT_SCROLL)*/) {
 	    tmp=(char *)malloc(proglen+1);
       /*for(len=0;len<proglen;len++) {
       	tmp[len]=file_read_byte(fd);
@@ -409,19 +567,16 @@ void load_objects(File &fd, struct board_info_node *board) {
 			//printf("Program (%i/%i): %s\n",len,proglen,tmp);
     }
     if(curobj!=NULL && x>=0 && y>=0) {
-      curobj->xstep=xstep;
-      curobj->ystep=ystep;
-      curobj->cycle=cycle;
-      curobj->arg1=p1;
-      curobj->arg2=p2;
-      curobj->arg3=p3;
-      curobj->proglen=proglen;
-      curobj->prog=tmp;
-      curobj->progpos=progpos;
-      if(curobj->create != NULL) curobj->create(curobj);
+			curobj->setStep(Vector(xstep,ystep,0));
+			curobj->setCycle(cycle);
+      curobj->setParam(1,p1);
+      curobj->setParam(2,p2);
+      curobj->setParam(3,p3);
+			curobj->setProg((tmp==NULL)?"":tmp,proglen,progpos);
+      curobj->create();
       board->board[x][y].under=create_object(ut,x,y);
-      board->board[x][y].under->fg=uc%16;
-      board->board[x][y].under->bg=uc/16;
+      board->board[x][y].under->setFg(uc%16);
+      board->board[x][y].under->setBg(uc/16);
       //board->board[x][y].under->create();
     } else {
       printf("Invalid object at: (%i,%i)\n",x,y);
@@ -433,8 +588,8 @@ int load_zzt(char *filename, int titleonly) {
   unsigned int c,x,y,z,sum=0,q;
 	unsigned char len,col,cod;
   struct board_info_node *current=NULL;
-  struct object *curobj=NULL;
-  struct object *prev=NULL; 
+  ZZTObject *curobj=NULL;
+  ZZTObject *prev=NULL; 
 
 	File fd(filename,"rb");
 
@@ -510,10 +665,13 @@ int load_zzt(char *filename, int titleonly) {
         current->board[x][y].obj=create_object(cod,x,y);
         curobj=current->board[x][y].obj;
         if(curobj!=NULL) {
-          curobj->fg=col%16;
-          curobj->bg=col/16;
-					if(curobj->create != NULL) curobj->create(curobj);
-        }
+          curobj->setFg(col%16);
+          curobj->setBg(col/16);
+					curobj->create();
+        } else {
+					printf("Unknown type encountered at (%i, %i): %i\n",x,y,cod);
+					current->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
+				}
       	x++;
       }
     }
@@ -524,51 +682,51 @@ int load_zzt(char *filename, int titleonly) {
     //intelligent line drawing!
     for(x=0;x<BOARD_X;x++) {
       for(y=0;y<BOARD_Y;y++) {
-        if(current->board[x][y].obj->type==ZZT_LINE) {
-          if(x>0&&current->board[x-1][y].obj->type==ZZT_LINE && //left is a line
-             x<BOARD_X-1 && current->board[x+1][y].obj->type==ZZT_LINE) { //right is a line
-             if(y>0&&current->board[x][y-1].obj->type==ZZT_LINE && //up is a line
-                y<BOARD_Y-1 &&current->board[x][y+1].obj->type==ZZT_LINE) { //down is a line
-                current->board[x][y].obj->shape=206;
-             } else if(y<BOARD_Y-1 &&current->board[x][y+1].obj->type==ZZT_LINE) { //only down is a line
-                current->board[x][y].obj->shape=203;
-             } else if(y>0&&current->board[x][y-1].obj->type==ZZT_LINE) { //only up is a line
-                current->board[x][y].obj->shape=202;
+        if(current->board[x][y].obj->getType()==ZZT_LINE) {
+          if(x>0&&current->board[x-1][y].obj->getType()==ZZT_LINE && //left is a line
+             x<BOARD_X-1 && current->board[x+1][y].obj->getType()==ZZT_LINE) { //right is a line
+             if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
+                y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
+                current->board[x][y].obj->setShape(206);
+             } else if(y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
+                current->board[x][y].obj->setShape(203);
+             } else if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE) { //only up is a line
+                current->board[x][y].obj->setShape(202);
              } else { //only left and right
-                current->board[x][y].obj->shape=205;
+                current->board[x][y].obj->setShape(205);
              }
-          } else if(x>0&&current->board[x-1][y].obj->type==ZZT_LINE) { //only left is a line
-             if(y>0&&current->board[x][y-1].obj->type==ZZT_LINE && //up is a line
-              y<BOARD_Y-1 &&current->board[x][y+1].obj->type==ZZT_LINE) { //down is a line
-                current->board[x][y].obj->shape=185;
-             } else if(y<BOARD_Y-1&&current->board[x][y+1].obj->type==ZZT_LINE) { //only down is a line
-                  current->board[x][y].obj->shape=187;
-             } else if(y>0&&current->board[x][y-1].obj->type==ZZT_LINE) { //only up is a line
-                  current->board[x][y].obj->shape=188;
+          } else if(x>0&&current->board[x-1][y].obj->getType()==ZZT_LINE) { //only left is a line
+             if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
+              y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
+                current->board[x][y].obj->setShape(185);
+             } else if(y<BOARD_Y-1&&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
+                  current->board[x][y].obj->setShape(187);
+             } else if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE) { //only up is a line
+                  current->board[x][y].obj->setShape(188);
              } else { //only left
-                  current->board[x][y].obj->shape=181;
+                  current->board[x][y].obj->setShape(181);
              }
-          } else if(x<BOARD_X-1 &&current->board[x+1][y].obj->type==ZZT_LINE) { //only right is a line
-               if(y>0&&current->board[x][y-1].obj->type==ZZT_LINE && //up is a line
-                  y<BOARD_Y-1 &&current->board[x][y+1].obj->type==ZZT_LINE) { //down is a line
-                    current->board[x][y].obj->shape=204;
-               } else if(y<BOARD_Y-1 &&current->board[x][y+1].obj->type==ZZT_LINE) { //only down is a line
-                    current->board[x][y].obj->shape=201;
-               } else if(y>1&&current->board[x][y-1].obj->type==ZZT_LINE) { //only up is a line
-                    current->board[x][y].obj->shape=200;
+          } else if(x<BOARD_X-1 &&current->board[x+1][y].obj->getType()==ZZT_LINE) { //only right is a line
+               if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
+                  y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
+                    current->board[x][y].obj->setShape(204);
+               } else if(y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
+                    current->board[x][y].obj->setShape(201);
+               } else if(y>1&&current->board[x][y-1].obj->getType()==ZZT_LINE) { //only up is a line
+                    current->board[x][y].obj->setShape(200);
                } else { //only right
-                    current->board[x][y].obj->shape=198;
+                    current->board[x][y].obj->setShape(198);
                }
           } else { //vertical
-            if(y>0&&current->board[x][y-1].obj->type==ZZT_LINE && //up is a line
-               y<BOARD_Y-1&&current->board[x][y+1].obj->type==ZZT_LINE) { //down is a line
-               current->board[x][y].obj->shape=186;
-            } else if(y<BOARD_Y-1&&current->board[x][y+1].obj->type==ZZT_LINE) { //only down is a line
-              current->board[x][y].obj->shape=210;
-            } else if(y>1&&current->board[x][y-1].obj->type==ZZT_LINE){ //only up
-              current->board[x][y].obj->shape=208;
+            if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
+               y<BOARD_Y-1&&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
+               current->board[x][y].obj->setShape(186);
+            } else if(y<BOARD_Y-1&&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
+              current->board[x][y].obj->setShape(210);
+            } else if(y>1&&current->board[x][y-1].obj->getType()==ZZT_LINE){ //only up
+              current->board[x][y].obj->setShape(208);
             } else { //only 1 block
-							current->board[x][y].obj->shape=249;
+							current->board[x][y].obj->setShape(249);
 						}
           }
         }
@@ -606,11 +764,11 @@ int load_zzt(char *filename, int titleonly) {
 //void delay(float seconds);
 
 void update_brd() {
-  struct object *o=NULL;
-  struct object *p=NULL;
-  struct object *t=NULL;
+  ZZTObject *o=NULL;
+  ZZTObject *p=NULL;
+  ZZTObject *t=NULL;
   struct board_info_node *current=currentbrd;
-  int rx,ry,x,y;
+  int rx,ry,x,y,i=0,j;
   char buf[30];
 
 	if(current->num>0) {
@@ -639,30 +797,36 @@ void update_brd() {
 		if(world_sec==0 && currentbrd->time>0) {
 			take_time(1);
 			if(world.time==10) { set_msg("Time is running out!"); }
-			if(world.time==0) player->message(player,player,"time");
+			if(world.time==0) player->message(player,"time");
 		}
 		if(world_sec==0) world_sec=10;
 	}
 	
-  for(y=0;y<BOARD_Y;y++) {
-    for(x=0;x<BOARD_X;x++) {
-      o=current->board[x][y].obj;
-      if(o!=NULL && o->updated==0) { 
-        o->tick--;
-        if(o->tick<=0 && o->update != NULL) {
-					//printf("Updating: %s\n",o->name);
-          o->update(o);
-          if(o->flags&F_DELETED) {
-            delete o;
-          } else {
-            o->updated=1;
-            o->tick=o->cycle;
-          }
-        }
-      }
-    }
-  }
-
+	for(j=0; j<2; j++) {
+		i=0;
+		for(y=0;y<BOARD_Y;y++) {
+			for(x=0;x<BOARD_X;x++) {
+				o=current->board[x][y].obj;
+				if(o!=NULL && o->getUpdated()==0) { 
+					o->setTick(o->getTick()-1);
+					if(o->getTick()<=0 && i%2==j) {
+						//printf("Updating: %s\n",o->name);
+						o->update();
+						if(o->getFlags()&F_DELETED) {
+							delete o;
+						} else {
+							o->setUpdated(true);
+							o->setTick(o->getCycle());
+						}
+					}
+				}
+			}
+			if(o!=NULL) {
+				i++; i%=2;
+			}							
+		}
+	}
+	
   for(y=0;y<BOARD_Y;y++) {
     for(x=0;x<BOARD_X;x++) {
       o=current->board[x][y].obj;
@@ -671,11 +835,8 @@ void update_brd() {
         ct->color(15,4);
         ct->printf("X");
       } else {
-        o->updated=0;
-        /*if(o!=NULL && o->flags&F_DELETED) {
-          remove_from_board(current,o);
-          free(o->name); free(o);
-        }*/
+        o->setUpdated(false);
+				o->setPushed(false);
       }
     }
   }
@@ -684,31 +845,8 @@ void update_brd() {
 int flicker = 0;
 
 void draw_block(int x, int y) {
-  float a,b;
-  struct object *them=currentbrd->board[x][y].obj;
   if(x>=BOARD_X||y>=BOARD_Y||x<0||y<0) return;
-  a=((x-player->x)*(x-player->x))/2.0f;
-  b=(y-player->y)*(y-player->y);
-	
-  if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
-    ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-		ct->putChar(x,y,177);
-  } else if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
-    if(them!=NULL) {
-      ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-      ct->putChar(x,y,them->shape);
-    }
-  } else if(currentbrd->dark && !(them->flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
-    if(them!=NULL) {
-      ct->putColor(x,y,them->fg%8);
-			ct->putChar(x,y,them->shape);
-    }
-  } else {
-    if(them!=NULL) {
-			ct->putColor(x,y,((them->fg > 7) ? HIGH_INTENSITY : 0) | (them->fg%8) | (them->bg << 8));
-      ct->putChar(x,y,them->shape);
-    }
-  }
+	currentbrd->board[x][y].obj->draw();
 }
 
 void draw_board() {

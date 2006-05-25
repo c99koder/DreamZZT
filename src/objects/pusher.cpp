@@ -21,26 +21,18 @@ using namespace Tiki::Audio;
 
 extern ZZTMusicStream *zm;
 
-msg_handler pusher_message(struct object *me, struct object *them, char *message) {
-  return 0;
-}
-
-update_handler pusher_update(struct object *me) {
-  if(me->xstep==1) move(me,RIGHT);
-  if(me->ystep==1) move(me,DOWN);
-  if(me->xstep==-1) move(me,LEFT);
-  if(me->ystep==-1) move(me,UP);
+void Pusher::update() {
+  if(m_step.x==1) move(RIGHT);
+  if(m_step.y==1) move(DOWN);
+  if(m_step.x==-1) move(LEFT);
+  if(m_step.y==-1) move(UP);
 	//zm->setTune("t--f");
 	//zm->start();
-  return 0;
 }
 
-create_handler pusher_create(struct object *me) {
-  if(me->xstep==65535) me->xstep=-1;
-  if(me->ystep==65535) me->ystep=-1;
-  if(me->xstep==1) me->shape=0x10;
-  if(me->ystep==1) me->shape=0x1f;
-  if(me->xstep==-1) me->shape=0x11;
-  if(me->ystep==-1) me->shape=0x1e;
-  return 0;
+void Pusher::create() {
+  if(m_step.x==1) m_shape=0x10;
+  if(m_step.y==1) m_shape=0x1f;
+  if(m_step.x==-1) m_shape=0x11;
+  if(m_step.y==-1) m_shape=0x1e;
 }

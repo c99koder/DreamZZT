@@ -19,7 +19,6 @@ using namespace Tiki::Audio;
 #include "status.h"
 #include "object.h"
 #include "board.h"
-#include "dirxn.h"
 #include "sound.h"
 
 extern ZZTMusicStream *zm;
@@ -27,126 +26,127 @@ extern ZZTMusicStream *zm;
 extern struct board_info_node *currentbrd;
 int forestmsg=0,invismsg=0,watermsg=0;
 
-update_handler laser_update(struct object *me) {
-	me->arg1--;
-	if(me->arg1<=0) {
-		remove_from_board(currentbrd,me);
+void Laser::setParam(int arg, int val) {
+	if(arg==1) m_time = val;
+}
+
+void Laser::update() {
+	m_time--;
+	if(m_time<=0) {
+		remove_from_board(currentbrd,this);
 	}
-  return 0;
 }
 
-create_handler blink_create(struct object *me) {
-  if(me->xstep==65535) me->xstep=-1;
-  if(me->ystep==65535) me->ystep=-1;
-	me->arg3=me->arg1;
-	//me->cycle=1;
-  return 0;
+void Blink::setParam(int arg, int val) {
+	if(arg==1) m_start = val;
+	if(arg==2) m_fire = val;
 }
 
-update_handler blink_update(struct object *me) {
-	int x=me->x;
-	int y=me->y;
-	struct object *tmp;
+void Blink::create() {
+	m_counter = m_start;
+}
+
+void Blink::update() {
+	int x=m_position.x;
+	int y=m_position.y;
+	ZZTObject *tmp;
 	
-	me->arg3--;
-	if(me->arg3<0) {
-		me->arg3=(me->arg2*4);
+	m_counter--;
+	if(m_counter<0) {
+		m_counter=(m_fire*4);
 		do {
-			x+=me->xstep;
-			y+=me->ystep;
-			if(is_empty(currentbrd,x,y) || currentbrd->board[x][y].obj->type==ZZT_BULLET) {
-				if(currentbrd->board[x][y].obj->type==ZZT_BULLET) {
+			x+=m_step.x;
+			y+=m_step.y;
+			if(::is_empty(currentbrd,x,y) || currentbrd->board[x][y].obj->getType()==ZZT_BULLET) {
+				if(currentbrd->board[x][y].obj->getType()==ZZT_BULLET) {
 					remove_from_board(currentbrd,currentbrd->board[x][y].obj);
 				}
-				if(me->ystep!=0) {
-					tmp=create_object(ZZT_VERTICAL_BLINK,x,y);
+				if(m_step.y!=0) {
+					tmp=::create_object(ZZT_VERTICAL_BLINK,x,y);
 				} else {
-					tmp=create_object(ZZT_HORIZONTAL_BLINK,x,y);
+					tmp=::create_object(ZZT_HORIZONTAL_BLINK,x,y);
 				}
-				tmp->arg1=me->arg2*2;
-				tmp->fg=me->fg;
-				tmp->bg=me->bg;
-				tmp->cycle=me->cycle;
+				tmp->setParam(1,m_fire*2);
+				tmp->setFg(m_fg);
+				tmp->setBg(m_bg);
+				tmp->setCycle(m_cycle);
 				currentbrd->board[x][y].under=currentbrd->board[x][y].obj;
 				currentbrd->board[x][y].obj=tmp;
 				draw_block(x,y);
 			} else {
-				if(currentbrd->board[x][y].obj!=NULL && currentbrd->board[x][y].obj->message!=NULL) {
-					currentbrd->board[x][y].obj->message(currentbrd->board[x][y].obj,me,"shot");
+				if(currentbrd->board[x][y].obj!=NULL) {
+					currentbrd->board[x][y].obj->message(this,"shot");
 				}
 				break;
 			}
 		} while(1);
 	}
-  return 0;
 }
 
-create_handler text_create(struct object *me) {
-  me->shape=me->bg*16+me->fg;
-  me->fg=15;
-  if(me->type==ZZT_WHITE_TEXT) {
-    me->bg=0;
-    me->color=&me->fg;
+void Text::create() {
+  m_shape=m_bg*16+m_fg;
+  m_fg=15;
+  if(m_type==ZZT_WHITE_TEXT) {
+    m_bg=0;
+    m_color=&m_fg;
   } else {
-    me->bg=(me->type-ZZT_BLUE_TEXT)+1;
-    me->color=&me->bg;
+    m_bg=(m_type-ZZT_BLUE_TEXT)+1;
+    m_color=&m_bg;
   }
-  return 0;
 }
 
-create_handler terrain_create(struct object *me) {
-  switch(me->type) {
+void Terrain::create() {
+  switch(m_type) {
   case ZZT_EMPTY:
-    me->shape=32;
-    me->fg=0;
-    me->bg=0;
+    m_shape=32;
+    m_fg=0;
+    m_bg=0;
     break;
   case ZZT_WATER:
-    me->bg=1;
-    me->fg=15;
-    me->cycle=1;
+    m_bg=1;
+    m_fg=15;
+    m_cycle=1;
+		break;
   }
-  return 0;
 }
 
-update_handler water_update(struct object *me) {
+void Water::update() {
   //me->shape=(rand()%2)+0xb1;
   if(rand()%8==1) {
-    me->arg1=1;
-    me->arg2=1;
+    m_counter=1;
+    m_cstep=1;
   }
-  switch(me->arg2) {
+  switch(m_counter) {
   case 0:
-    me->arg1=0;
-    me->fg=1;
-    me->shape=0xb0;
+    m_cstep=0;
+    m_fg=1;
+    m_shape=0xb0;
     break;
   case 1:
-    me->fg=9;
-    me->shape=0xb0;
+    m_fg=9;
+    m_shape=0xb0;
     break;
   case 2:
-    me->fg=9;
-    me->shape=0xb1;
+    m_fg=9;
+    m_shape=0xb1;
     break;
   case 3:
-    me->fg=9;
-    me->shape=0xb2;
+    m_fg=9;
+    m_shape=0xb2;
     break;
   case 4:
-    me->fg=9;
-    me->shape=0xdb;
-    me->arg1=-1;
+    m_fg=9;
+    m_shape=0xdb;
+    m_cstep=-1;
     break;
   }
-  me->arg2+=me->arg1;
-  draw_block(me->x,me->y);
-  return 0;
+  m_counter+=m_cstep;
+  draw_block((int)m_position.x,(int)m_position.y);
 }
 
-msg_handler terrain_message(struct object *me, struct object *them, char *message) {
-  if(!strcmp(message,"touch") && them->type==ZZT_PLAYER) {
-    switch(me->type) {
+void Terrain::message(ZZTObject *them, std::string message) {
+  if(message == "touch" && them->getType()==ZZT_PLAYER) {
+    switch(m_type) {
     case ZZT_FOREST:
       if(forestmsg==0) {
         set_msg("A path is cleared through the forest.");
@@ -154,8 +154,8 @@ msg_handler terrain_message(struct object *me, struct object *them, char *messag
       }
 			zm->setTune("ta");
 			zm->start();
-      remove_from_board(currentbrd,me);
-      move(them,toward(them,me));      
+      remove_from_board(currentbrd,this);
+      them->move(them->toward(this));      
       break;
     case ZZT_INVISIBLE:
       if(invismsg==0) {
@@ -164,9 +164,9 @@ msg_handler terrain_message(struct object *me, struct object *them, char *messag
       }
 			zm->setTune("t--dc");
 			zm->start();
-			me->type=ZZT_NORMAL;
-      me->shape=ZZT_NORMAL_SHAPE;
-      draw_block(me->x,me->y);
+			m_type=ZZT_NORMAL;
+      m_shape=ZZT_NORMAL_SHAPE;
+      draw_block((int)m_position.x,(int)m_position.y);
       break;
     case ZZT_WATER:
       if(watermsg==0) {
@@ -177,5 +177,4 @@ msg_handler terrain_message(struct object *me, struct object *them, char *messag
 			zm->start();
     }
   }
-  return 0;
 }
