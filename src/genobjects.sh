@@ -1,5 +1,24 @@
 #!/bin/sh
 
+# genobjects.sh - Generate the object database
+# Copyright (c) 2000-2006 Sam Steele
+#
+# This file is part of DreamZZT.
+#
+# DreamZZT is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2
+# as published by the Free Software Foundation.
+#
+# DreamZZT is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+# 
+
 objlist="PLAYER OBJECT PASSAGE SLIDER_NS SLIDER_EW PUSHER \
 KEY GEM TORCH AMMO SCROLL ENERGIZER \
 DOOR CONVEYER_CW CONVEYER_CCW BOMB EXPLOSION BULLET DUPLICATOR TRANSPORTER \

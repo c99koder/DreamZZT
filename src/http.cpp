@@ -1,3 +1,22 @@
+/* http.cpp - HTTP file downloader
+ * Copyright (c) 2000-2006 Sam Steele
+ *
+ * This file is part of DreamZZT.
+ *
+ * DreamZZT is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation.
+ *
+ * DreamZZT is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ */ 
+
 #ifdef WIN32
 #include <windows.h>
 #include <winsock.h>
@@ -33,16 +52,16 @@ using namespace std;
 #include "http.h"
 
 #ifdef DREAMCAST
-#define USER_AGENT "DCSquares/2.0.0 (Dreamcast)"
+#define USER_AGENT "DreamZZT/3.0.6 (Dreamcast)"
 #endif
 #ifdef LINUX
-#define USER_AGENT "DCSquares/2.0.0 (Linux)"
+#define USER_AGENT "DreamZZT/3.0.6 (Linux)"
 #endif
 #ifdef WIN32
-#define USER_AGENT "DCSquares/2.0.0 (Windows)"
+#define USER_AGENT "DreamZZT/3.0.6 (Windows)"
 #endif
 #ifdef MACOS
-#define USER_AGENT "DCSquares/2.0.0 (Macintosh)"
+#define USER_AGENT "DreamZZT/3.0.6 (Macintosh)"
 #endif
 
 void (*status_callback)(char *)=NULL;

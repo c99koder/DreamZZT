@@ -133,8 +133,8 @@
 				22AD22CB0A13FAD8003E828E /* http.cpp */,
 				2242FBDF0A0C11DF00F4BDF2 /* main.cpp */,
 				2242FDE90A0C31F100F4BDF2 /* object.cpp */,
-				2242FDD40A0C312500F4BDF2 /* status.cpp */,
 				223229BC0A16C63C0035025E /* sound.cpp */,
+				2242FDD40A0C312500F4BDF2 /* status.cpp */,
 				2242FBA40A0C104300F4BDF2 /* txtwin.cpp */,
 				2242FB9E0A0C104300F4BDF2 /* word.cpp */,
 			);
