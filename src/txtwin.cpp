@@ -183,7 +183,7 @@ TextWindow::TextWindow(ConsoleText *c, std::string title, std::string text) {
 }
 
 extern int player_hidCookie;
-extern struct object *player;
+extern Player *player;
 void player_hidCallback(const Event & evt, void * data);
 
 void TextWindow::doMenu() {

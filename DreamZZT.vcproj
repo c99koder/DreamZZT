@@ -120,7 +120,7 @@
 				RelativePath=".\src\board.cpp">
 			</File>
 			<File
-				RelativePath=".\src\dirxn.cpp">
+				RelativePath=".\src\debug.cpp">
 			</File>
 			<File
 				RelativePath=".\src\DreamZZT.cpp">
@@ -156,6 +156,9 @@
 					RelativePath=".\src\objects\bullet.cpp">
 				</File>
 				<File
+					RelativePath=".\src\objects\conveyer.cpp">
+				</File>
+				<File
 					RelativePath=".\src\objects\dup.cpp">
 				</File>
 				<File
@@ -174,9 +177,6 @@
 					RelativePath=".\src\objects\pusher.cpp">
 				</File>
 				<File
-					RelativePath=".\src\objects\spinner.cpp">
-				</File>
-				<File
 					RelativePath=".\src\objects\terrain.cpp">
 				</File>
 				<File
@@ -190,9 +190,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\include\board.h">
-			</File>
-			<File
-				RelativePath=".\include\dirxn.h">
 			</File>
 			<File
 				RelativePath=".\include\http.h">

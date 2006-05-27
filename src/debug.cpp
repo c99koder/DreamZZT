@@ -50,7 +50,7 @@ extern bool gameFrozen;
 int debug_visible = 0;
 std::string debug_cmdline;
 
-Thread::Thread *debug_thread;
+Tiki::Thread::Thread *debug_thread;
 
 void debug_hidCallback(const Event & evt, void * data);
 
@@ -199,7 +199,7 @@ void debug_init() {
 	debug("\n\nDreamZZT 3.0\n(C) 2006 Sam Steele\n\nREADY.\n");	
 	debug_hidCookie = Hid::callbackReg(debug_hidCallback, NULL);
 	
-	debug_thread = new Thread::Thread(process_debug,NULL);
+	debug_thread = new Tiki::Thread::Thread(process_debug,NULL);
 }
 
 void debug(const char *fmt, ...) {

@@ -101,6 +101,8 @@ void *spinner_thd(void *text) {
 		render();
 		Time::sleep(80000);
 	}
+
+	return 0; //Your *MOM* must return a value, Microsoft!
 }
 	
 void spinner(char *text) {

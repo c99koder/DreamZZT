@@ -116,7 +116,7 @@ pvr_init_params_t params = {
 #endif
 
 ZZTMusicStream *zm = NULL;
-Thread::Thread *render_thread;
+Tiki::Thread::Thread *render_thread;
 
 void render() {
 	zzt_screen_mutex.lock();

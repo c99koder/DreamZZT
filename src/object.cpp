@@ -37,7 +37,7 @@ using namespace std;
 #include "sound.h"
 
 extern int zztascii[];
-extern ZZTObject *player;
+extern Player *player;
 extern ZZTMusicStream *zm;
 extern struct world_header world;
 extern ConsoleText *ct;
