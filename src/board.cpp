@@ -11,6 +11,7 @@
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/tikitime.h>
+#include <Tiki/thread.h>
 #include <Tiki/file.h>
 #include <string.h>
 #include <stdio.h>
@@ -73,17 +74,31 @@ void free_world() {
 	currentbrd=NULL;
 }
 
+Thread::Thread *spinner_thread;
+bool spinner_active;
+
+void *spinner_thd(void *text) {
+  int x=0;
+	spinner_active=true;
+	
+	while(spinner_active) {
+		ct->locate(BOARD_X+3,5);
+		ct->color(15,1);
+		ct->printf("%s %c...",(char *)text,spin_anim[x]);
+		x++;
+		x%=4;
+		render();
+		Time::sleep(80000);
+	}
+}
+	
 void spinner(char *text) {
-  static int x=0;
-  ct->locate(BOARD_X+3,5);
-  ct->color(15,1);
-  ct->printf("%s %c...",text,spin_anim[x]);
-  x++;
-  x%=4;
-	render();
+	spinner_thread = new Thread::Thread(spinner_thd,text);
 }
 
 void spinner_clear() {
+	spinner_active = false;
+	
   ct->locate(BOARD_X+3,5);
   ct->color(15,1);
   ct->printf("            ");
@@ -638,7 +653,6 @@ int load_zzt(char *filename, int titleonly) {
   board_list=current;
 	if(titleonly==1) world.board_count=1;
   for(q=0;q<=world.board_count;q++) {
-    spinner("Loading");
     //current->objlist=NULL;
     curobj=NULL;
 		//fd.readle16(&c, 1);
