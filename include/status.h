@@ -30,7 +30,7 @@ void draw_hud_ingame();
 
 class TextWindow {
 public:
-	TextWindow(Tiki::GL::ConsoleText *c,std::string title,const char *text);
+	TextWindow(Tiki::GL::ConsoleText *c,std::string title,std::string text);
 
 	char *getLabel() { return retlbl; }
 	void doMenu();

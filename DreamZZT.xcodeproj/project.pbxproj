@@ -80,7 +80,6 @@
 		2242FBCE0A0C109000F4BDF2 /* word.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = word.h; path = include/word.h; sourceTree = "<group>"; };
 		2242FBCF0A0C109000F4BDF2 /* http.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = http.h; path = include/http.h; sourceTree = "<group>"; };
 		2242FBD00A0C109000F4BDF2 /* board.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = board.h; path = include/board.h; sourceTree = "<group>"; };
-		2242FBD10A0C109000F4BDF2 /* dirxn.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = dirxn.h; path = include/dirxn.h; sourceTree = "<group>"; };
 		2242FBD20A0C109000F4BDF2 /* status.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = status.h; path = include/status.h; sourceTree = "<group>"; };
 		2242FBD30A0C109000F4BDF2 /* object.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = object.h; path = include/object.h; sourceTree = "<group>"; };
 		2242FBDF0A0C11DF00F4BDF2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = "<group>"; };
@@ -139,7 +138,6 @@
 				2242FDD40A0C312500F4BDF2 /* status.cpp */,
 				2242FDE90A0C31F100F4BDF2 /* object.cpp */,
 				223229BC0A16C63C0035025E /* sound.cpp */,
-				22907D650A1A947800B9BB6D /* debug.h */,
 				22907D660A1A947800B9BB6D /* debug.cpp */,
 			);
 			name = Classes;
@@ -177,9 +175,9 @@
 			children = (
 				2242FBC90A0C109000F4BDF2 /* objects */,
 				2242FBCE0A0C109000F4BDF2 /* word.h */,
+				22907D650A1A947800B9BB6D /* debug.h */,
 				2242FBCF0A0C109000F4BDF2 /* http.h */,
 				2242FBD00A0C109000F4BDF2 /* board.h */,
-				2242FBD10A0C109000F4BDF2 /* dirxn.h */,
 				2242FBD20A0C109000F4BDF2 /* status.h */,
 				2242FBD30A0C109000F4BDF2 /* object.h */,
 			);

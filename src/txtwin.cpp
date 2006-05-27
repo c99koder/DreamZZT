@@ -78,7 +78,7 @@ void TextWindow::pc_box(int x, int y,int w,int h,int fg,int bg) {
 }
 
 //draw a window with text in it, wait for "start", delete the window
-TextWindow::TextWindow(ConsoleText *c, std::string title, const char *text) {
+TextWindow::TextWindow(ConsoleText *c, std::string title, std::string text) {
 	int x=0,u=0,z=0,i=0;
 	
 	console = c;

@@ -278,9 +278,7 @@ void ZZTOOP::exec(std::string text) {
 	} else {
 				args = "";
 	}
-#ifdef DEBUG
-	printf("%s executing: %s\n",get_zztobj_name().c_str(),text.c_str());
-#endif
+
 	debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
 	
 	if(words[0] == "go") {
@@ -299,7 +297,6 @@ void ZZTOOP::exec(std::string text) {
 	else if(words[0] == "play") {
 				if(zm != NULL) {
 					if(zm->isPlaying()) {
-						printf("Waiting for sound to finish...\n");
 						m_progpos-=(text.length()+2);
 					} else {
 						if(playedLast==0) {
@@ -530,9 +527,7 @@ void ZZTOOP::exec(std::string text) {
 #endif
 					} else {
 						for(i=0;i<10;i++) {
-							//printf("Flag %i: %s\n",i,world.flag[i].string);
 							if(std::string((const char *)world.flag[i].string) == words[1]) {
-								//printf("Matched!");
 								res=1;
 								break;
 							}
@@ -702,13 +697,10 @@ void ZZTOOP::update() {
 	playedLast = 0;
 	goagain = 1;
 	
-  printf("%s: --CYCLE--\n",get_zztobj_name().c_str());
   while(goagain) {
     goagain=0;
     if(m_progpos>m_proglen || m_progpos==-1) { break; }
     text="";
-		printf("Switching on %c\n",m_prog[m_progpos]);
-		printf("Progpos: %i\n",m_progpos);
     switch(m_prog[m_progpos]) {
     case ':':
       while(m_prog[m_progpos]!='\r') {
@@ -726,14 +718,7 @@ void ZZTOOP::update() {
 			m_progpos += y+1;
 				
 			debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
-			printf("%s: ?%s\n",get_zztobj_name().c_str(), text.c_str());
-			if(move(str_to_direction(text), true)) {
-				//move(str_to_direction(text));
-				printf("Move successful, next chars: '%c,%c,%c,%c'\n",m_prog[m_progpos+1],m_prog[m_progpos+2],m_prog[m_progpos+3],m_prog[m_progpos+4]);
-			} else {
-				printf("Move failed, next chars: '%c,%c,%c,%c'\n",m_prog[m_progpos+1],m_prog[m_progpos+2],m_prog[m_progpos+3],m_prog[m_progpos+4]);
-			}
-			
+			move(str_to_direction(text), true);			
 			goagain=0;
 			break;
     case '/':
@@ -745,15 +730,10 @@ void ZZTOOP::update() {
       }
 			debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
 			
-			printf("%s: /%s\n",get_zztobj_name().c_str(), text.c_str());
-			
 			if(move(str_to_direction(text), true)) {
-				//move(str_to_direction(text));
 				m_progpos+=(y-1);
-				printf("Move successful, next chars: '%c,%c,%c,%c'\n",m_prog[m_progpos+1],m_prog[m_progpos+2],m_prog[m_progpos+3],m_prog[m_progpos+4]);
 			} else {
 				m_progpos-=2;
-				printf("Move failed, next chars: '%c,%c,%c,%c'\n",m_prog[m_progpos+1],m_prog[m_progpos+2],m_prog[m_progpos+3],m_prog[m_progpos+4]);
 			}
 				
 			goagain=0;
@@ -778,58 +758,46 @@ void ZZTOOP::update() {
 			exec(text);	
 			break;
     case '\r':
-			printf("Setting goagain to 1\n");
       goagain=1;
       break;
     default:
       x=m_progpos;
       y=0;
+			text = "";
+			
       while(m_prog[y+x]!='\0') {
 	      if(m_prog[y+x]=='\r') {
 	        newline=1;
 	        linecount++;
 	      }
 	      if((newline==1 && m_progpos!=-1) && (m_prog[y+x]=='#'||m_prog[y+x]=='/'||m_prog[y+x]=='?' || m_prog[x+y]==':' || m_prog[x+y]=='\'' || m_proglen <= x+y+1)) {
-	        if(m_proglen < x+y || text[y-1]=='\r') {
-						text[y-1]='\0';
-					} else {
-						text[y]='\0';
-					}
 	        if(text[0]!=':') {
-						//printf(" **** %s **** \n",text.c_str());
 	          if(linecount>1) {
-              //printf("%s\n%s\n",m_name,text);
-							//if(zm!=NULL) zm->start();
-	            TextWindow *t= new TextWindow(ct,get_zztobj_name(),text.c_str());
+							if(zm!=NULL) zm->start();
+	            TextWindow *t= new TextWindow(ct,get_zztobj_name(),text);
 							t->doMenu();
               draw_board();
               if(t->getLabel()!='\0') { zzt_goto(t->getLabel()); }
 							delete t;
 	          } else {
-							//printf("%s\n",text);
 	            set_msg((char *)text.c_str());
 	            goagain=1;
 	          }
 	        }
 	        m_progpos--;
-	        //m_update(me);
 	        break;
 	      }
-	      text[y]=m_prog[y+x];
-				//printf("%c",m_prog[x+y]);
+	      text += m_prog[y+x];
         if(text[y]!='\r') newline=0;
 	      y++;
 	      m_progpos++;
       }
     }
     if(m_progpos>0) m_progpos++;
-		printf("Out of loop, goagain=%i progpos=%i next=%i\n",goagain,m_progpos,m_prog[m_progpos]);
     if(went++>6) goagain=0;
   }
   if(m_walk!=IDLE) {
     move(m_walk);
-    //printf("Moving: %i\n",m_arg3);
   }
 	if(zm!=NULL) zm->start();
-  //printf("returning..\n");
 }
