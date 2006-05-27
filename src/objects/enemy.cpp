@@ -119,7 +119,7 @@ void Tiger::update() {
 }
 
 void Enemy::message(ZZTObject *them, std::string message) {
-  if(message == "shot" || them->getType()==ZZT_PLAYER || message == "bombed") {
+  if((message == "shot" || them->getType()==ZZT_PLAYER || message == "bombed") && m_type != ZZT_SPINNING_GUN) {
     give_score(2);
     draw_score();
     if(message == "touch" || message == "thud") {
