@@ -816,6 +816,7 @@ void update_brd() {
 		if(world.energizer_cycle>0) {
 			world.energizer_cycle--;
 			if(world.energizer_cycle==0) {
+				zm->unlock();
 				zm->setTune("s.-c-a#gf#fd#c");
 				zm->start();
 			}

@@ -185,7 +185,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 	if(debug_visible) {
 		ct->color(WHITE|HIGH_INTENSITY, BLUE);
 		ct->locate(65,23);
-		*ct << "X: " << (int)player->getPosition().x << " Y: " << (int)player->getPosition().y;
+		*ct << "X: " << (int)player->getPosition().x << " Y: " << (int)player->getPosition().y << "    ";
 	}
 }
 

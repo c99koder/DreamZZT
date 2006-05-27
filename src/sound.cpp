@@ -43,6 +43,8 @@ ZZTMusicStream::ZZTMusicStream() {
 	m_note_len=0;
 	m_octave = 4;
 	m_hfreq = 0;
+	
+	m_locked = false;
 }
 
 ZZTMusicStream::~ZZTMusicStream() {
@@ -50,6 +52,8 @@ ZZTMusicStream::~ZZTMusicStream() {
 }
 
 void ZZTMusicStream::setTune(std::string tune) {
+	if(m_locked) return;
+	
 	stop();
 	
 	m_tune = tune;
@@ -80,6 +84,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 	
 	if(m_tune_idx >= m_tune.length()) {
 		m_tune = "";
+		m_locked = false;
 		return GDSuccess;
 	}
 	
@@ -94,8 +99,11 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 
 			switch(m_tune[m_tune_idx++]) {
 				case '@':
-					m_note_duration = 32;
+					m_note_len=0;
 					m_octave = 5;
+					m_hfreq = 0;
+					osc = 1;
+					m_note_duration = 32;
 					i--;
 					continue;
 				case 'c':

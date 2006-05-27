@@ -119,7 +119,8 @@ void Inventory::message(ZZTObject *them, std::string message) {
         enermsg=1;
         set_msg("Energizer - You are invincible!");
       }
-			zm->setTune("s.-cd#e");
+			zm->setTune("s.-cd#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#e");
+			zm->lock();
 			zm->start();
       break;
     case ZZT_GEM:

@@ -34,6 +34,9 @@ public:
 			void setTune(std::string tune);
 			void appendTune(std::string tune);
 			
+			void lock() { m_locked = true; }
+			void unlock() { m_locked = false; }
+			
 protected:
 			virtual GetDataResult getData(uint16 * buffer, int * numSamples);
 
@@ -48,6 +51,7 @@ private:
 			std::string m_tune;
 			int m_tune_idx;
 			int m_hfreq;
+			bool m_locked;
 };
 
 #endif	/* __SOUND_H */
