@@ -344,17 +344,9 @@ void whip(struct object *me, int x, int y, char shape) {
 }
 
 void Player::update() {
+	int s=0;
+	
 	if(m_counter > 0) m_counter--;
-#if 0 
-	struct object *obj;
-  struct object *under;
-  struct board_info_node *brd;
-  int oldx=m_position.x,oldy=m_position.y;
-  char tmp[50];
-  int x;
-  int s=0;
-	char *filename;
-	if(m_arg1==1) return 0;
   
 	if(m_flags&F_SLEEPING) {
     ct->locate(BOARD_X+4,6);
@@ -362,13 +354,13 @@ void Player::update() {
     ct->printf("Pausing...");
     do {
       if(s==0) {
-        draw_block(m_position.x,m_position.y);
+        draw();
         s++;
       } else {
         s=0;
         ct->locate(m_position.x,m_position.y);
-        ct->color(currentbrd->board[m_position.x][m_position.y].under->fg,currentbrd->board[m_position.x][m_position.y].under->bg);
-        ct->printf("%c",currentbrd->board[m_position.x][m_position.y].under->shape);
+        ct->color(currentbrd->board[(int)m_position.x][(int)m_position.y].under->getFg(),currentbrd->board[(int)m_position.x][(int)m_position.y].under->getBg());
+        ct->printf("%c",currentbrd->board[(int)m_position.x][(int)m_position.y].under->getShape());
       }
 			draw_msg();
 			render();
@@ -377,7 +369,7 @@ void Player::update() {
     ct->locate(BOARD_X+4,6);
     ct->color(15,1);
     ct->printf("          ");
-    draw_block(m_position.x,m_position.y);
+    draw();
   }
 
 	if(world.energizer_cycle%2==0) {
@@ -388,10 +380,5 @@ void Player::update() {
 		m_shape=1;
 		m_fg=15;
 		m_bg=5;
-		//zm->appendTune("s.-f+fd#c+c-d#ef+f-fd#c+c-d#e");
 	}
-
-	draw_block(m_position.x,m_position.y);
-  return 0;
-#endif
 }

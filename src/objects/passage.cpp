@@ -56,6 +56,7 @@ void Passage::message(ZZTObject *them, std::string message) {
 			pos = obj2->getPosition();
       obj->setPosition(pos);
 			obj->setHeading(IDLE);
+			them->setHeading(IDLE);
       brd->board[(int)pos.x][(int)pos.y].under=obj2;
       brd->board[(int)pos.x][(int)pos.y].obj=obj;
     }

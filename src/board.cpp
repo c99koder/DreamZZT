@@ -349,23 +349,58 @@ struct board_info_node *get_board(int num) {
 }
 
 void boardTransition(direction d, board_info_node *newbrd) {
-	int i,x,y;
+	int i,j,x,y;
 	ZZTObject *o;
 	float a,b;
 	Vector dist;
-
+	struct board_info_node *board=newbrd;
+	bool changed[BOARD_X][BOARD_Y] = {0};
+	
 	playerInputActive=false;
 	
 	switch(d) {
+		case IDLE:
+			for(i=0; i<(BOARD_X * BOARD_Y)/80; i++) {
+				for(j=0; j<80; j++) {
+					do {
+						x=rand()%BOARD_X;
+						y=rand()%BOARD_Y;
+					} while(changed[x][y]);
+					changed[x][y]=true;
+					o = newbrd->board[x][y].obj;
+					dist = o->getPosition() - player->getPosition();
+					
+					a=(dist.x)*(dist.x)/2.0f;
+					b=(dist.y)*(dist.y);
+										
+					if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+						ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+						ct->putChar(x,y,177);
+					} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+						ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
+						ct->putChar(x,y,o->getShape());
+					} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+						ct->putColor(x,y,o->getFg()%8);
+						ct->putChar(x,y,o->getShape());
+					} else {
+						ct->putColor(x,y,((o->getFg() > 7) ? HIGH_INTENSITY : 0) | (o->getFg()%8) | (o->getBg() << 8));
+						ct->putChar(x,y,o->getShape());
+					}
+				}
+				render();
+			}
+			break;
 		case UP:
 			for(i=1; i< BOARD_Y; i+=2) {
 				for(y=0; y<BOARD_Y; y++) {
 					for(x=0; x<BOARD_X; x++) {
 						if(y < i) {
 							o=newbrd->board[x][BOARD_Y+y-i].obj;
+							board=newbrd;
 						} else {
 							o=currentbrd->board[x][y-i].obj;
 							if(o->getType() == ZZT_PLAYER) o=currentbrd->board[x][y-i].under;
+							board=currentbrd;
 						}
 						
 						dist = o->getPosition() - player->getPosition();
@@ -373,13 +408,13 @@ void boardTransition(direction d, board_info_node *newbrd) {
 						a=(dist.x)*(dist.x)/2.0f;
 						b=(dist.y)*(dist.y);
 						
-						if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+						if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
 							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
 							ct->putChar(x,y,177);
-						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+						} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
 							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
 							ct->putChar(x,y,o->getShape());
-						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+						} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
 							ct->putColor(x,y,o->getFg()%8);
 							ct->putChar(x,y,o->getShape());
 						} else {
@@ -399,8 +434,10 @@ void boardTransition(direction d, board_info_node *newbrd) {
 						if(y < i) {
 							o=currentbrd->board[x][BOARD_Y+y-i].obj;
 							if(o->getType() == ZZT_PLAYER) o=currentbrd->board[x][BOARD_Y+y-i].under;
+							board=currentbrd;
 						} else {
 							o=newbrd->board[x][y-i].obj;
+							board=newbrd;
 						}
 						
 						dist = o->getPosition() - player->getPosition();
@@ -408,13 +445,13 @@ void boardTransition(direction d, board_info_node *newbrd) {
 						a=(dist.x)*(dist.x)/2.0f;
 						b=(dist.y)*(dist.y);
 						
-						if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+						if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
 							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
 							ct->putChar(x,y,177);
-						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+						} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
 							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
 							ct->putChar(x,y,o->getShape());
-						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+						} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
 							ct->putColor(x,y,o->getFg()%8);
 							ct->putChar(x,y,o->getShape());
 						} else {
@@ -433,9 +470,11 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					for(x=0; x<BOARD_X; x++) {
 						if(x < i) {
 							o=newbrd->board[BOARD_X+x-i][y].obj;
+							board=newbrd;
 						} else {
 							o=currentbrd->board[x-i][y].obj;
 							if(o->getType() == ZZT_PLAYER) o=currentbrd->board[x-i][y].under;
+							board=currentbrd;
 						}
 						
 						dist = o->getPosition() - player->getPosition();
@@ -443,13 +482,13 @@ void boardTransition(direction d, board_info_node *newbrd) {
 						a=(dist.x)*(dist.x)/2.0f;
 						b=(dist.y)*(dist.y);
 						
-						if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+						if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
 							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
 							ct->putChar(x,y,177);
-						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+						} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
 							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
 							ct->putChar(x,y,o->getShape());
-						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+						} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
 							ct->putColor(x,y,o->getFg()%8);
 							ct->putChar(x,y,o->getShape());
 						} else {
@@ -469,8 +508,10 @@ void boardTransition(direction d, board_info_node *newbrd) {
 						if(x < i) {
 							o=currentbrd->board[BOARD_X+x-i][y].obj;
 							if(o->getType() == ZZT_PLAYER) o=currentbrd->board[BOARD_X+x-i][y].under;
+							board=currentbrd;
 						} else {
 							o=newbrd->board[x-i][y].obj;
+							board=newbrd;
 						}
 						
 						dist = o->getPosition() - player->getPosition();
@@ -478,13 +519,13 @@ void boardTransition(direction d, board_info_node *newbrd) {
 						a=(dist.x)*(dist.x)/2.0f;
 						b=(dist.y)*(dist.y);
 						
-						if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+						if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
 							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
 							ct->putChar(x,y,177);
-						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+						} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
 							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
 							ct->putChar(x,y,o->getShape());
-						} else if(currentbrd->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+						} else if(board->dark && !(o->getFlags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
 							ct->putColor(x,y,o->getFg()%8);
 							ct->putChar(x,y,o->getShape());
 						} else {
