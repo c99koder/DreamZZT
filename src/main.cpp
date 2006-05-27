@@ -137,7 +137,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zm = new ZZTMusicStream;
 	zm->setTune("cdefgab+c");
 	zm->start();
-	zm->setVolume(100);
+	zm->setVolume(0.2);
 	
 	//initialize the screen		
 	ct = new ConsoleText(80,25,new Texture("zzt-ascii.png", true));
