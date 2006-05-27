@@ -229,4 +229,6 @@ public:
 	void update();
 	void message(ZZTObject *them, std::string msg);
 	void processEvent(const Tiki::Hid::Event & evt);
+private:
+	int m_counter;
 };

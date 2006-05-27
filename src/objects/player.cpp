@@ -67,7 +67,7 @@ void Player::processEvent(const Event & evt) {
 	struct board_info_node *brd;
 	ZZTObject *obj;
 	
-	if(!playerInputActive) return;
+	if(!playerInputActive || m_counter > 0) return;
 	
 	if (evt.type == Hid::Event::EvtQuit) {
 		switchbrd = -2;
@@ -208,6 +208,8 @@ void Player::processEvent(const Event & evt) {
 					break;
 			}
 		}
+
+		m_counter = 1;
 	}
 }
 
@@ -293,6 +295,7 @@ void Player::create() {
   m_shape=2;
   m_fg=15;
   m_bg=1;
+  m_counter = 0;
 	
 	if(player_hidCookie == -1) {
 		printf("Registering player callback\n");
@@ -341,6 +344,7 @@ void whip(struct object *me, int x, int y, char shape) {
 }
 
 void Player::update() {
+	if(m_counter > 0) m_counter--;
 #if 0 
 	struct object *obj;
   struct object *under;

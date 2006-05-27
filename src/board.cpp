@@ -86,13 +86,12 @@ void free_world() {
 }
 
 Thread::Thread *spinner_thread;
-bool spinner_active;
+bool spinner_active = false;
 
 void *spinner_thd(void *text) {
   int x=0;
-	spinner_active=true;
 	
-	while(spinner_active) {
+	while(spinner_active == true) {
 		ct->locate(BOARD_X+3,5);
 		ct->color(15,1);
 		ct->printf("%s %c...",(char *)text,spin_anim[x]);
@@ -106,11 +105,13 @@ void *spinner_thd(void *text) {
 }
 	
 void spinner(char *text) {
+	spinner_active = true;
 	spinner_thread = new Thread::Thread(spinner_thd,text);
 }
 
 void spinner_clear() {
 	spinner_active = false;
+	delete spinner_thread;
 	
   ct->locate(BOARD_X+3,5);
   ct->color(15,1);
