@@ -141,9 +141,6 @@ TextWindow::TextWindow(ConsoleText *c, std::string title, std::string text) {
           lbl[lblcnt][q++]=text[z++];
         }
 				lbl[lblcnt][q]='\0';
-#ifdef DEBUG
-				printf("Label %i: %s\n",lblcnt,lbl[lblcnt]);
-#endif
         lblcnt++;
         z++;
       } else { txt[y][44]=' '; }
@@ -167,7 +164,6 @@ TextWindow::TextWindow(ConsoleText *c, std::string title, std::string text) {
       }
       txt[y][42]='\0';
       if(txt[y][44]=='!') txt[y][37]='\0';
-			printf("Y: %i\n",y);
       y++;
       x=0;
     }
@@ -243,8 +239,8 @@ void TextWindow::doMenu() {
       console->printf("%c",175);
       console->locate(7+44,13);
       console->printf("%c",174);
-			render();
     }
+		render();
 		Time::sleep(80000);
   }
 	

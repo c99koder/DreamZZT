@@ -51,7 +51,7 @@ void Duplicator::update() {
   draw();
 	
   if(m_animIndex==5) {
-    obj=currentbrd->board[(int)(m_position.x + m_step.x)][(int)(m_position.x + m_step.x)].obj;
+    obj=currentbrd->board[(int)(m_position.x + m_step.x)][(int)(m_position.y + m_step.y)].obj;
     if(currentbrd->board[x][y].obj->getFlags()&F_PUSHABLE) {
       if(m_step.x==-1) currentbrd->board[x][y].obj->move(RIGHT);
       if(m_step.x==1) currentbrd->board[x][y].obj->move(LEFT);

@@ -789,6 +789,7 @@ void ZZTOOP::update() {
               if(t->getLabel()!='\0') { zzt_goto(t->getLabel()); }
 							delete t;
 	          } else {
+							if(text[text.length() - 1] == '\r') text.resize(text.length() - 1);
 	            set_msg((char *)text.c_str());
 	            goagain=1;
 	          }
