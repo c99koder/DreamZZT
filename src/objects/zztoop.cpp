@@ -632,7 +632,7 @@ void ZZTOOP::exec(std::string text) {
 		if(words[1] == "gems") {
 			give_gems(atoi(words[2].c_str()));
 		}
-		if(words[1] == "torch") {
+		if(words[1] == "torch" || words[1] == "torches") {
 			give_torch(atoi(words[2].c_str()));
 		}
 		if(words[1] == "score") {
@@ -651,7 +651,7 @@ void ZZTOOP::exec(std::string text) {
 			if(world.gems<atoi(words[2].c_str())) { zzt_goto(words[3]); }
 			else take_gems(atoi(words[2].c_str()));
 		}
-		if(words[1] == "torch") {
+		if(words[1] == "torch" || words[1] == "torches") {
 			if(world.torches<atoi(words[2].c_str())) { zzt_goto(words[3]); }
 			else take_torch(atoi(words[2].c_str()));
 		}

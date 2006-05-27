@@ -105,13 +105,15 @@ void ZZTObject::shoot(enum direction dir) {
 	  bullet->setCycle(1);
     currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].under;
     currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=bullet;
-		zm->setTune("t+c-c-c");
-		zm->start();
+		if(!zm->isPlaying()) {
+			zm->setTune("t+c-c-c");
+			zm->start();
+		}
   } else {
     if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj!=NULL) {
 			if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->getType()==ZZT_BREAKABLE) {
 				remove_from_board(currentbrd,currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj);
-			} else {
+			} else if(m_type == ZZT_PLAYER) {
 				currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->message(this,"shot");
 			} 
 			if(is_empty(dir)) {
