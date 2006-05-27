@@ -1,5 +1,9 @@
 2006-05-27  sam
 
+	* src/board.cpp, src/objects/passage.cpp, src/objects/player.cpp:
+	  Add passage transition
+	* ChangeLog: Generate changelog from SVN
+	* ChangeLog: Generate changelog from SVN
 	* src/objects/bullet.cpp, src/objects/zztoop.cpp: Dont let bullets
 	  interrupt sfx, dont let tigers kill eachother point-blank
 	* src/debug.cpp, src/objects/player.cpp, src/status.cpp: Fix key
