@@ -104,7 +104,7 @@
 		32CA4F630368D1EE00C91783 /* DreamZZT_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DreamZZT_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* DreamZZT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DreamZZT.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C4F50ECB0799E1350001D0D0 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Controller.h; path = src/Controller.h; sourceTree = SOURCE_ROOT; };
+		C4F50ECB0799E1350001D0D0 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Controller.h; path = src/Controller.h; sourceTree = "<group>"; };
 		C4F50ECC0799E1350001D0D0 /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Controller.m; path = src/Controller.m; sourceTree = SOURCE_ROOT; };
 		C4F50EEE0799E5B40001D0D0 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -126,19 +126,17 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				22AD22CB0A13FAD8003E828E /* http.cpp */,
 				2242FE330A0C349300F4BDF2 /* Objects */,
-				C4F50ECB0799E1350001D0D0 /* Controller.h */,
-				223229BB0A16C63C0035025E /* sound.h */,
-				C4F50ECC0799E1350001D0D0 /* Controller.m */,
-				2242FB9E0A0C104300F4BDF2 /* word.cpp */,
-				2242FBDF0A0C11DF00F4BDF2 /* main.cpp */,
-				2242FBA40A0C104300F4BDF2 /* txtwin.cpp */,
 				2242FDA40A0C26F500F4BDF2 /* board.cpp */,
-				2242FDD40A0C312500F4BDF2 /* status.cpp */,
-				2242FDE90A0C31F100F4BDF2 /* object.cpp */,
-				223229BC0A16C63C0035025E /* sound.cpp */,
+				C4F50ECC0799E1350001D0D0 /* Controller.m */,
 				22907D660A1A947800B9BB6D /* debug.cpp */,
+				22AD22CB0A13FAD8003E828E /* http.cpp */,
+				2242FBDF0A0C11DF00F4BDF2 /* main.cpp */,
+				2242FDE90A0C31F100F4BDF2 /* object.cpp */,
+				2242FDD40A0C312500F4BDF2 /* status.cpp */,
+				223229BC0A16C63C0035025E /* sound.cpp */,
+				2242FBA40A0C104300F4BDF2 /* txtwin.cpp */,
+				2242FB9E0A0C104300F4BDF2 /* word.cpp */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -174,12 +172,14 @@
 			isa = PBXGroup;
 			children = (
 				2242FBC90A0C109000F4BDF2 /* objects */,
-				2242FBCE0A0C109000F4BDF2 /* word.h */,
+				2242FBD00A0C109000F4BDF2 /* board.h */,
+				C4F50ECB0799E1350001D0D0 /* Controller.h */,
 				22907D650A1A947800B9BB6D /* debug.h */,
 				2242FBCF0A0C109000F4BDF2 /* http.h */,
-				2242FBD00A0C109000F4BDF2 /* board.h */,
-				2242FBD20A0C109000F4BDF2 /* status.h */,
 				2242FBD30A0C109000F4BDF2 /* object.h */,
+				223229BB0A16C63C0035025E /* sound.h */,
+				2242FBD20A0C109000F4BDF2 /* status.h */,
+				2242FBCE0A0C109000F4BDF2 /* word.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -200,17 +200,17 @@
 		2242FE330A0C349300F4BDF2 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
-				229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */,
-				224200B80A0C569300F4BDF2 /* passage.cpp */,
-				224200B90A0C569300F4BDF2 /* terrain.cpp */,
-				224200BA0A0C569300F4BDF2 /* bullet.cpp */,
-				224200BB0A0C569300F4BDF2 /* enemy.cpp */,
-				224200BC0A0C569300F4BDF2 /* dup.cpp */,
-				224200BD0A0C569300F4BDF2 /* zztoop.cpp */,
-				224200BE0A0C569300F4BDF2 /* pusher.cpp */,
 				224200BF0A0C569300F4BDF2 /* bomb.cpp */,
+				224200BA0A0C569300F4BDF2 /* bullet.cpp */,
+				229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */,
+				224200BC0A0C569300F4BDF2 /* dup.cpp */,
+				224200BB0A0C569300F4BDF2 /* enemy.cpp */,
 				224200C00A0C569300F4BDF2 /* items.cpp */,
+				224200B80A0C569300F4BDF2 /* passage.cpp */,
 				224200C20A0C569300F4BDF2 /* player.cpp */,
+				224200BE0A0C569300F4BDF2 /* pusher.cpp */,
+				224200B90A0C569300F4BDF2 /* terrain.cpp */,
+				224200BD0A0C569300F4BDF2 /* zztoop.cpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
