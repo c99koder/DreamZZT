@@ -60,7 +60,6 @@ extern struct board_info_node *currentbrd;
 
 ZZTObject *find_zztobj_by_name(int &x, int &y, std::string target) {
   ZZTObject *myobj;
-  int z;
   int i,j;
 	
 	transform(target.begin(), target.end(), target.begin(), ::tolower);
@@ -106,7 +105,6 @@ std::string ZZTOOP::get_zztobj_name() {
 void ZZTOOP::send(std::string cmd) {
   int x,y;
   ZZTObject *obj=NULL;
-  struct board_info_node *brd;
 	std::string target;
 	std::string label;
 	std::string name;
@@ -279,7 +277,7 @@ void ZZTOOP::exec(std::string text) {
 	ZZTObject *theirobj;
   struct board_data *b;
   static int textfg=1,textbg=0;
-  int i,j,in,went=0,color,color2,neg,res;
+  int i,j,went=0,color,color2,neg,res;
 	
 	transform(text.begin(), text.end(), text.begin(), ::tolower);
 	
@@ -368,7 +366,7 @@ void ZZTOOP::exec(std::string text) {
 			set_msg("ERR: undefined item");
 		} else {
 			b->under=b->obj;
-			b->obj=::create_object(str_to_obj(words[1]),i,j);
+			b->obj=::create_object(str_to_obj(words[1]),m_position.x,m_position.y);
 			if(color!=-1) b->obj->setColor(color);
 			draw_block(m_position.x,m_position.y);
 		}
@@ -700,7 +698,7 @@ void ZZTOOP::exec(std::string text) {
 
 void ZZTOOP::update() {
 	std::string text;
-  int x=0,y=0,z,newline=0,linecount=0,ty=0,i,j,went=0;
+  int x=0,y=0,newline=0,linecount=0,ty=0,went=0;
 	std::string lbl;
 	
 	if(m_proglen<1) return;
