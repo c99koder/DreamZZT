@@ -301,11 +301,10 @@ void Player::create() {
 }
 
 void Player::message(ZZTObject *them, std::string message) {
-#if 0
-  if(!strcmp(message,"shot") || !strcmp(message,"bombed") || !strcmp(message,"time")) {
-		if(world.energizer_cycle==0) {
+  if(message == "shot" || message == "bombed" || message == "time") {
+		if(world.energizer_cycle==0 || message == "time") {
 			take_health(10);
-			if(strcmp(message,"time")) {
+			if(message != "time") {
 				set_msg("Ouch!");
 				zm->setTune("t--ct+cd#");
 				zm->start();
@@ -313,20 +312,17 @@ void Player::message(ZZTObject *them, std::string message) {
 			if(currentbrd->reenter && world.health>0) {
 				world.time=currentbrd->time;
 				draw_time();
-				currentbrd->board[m_position.x][m_position.y].obj=currentbrd->board[m_position.x][m_position.y].under;
+				currentbrd->board[(int)m_position.x][(int)m_position.y].obj=currentbrd->board[(int)m_position.x][(int)m_position.y].under;
+				currentbrd->board[(int)m_position.x][(int)m_position.y].under=NULL;
 				draw_block(m_position.x,m_position.y);
-				m_position.x=m_position.xstep;
-				m_position.y=m_position.ystep;
-				currentbrd->board[m_position.x][m_position.y].under=currentbrd->board[m_position.x][m_position.y].obj;
-				currentbrd->board[m_position.x][m_position.y].obj=me;
+				m_position=m_step;
+				currentbrd->board[(int)m_position.x][(int)m_position.y].under=currentbrd->board[(int)m_position.x][(int)m_position.y].obj;
+				currentbrd->board[(int)m_position.x][(int)m_position.y].obj=this;
 				draw_block(m_position.x,m_position.y);
 				m_flags|=F_SLEEPING;
-				m_update(me);
 			}
 		}
   }
-  return 0;
-#endif
 }
 
 void whip(struct object *me, int x, int y, char shape) {

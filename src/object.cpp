@@ -66,9 +66,7 @@ direction ZZTObject::clockwise(direction dir) {
 direction ZZTObject::str_to_direction(string s) {
   int neg=0;
   direction res=IDLE;
-	
-	printf("str_to_direction: '%s'\n", s.c_str());
-	
+		
 	transform(s.begin(), s.end(), s.begin(), ::tolower);
 	
 	vector<string> words = wordify(s, ' ');
@@ -122,7 +120,6 @@ direction ZZTObject::str_to_direction(string s) {
   if(neg==3) {
     res=opposite(clockwise(res));
   }
-	printf("Returning: %i\n",res);
   return res;
 }
 

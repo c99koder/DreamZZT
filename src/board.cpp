@@ -48,7 +48,7 @@ struct world_header world;
 struct board_info_node *board_list=NULL;
 struct board_info_node *currentbrd=NULL;
 extern Player *player;
-void delay(long ms);
+extern bool playerInputActive;
 
 struct board_info_node *get_current_board() { return currentbrd; }
 int world_sec=10;
@@ -352,6 +352,8 @@ void boardTransition(direction d, board_info_node *newbrd) {
 	ZZTObject *o;
 	float a,b;
 	Vector dist;
+
+	playerInputActive=false;
 	
 	switch(d) {
 		case UP:
@@ -495,6 +497,8 @@ void boardTransition(direction d, board_info_node *newbrd) {
 			}
 			break;
 	}
+	
+	playerInputActive = true;
 }
 
 void switch_board(int num) {
@@ -870,10 +874,8 @@ void update_brd() {
   }
 }
 
-int flicker = 0;
-
 void draw_block(int x, int y) {
-  if(x>=BOARD_X||y>=BOARD_Y||x<0||y<0) return;
+  if(x>=BOARD_X||y>=BOARD_Y||x<0||y<0||currentbrd->board[x][y].obj==NULL) return;
 	currentbrd->board[x][y].obj->draw();
 }
 

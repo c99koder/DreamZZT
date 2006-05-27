@@ -53,7 +53,7 @@ void Bomb::update() {
 
   if(m_shape <= '9' && m_shape >= '1') {
     m_shape--;
-    m_cycle=4;
+    m_cycle=8;
     m_counter=4;
     draw();
   }
