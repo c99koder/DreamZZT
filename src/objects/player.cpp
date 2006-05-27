@@ -60,7 +60,7 @@ bool playerInputActive;
 
 void player_hidCallback(const Event & evt, void * data) {
 	//((Player *)data)->processEvent(evt);
-	player->processEvent(evt);
+	if(player!=NULL) player->processEvent(evt);
 }
 
 void Player::processEvent(const Event & evt) {

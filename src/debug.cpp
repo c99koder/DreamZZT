@@ -107,6 +107,12 @@ void *process_debug(void *) {
 			if(player->getPosition().x + 1 < BOARD_X) remove_from_board(currentbrd,currentbrd->board[(int)player->getPosition().x+1][(int)player->getPosition().y].obj);
 			if(player->getPosition().y + 1 < BOARD_Y) remove_from_board(currentbrd,currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y+1].obj);
 			debug("Cleared area around player.\n");
+		} else if(debug_cmdline.find("keys") == 0) {
+			for(int i=0; i<7; i++) {
+				world.keys[i] = 1;
+			}
+			draw_keys();
+			debug("Player now has all keys.\n");
 		} else if(debug_cmdline.find("warp ") == 0) {
 			switchbrd = atoi(debug_cmdline.c_str() + 5);
 			player->setFlag(F_SLEEPING);

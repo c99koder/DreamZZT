@@ -221,7 +221,7 @@ void give_score(int count) {
 }
 
 void draw_keys() {
-  int x=0,i;
+  int i;
 	ct->putColor(BOARD_X+2,13, HIGH_INTENSITY | GREY | (BLUE << 8));
 	ct->putChar(BOARD_X+2,13,0x0c);
 
@@ -230,13 +230,12 @@ void draw_keys() {
   ct->printf("    Keys:");
 
   for(i=0;i<7;i++) {
-		ct->putColor(BOARD_X+12+x,13, HIGH_INTENSITY | (x+1) | (BLUE << 8));
+		ct->putColor(BOARD_X+12+i,13, HIGH_INTENSITY | (i+1) | (BLUE << 8));
 
-    if(world.keys[x]==1) {
-			ct->putChar(BOARD_X+12+x,13,0x0c);
-			x++;
+    if(world.keys[i]==1) {
+			ct->putChar(BOARD_X+12+i,13,0x0c);
     } else {
-			ct->putChar(BOARD_X+12+x,13,' ');
+			ct->putChar(BOARD_X+12+i,13,' ');
     }
   }
 }
