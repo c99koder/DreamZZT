@@ -39,6 +39,7 @@ extern struct board_info_node *currentbrd;
 void Bomb::message(ZZTObject *them, std::string message) {
   if(them->getType()==ZZT_PLAYER && message == "touch" && m_shape==ZZT_BOMB_SHAPE) {
     m_shape='9';
+		m_cycle=10;
     m_flags|=F_PUSHABLE;
     draw();
 		zm->setTune("tcf+cf+c");
@@ -53,9 +54,13 @@ void Bomb::update() {
 
   if(m_shape <= '9' && m_shape >= '1') {
     m_shape--;
-    m_cycle=8;
+    m_cycle=10;
     m_counter=4;
     draw();
+		if(m_shape<'9'){
+			zm->setTune((m_shape%2==0)?"t5":"t8");
+			zm->start();
+		}
   }
 	
   if(m_shape=='0' && m_counter>0) {

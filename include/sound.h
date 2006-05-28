@@ -53,6 +53,8 @@ private:
 			int m_tune_idx;
 			int m_hfreq;
 			bool m_locked;
+			int m_drum_idx;
+			int m_drum;
 };
 
 #endif	/* __SOUND_H */

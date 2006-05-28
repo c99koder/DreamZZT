@@ -157,12 +157,17 @@ void *process_debug(void *) {
 			}
 		} else if(debug_cmdline == "quit") {
 			switchbrd = -2;
+		} else if(debug_cmdline.find("play ") == 0) {
+			zm->setTune(debug_cmdline.c_str() + 5);
+			zm->start();
 		} else {
 			player->exec(debug_cmdline);
 		}
 		
-		zm->setTune("i-g");
-		zm->start();
+		if(!zm->isPlaying()) {
+			zm->setTune("i-g");
+			zm->start();
+		}
 	}
 }
 

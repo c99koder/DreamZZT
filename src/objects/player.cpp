@@ -67,7 +67,7 @@ void Player::processEvent(const Event & evt) {
 	struct board_info_node *brd;
 	ZZTObject *obj;
 	
-	if(!playerInputActive || m_counter > 0) return;
+	if(!playerInputActive) return;
 	
 	if (evt.type == Hid::Event::EvtQuit) {
 		switchbrd = -2;
@@ -124,19 +124,19 @@ void Player::processEvent(const Event & evt) {
 		if(evt.mod & Hid::Event::KeyShift) {
 			switch(evt.key) {
 				case Event::KeyUp:
-					shoot(UP);
+					m_shoot=UP;
 					m_heading=UP;
 					break;
 				case Event::KeyDown:
-					shoot(DOWN);
+					m_shoot=DOWN;
 					m_heading=DOWN;
 					break;
 				case Event::KeyLeft:
-					shoot(LEFT);
+					m_shoot=LEFT;
 					m_heading=LEFT;
 					break;
 				case Event::KeyRight:
-					shoot(RIGHT);
+					m_shoot=RIGHT;
 					m_heading=RIGHT;
 					break;
 			}					
@@ -154,7 +154,7 @@ void Player::processEvent(const Event & evt) {
 						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
 						switchbrd=board_up();
 					} else {
-						move(UP);
+						m_move=UP;
 					}
 					break;
 				case Event::KeyDown:
@@ -169,7 +169,7 @@ void Player::processEvent(const Event & evt) {
 						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
 						switchbrd=board_down();
 					} else {
-						move(DOWN);
+						m_move=DOWN;
 					}
 					break;
 				case Event::KeyLeft:
@@ -184,7 +184,7 @@ void Player::processEvent(const Event & evt) {
 						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
 						switchbrd=board_left();
 					} else {
-						move(LEFT);
+						m_move=LEFT;
 					}
 					break;
 				case Event::KeyRight:
@@ -199,20 +199,18 @@ void Player::processEvent(const Event & evt) {
 						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
 						switchbrd=board_right();
 					} else {
-						move(RIGHT);
+						m_move=RIGHT;
 					}
 					break;			
 				case 32:
 					if(currentbrd->maxshots==0) {
 						set_msg("Can't shoot in here");
 					} else {
-						shoot(m_heading);
+						m_shoot=m_heading;
 					}
 					break;
 			}
 		}
-
-		m_counter = 1;
 	}
 }
 
@@ -298,7 +296,7 @@ void Player::create() {
   m_shape=2;
   m_fg=15;
   m_bg=1;
-  m_counter = 0;
+  m_shoot = m_move = IDLE;
 	
 	if(player_hidCookie == -1) {
 		printf("Registering player callback\n");
@@ -348,8 +346,6 @@ void whip(struct object *me, int x, int y, char shape) {
 
 void Player::update() {
 	int s=0;
-	
-	if(m_counter > 0) m_counter--;
   
 	if(m_flags&F_SLEEPING) {
     ct->locate(BOARD_X+4,6);
@@ -383,5 +379,15 @@ void Player::update() {
 		m_shape=1;
 		m_fg=15;
 		m_bg=5;
+	}
+	
+	if(m_move!=IDLE) {
+		move(m_move);
+		m_move=IDLE;
+	}
+	
+	if(m_shoot!=IDLE) {
+		shoot(m_shoot);
+		m_shoot=IDLE;
 	}
 }
