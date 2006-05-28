@@ -309,7 +309,7 @@ void Player::message(ZZTObject *them, std::string message) {
 			take_health(10);
 			if(message != "time") {
 				set_msg("Ouch!");
-				zm->setTune("t--ct+cd#");
+				zm->setTune("t--c+c---c+d#");
 				zm->start();
 			}
 			if(currentbrd->reenter && world.health>0) {

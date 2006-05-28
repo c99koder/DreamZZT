@@ -34,11 +34,13 @@ using namespace Tiki::Thread;
 #include "word.h"
 #include "board.h"
 #include "status.h"
+#include "sound.h"
 
 extern struct board_info_node *currentbrd;
 extern struct board_info_node *board_list;
 extern struct world_header world;
 extern int switchbrd;
+extern ZZTMusicStream *zm;
 
 ConsoleText *dt=NULL;
 extern ConsoleText *ct;
@@ -56,6 +58,11 @@ void debug_hidCallback(const Event & evt, void * data);
 
 void *process_debug(void *) {
 	while(1) {
+		debug_cmdline = "";
+		debug("");
+		
+		debug_hidCookie = Hid::callbackReg(debug_hidCallback, NULL);
+		
 		while(debug_cmdline.length() == 0 || (debug_cmdline[debug_cmdline.length() - 1] != '\r')) {
 			Time::sleep(10000);
 		}; //Wait for enter
@@ -63,6 +70,8 @@ void *process_debug(void *) {
 		Hid::callbackUnreg(debug_hidCookie);
 		
 		debug_cmdline.resize(debug_cmdline.length() - 1);
+
+		if(player==NULL) continue;
 		
 		*dt << ">>> " << debug_cmdline.c_str() << endl;
 		if(debug_cmdline == "+dark") {
@@ -151,10 +160,9 @@ void *process_debug(void *) {
 		} else {
 			player->exec(debug_cmdline);
 		}
-		debug_cmdline = "";
-		debug("");
 		
-		debug_hidCookie = Hid::callbackReg(debug_hidCallback, NULL);
+		zm->setTune("i-g");
+		zm->start();
 	}
 }
 
@@ -182,7 +190,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 			dt->color(GREY | HIGH_INTENSITY, BLACK);
 			*dt << "> \x1b[1;32m" << debug_cmdline.c_str() << "\x1b[k"; //clear EOL
 			*dt << "\x1b[u"; // Restore cursor position
-		} else if (evt.key == 13) {
+		} else if (evt.key == 13 && debug_visible) {
 			playerInputActive = true;
 			debug_cmdline += '\r';
 		}
@@ -203,7 +211,6 @@ void debug_init() {
 	dt->color(GREY, BLACK);
 	dt->clear();
 	debug("\n\nDreamZZT 3.0\n(C) 2006 Sam Steele\n\nREADY.\n");	
-	debug_hidCookie = Hid::callbackReg(debug_hidCallback, NULL);
 	
 	debug_thread = new Tiki::Thread::Thread(process_debug,NULL);
 }

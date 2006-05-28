@@ -106,7 +106,11 @@ void ZZTObject::shoot(enum direction dir) {
     currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].under;
     currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=bullet;
 		if(!zm->isPlaying()) {
-			zm->setTune("t+c-c-c");
+			if(m_type==ZZT_PLAYER) {
+				zm->setTune("t+c-c-c");
+			} else {
+				zm->setTune("c-f#");
+			}
 			zm->start();
 		}
   } else {

@@ -84,7 +84,6 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 	
 	if(m_tune_idx >= m_tune.length()) {
 		m_tune = "";
-		m_locked = false;
 		return GDSuccess;
 	}
 	

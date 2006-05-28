@@ -67,7 +67,10 @@ void Duplicator::update() {
       draw_block(x,y);
 			zm->setTune("scdefg");
 			zm->start();			
-    }
+    } else {
+			zm->setTune("--g#f#");
+			zm->start();
+		}
   }
   m_animIndex%=5;
 }

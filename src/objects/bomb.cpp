@@ -62,6 +62,11 @@ void Bomb::update() {
     m_counter--;
     m_cycle=1;
 
+		if(m_counter==3) {
+			zm->setTune("t+++c-c-c-c-c-c");
+			zm->start();
+		}
+		
     for(y=m_position.y-4;y<=m_position.y+4;y++) {
       for(x=m_position.x-7;x<=m_position.x+7;x++) {
         a=((x-m_position.x)*(x-m_position.x))/2.0f;

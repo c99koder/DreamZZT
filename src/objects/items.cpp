@@ -87,6 +87,8 @@ void Transporter::message(ZZTObject *them, std::string message) {
 				break;
 			}
 		} while(x>0 && x<BOARD_X && y>0 && y<BOARD_Y);
+		zm->setTune("tc+d-e+f#-g#+a#c+d");
+		zm->start();
 	}
 }
 	
@@ -155,6 +157,8 @@ void Inventory::message(ZZTObject *them, std::string message) {
     case ZZT_KEY:
       if(world.keys[m_fg-9]==1) {
         sprintf(tmp,"You already have a %s key!",int_to_color(*m_color).c_str());
+				zm->setTune("sc-c");
+				zm->start();
         ok=0;
       } else {
         world.keys[m_fg-9]=1;

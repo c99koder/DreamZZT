@@ -848,6 +848,10 @@ void update_brd() {
 		if(world.torch_cycle>0) {
 			world.torch_cycle--;
 			draw_torch();
+			if(world.torch_cycle==0) {
+				zm->setTune("tc-c-c");
+				zm->start();
+			}
 		}
 		
 		if(world.time>0) {
@@ -856,6 +860,11 @@ void update_brd() {
 	
 		world_sec--;
 		if(world.health==0 && world_sec==0) {
+			if(!zm->isLocked()) {
+				zm->setTune("s.-cd#g+c-ga#+dgfg#+cf----q.c");		
+				zm->lock();
+				zm->start();
+			}
 			set_msg("Game Over - Press ESC");
 		}
 		
@@ -870,7 +879,11 @@ void update_brd() {
 		
 		if(world_sec==0 && currentbrd->time>0) {
 			take_time(1);
-			if(world.time==10) { set_msg("Time is running out!"); }
+			if(world.time==10) { 
+				set_msg("Time is running out!"); 
+				zm->setTune("i.+cfc-f+cfq.c");
+				zm->start();
+			}
 			if(world.time==0) player->message(player,"time");
 		}
 		if(world_sec==0) world_sec=10;

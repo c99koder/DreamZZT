@@ -50,12 +50,10 @@ menu below:\r\
 \r\
 !new;Start a New Game\r\
 !tutorial;DreamZZT Tutorial\r\
-!restore;Restore a Saved Game\r\
-!net;Homepage\r\
 !credits;Credits\r\
 !quit;Quit DreamZZT\r\
 \r\
-(C) 2003 Sam Steele"
+(C) 2006 Sam Steele"
 
 #define CREDITS "$Programming\r\r\
 Sam Steele\r\
@@ -65,7 +63,7 @@ Tim Sweeny - Epic Games\r\
 http://www.epicgames.com/\r\r\
 $ZZT file format specs\r\r\
 Kev Vance\r\r\
-$KallistiOS - Dreamcast\r\r\
+$Tiki\r\r\
 Cryptic Allusion, LLC\r\
 http://www.cadcdev.com/\r\r\
 $Simple DirectMedia Layer - Linux\r\r\
@@ -75,16 +73,12 @@ http://www.libsdl.org/\r\r\
 $Testing, Special Thanks and Shoutouts\r\r\
 Jason Costa - Necrocosm Software\r\
 http://www.necrocosm.com\r\r\
-James Futhey\r\
-http://www.dreamgamer.com/\r\r\
-Gunnar (G-Force)\r\
-http://G-Force420.cjb.net\r\r\
 Chris 'Kilokahn' Haslage\r\
 http://www.kkwow.net\r\r\
 Brian Pinney\r\r\
-$DreamZZT is (C) 2003 Sam Steele\r\
+$DreamZZT is (C) 2006 Sam Steele\r\
 $For more information, please visit\r\
-$http://www.c99.org/dc/\r"
+$http://www.c99.org/dc/dzzt/\r"
 
 void play_zzt(char *filename);
 void net_menu();
@@ -131,7 +125,7 @@ void render() {
 }
 
 extern "C" int tiki_main(int argc, char **argv) {
-  char tmp[50];
+	TextWindow *t, *c;
 	srand(time(NULL));
 		
 	// Init Tiki
@@ -156,29 +150,38 @@ extern "C" int tiki_main(int argc, char **argv) {
 	ct->translate(Vector(320,240,0));
 	
 	debug_init();
-	
-  ct->color(15,1);
-  ct->clear();
-  dzzt_logo();
-	menu_background();
-	
-	//TextWindow t("Main Menu",MAIN_MENU);
-	//t.doMenu();
 
-	/*menu_background();
-	
-	Frame::begin();
-	ct->draw(Drawable::Opaque);
-	Frame::transEnable();
-	ct->draw(Drawable::Trans);
-	Frame::finish();
-	
-	Time::sleep(800000);
-	
-	TextWindow t("Main Menu",MAIN_MENU);
-	t.doMenu();*/
-	
-	play_zzt("town.zzt");
+	while(1) {
+		ct->color(15,1);
+		ct->clear();
+		dzzt_logo();
+		menu_background();
+
+		t = new TextWindow(ct,"Main Menu",MAIN_MENU);
+		t->doMenu();
+		
+		if(!strcmp(t->getLabel(),"quit") || t->getLabel()[0]=='\0') {
+			break;
+		} else if(!strcmp(t->getLabel(),"new")) {
+			play_zzt("town.zzt");
+		} else if(!strcmp(t->getLabel(),"tutorial")) {
+			play_zzt("tutorial.zzt");
+		/*} else if(!strcmp(tmp,"restore")) {
+			play_zzt(select_file(getcwd(tmp,50),"sav",0));
+		} else if(!strcmp(tmp,"net")) {
+			net_menu();*/
+		} else if(!strcmp(t->getLabel(),"credits")) {
+			c = new TextWindow(ct,"Credits",CREDITS);
+			c->doMenu();
+			
+			delete c;
+		}
+		
+		delete t;
+		
+		if(switchbrd==-2) break;
+	}
+
 	if(zm!=NULL && zm->isPlaying()) zm->stop();
 	Tiki::shutdown();
   return 0;

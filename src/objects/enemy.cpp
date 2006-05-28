@@ -125,6 +125,8 @@ void Enemy::message(ZZTObject *them, std::string message) {
     if(message == "touch" || message == "thud") {
       them->message(this,"shot");
     } 
+		zm->setTune("t+c---c++++c--c");
+		zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
     remove_from_board(currentbrd,this);
   }
