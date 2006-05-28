@@ -150,8 +150,8 @@ void Conveyer::update() {
     m_animIndex++;
     m_animIndex%=4;
   } else {
+    if(m_animIndex==0) m_animIndex=4;
     m_animIndex--;
-    if(m_animIndex<0) m_animIndex=3;
   }
   m_shape=spin_anim[m_animIndex];
   draw();

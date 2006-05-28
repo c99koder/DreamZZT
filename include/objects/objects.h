@@ -30,8 +30,7 @@ public:
 	void update();
 	void message(ZZTObject *them, std::string msg);
 private:
-	int m_counter;
-	int m_anim;
+	int m_counter, m_anim;
 };
 	
 //BOMB
@@ -81,7 +80,8 @@ public:
 		m_bg = 0;
 		m_owner = 0;
 	}
-	void setParam(int arg, int val);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
 	void update();
 	void message(ZZTObject *them, std::string msg);
 private:
@@ -149,7 +149,8 @@ public:
 	ZZTOOP(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
 		m_walk = IDLE;
 	}
-	void setParam(int arg, int val);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);
@@ -187,7 +188,8 @@ public:
 class Passage : public ZZTObject {
 public:
 	Passage(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
-	void setParam(int arg, int val);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
 	void create();
 	void message(ZZTObject *them, std::string msg);
 private:
@@ -206,12 +208,12 @@ public:
 		m_animIndex = 0;
 		m_rate = 0;
 	}
-	void setParam(int arg, int val);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
 	void create();
 	void update();
 private:
-	int m_animIndex;
-	int m_rate;
+	int m_animIndex, m_rate;
 };
 
 //PLAYER

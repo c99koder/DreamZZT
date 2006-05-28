@@ -27,6 +27,23 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <machine/endian.h>
+#include <algorithm>
+
+#define ByteSwap5(x) ByteSwap((unsigned char *) &x,sizeof(x))   
+
+inline void ByteSwap(void * b, int n)
+{
+#if BYTE_ORDER == BIG_ENDIAN
+	register int i = 0;
+	register int j = n-1;
+	while (i<j)
+	{
+		std::swap(((unsigned char *)b)[i], ((unsigned char *)b)[j]);
+		i++, j--;
+	}
+#endif
+}
 
 using namespace Tiki;
 using namespace Tiki::GL;
@@ -117,149 +134,6 @@ void spinner_clear() {
   ct->color(15,1);
   ct->printf("            ");
 }
-
-/*void write_object(int fd, struct object *obj, struct object *under) {
-	char ut,uc,x,y;
-	//printf("%s\n",obj->name);
-	ut=under->type;
-	uc=under->fg+(16*under->bg);
-	x=obj->x+1;
-	y=obj->y+1;
-	write(fd,&x,1);
-	write(fd,&y,1);
-	write(fd,&obj->xstep,2);
-	write(fd,&obj->ystep,2);
-	write(fd,&obj->cycle,2);
-	write(fd,&obj->arg1,1);
-	write(fd,&obj->arg2,1);
-	write(fd,&obj->arg3,1);
-	write(fd,&obj->arg4,4);
-	write(fd,&ut,1);
-	write(fd,&uc,1);
-	write(fd,"\0\0\0\0",4);
-	write(fd,&obj->progpos,2);
-	write(fd,&obj->proglen,2);
-	//printf("Proglen: %i\n",obj->proglen);
-	write(fd,"\0\0\0\0\0\0\0\0",8);
-	write(fd,obj->prog,obj->proglen);
-}
-
-void save_game(char *filename) {
-	int fd,i;
-	short int x,y,z;
-	unsigned char c,code,color,code2,color2;
-	struct board_info_node *curbrd=board_list;
-	struct object *curplayer;
-		
-#ifdef DREAMCAST
-  fd=fs_open(filename,O_WRONLY|O_TRUNC);
-#endif
-#ifdef WIN32
-  fd=open(filename,O_WRONLY|O_BINARY,S_IREAD|S_IWRITE);
-  if(fd==-1) fd=open(filename,O_WRONLY|O_BINARY|O_CREAT,S_IREAD|S_IWRITE);
-#endif
-#ifdef LINUX
-  fd=open(filename,O_WRONLY,S_IRWXU);
-  if(fd==-1) fd=open(filename,O_WRONLY|O_CREAT,S_IRWXU);
-#endif
-#ifdef MSDOS
-  fd=open(filename,O_WRONLY|O_BINARY);
-  if(fd==-1) fd=open(filename,O_WRONLY|O_BINARY|O_CREAT);
-#endif
-	
-	if(fd==-1) {
-		ct->printf("Save failed\n");
-		return;
-	}
-  spinner("Saving");
-	world.saved=1;	
-	write(fd,&world,sizeof(world));
-	lseek(fd,0x200,SEEK_SET);
-
-	while(curbrd!=NULL) {
-		spinner("Saving");
-		write(fd,"\0\0",2); //size (int bytes) of the board
-		c=strlen(curbrd->title);
-		write(fd,&c,1);
-		write(fd,curbrd->title,34);	
-		for(x=0;x<16;x++) {
-			write(fd,"\0",1);
-		}
-		c=0;
-		code=curbrd->board[0][0].obj->getType();
-		if(code>=ZZT_BLUE_TEXT && code <=ZZT_WHITE_TEXT) {
-			color=curbrd->board[0][0].obj->shape;
-		} else {
-			color=curbrd->board[0][0].obj->fg+(16*curbrd->board[0][0].obj->bg);
-		}
-		z=0;
-		for(y=0;y<BOARD_Y;y++) {
-			for(x=0;x<BOARD_X;x++) {
-				code2=curbrd->board[x][y].obj->getType();
-				if(code2>=ZZT_BLUE_TEXT && code2<=ZZT_WHITE_TEXT) {
-					color2=curbrd->board[x][y].obj->shape;
-				} else {
-					color2=curbrd->board[x][y].obj->fg+(16*curbrd->board[x][y].obj->bg);
-				}
-				if(c>=255 || code!=code2 || color!= color2) {
-					write(fd,&c,1);
-					write(fd,&code,1);
-					write(fd,&color,1);
-					//printf("Writing %i of %i (%i)\n",c,code,color);
-					z+=c; c=0;
-					code=curbrd->board[x][y].obj->getType();
-					if(code>=ZZT_BLUE_TEXT && code <=ZZT_WHITE_TEXT) {
-						color=curbrd->board[x][y].obj->shape;
-					} else {
-						color=curbrd->board[x][y].obj->fg+(16*curbrd->board[x][y].obj->bg);
-					}
-				}
-				c++;
-			}
-		}
-		if(c>0) {
-			z+=c;
-			write(fd,&c,1);
-			write(fd,&code,1);
-			write(fd,&color,1);
-		}
-		//printf("z: %i\n",z);
-		write(fd,&curbrd->maxshots,1);
-		write(fd,&curbrd->dark,1);
-		write(fd,&curbrd->board_up,1);
-		write(fd,&curbrd->board_down,1);
-		write(fd,&curbrd->board_left,1);
-		write(fd,&curbrd->board_right,1);
-		write(fd,&curbrd->reenter,1);
-		x=strlen(curbrd->message);
-		write(fd,&x,1);
-		write(fd,curbrd->message,60);
-		write(fd,&curbrd->time,2);
-		for(x=0;x<16;x++) write(fd,"\0",1);
-		z=0;
-		for(y=0;y<BOARD_Y;y++) {
-			for(x=0;x<BOARD_X;x++) {
-				if(curbrd->board[x][y].obj->flags&F_OBJECT) {
-					//printf("Object: %s\n",curbrd->board[x][y].obj->name);
-					z++;
-				}
-				if(curbrd->board[x][y].obj->getType()==ZZT_PLAYER) curplayer=curbrd->board[x][y].obj;
-			}
-		}
-		z--;
-		printf("Writing %i objects\n",z);
-		write(fd,&z,2);
-		write_object(fd,curplayer,curbrd->board[curplayer->x][curplayer->y].under);
-		for(y=0;y<BOARD_Y;y++) {
-			for(x=0;x<BOARD_X;x++) {
-				if(curbrd->board[x][y].obj->getType()!=ZZT_PLAYER && curbrd->board[x][y].obj->flags&F_OBJECT) write_object(fd,curbrd->board[x][y].obj,curbrd->board[x][y].under);
-			}
-		}		
-		curbrd=curbrd->next;
-	}
-	close(fd);
-  spinner_clear();
-}*/
 
 int is_empty(struct board_info_node *curbrd, int x, int y) {
 	if(x<0 || y<0 || x>=BOARD_X || y >= BOARD_Y) return 0;
@@ -583,11 +457,21 @@ int board_right() {
 }
 
 int read_zzt_int(File &fd) {
-	unsigned char a,b;
+	/*unsigned char a,b;
 	fd.read(&a,1);
 	fd.read(&b,1);
 	
-	return (b*256) + a;
+	return (b*256) + a;*/
+	short int i;
+	
+	fd.read(&i,2);
+	ByteSwap(&i,2);
+	return i;
+}
+
+void write_zzt_int(File &fd, short int i) {
+	ByteSwap(&i,2);
+	fd.write(&i,2);
 }
 
 void load_objects(File &fd, struct board_info_node *board) {
@@ -834,7 +718,153 @@ int load_zzt(char *filename, int titleonly) {
   return 1;
 }
 
-//void delay(float seconds);
+void write_object(File &fd, ZZTObject *obj, ZZTObject *under) {
+	unsigned char ut,uc,x,y,j;
+	
+	if(under!=NULL) {
+		ut=under->getType();
+		uc=under->getFg()+(16*under->getBg());
+	} else {
+		ut=ZZT_EMPTY;
+		uc=0;
+	}
+	x=obj->getPosition().x+1;
+	y=obj->getPosition().y+1;
+	//printf("Storing parameters at %i, %i for a %s (%i)\n",x,y,obj->getName().c_str(),obj->isValid());
+	fd.write(&x,1);
+	fd.write(&y,1);
+	write_zzt_int(fd,obj->getStep().x);
+	write_zzt_int(fd,obj->getStep().y);
+	write_zzt_int(fd,obj->getCycle());
+	for(int i=0; i<3; i++) {
+		j = obj->getParam(i+1);
+		fd.write(&j,1);
+	}
+	fd.write("\0\0\0\0",4);
+	fd.write(&ut,1);
+	fd.write(&uc,1);
+	fd.write("\0\0\0\0",4);
+	write_zzt_int(fd,obj->getProgPos());
+	write_zzt_int(fd,obj->getProgLen());
+	fd.write("\0\0\0\0\0\0\0\0",8);
+	fd.write(obj->getProg().c_str(),obj->getProgLen());
+}
+
+void save_game(char *filename) {
+	int i;
+	short int x,y,z;
+	unsigned char c,code,color,code2,color2;
+	struct board_info_node *curbrd=board_list;
+	ZZTObject *curplayer;
+		
+  File fd(filename,"wb");
+	
+  spinner("Saving");
+	world.saved=1;	
+	
+	write_zzt_int(fd,world.magic);
+	write_zzt_int(fd,world.board_count);
+	write_zzt_int(fd,world.ammo);
+	write_zzt_int(fd,world.gems);
+	fd.write(world.keys,7);
+	write_zzt_int(fd,world.health);
+	write_zzt_int(fd,world.start);
+	write_zzt_int(fd,world.torches);
+	write_zzt_int(fd,world.torch_cycle);
+	write_zzt_int(fd,world.energizer_cycle);
+	write_zzt_int(fd,world.pad1);
+	write_zzt_int(fd,world.score);
+	fd.write(&world.title,sizeof(zzt_string));
+	fd.write(world.flag,sizeof(zzt_string) * 10);
+	write_zzt_int(fd,world.time);
+	write_zzt_int(fd,world.saved);
+	
+	fd.seek(0x200,SEEK_SET);
+	
+	while(curbrd!=NULL) {
+		printf("Writing %s...\n",curbrd->title);
+		fd.write("\0\0",2); //size (int bytes) of the board, unused by DreamZZT
+		c=strlen(curbrd->title);
+		fd.write(&c,1);
+		fd.write(curbrd->title,34);	
+		for(x=0;x<16;x++) {
+			fd.write("\0",1);
+		}
+		c=0;
+		code=curbrd->board[0][0].obj->getType();
+		if(code>=ZZT_BLUE_TEXT && code <=ZZT_WHITE_TEXT) {
+			color=curbrd->board[0][0].obj->getShape();
+		} else {
+			color=curbrd->board[0][0].obj->getFg()+(16*curbrd->board[0][0].obj->getBg());
+		}
+		z=0;
+		for(y=0;y<BOARD_Y;y++) {
+			for(x=0;x<BOARD_X;x++) {
+				code2=curbrd->board[x][y].obj->getType();
+				if(code2>=ZZT_BLUE_TEXT && code2<=ZZT_WHITE_TEXT) {
+					color2=curbrd->board[x][y].obj->getShape();
+				} else {
+					color2=curbrd->board[x][y].obj->getFg()+(16*curbrd->board[x][y].obj->getBg());
+				}
+				if(c>=255 || code!=code2 || color!= color2) {
+					fd.write(&c,1);
+					fd.write(&code,1);
+					fd.write(&color,1);
+					z+=c; c=0;
+					code=curbrd->board[x][y].obj->getType();
+					if(code>=ZZT_BLUE_TEXT && code <=ZZT_WHITE_TEXT) {
+						color=curbrd->board[x][y].obj->getShape();
+					} else {
+						color=curbrd->board[x][y].obj->getFg()+(16*curbrd->board[x][y].obj->getBg());
+					}
+				}
+				c++;
+			}
+		}
+		if(c>0) {
+			z+=c;
+			fd.write(&c,1);
+			fd.write(&code,1);
+			fd.write(&color,1);
+		}
+		//printf("z: %i\n",z);
+		fd.write(&curbrd->maxshots,1);
+		fd.write(&curbrd->dark,1);
+		fd.write(&curbrd->board_up,1);
+		fd.write(&curbrd->board_down,1);
+		fd.write(&curbrd->board_left,1);
+		fd.write(&curbrd->board_right,1);
+		fd.write(&curbrd->reenter,1);
+		x=strlen(curbrd->message);
+		fd.write(&x,1);
+		fd.write(curbrd->message,60);
+		write_zzt_int(fd,curbrd->time);
+		for(x=0;x<16;x++) fd.write("\0",1);
+		z=0;
+		for(y=0;y<BOARD_Y;y++) {
+			for(x=0;x<BOARD_X;x++) {
+				if(curbrd->board[x][y].obj->getFlags()&F_OBJECT) {
+					//printf("Object: %s\n",curbrd->board[x][y].obj->name);
+					z++;
+				}
+				if(curbrd->board[x][y].obj->getType()==ZZT_PLAYER) curplayer=curbrd->board[x][y].obj;
+			}
+		}
+		z--;
+		printf("Writing %i objects\n",z);
+		write_zzt_int(fd,z);
+
+		write_object(fd,curplayer,curbrd->board[(int)curplayer->getPosition().x][(int)curplayer->getPosition().y].under);
+		for(y=0;y<BOARD_Y;y++) {
+			for(x=0;x<BOARD_X;x++) {
+				if(curbrd->board[x][y].obj != NULL && curbrd->board[x][y].obj->getType()!=ZZT_PLAYER && curbrd->board[x][y].obj->getFlags()&F_OBJECT) write_object(fd,curbrd->board[x][y].obj,curbrd->board[x][y].under);
+			}
+		}		
+		curbrd=curbrd->next;
+	}
+	fd.close();
+  spinner_clear();
+}
 
 void update_brd() {
   ZZTObject *o=NULL;

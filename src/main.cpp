@@ -49,6 +49,7 @@ Please select an option from the\r\
 menu below:\r\
 \r\
 !new;Start a New Game\r\
+!restore;Restore a Saved Game\r\
 !tutorial;DreamZZT Tutorial\r\
 !credits;Credits\r\
 !quit;Quit DreamZZT\r\
@@ -166,9 +167,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 			play_zzt("town.zzt");
 		} else if(!strcmp(t->getLabel(),"tutorial")) {
 			play_zzt("tutorial.zzt");
-		/*} else if(!strcmp(tmp,"restore")) {
-			play_zzt(select_file(getcwd(tmp,50),"sav",0));
-		} else if(!strcmp(tmp,"net")) {
+		} else if(!strcmp(t->getLabel(),"restore")) {
+			play_zzt("saved.sav");
+		/*} else if(!strcmp(tmp,"net")) {
 			net_menu();*/
 		} else if(!strcmp(t->getLabel(),"credits")) {
 			c = new TextWindow(ct,"Credits",CREDITS);
@@ -259,6 +260,11 @@ void play_zzt(char *filename) {
       switchbrd=-1;
     } else if(switchbrd==-2) {
 			break;
+		} else if(switchbrd==-3) {
+			//menu
+		} else if(switchbrd==-4) {
+			save_game("saved.sav");
+			switchbrd=-1;
 		}
   }
 	ct->color(15,1);
@@ -268,74 +274,6 @@ void play_zzt(char *filename) {
 }
 
 #if 0
-
-void status(char *text) {
-  int x;
-  ct->locate(0,23);
-  ct->color(0,7);
-  for(x=0;x<BOARD_X;x++) {
-    ct->printf(" ");
-  }
-  ct->locate(0,23);
-  ct->printf("%s",text);
-  video_refresh();
-  video_refresh();
-}
-
-
-
-
-
-#ifdef NDEBUG //win32 release
-WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-#else
-int main() {
-#endif
-  char tmp[50];
-	char input[5][2][50];
-  int x,y;
-#ifdef DREAMCAST
-  fs_chdir("/rd");
-#endif
-#ifdef LINUX
-	chdir(PACKAGE_DATA_DIR);
-#endif
-  c99_sys_init("DreamZZT 3.0");
-  load_font("pc.fnt");
-  init_screen();
-#ifdef NET
-  c99_net_init();
-#endif
-  objects_init();
-  ct->color(15,1);
-  clear_screen();
-  dzzt_logo();
-	menu_background();
-	/*text_window("Login","Please enter your DZZT.NET username and\r\
-password below:\r\r\
-%username;c99koder:Username:\r\
-%password;:Password:\r\r\
-!login;Login\r",tmp,input);*/
-	
-	while(1) {
-		menu_background();
-    text_window("Main Menu",MAIN_MENU,tmp,NULL);
-
-    if(!strcmp(tmp,"quit") || tmp[0]=='\0') {
-      break;
-    } else if(!strcmp(tmp,"new")) {
-      play_zzt(select_file(getcwd(tmp,50),"zzt",0));
-    } else if(!strcmp(tmp,"tutorial")) {
-      play_zzt("tutorial.zzt");
-    } else if(!strcmp(tmp,"restore")) {
-      play_zzt(select_file(getcwd(tmp,50),"sav",0));
-    } else if(!strcmp(tmp,"net")) {
-      net_menu();
-    } else if(!strcmp(tmp,"credits")) {
-      text_window("Credits",CREDITS,tmp,NULL);
-    }
-  }
-}
 
 void net_menu() {
 #ifdef NET

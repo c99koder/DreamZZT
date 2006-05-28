@@ -37,8 +37,12 @@ extern ZZTMusicStream *zm;
 extern struct board_info_node *currentbrd;
 int forestmsg=0,invismsg=0,watermsg=0;
 
-void Laser::setParam(int arg, int val) {
+void Laser::setParam(int arg, unsigned char val) {
 	if(arg==1) m_time = val;
+}
+
+unsigned char Laser::getParam(int arg) {
+	if(arg == 1) return m_time;
 }
 
 void Laser::update() {
@@ -48,10 +52,16 @@ void Laser::update() {
 	}
 }
 
-void Blink::setParam(int arg, int val) {
+void Blink::setParam(int arg, unsigned char val) {
 	if(arg==1) m_start = val;
 	if(arg==2) m_fire = val;
 }
+
+unsigned char Blink::getParam(int arg) {
+	if(arg == 1) return m_start;
+	if(arg == 2) return m_fire;
+}
+
 
 void Blink::create() {
 	m_counter = m_start;

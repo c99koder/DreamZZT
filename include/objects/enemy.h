@@ -64,7 +64,8 @@ public:
 		}
 	}
 		
-	void setParam(int arg, int val) { if(arg==1) m_intel = val; }
+	void setParam(int arg, unsigned char val) { if(arg==1) m_intel = val; }
+	unsigned char getParam(int arg) { if(arg==1) return m_intel; }
 	void message(ZZTObject *them, std::string msg);
 protected:
 	int m_intel;
@@ -89,7 +90,8 @@ public:
 		m_restCounter=0;
 		m_moveCounter=0;
 	}
-	void setParam(int arg, int val);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
 	void update();
 private:
 	int m_rest, m_restCounter, m_moveCounter;
@@ -100,7 +102,8 @@ public:
 	Tiger(int type, int x, int y, int shape, int flags, std::string name) : Lion(type, x, y, shape, flags, name) { 
 		m_rate = 0;
 	}
-	void setParam(int arg, int val);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
 	void update();
 private:
 	int m_rate;
@@ -112,7 +115,8 @@ public:
 		m_rate = 0;
 		m_animIndex = 0;
 	}
-	void setParam(int arg, int val);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
 	void update();
 private:
 	int m_rate, m_animIndex;

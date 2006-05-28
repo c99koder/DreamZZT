@@ -45,8 +45,14 @@ void bullet_sound_init() {
 #endif
 }
 
-void Bullet::setParam(int arg,int value) {
-	if(arg == 1) m_owner = value;
+void Bullet::setParam(int arg, unsigned char val) {
+	if(arg == 1) m_owner = val;
+	if(arg == 2) m_heading = (direction)val;
+}
+
+unsigned char Bullet::getParam(int arg) {
+	if(arg == 1) return m_owner;
+	if(arg == 2) return m_heading;
 }
 
 void Bullet::update() {
@@ -103,7 +109,7 @@ void ZZTObject::shoot(enum direction dir) {
     bullet->setParam(1,m_type==ZZT_PLAYER?0:1);
     bullet->setHeading(dir);
 	  bullet->setCycle(1);
-    currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].under;
+    currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].under=currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj;
     currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=bullet;
 		if(!zm->isPlaying()) {
 			if(m_type==ZZT_PLAYER) {

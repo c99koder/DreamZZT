@@ -74,6 +74,9 @@ void Player::processEvent(const Event & evt) {
 	}
 	if (evt.type == Hid::Event::EvtKeyDown) {
 		switch(evt.key) {
+			case 's':
+				switchbrd=-4;
+				break;
 			case 't':
 				if(world.torches>0) {
 					if(currentbrd->dark==1) {

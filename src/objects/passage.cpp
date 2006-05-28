@@ -35,8 +35,12 @@ extern int switchbrd;
 
 extern ZZTMusicStream *zm;
 
-void Passage::setParam(int arg, int val) {
+void Passage::setParam(int arg, unsigned char val) {
 	if(arg==3) m_dest = val;
+}
+
+unsigned char Passage::getParam(int arg) {
+	if(arg == 3) return m_dest;
 }
 
 void Passage::message(ZZTObject *them, std::string message) {

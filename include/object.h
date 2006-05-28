@@ -24,7 +24,7 @@
 #include <Tiki/file.h>
 using namespace Tiki::Math;
 
-enum direction { LEFT, RIGHT, UP, DOWN, IDLE };
+enum direction { IDLE, LEFT, RIGHT, UP, DOWN };
 
 class ZZTObject {
 public:
@@ -79,12 +79,12 @@ public:
 	direction getHeading() { return m_heading; }
 	std::string getProg() { return m_prog; }
 	int getProgLen() { return m_proglen; }
+	int getProgPos() { return m_progpos; }
 	
 	void draw();
-	//void load(Tiki::File &f);
-	//void save(Tiki::File &f);
 	
-	virtual void setParam(int arg, int value) { };
+	virtual void setParam(int arg, unsigned char val) { };
+	virtual unsigned char getParam(int arg) { return 0; }
 	virtual void update() { };
 	virtual void message(ZZTObject *from, std::string msg) { };
 	virtual void create() { };

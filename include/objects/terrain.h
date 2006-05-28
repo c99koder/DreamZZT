@@ -155,7 +155,8 @@ private:
 class Blink : public ZZTObject {
 public:
 	Blink(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
-	void setParam(int arg, int val);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
 	void create();
 	void update();
 private:
@@ -165,7 +166,8 @@ private:
 class Laser : public ZZTObject {
 public:
 	Laser(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
-	void setParam(int arg, int val);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
 	void update();
 private:
 	int m_time;

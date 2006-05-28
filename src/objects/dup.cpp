@@ -38,8 +38,12 @@ extern struct board_info_node *currentbrd;
 
 char dupanim[5]={'.',7,'o','O','.' };
 
-void Duplicator::setParam(int arg, int val) {
+void Duplicator::setParam(int arg, unsigned char val) {
 	if(arg==2) m_rate = val;
+}
+
+unsigned char Duplicator::getParam(int arg) {
+	if(arg==2) return m_rate;
 }
 
 void Duplicator::update() {

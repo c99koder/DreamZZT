@@ -44,8 +44,14 @@ extern Player *player;
 extern ConsoleText *ct;
 extern ZZTMusicStream *zm;
 
-void ZZTOOP::setParam(int arg, int val) {
+void ZZTOOP::setParam(int arg, unsigned char val) {
 	if(arg == 1) m_shape = val;
+	if(arg == 3 && val < 5) m_walk = (direction)val;
+}
+
+unsigned char ZZTOOP::getParam(int arg) {
+	if(arg == 1) return m_shape;
+	if(arg == 3) return (int)m_walk;
 }
 
 void ZZTOOP::create() {
@@ -132,7 +138,7 @@ void ZZTOOP::send(std::string cmd) {
       for(x=0;x<BOARD_X;x++) {
         obj=currentbrd->board[x][y].obj;
         if(obj->getType()==ZZT_OBJECT) {
-          if(obj==this && target != "others") {
+          if(!(target == "others" && obj==this)) {
             ((ZZTOOP *)obj)->zzt_goto(label);
           }
         }

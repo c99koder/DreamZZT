@@ -52,10 +52,16 @@ void Bear::update() {
   }
 }
 
-void Ruffian::setParam(int arg, int val) {
+void Ruffian::setParam(int arg, unsigned char val) {
 	if(arg == 2) m_rest = val;
 
 	Enemy::setParam(arg,val);
+}
+
+unsigned char Ruffian::getParam(int arg) {
+	if(arg == 2) return m_rest;
+	
+	return Enemy::getParam(arg);
 }
 
 void Ruffian::update() {
@@ -75,10 +81,16 @@ void Ruffian::update() {
 
 char gun[4] = {27,24,26,25};
 
-void SpinningGun::setParam(int arg, int val) {
+void SpinningGun::setParam(int arg, unsigned char val) {
 	if(arg == 2) m_rate = val;
 	
 	Enemy::setParam(arg,val);	
+}
+
+unsigned char SpinningGun::getParam(int arg) {
+	if(arg == 2) return m_rate;
+	
+	return Enemy::getParam(arg);
 }
 
 void SpinningGun::update() {
@@ -101,10 +113,16 @@ void SpinningGun::update() {
   }
 }
 
-void Tiger::setParam(int arg, int val) {
+void Tiger::setParam(int arg, unsigned char val) {
 	if(arg == 2) m_rate = val;
 	
 	Enemy::setParam(arg,val);
+}
+
+unsigned char Tiger::getParam(int arg) {
+	if(arg == 2) return m_rate;
+	
+	return Enemy::getParam(arg);
 }
 
 void Tiger::update() {

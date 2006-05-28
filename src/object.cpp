@@ -42,7 +42,7 @@ extern ZZTMusicStream *zm;
 extern struct world_header world;
 extern ConsoleText *ct;
 
-int dir_to_delta[4] = { -1,1,-1,1 };
+int dir_to_delta[5] = { 0,-1,1,-1,1 };
 extern struct board_info_node *currentbrd;
 
 int id_pool=0;
@@ -382,6 +382,8 @@ ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string n
   m_updated=1;
 	m_pushed=0;
 	m_progpos=0;
+	m_prog="";
+	m_proglen=0;
 	
 	m_isValid = true;
 }

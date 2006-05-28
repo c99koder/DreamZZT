@@ -167,6 +167,9 @@ void *process_debug(void *) {
 }
 
 void debug_hidCallback(const Event & evt, void * data) {
+	ct->color(WHITE|HIGH_INTENSITY, BLUE);
+	ct->locate(65,23);
+
 	if (evt.type == Hid::Event::EvtKeyDown) {
 		if(evt.key == '`') {
 			if(debug_visible==0) {
@@ -181,6 +184,9 @@ void debug_hidCallback(const Event & evt, void * data) {
 				ct->setTranslate(Vector(320,240,0));
 				dt->setTranslate(Vector(1024,360,0));
 				playerInputActive = true;
+				ct->setANSI(true);
+				*ct << "\x1b[k"; // clear EOL
+				ct->setANSI(false);
 			}
 		} else if (evt.key >= 32 && evt.key <= 128 && debug_visible) {
 			debug_cmdline += evt.key;
@@ -197,8 +203,6 @@ void debug_hidCallback(const Event & evt, void * data) {
 	}
 	
 	if(debug_visible) {
-		ct->color(WHITE|HIGH_INTENSITY, BLUE);
-		ct->locate(65,23);
 		*ct << "X: " << (int)player->getPosition().x << " Y: " << (int)player->getPosition().y << "    ";
 	}
 }
