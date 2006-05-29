@@ -1,5 +1,8 @@
 2006-05-29  sam
 
+	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
+	  DreamZZT/trunk/Info.plist: Update icon file for Mac OS
+	* DreamZZT/trunk/ChangeLog: Generate ChangeLog from svn history
 	* DreamZZT/trunk/src/DreamZZT.cpp: Allow linux to find its data
 	  files
 	* DreamZZT/trunk/loki/bin/Linux/x86/glibc-2.1/dreamzzt: Remove
