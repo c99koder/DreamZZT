@@ -27,13 +27,57 @@
 static char szAppName[] = "DreamZZT";
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 #else
+#if TIKI_PLAT == TIKI_SDL
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
+
 extern "C" int tiki_main(int argc, char *argv[]);
 int main(int argc, char *argv[])
 #endif
 {
 #if TIKI_PLAT != TIKI_WIN32
-	return tiki_main(argc, argv);
+#if TIKI_PLAT == TIKI_SDL
+//Locate our data files by searching PATH for our binary
+//and following the symblink to our installed location
+  char text[200];
+  char text2[200];
+  int len,cnt=0;
+
+  if(readlink(argv[0],text,100)==-1) strcpy(text,argv[0]);
+
+  if(text[0]!='/' && text[0]!='.') {
+    char *val;
+    struct stat s;
+
+    val=strtok(getenv("PATH"),":");
+    do {
+      sprintf(text2,"%s/%s",val,argv[0]);
+
+      if(lstat(text2,&s)!=-1) {
+        if(S_ISLNK(s.st_mode)) {
+          readlink(text2,text,100);
+        } else {
+          strcpy(text,text2);
+        }
+        break;
+      }
+      val=strtok(NULL,":");
+    } while(val!=NULL);
+  }
+
+  for(len=strlen(text);len>=0;len--) {
+    if(text[len]=='/') {
+      text[len]='\0';
+      break;
+    }
+  }
+
+  chdir(text);
+#endif
+
+  return tiki_main(argc, argv);
 #else
-	return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
+  return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
 #endif
 }
