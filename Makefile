@@ -7,10 +7,16 @@ src/objects/passage.o src/objects/terrain.o src/objects/bullet.o src/objects/ene
 src/objects/dup.o src/objects/zztoop.o src/objects/pusher.o src/objects/bomb.o src/objects/items.o \
 src/objects/conveyer.o src/objects/player.o
 
-all: $(OBJS)
-	$(CXX) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -o dreamzzt
+all: dreamzzt
 
+dreamzzt: $(OBJS)
+	$(CXX) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -o dreamzzt
+	
 clean:
 	-rm -f $(OBJS) dreamzzt
+
+package: dreamzzt
+	cp dreamzzt loki/bin/Linux/x86/glibc-2.1 
+	~/loki_setup/makeself/makeself.sh --follow loki dreamzzt-$(VERSION).run dreamzzt ./setup.sh
 
 include $(TIKI_DIR)/$(TIKI_PLAT)/Makefile.rules

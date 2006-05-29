@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<install product="DreamZZT" desc="DreamZZT" version="3.0.4" 
+	uninstall="uninstall.sh" 
+	path="/usr/local/games"
+        update_url="http://www.c99.org/dc/dzzt/updates.txt">
+
+   <option install="true" required="true">
+    Base Install
+    <lang lang="fr">Installation de base</lang>
+    <lang lang="it">Installazione base</lang>
+    <lang lang="de">Minimale Installation</lang>
+    <help          >Required for play</help>
+    <help lang="fr">Requis pour jouer</help>
+    <help lang="es">Se necesita para jugar</help>
+    <help lang="it">È necessaria per giocare</help>
+    <help lang="de">Zum Spielen benötigt</help>
+
+    <binary arch="x86" libc="glibc-2.1" symlink="dreamzzt" icon="icon.xpm" play="yes">
+      dreamzzt
+    </binary>
+    <files>
+      zzt-ascii.png
+      town.zzt
+      tutorial.zzt
+      icon.xpm
+    </files>
+   </option>
+</install>
