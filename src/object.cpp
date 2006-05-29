@@ -253,7 +253,7 @@ bool ZZTObject::move(enum direction dir, bool trying) {
   if(x>=BOARD_X) { x=BOARD_X-1; }
   if(y>=BOARD_Y) { y=BOARD_Y-1; }
   //printf("dir: %i oldx: %i oldy: %i newx: %i newy: %i\n",dir,m_position.x,m_position.y,x,y);
-  if(is_empty(dir) || (m_type==ZZT_BULLET && board->board[x][y].obj->getType()==ZZT_WATER)) {
+  if((m_type != ZZT_SHARK && is_empty(dir)) || ((m_type==ZZT_BULLET || m_type==ZZT_SHARK) && board->board[x][y].obj->getType()==ZZT_WATER)) {
 		//printf("Move successful\n");
     m_position.x=x;
     m_position.y=y;

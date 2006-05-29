@@ -1,5 +1,5 @@
 
-//Generated on Sun May 21 18:20:17 EDT 2006 by sam 
+//Generated on Sun May 28 19:47:05 EDT 2006 by sam 
 
 int str_to_obj(std::string str) { 
   if(str == "") {
@@ -86,6 +86,8 @@ int str_to_obj(std::string str) {
     return ZZT_WHITE_TEXT;
   } else if(str.find(ZZT_LION_NAME) == 0) {
     return ZZT_LION;
+  } else if(str.find(ZZT_SHARK_NAME) == 0) {
+    return ZZT_SHARK;
   } else if(str.find(ZZT_BEAR_NAME) == 0) {
     return ZZT_BEAR;
   } else if(str.find(ZZT_RUFFIAN_NAME) == 0) {
@@ -185,6 +187,8 @@ ZZTObject *create_object(int type, int x, int y) {
     return new ZZT_WHITE_TEXT_CLASS(type, x, y, ZZT_WHITE_TEXT_SHAPE, ZZT_WHITE_TEXT_FLAGS, ZZT_WHITE_TEXT_NAME);
   } else if(type == ZZT_LION) {
     return new ZZT_LION_CLASS(type, x, y, ZZT_LION_SHAPE, ZZT_LION_FLAGS, ZZT_LION_NAME);
+  } else if(type == ZZT_SHARK) {
+    return new ZZT_SHARK_CLASS(type, x, y, ZZT_SHARK_SHAPE, ZZT_SHARK_FLAGS, ZZT_SHARK_NAME);
   } else if(type == ZZT_BEAR) {
     return new ZZT_BEAR_CLASS(type, x, y, ZZT_BEAR_SHAPE, ZZT_BEAR_FLAGS, ZZT_BEAR_NAME);
   } else if(type == ZZT_RUFFIAN) {
@@ -284,6 +288,8 @@ ZZTObject *create_copy(ZZTObject *source) {
     return new ZZT_WHITE_TEXT_CLASS(*(ZZT_WHITE_TEXT_CLASS *)source);
   } else if(source->getType() == ZZT_LION) {
     return new ZZT_LION_CLASS(*(ZZT_LION_CLASS *)source);
+  } else if(source->getType() == ZZT_SHARK) {
+    return new ZZT_SHARK_CLASS(*(ZZT_SHARK_CLASS *)source);
   } else if(source->getType() == ZZT_BEAR) {
     return new ZZT_BEAR_CLASS(*(ZZT_BEAR_CLASS *)source);
   } else if(source->getType() == ZZT_RUFFIAN) {
