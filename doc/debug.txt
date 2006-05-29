@@ -1,0 +1,35 @@
+DreamZZT Debug Console
+======================
+
+DreamZZT includes a debug console that allows you to view ZZT-OOP as it runs,
+as well as perform various operations on the game world.  To show or hide the
+debug console, press the tilde key during a game.
+
+Below is a description of the currently supported debug commands.  The debug
+console also allows you to execute ZZT-OOP statements directly, which will
+not be covered here.
+
++ammo / -ammo: Increases or decreases the player's ammo by 10
+
++dark / -dark: Toggles darkness on the current board
+
+freeze / unfreeze: Pause and unpause the game world.  This does not affect
+the player, only the other objects on the board.
+
++gems / -gems: Increases or decreases the player's gems by 10
+
++health / -health: Increases or decreases the player's health by 10
+
+keys: Gives the player all the keys
+
+quit: Quit DreamZZT
+
++score / -score: Increases or decreases the player's score by 10
+
++torch / -torch: Increases or decreases the player's torches by 10
+
+warp: Switch to a different board.  'warp' by itself will display a list
+of boards to choose from.  If you know the board's number, you can instead 
+use 'warp x' where x is the board number to warp to.
+
+zap: Clears the spaces north, south, east, and west of the player
