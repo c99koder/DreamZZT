@@ -1,0 +1,23 @@
+Supported ZZT-OOP Commands
+==========================
+
+The following is a list of ZZT-OOP keywords and tokens supported by DreamZZT.
+For a description of each command, see ZZT or kevedit's help files.  Also
+note that some commands may not respond exactly as in ZZT, please report any
+incorrect behavior on the forums at http://forums.c99.org/
+
+Directions:
+north, south, east, west, opp, cw, ccw, rndp, rndns, rndne, flow, seek
+
+Inventory:
+give, take, ammo, gems, torch, score, health, time
+
+Logic:
+if, aligned, any, contact, blocked, dreamcast, pc
+
+Misc:
+__dark, become, bind, char, change, clear, color, cycle, die, end, endgame, 
+lock, play, put, restore, send, set, shoot, unlock, zap
+
+Movement:
+/n,/s,/e,/w,/i,?n,?s,?e,?w,go, walk, try
