@@ -229,7 +229,7 @@ void play_zzt(char *filename) {
 		draw_board();
 		draw_msg();
 		render();
-		//Time::sleep(100000);
+		Time::sleep(80000);
 	} while(0);//poll_game_device(0)!=START_BTN);
 	//while(poll_game_device(0)==START_BTN);
 	free_world();

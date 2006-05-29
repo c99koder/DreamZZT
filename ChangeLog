@@ -1,5 +1,29 @@
+2006-05-29  sam
+
+	* src/genobjects.sh, src/objdb, src/object.cpp: sharks
+
+2006-05-28  sam
+
+	* include/objects/objects.h, include/sound.h, src/debug.cpp,
+	  src/objects/bomb.cpp, src/objects/player.cpp, src/sound.cpp:
+	  Drums.
+	* include/board.h, include/object.h, include/objects/enemy.h,
+	  include/objects/objects.h, include/objects/terrain.h,
+	  src/board.cpp, src/debug.cpp, src/main.cpp, src/object.cpp,
+	  src/objects/bullet.cpp, src/objects/conveyer.cpp,
+	  src/objects/dup.cpp, src/objects/enemy.cpp,
+	  src/objects/passage.cpp, src/objects/player.cpp,
+	  src/objects/terrain.cpp, src/objects/zztoop.cpp: Game save
+	  support
+	* include/sound.h, src/board.cpp, src/debug.cpp, src/main.cpp,
+	  src/objects/bomb.cpp, src/objects/bullet.cpp,
+	  src/objects/dup.cpp, src/objects/enemy.cpp,
+	  src/objects/items.cpp, src/objects/player.cpp, src/sound.cpp:
+	  SFX update
+
 2006-05-27  sam
 
+	* ChangeLog:
 	* src/board.cpp, src/objects/passage.cpp, src/objects/player.cpp:
 	  Add passage transition
 	* ChangeLog: Generate changelog from SVN

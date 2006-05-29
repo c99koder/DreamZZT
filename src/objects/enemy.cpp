@@ -42,7 +42,7 @@ void Lion::update() {
   if(rand()%10<m_intel) {
     move(toward(player));
   } else {
-    move((direction)(rand()%4));
+    move((direction)((rand()%4)+1));
   }
 }
 
@@ -71,7 +71,7 @@ void Ruffian::update() {
 		if(rand()%9 < m_intel) {
 			m_heading = toward(player);
 		} else {
-			m_heading = (direction)(rand() % 4);
+			m_heading = (direction)(((rand()%4)+1));
 		}
 		m_moveCounter = rand() % 10;
 	} else if(m_moveCounter <= 0) {
