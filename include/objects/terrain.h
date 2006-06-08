@@ -24,7 +24,7 @@
 #define ZZT_BOULDER_CLASS Terrain
 
 //LINE
-#define ZZT_LINE_SHAPE 206
+#define ZZT_LINE_SHAPE 0xFA
 #define ZZT_LINE_NAME "line"
 #define ZZT_LINE_FLAGS F_NONE
 #define ZZT_LINE_CLASS Terrain
@@ -66,7 +66,7 @@
 #define ZZT_FOREST_CLASS Terrain
 
 //WATER
-#define ZZT_WATER_SHAPE 0xb1
+#define ZZT_WATER_SHAPE 0xb0
 #define ZZT_WATER_NAME "water"
 #define ZZT_WATER_FLAGS F_NONE
 #define ZZT_WATER_CLASS Water
