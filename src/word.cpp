@@ -27,11 +27,11 @@ std::vector<std::string> wordify(std::string s, char seperator) {
 	std::string tmp;
 	
   for(x=0;x<s.length();x++) {
-    if(s[x]==seperator) {
+    if(s[x]==seperator && tmp.length() > 0) {
 			list.push_back(tmp);
 			tmp = "";
       continue;
-    } else {
+    } else if(s[x]!=seperator) {
 			tmp += s[x];
     }
   }
