@@ -33,6 +33,7 @@
 		229B982A0A1F6F4400E85BB8 /* genobjects.sh in Resources */ = {isa = PBXBuildFile; fileRef = 229B98290A1F6F4400E85BB8 /* genobjects.sh */; };
 		229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */; };
 		22A983470A0C6C3100835D10 /* town.zzt in Resources */ = {isa = PBXBuildFile; fileRef = 22A983460A0C6C3100835D10 /* town.zzt */; };
+		22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22ABAB4D0A31145600B9C077 /* centipede.cpp */; };
 		22AD22CC0A13FAD8003E828E /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
 		22EC1AC20A2B3FD700DEE79D /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 22EC1AC10A2B3FD600DEE79D /* icon.icns */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
@@ -95,6 +96,7 @@
 		229B98290A1F6F4400E85BB8 /* genobjects.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = genobjects.sh; path = src/genobjects.sh; sourceTree = "<group>"; };
 		229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = conveyer.cpp; path = src/objects/conveyer.cpp; sourceTree = "<group>"; };
 		22A983460A0C6C3100835D10 /* town.zzt */ = {isa = PBXFileReference; lastKnownFileType = file; name = town.zzt; path = resources/town.zzt; sourceTree = "<group>"; };
+		22ABAB4D0A31145600B9C077 /* centipede.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = centipede.cpp; path = src/objects/centipede.cpp; sourceTree = "<group>"; };
 		22AD22CB0A13FAD8003E828E /* http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = http.cpp; path = src/http.cpp; sourceTree = "<group>"; };
 		22EC1AC10A2B3FD600DEE79D /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				224200BE0A0C569300F4BDF2 /* pusher.cpp */,
 				224200B90A0C569300F4BDF2 /* terrain.cpp */,
 				224200BD0A0C569300F4BDF2 /* zztoop.cpp */,
+				22ABAB4D0A31145600B9C077 /* centipede.cpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				223229BE0A16C63C0035025E /* sound.cpp in Sources */,
 				22907D680A1A947800B9BB6D /* debug.cpp in Sources */,
 				229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */,
+				22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

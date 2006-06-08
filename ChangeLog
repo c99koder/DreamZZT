@@ -1,457 +1,315 @@
+2006-06-08  sam
+
+	* src/objects/zztoop.cpp: Misc. ZZT-OOP fixes
+	* include/objects/objects.h: Make scrolls visible on board load
+	* resources/zzt-ascii.png: Fix a missing glyph in the ZZT font
+	* include/board.h, src/board.cpp: Improve searching by color, misc
+	  other fixes
+	* src/object.cpp: Avoid null-pointer exception when player doesn't
+	  exist
+	* src/main.cpp, src/objects/player.cpp: Enable title screen, ESC
+	  to return to menu
+	* src/objects/terrain.cpp: Disable water animation
+	* src/objects/items.cpp: Set default colors on inventory items
+	* src/debug.cpp: New debug commands: watch, inspect, flags
+	* src/word.cpp: Handle extra whitespace between words
+	* src/objects/passage.cpp: Compare both FG and BG when searching
+	  for the destination passage
+	* include/objects/terrain.h: Update line and water characters
+	* include/objects/enemy.h, src/genobjects.sh, src/objdb,
+	  src/objects/centipede.cpp: Centipedes: part one
+
 2006-05-29  sam
 
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/Info.plist: Update icon file for Mac OS
-	* DreamZZT/trunk/ChangeLog: Generate ChangeLog from svn history
-	* DreamZZT/trunk/src/DreamZZT.cpp: Allow linux to find its data
-	  files
-	* DreamZZT/trunk/loki/bin/Linux/x86/glibc-2.1/dreamzzt: Remove
-	  binary file
-	* DreamZZT/trunk/loki/setup.data/splash.xpm: Loki installer splash
-	  image
-	* DreamZZT/trunk/Makefile, DreamZZT/trunk/loki,
-	  DreamZZT/trunk/loki/bin, DreamZZT/trunk/loki/bin/Linux,
-	  DreamZZT/trunk/loki/bin/Linux/x86,
-	  DreamZZT/trunk/loki/bin/Linux/x86/glibc-2.1,
-	  DreamZZT/trunk/loki/bin/Linux/x86/glibc-2.1/dreamzzt,
-	  DreamZZT/trunk/loki/setup.data,
-	  DreamZZT/trunk/loki/setup.data/bin,
-	  DreamZZT/trunk/loki/setup.data/bin/Linux,
-	  DreamZZT/trunk/loki/setup.data/bin/Linux/x86,
-	  DreamZZT/trunk/loki/setup.data/bin/Linux/x86/glibc-2.1,
-	  DreamZZT/trunk/loki/setup.data/bin/Linux/x86/glibc-2.1/plugins,
-	  DreamZZT/trunk/loki/setup.data/bin/Linux/x86/glibc-2.1/setup.gtk2,
-	  DreamZZT/trunk/loki/setup.data/bin/Linux/x86/glibc-2.1/xsu,
-	  DreamZZT/trunk/loki/setup.data/bin/Linux/x86/plugins,
-	  DreamZZT/trunk/loki/setup.data/bin/Linux/x86/setup,
-	  DreamZZT/trunk/loki/setup.data/bin/Linux/x86/uninstall,
-	  DreamZZT/trunk/loki/setup.data/config.sh,
-	  DreamZZT/trunk/loki/setup.data/locale,
-	  DreamZZT/trunk/loki/setup.data/locale/de,
-	  DreamZZT/trunk/loki/setup.data/locale/de/LC_MESSAGES,
-	  DreamZZT/trunk/loki/setup.data/locale/de/LC_MESSAGES/loki-uninstall.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/de/LC_MESSAGES/setup.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/en_GB,
-	  DreamZZT/trunk/loki/setup.data/locale/en_GB/LC_MESSAGES,
-	  DreamZZT/trunk/loki/setup.data/locale/en_GB/LC_MESSAGES/loki-uninstall.mo,
-	  
-	  DreamZZT/trunk/loki/setup.data/locale/en_GB/LC_MESSAGES/setup.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/es,
-	  DreamZZT/trunk/loki/setup.data/locale/es/LC_MESSAGES,
-	  DreamZZT/trunk/loki/setup.data/locale/es/LC_MESSAGES/loki-uninstall.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/es/LC_MESSAGES/setup.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/fr,
-	  DreamZZT/trunk/loki/setup.data/locale/fr/LC_MESSAGES,
-	  DreamZZT/trunk/loki/setup.data/locale/fr/LC_MESSAGES/loki-uninstall.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/fr/LC_MESSAGES/setup.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/it,
-	  DreamZZT/trunk/loki/setup.data/locale/it/LC_MESSAGES,
-	  DreamZZT/trunk/loki/setup.data/locale/it/LC_MESSAGES/loki-uninstall.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/it/LC_MESSAGES/setup.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/nl,
-	  DreamZZT/trunk/loki/setup.data/locale/nl/LC_MESSAGES,
-	  DreamZZT/trunk/loki/setup.data/locale/nl/LC_MESSAGES/loki-uninstall.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/nl/LC_MESSAGES/setup.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/ru,
-	  DreamZZT/trunk/loki/setup.data/locale/ru/LC_MESSAGES,
-	  DreamZZT/trunk/loki/setup.data/locale/ru/LC_MESSAGES/loki-uninstall.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/ru/LC_MESSAGES/setup.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/sv,
-	  DreamZZT/trunk/loki/setup.data/locale/sv/LC_MESSAGES,
-	  DreamZZT/trunk/loki/setup.data/locale/sv/LC_MESSAGES/loki-uninstall.mo,
-	  DreamZZT/trunk/loki/setup.data/locale/sv/LC_MESSAGES/setup.mo,
-	  DreamZZT/trunk/loki/setup.data/setup.glade,
-	  DreamZZT/trunk/loki/setup.data/setup.gtk2.glade,
-	  DreamZZT/trunk/loki/setup.data/setup.xml,
-	  DreamZZT/trunk/loki/setup.data/splash.xpm,
-	  DreamZZT/trunk/loki/setup.sh, DreamZZT/trunk/loki/town.zzt,
-	  DreamZZT/trunk/loki/tutorial.zzt,
-	  DreamZZT/trunk/loki/zzt-ascii.png,
-	  DreamZZT/trunk/resources/OpenAL32.dll,
-	  DreamZZT/trunk/resources/alut.dll,
-	  DreamZZT/trunk/resources/icon.hex,
-	  DreamZZT/trunk/resources/pc-ascii.png,
-	  DreamZZT/trunk/resources/pc.fnt,
-	  DreamZZT/trunk/resources/wrap_oal.dll, DreamZZT/trunk/town.sav,
-	  DreamZZT/trunk/town.zzt, DreamZZT/trunk/win32,
-	  DreamZZT/trunk/win32/OpenAL32.dll,
-	  DreamZZT/trunk/win32/alut.dll,
-	  DreamZZT/trunk/win32/wrap_oal.dll: Loki installer files
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj: Enable Intel
-	  builds
-	* DreamZZT/trunk/doc/zztoop.txt: ZZT-OOP documentation
-	* DreamZZT/trunk/doc/debug.txt: Add debug commands documentation
-	* DreamZZT/trunk/doc, DreamZZT/trunk/doc/zztff.txt: Add kvance's
-	  zzt file format spec
-	* DreamZZT/trunk/ChangeLog,
-	  DreamZZT/trunk/include/objects/enemy.h,
-	  DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/objects/enemy.cpp: Sharks
-	* DreamZZT/trunk/src/genobjects.sh, DreamZZT/trunk/src/objdb,
-	  DreamZZT/trunk/src/object.cpp: sharks
+	* ChangeLog: Generate ChangeLog from svn history
+	* DreamZZT.xcodeproj/project.pbxproj, Info.plist: Update icon file
+	  for Mac OS
+	* ChangeLog: Generate ChangeLog from svn history
+	* src/DreamZZT.cpp: Allow linux to find its data files
+	* loki/bin/Linux/x86/glibc-2.1/dreamzzt: Remove binary file
+	* loki/setup.data/splash.xpm: Loki installer splash image
+	* Makefile, loki, loki/bin, loki/bin/Linux, loki/bin/Linux/x86,
+	  loki/bin/Linux/x86/glibc-2.1,
+	  loki/bin/Linux/x86/glibc-2.1/dreamzzt, loki/setup.data,
+	  loki/setup.data/bin, loki/setup.data/bin/Linux,
+	  loki/setup.data/bin/Linux/x86,
+	  loki/setup.data/bin/Linux/x86/glibc-2.1,
+	  loki/setup.data/bin/Linux/x86/glibc-2.1/plugins,
+	  loki/setup.data/bin/Linux/x86/glibc-2.1/setup.gtk2,
+	  loki/setup.data/bin/Linux/x86/glibc-2.1/xsu,
+	  loki/setup.data/bin/Linux/x86/plugins,
+	  loki/setup.data/bin/Linux/x86/setup,
+	  loki/setup.data/bin/Linux/x86/uninstall,
+	  loki/setup.data/config.sh, loki/setup.data/locale,
+	  loki/setup.data/locale/de,
+	  loki/setup.data/locale/de/LC_MESSAGES,
+	  loki/setup.data/locale/de/LC_MESSAGES/loki-uninstall.mo,
+	  loki/setup.data/locale/de/LC_MESSAGES/setup.mo,
+	  loki/setup.data/locale/en_GB,
+	  loki/setup.data/locale/en_GB/LC_MESSAGES,
+	  loki/setup.data/locale/en_GB/LC_MESSAGES/loki-uninstall.mo,
+	  loki/setup.data/locale/en_GB/LC_MESSAGES/setup.mo,
+	  loki/setup.data/locale/es,
+	  loki/setup.data/locale/es/LC_MESSAGES,
+	  loki/setup.data/locale/es/LC_MESSAGES/loki-uninstall.mo,
+	  loki/setup.data/locale/es/LC_MESSAGES/setup.mo,
+	  loki/setup.data/locale/fr,
+	  loki/setup.data/locale/fr/LC_MESSAGES,
+	  loki/setup.data/locale/fr/LC_MESSAGES/loki-uninstall.mo,
+	  loki/setup.data/locale/fr/LC_MESSAGES/setup.mo,
+	  loki/setup.data/locale/it,
+	  loki/setup.data/locale/it/LC_MESSAGES,
+	  loki/setup.data/locale/it/LC_MESSAGES/loki-uninstall.mo,
+	  loki/setup.data/locale/it/LC_MESSAGES/setup.mo,
+	  loki/setup.data/locale/nl,
+	  loki/setup.data/locale/nl/LC_MESSAGES,
+	  loki/setup.data/locale/nl/LC_MESSAGES/loki-uninstall.mo,
+	  loki/setup.data/locale/nl/LC_MESSAGES/setup.mo,
+	  loki/setup.data/locale/ru,
+	  loki/setup.data/locale/ru/LC_MESSAGES,
+	  loki/setup.data/locale/ru/LC_MESSAGES/loki-uninstall.mo,
+	  loki/setup.data/locale/ru/LC_MESSAGES/setup.mo,
+	  loki/setup.data/locale/sv,
+	  loki/setup.data/locale/sv/LC_MESSAGES,
+	  loki/setup.data/locale/sv/LC_MESSAGES/loki-uninstall.mo,
+	  loki/setup.data/locale/sv/LC_MESSAGES/setup.mo,
+	  loki/setup.data/setup.glade, loki/setup.data/setup.gtk2.glade,
+	  loki/setup.data/setup.xml, loki/setup.data/splash.xpm,
+	  loki/setup.sh, loki/town.zzt, loki/tutorial.zzt,
+	  loki/zzt-ascii.png, resources/OpenAL32.dll, resources/alut.dll,
+	  resources/icon.hex, resources/pc-ascii.png, resources/pc.fnt,
+	  resources/wrap_oal.dll, town.sav, town.zzt, win32,
+	  win32/OpenAL32.dll, win32/alut.dll, win32/wrap_oal.dll: Loki
+	  installer files
+	* DreamZZT.xcodeproj/project.pbxproj: Enable Intel builds
+	* doc/zztoop.txt: ZZT-OOP documentation
+	* doc/debug.txt: Add debug commands documentation
+	* doc, doc/zztff.txt: Add kvance's zzt file format spec
+	* ChangeLog, include/objects/enemy.h, src/main.cpp,
+	  src/objects/enemy.cpp: Sharks
+	* src/genobjects.sh, src/objdb, src/object.cpp: sharks
 
 2006-05-28  sam
 
-	* DreamZZT/trunk/include/objects/objects.h,
-	  DreamZZT/trunk/include/sound.h, DreamZZT/trunk/src/debug.cpp,
-	  DreamZZT/trunk/src/objects/bomb.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/sound.cpp: Drums.
-	* DreamZZT/trunk/include/board.h, DreamZZT/trunk/include/object.h,
-	  DreamZZT/trunk/include/objects/enemy.h,
-	  DreamZZT/trunk/include/objects/objects.h,
-	  DreamZZT/trunk/include/objects/terrain.h,
-	  DreamZZT/trunk/src/board.cpp, DreamZZT/trunk/src/debug.cpp,
-	  DreamZZT/trunk/src/main.cpp, DreamZZT/trunk/src/object.cpp,
-	  DreamZZT/trunk/src/objects/bullet.cpp,
-	  DreamZZT/trunk/src/objects/conveyer.cpp,
-	  DreamZZT/trunk/src/objects/dup.cpp,
-	  DreamZZT/trunk/src/objects/enemy.cpp,
-	  DreamZZT/trunk/src/objects/passage.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/objects/terrain.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp: Game save support
-	* DreamZZT/trunk/include/sound.h, DreamZZT/trunk/src/board.cpp,
-	  DreamZZT/trunk/src/debug.cpp, DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/objects/bomb.cpp,
-	  DreamZZT/trunk/src/objects/bullet.cpp,
-	  DreamZZT/trunk/src/objects/dup.cpp,
-	  DreamZZT/trunk/src/objects/enemy.cpp,
-	  DreamZZT/trunk/src/objects/items.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/sound.cpp: SFX update
+	* include/objects/objects.h, include/sound.h, src/debug.cpp,
+	  src/objects/bomb.cpp, src/objects/player.cpp, src/sound.cpp:
+	  Drums.
+	* include/board.h, include/object.h, include/objects/enemy.h,
+	  include/objects/objects.h, include/objects/terrain.h,
+	  src/board.cpp, src/debug.cpp, src/main.cpp, src/object.cpp,
+	  src/objects/bullet.cpp, src/objects/conveyer.cpp,
+	  src/objects/dup.cpp, src/objects/enemy.cpp,
+	  src/objects/passage.cpp, src/objects/player.cpp,
+	  src/objects/terrain.cpp, src/objects/zztoop.cpp: Game save
+	  support
+	* include/sound.h, src/board.cpp, src/debug.cpp, src/main.cpp,
+	  src/objects/bomb.cpp, src/objects/bullet.cpp,
+	  src/objects/dup.cpp, src/objects/enemy.cpp,
+	  src/objects/items.cpp, src/objects/player.cpp, src/sound.cpp:
+	  SFX update
 
 2006-05-27  sam
 
-	* DreamZZT/trunk/ChangeLog:
-	* DreamZZT/trunk/src/board.cpp,
-	  DreamZZT/trunk/src/objects/passage.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp: Add passage transition
-	* DreamZZT/trunk/ChangeLog: Generate changelog from SVN
-	* DreamZZT/trunk/ChangeLog: Generate changelog from SVN
-	* DreamZZT/trunk/src/objects/bullet.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp: Dont let bullets
+	* ChangeLog:
+	* src/board.cpp, src/objects/passage.cpp, src/objects/player.cpp:
+	  Add passage transition
+	* ChangeLog: Generate changelog from SVN
+	* ChangeLog: Generate changelog from SVN
+	* src/objects/bullet.cpp, src/objects/zztoop.cpp: Dont let bullets
 	  interrupt sfx, dont let tigers kill eachother point-blank
-	* DreamZZT/trunk/src/debug.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/status.cpp: Fix key display, add 'keys' debug
-	  command
-	* DreamZZT/trunk/src/objects/dup.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/txtwin.cpp: Fix duplicators, remove more
-	  debugging chatter, remove \r from status messages
-	* DreamZZT/trunk/include/objects/objects.h,
-	  DreamZZT/trunk/src/board.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp: Fix threadded loader, key
-	  repeating
-	* DreamZZT/trunk/src/objects/zztoop.cpp: Clean up unused variables
-	* DreamZZT/trunk/src/board.cpp, DreamZZT/trunk/src/object.cpp,
-	  DreamZZT/trunk/src/objects/bomb.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp: Fix bomb cycle, player
-	  responds to messages again, protect against null objects,
-	  disable player movement during transition
-	* DreamZZT/trunk/include/sound.h, DreamZZT/trunk/src/board.cpp,
-	  DreamZZT/trunk/src/debug.cpp,
-	  DreamZZT/trunk/src/objects/items.cpp,
-	  DreamZZT/trunk/src/sound.cpp: Complete energizer tune and
-	  correct debug X,Y display
-	* DreamZZT/trunk/DreamZZT.vcproj, DreamZZT/trunk/src/DreamZZT.cpp,
-	  DreamZZT/trunk/src/board.cpp, DreamZZT/trunk/src/debug.cpp,
-	  DreamZZT/trunk/src/main.cpp, DreamZZT/trunk/src/object.cpp,
-	  DreamZZT/trunk/src/txtwin.cpp: Win32 build fixes
-	* DreamZZT/trunk/src/objects/enemy.cpp: Spinning guns can't be
-	  killed
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/include/board.h, DreamZZT/trunk/include/debug.h,
-	  DreamZZT/trunk/include/http.h, DreamZZT/trunk/include/object.h,
-	  DreamZZT/trunk/include/objects/enemy.h,
-	  DreamZZT/trunk/include/objects/items.h,
-	  DreamZZT/trunk/include/objects/objects.h,
-	  DreamZZT/trunk/include/objects/terrain.h,
-	  DreamZZT/trunk/include/sound.h, DreamZZT/trunk/include/status.h,
-	  DreamZZT/trunk/include/word.h, DreamZZT/trunk/main.m,
-	  DreamZZT/trunk/src/Controller.h,
-	  DreamZZT/trunk/src/Controller.m, DreamZZT/trunk/src/board.cpp,
-	  DreamZZT/trunk/src/debug.cpp, DreamZZT/trunk/src/genobjects.sh,
-	  DreamZZT/trunk/src/http.cpp, DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/object.cpp,
-	  DreamZZT/trunk/src/objects/bomb.cpp,
-	  DreamZZT/trunk/src/objects/bullet.cpp,
-	  DreamZZT/trunk/src/objects/conveyer.cpp,
-	  DreamZZT/trunk/src/objects/dup.cpp,
-	  DreamZZT/trunk/src/objects/enemy.cpp,
-	  DreamZZT/trunk/src/objects/items.cpp,
-	  DreamZZT/trunk/src/objects/passage.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/objects/pusher.cpp,
-	  DreamZZT/trunk/src/objects/terrain.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/sound.cpp, DreamZZT/trunk/src/status.cpp,
-	  DreamZZT/trunk/src/txtwin.cpp, DreamZZT/trunk/src/word.cpp: GPL
-	  this mo-fo
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj: Alphabetize
-	  project items
-	* DreamZZT/trunk/src/objects/zztoop.cpp: Avoid a buffer overflow
-	* DreamZZT/trunk/src/board.cpp: Make loading spinner threaded
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/include/status.h,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/sound.cpp, DreamZZT/trunk/src/txtwin.cpp:
-	  Remove some debug chatter and fix a crash on opening text
-	  windows from ZZT-OOP
-	* DreamZZT/trunk/src/main.cpp: Decrease audio volume to below
-	  deafening
+	* src/debug.cpp, src/objects/player.cpp, src/status.cpp: Fix key
+	  display, add 'keys' debug command
+	* src/objects/dup.cpp, src/objects/zztoop.cpp, src/txtwin.cpp: Fix
+	  duplicators, remove more debugging chatter, remove \r from
+	  status messages
+	* include/objects/objects.h, src/board.cpp,
+	  src/objects/player.cpp: Fix threadded loader, key repeating
+	* src/objects/zztoop.cpp: Clean up unused variables
+	* src/board.cpp, src/object.cpp, src/objects/bomb.cpp,
+	  src/objects/player.cpp: Fix bomb cycle, player responds to
+	  messages again, protect against null objects, disable player
+	  movement during transition
+	* include/sound.h, src/board.cpp, src/debug.cpp,
+	  src/objects/items.cpp, src/sound.cpp: Complete energizer tune
+	  and correct debug X,Y display
+	* DreamZZT.vcproj, src/DreamZZT.cpp, src/board.cpp, src/debug.cpp,
+	  src/main.cpp, src/object.cpp, src/txtwin.cpp: Win32 build fixes
+	* src/objects/enemy.cpp: Spinning guns can't be killed
+	* DreamZZT.xcodeproj/project.pbxproj, include/board.h,
+	  include/debug.h, include/http.h, include/object.h,
+	  include/objects/enemy.h, include/objects/items.h,
+	  include/objects/objects.h, include/objects/terrain.h,
+	  include/sound.h, include/status.h, include/word.h, main.m,
+	  src/Controller.h, src/Controller.m, src/board.cpp,
+	  src/debug.cpp, src/genobjects.sh, src/http.cpp, src/main.cpp,
+	  src/object.cpp, src/objects/bomb.cpp, src/objects/bullet.cpp,
+	  src/objects/conveyer.cpp, src/objects/dup.cpp,
+	  src/objects/enemy.cpp, src/objects/items.cpp,
+	  src/objects/passage.cpp, src/objects/player.cpp,
+	  src/objects/pusher.cpp, src/objects/terrain.cpp,
+	  src/objects/zztoop.cpp, src/sound.cpp, src/status.cpp,
+	  src/txtwin.cpp, src/word.cpp: GPL this mo-fo
+	* DreamZZT.xcodeproj/project.pbxproj: Alphabetize project items
+	* src/objects/zztoop.cpp: Avoid a buffer overflow
+	* src/board.cpp: Make loading spinner threaded
+	* DreamZZT.xcodeproj/project.pbxproj, include/status.h,
+	  src/objects/zztoop.cpp, src/sound.cpp, src/txtwin.cpp: Remove
+	  some debug chatter and fix a crash on opening text windows from
+	  ZZT-OOP
+	* src/main.cpp: Decrease audio volume to below deafening
 
 2006-05-25  sam
 
-	* DreamZZT/trunk/COPYING: GPL COPYING file
-	* DreamZZT/trunk/Makefile, DreamZZT/trunk/Makefile.dc: Makefile
-	  update
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/include/board.h, DreamZZT/trunk/include/dirxn.h,
-	  DreamZZT/trunk/include/object.h,
-	  DreamZZT/trunk/include/objects/enemy.h,
-	  DreamZZT/trunk/include/objects/items.h,
-	  DreamZZT/trunk/include/objects/objects.h,
-	  DreamZZT/trunk/include/objects/terrain.h,
-	  DreamZZT/trunk/include/status.h, DreamZZT/trunk/include/word.h,
-	  DreamZZT/trunk/src/board.cpp, DreamZZT/trunk/src/debug.cpp,
-	  DreamZZT/trunk/src/dirxn.cpp, DreamZZT/trunk/src/genobjects.sh,
-	  DreamZZT/trunk/src/main.cpp, DreamZZT/trunk/src/objdb,
-	  DreamZZT/trunk/src/object.cpp,
-	  DreamZZT/trunk/src/objects/bomb.cpp,
-	  DreamZZT/trunk/src/objects/bullet.cpp,
-	  DreamZZT/trunk/src/objects/conveyer.cpp,
-	  DreamZZT/trunk/src/objects/dup.cpp,
-	  DreamZZT/trunk/src/objects/enemy.cpp,
-	  DreamZZT/trunk/src/objects/items.cpp,
-	  DreamZZT/trunk/src/objects/passage.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/objects/pusher.cpp,
-	  DreamZZT/trunk/src/objects/spinner.cpp,
-	  DreamZZT/trunk/src/objects/terrain.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/txtwin.cpp, DreamZZT/trunk/src/word.cpp: C++
-	  rewrite
+	* COPYING: GPL COPYING file
+	* Makefile, Makefile.dc: Makefile update
+	* DreamZZT.xcodeproj/project.pbxproj, include/board.h,
+	  include/dirxn.h, include/object.h, include/objects/enemy.h,
+	  include/objects/items.h, include/objects/objects.h,
+	  include/objects/terrain.h, include/status.h, include/word.h,
+	  src/board.cpp, src/debug.cpp, src/dirxn.cpp, src/genobjects.sh,
+	  src/main.cpp, src/objdb, src/object.cpp, src/objects/bomb.cpp,
+	  src/objects/bullet.cpp, src/objects/conveyer.cpp,
+	  src/objects/dup.cpp, src/objects/enemy.cpp,
+	  src/objects/items.cpp, src/objects/passage.cpp,
+	  src/objects/player.cpp, src/objects/pusher.cpp,
+	  src/objects/spinner.cpp, src/objects/terrain.cpp,
+	  src/objects/zztoop.cpp, src/txtwin.cpp, src/word.cpp: C++ rewrite
 
 2006-05-21  sam
 
-	* DreamZZT/trunk/src/objects/conveyer.cpp: Rename spinner to
-	  conveyer
+	* src/objects/conveyer.cpp: Rename spinner to conveyer
 
 2006-05-17  sam
 
-	* DreamZZT/trunk/include/debug.h, DreamZZT/trunk/src/debug.cpp:
+	* include/debug.h, src/debug.cpp: Debug mode
+	* Makefile, src/objects/zztoop.cpp: Debug mode
+	* DreamZZT.xcodeproj/project.pbxproj, src/main.cpp,
+	  src/objects/enemy.cpp, src/objects/items.cpp,
+	  src/objects/player.cpp, src/objects/zztoop.cpp, src/txtwin.cpp:
 	  Debug mode
-	* DreamZZT/trunk/Makefile, DreamZZT/trunk/src/objects/zztoop.cpp:
-	  Debug mode
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/objects/enemy.cpp,
-	  DreamZZT/trunk/src/objects/items.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/txtwin.cpp: Debug mode
 
 2006-05-15  sam
 
-	* DreamZZT/trunk/src/board.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/sound.cpp: Sound fixes
-	* DreamZZT/trunk/src/main.cpp: Change default to town.zzt
+	* src/board.cpp, src/objects/zztoop.cpp, src/sound.cpp: Sound fixes
+	* src/main.cpp: Change default to town.zzt
 
 2006-05-14  sam
 
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/Makefile.dc, DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/sound.cpp: Sound fixes
-	* DreamZZT/trunk/src/genobjects.sh: ruffians
-	* DreamZZT/trunk/include/objects/enemy.h,
-	  DreamZZT/trunk/src/objdb, DreamZZT/trunk/src/objects/enemy.cpp:
+	* DreamZZT.xcodeproj/project.pbxproj, Makefile.dc, src/main.cpp,
+	  src/objects/zztoop.cpp, src/sound.cpp: Sound fixes
+	* src/genobjects.sh: ruffians
+	* include/objects/enemy.h, src/objdb, src/objects/enemy.cpp:
 	  ruffians
-	* DreamZZT/trunk/resources/tutorial.zzt: Add sound to tutorial
-	* DreamZZT/trunk/DreamZZT.vcproj, DreamZZT/trunk/include/http.h,
-	  DreamZZT/trunk/src/http.cpp,
-	  DreamZZT/trunk/src/objects/enemy.cpp,
-	  DreamZZT/trunk/src/sound.cpp: win32 build fixes
-	* DreamZZT/trunk/Makefile, DreamZZT/trunk/src/main.cpp: Linux
-	  build fixes
-	* DreamZZT/trunk/src/board.cpp, DreamZZT/trunk/src/dirxn.cpp,
-	  DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/objects/bomb.cpp,
-	  DreamZZT/trunk/src/objects/bullet.cpp,
-	  DreamZZT/trunk/src/objects/dup.cpp,
-	  DreamZZT/trunk/src/objects/items.cpp,
-	  DreamZZT/trunk/src/objects/passage.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/objects/pusher.cpp,
-	  DreamZZT/trunk/src/objects/terrain.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/sound.cpp: Sound update
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/include/sound.h,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/sound.cpp: Sound update
-	* DreamZZT/trunk/src/sound.cpp: Sound support
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/include/sound.h, DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/sound.cpp, DreamZZT/trunk/src/txtwin.cpp:
-	  Sound support
-	* DreamZZT/trunk/include/objects/enemy.h,
-	  DreamZZT/trunk/src/board.cpp, DreamZZT/trunk/src/genobjects.sh,
-	  DreamZZT/trunk/src/objdb, DreamZZT/trunk/src/objects/enemy.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp: Bears\!
+	* resources/tutorial.zzt: Add sound to tutorial
+	* DreamZZT.vcproj, include/http.h, src/http.cpp,
+	  src/objects/enemy.cpp, src/sound.cpp: win32 build fixes
+	* Makefile, src/main.cpp: Linux build fixes
+	* src/board.cpp, src/dirxn.cpp, src/main.cpp,
+	  src/objects/bomb.cpp, src/objects/bullet.cpp,
+	  src/objects/dup.cpp, src/objects/items.cpp,
+	  src/objects/passage.cpp, src/objects/player.cpp,
+	  src/objects/pusher.cpp, src/objects/terrain.cpp,
+	  src/objects/zztoop.cpp, src/sound.cpp: Sound update
+	* DreamZZT.xcodeproj/project.pbxproj, include/sound.h,
+	  src/objects/zztoop.cpp, src/sound.cpp: Sound update
+	* src/sound.cpp: Sound support
+	* DreamZZT.xcodeproj/project.pbxproj, include/sound.h,
+	  src/main.cpp, src/sound.cpp, src/txtwin.cpp: Sound support
+	* include/objects/enemy.h, src/board.cpp, src/genobjects.sh,
+	  src/objdb, src/objects/enemy.cpp, src/objects/zztoop.cpp: Bears\!
 
 2006-05-13  sam
 
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/include/drawables, DreamZZT/trunk/src/Drawables,
-	  DreamZZT/trunk/src/board.cpp, DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/status.cpp, DreamZZT/trunk/src/txtwin.cpp:
+	* DreamZZT.xcodeproj/project.pbxproj, include/drawables,
+	  src/Drawables, src/board.cpp, src/main.cpp,
+	  src/objects/player.cpp, src/status.cpp, src/txtwin.cpp:
 	  Integrate ConsoleText with Tiki, add ANSI support, misc other
 	  bug fixes
 
 2006-05-12  sam
 
-	* DreamZZT/trunk/Makefile,
-	  DreamZZT/trunk/src/Drawables/ConsoleText.cpp,
-	  DreamZZT/trunk/src/main.cpp: Linux makefile update
-	* DreamZZT/trunk/Makefile.dc: Dreamcast makefile
+	* Makefile, src/Drawables/ConsoleText.cpp, src/main.cpp: Linux
+	  makefile update
+	* Makefile.dc: Dreamcast makefile
 
 2006-05-11  sam
 
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/include/http.h, DreamZZT/trunk/src/board.cpp,
-	  DreamZZT/trunk/src/dirxn.cpp, DreamZZT/trunk/src/http.cpp,
-	  DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp: Misc. bug fixes, Town
-	  should now be playable
+	* DreamZZT.xcodeproj/project.pbxproj, include/http.h,
+	  src/board.cpp, src/dirxn.cpp, src/http.cpp, src/main.cpp,
+	  src/objects/player.cpp, src/objects/zztoop.cpp: Misc. bug fixes,
+	  Town should now be playable
 
 2006-05-07  sam
 
-	* DreamZZT/trunk/src/DreamZZT.cpp: win32 build fix
-	* DreamZZT/trunk/src/board.cpp: Enhanced torch effect
-	* DreamZZT/trunk/src/board.cpp, DreamZZT/trunk/src/dirxn.cpp:
-	  Really fix the double-free crash
-	* DreamZZT/trunk/src/objects/player.cpp: Ignore esc key
-	* DreamZZT/trunk/src/board.cpp: Fix double-free crash
-	* DreamZZT/trunk/resources/zzt-ascii.png: New ZZT font
-	* DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/txtwin.cpp: Handle quit event
-	* DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/src/main.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/txtwin.cpp: Additional key controls
+	* src/DreamZZT.cpp: win32 build fix
+	* src/board.cpp: Enhanced torch effect
+	* src/board.cpp, src/dirxn.cpp: Really fix the double-free crash
+	* src/objects/player.cpp: Ignore esc key
+	* src/board.cpp: Fix double-free crash
+	* resources/zzt-ascii.png: New ZZT font
+	* src/objects/player.cpp, src/txtwin.cpp: Handle quit event
+	* DreamZZT.xcodeproj/project.pbxproj, src/main.cpp,
+	  src/objects/player.cpp, src/txtwin.cpp: Additional key controls
 
 2006-05-06  sam
 
-	* DreamZZT/trunk/Makefile,
-	  DreamZZT/trunk/src/Drawables/ConsoleText.cpp,
-	  DreamZZT/trunk/src/DreamZZT.cpp: Linux build fixes
-	* DreamZZT/trunk/.tm_project.cache, DreamZZT/trunk/DreamZZT.sln,
-	  DreamZZT/trunk/DreamZZT.vcproj, DreamZZT/trunk/include/board.h,
-	  DreamZZT/trunk/resources/OpenAL32.dll,
-	  DreamZZT/trunk/resources/alut.dll,
-	  DreamZZT/trunk/resources/wrap_oal.dll,
-	  DreamZZT/trunk/src/Drawables/ConsoleText.cpp,
-	  DreamZZT/trunk/src/DreamZZT.cpp, DreamZZT/trunk/src/dirxn.cpp,
-	  DreamZZT/trunk/src/main.cpp, DreamZZT/trunk/src/object.cpp,
-	  DreamZZT/trunk/src/objects/bomb.cpp,
-	  DreamZZT/trunk/src/objects/bullet.cpp,
-	  DreamZZT/trunk/src/objects/dup.cpp,
-	  DreamZZT/trunk/src/objects/enemy.cpp,
-	  DreamZZT/trunk/src/objects/items.cpp,
-	  DreamZZT/trunk/src/objects/passage.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/objects/pusher.cpp,
-	  DreamZZT/trunk/src/objects/spinner.cpp,
-	  DreamZZT/trunk/src/objects/terrain.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp: Win32 build fixes
-	* DreamZZT/trunk/DreamZZT.xcodeproj/sam.pbxuser,
-	  DreamZZT/trunk/DreamZZT.xcodeproj/sam.perspective,
-	  DreamZZT/trunk/English.lproj/MainMenu~.nib,
-	  DreamZZT/trunk/src/.deps: Cleanup stale files
-	* DreamZZT, DreamZZT/trunk, DreamZZT/trunk/.tm_project.cache,
-	  DreamZZT/trunk/ChangeLog, DreamZZT/trunk/DreamZZT.xcodeproj,
-	  DreamZZT/trunk/DreamZZT.xcodeproj/project.pbxproj,
-	  DreamZZT/trunk/DreamZZT.xcodeproj/sam.pbxuser,
-	  DreamZZT/trunk/DreamZZT.xcodeproj/sam.perspective,
-	  DreamZZT/trunk/DreamZZT_Prefix.pch,
-	  DreamZZT/trunk/English.lproj,
-	  DreamZZT/trunk/English.lproj/InfoPlist.strings,
-	  DreamZZT/trunk/English.lproj/MainMenu.nib,
-	  DreamZZT/trunk/English.lproj/MainMenu.nib/classes.nib,
-	  DreamZZT/trunk/English.lproj/MainMenu.nib/info.nib,
-	  DreamZZT/trunk/English.lproj/MainMenu.nib/objects.nib,
-	  DreamZZT/trunk/English.lproj/MainMenu~.nib,
-	  DreamZZT/trunk/English.lproj/MainMenu~.nib/classes.nib,
-	  DreamZZT/trunk/English.lproj/MainMenu~.nib/info.nib,
-	  DreamZZT/trunk/English.lproj/MainMenu~.nib/objects.nib,
-	  DreamZZT/trunk/IP.BIN, DreamZZT/trunk/Info.plist,
-	  DreamZZT/trunk/burn-boot.sh, DreamZZT/trunk/burn.sh,
-	  DreamZZT/trunk/icon.hex, DreamZZT/trunk/icon.png,
-	  DreamZZT/trunk/include, DreamZZT/trunk/include/board.h,
-	  DreamZZT/trunk/include/dirxn.h,
-	  DreamZZT/trunk/include/drawables,
-	  DreamZZT/trunk/include/drawables/ConsoleText.h,
-	  DreamZZT/trunk/include/http.h, DreamZZT/trunk/include/object.h,
-	  DreamZZT/trunk/include/objects,
-	  DreamZZT/trunk/include/objects/enemy.h,
-	  DreamZZT/trunk/include/objects/items.h,
-	  DreamZZT/trunk/include/objects/objects.h,
-	  DreamZZT/trunk/include/objects/terrain.h,
-	  DreamZZT/trunk/include/status.h, DreamZZT/trunk/include/word.h,
-	  DreamZZT/trunk/include/zztobj.h, DreamZZT/trunk/main.m,
-	  DreamZZT/trunk/resources, DreamZZT/trunk/resources/icon.hex,
-	  DreamZZT/trunk/resources/pc-ascii.png,
-	  DreamZZT/trunk/resources/pc.fnt,
-	  DreamZZT/trunk/resources/town.zzt,
-	  DreamZZT/trunk/resources/tutorial.zzt, DreamZZT/trunk/src,
-	  DreamZZT/trunk/src/.deps,
-	  DreamZZT/trunk/src/.deps/dreamzzt-board.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-bomb.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-bullet.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-dirxn.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-disk.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-dup.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-enemy.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-http.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-items.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-main.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-net_unix.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-object.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-passage.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-player.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-pusher.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-spinner.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-status.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-terrain.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-txtwin.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-word.Po,
-	  DreamZZT/trunk/src/.deps/dreamzzt-zztoop.Po,
-	  DreamZZT/trunk/src/Controller.h,
-	  DreamZZT/trunk/src/Controller.m, DreamZZT/trunk/src/Drawables,
-	  DreamZZT/trunk/src/Drawables/ConsoleText.cpp,
-	  DreamZZT/trunk/src/board.cpp, DreamZZT/trunk/src/dirxn.cpp,
-	  DreamZZT/trunk/src/disk.cpp, DreamZZT/trunk/src/genobjects.sh,
-	  DreamZZT/trunk/src/main.cpp, DreamZZT/trunk/src/objdb,
-	  DreamZZT/trunk/src/object.cpp, DreamZZT/trunk/src/objects,
-	  DreamZZT/trunk/src/objects/bomb.cpp,
-	  DreamZZT/trunk/src/objects/bullet.cpp,
-	  DreamZZT/trunk/src/objects/dup.cpp,
-	  DreamZZT/trunk/src/objects/enemy.cpp,
-	  DreamZZT/trunk/src/objects/items.cpp,
-	  DreamZZT/trunk/src/objects/passage.cpp,
-	  DreamZZT/trunk/src/objects/player.cpp,
-	  DreamZZT/trunk/src/objects/pusher.cpp,
-	  DreamZZT/trunk/src/objects/spinner.cpp,
-	  DreamZZT/trunk/src/objects/terrain.cpp,
-	  DreamZZT/trunk/src/objects/zztoop.cpp,
-	  DreamZZT/trunk/src/status.cpp, DreamZZT/trunk/src/txtwin.cpp,
-	  DreamZZT/trunk/src/vmuify.cpp, DreamZZT/trunk/src/word.cpp,
-	  DreamZZT/trunk/town.sav, DreamZZT/trunk/town.zzt,
-	  DreamZZT/trunk/version.plist: Initial import of DreamZZT
+	* Makefile, src/Drawables/ConsoleText.cpp, src/DreamZZT.cpp: Linux
+	  build fixes
+	* .tm_project.cache, DreamZZT.sln, DreamZZT.vcproj,
+	  include/board.h, resources/OpenAL32.dll, resources/alut.dll,
+	  resources/wrap_oal.dll, src/Drawables/ConsoleText.cpp,
+	  src/DreamZZT.cpp, src/dirxn.cpp, src/main.cpp, src/object.cpp,
+	  src/objects/bomb.cpp, src/objects/bullet.cpp,
+	  src/objects/dup.cpp, src/objects/enemy.cpp,
+	  src/objects/items.cpp, src/objects/passage.cpp,
+	  src/objects/player.cpp, src/objects/pusher.cpp,
+	  src/objects/spinner.cpp, src/objects/terrain.cpp,
+	  src/objects/zztoop.cpp: Win32 build fixes
+	* DreamZZT.xcodeproj/sam.pbxuser,
+	  DreamZZT.xcodeproj/sam.perspective, English.lproj/MainMenu~.nib,
+	  src/.deps: Cleanup stale files
+	* DreamZZT, ., .tm_project.cache, ChangeLog, DreamZZT.xcodeproj,
+	  DreamZZT.xcodeproj/project.pbxproj,
+	  DreamZZT.xcodeproj/sam.pbxuser,
+	  DreamZZT.xcodeproj/sam.perspective, DreamZZT_Prefix.pch,
+	  English.lproj, English.lproj/InfoPlist.strings,
+	  English.lproj/MainMenu.nib,
+	  English.lproj/MainMenu.nib/classes.nib,
+	  English.lproj/MainMenu.nib/info.nib,
+	  English.lproj/MainMenu.nib/objects.nib,
+	  English.lproj/MainMenu~.nib,
+	  English.lproj/MainMenu~.nib/classes.nib,
+	  English.lproj/MainMenu~.nib/info.nib,
+	  English.lproj/MainMenu~.nib/objects.nib, IP.BIN, Info.plist,
+	  burn-boot.sh, burn.sh, icon.hex, icon.png, include,
+	  include/board.h, include/dirxn.h, include/drawables,
+	  include/drawables/ConsoleText.h, include/http.h,
+	  include/object.h, include/objects, include/objects/enemy.h,
+	  include/objects/items.h, include/objects/objects.h,
+	  include/objects/terrain.h, include/status.h, include/word.h,
+	  include/zztobj.h, main.m, resources, resources/icon.hex,
+	  resources/pc-ascii.png, resources/pc.fnt, resources/town.zzt,
+	  resources/tutorial.zzt, src, src/.deps,
+	  src/.deps/dreamzzt-board.Po, src/.deps/dreamzzt-bomb.Po,
+	  src/.deps/dreamzzt-bullet.Po, src/.deps/dreamzzt-dirxn.Po,
+	  src/.deps/dreamzzt-disk.Po, src/.deps/dreamzzt-dup.Po,
+	  src/.deps/dreamzzt-enemy.Po, src/.deps/dreamzzt-http.Po,
+	  src/.deps/dreamzzt-items.Po, src/.deps/dreamzzt-main.Po,
+	  src/.deps/dreamzzt-net_unix.Po, src/.deps/dreamzzt-object.Po,
+	  src/.deps/dreamzzt-passage.Po, src/.deps/dreamzzt-player.Po,
+	  src/.deps/dreamzzt-pusher.Po, src/.deps/dreamzzt-spinner.Po,
+	  src/.deps/dreamzzt-status.Po, src/.deps/dreamzzt-terrain.Po,
+	  src/.deps/dreamzzt-txtwin.Po, src/.deps/dreamzzt-word.Po,
+	  src/.deps/dreamzzt-zztoop.Po, src/Controller.h,
+	  src/Controller.m, src/Drawables, src/Drawables/ConsoleText.cpp,
+	  src/board.cpp, src/dirxn.cpp, src/disk.cpp, src/genobjects.sh,
+	  src/main.cpp, src/objdb, src/object.cpp, src/objects,
+	  src/objects/bomb.cpp, src/objects/bullet.cpp,
+	  src/objects/dup.cpp, src/objects/enemy.cpp,
+	  src/objects/items.cpp, src/objects/passage.cpp,
+	  src/objects/player.cpp, src/objects/pusher.cpp,
+	  src/objects/spinner.cpp, src/objects/terrain.cpp,
+	  src/objects/zztoop.cpp, src/status.cpp, src/txtwin.cpp,
+	  src/vmuify.cpp, src/word.cpp, town.sav, town.zzt, version.plist:
+	  Initial import of DreamZZT
 
