@@ -96,15 +96,19 @@ void Scroll::message(ZZTObject *them, std::string message) {
 	if(message == "get") {
 		zm->setTune("tc-c+d-d+e-e+f-f+g-g");
 		zm->start();
-		ZZTOOP::update();
-		remove_from_board(currentbrd,this);
-		them->move(toward(this));
+		m_progpos = 0;
 	}
 }
 
 void Scroll::update() {
+	m_shape=ZZT_SCROLL_SHAPE;
 	m_fg++;
 	if(m_fg>15) m_fg=9;
+	if(m_progpos>=0) {
+		ZZTOOP::update();
+		remove_from_board(currentbrd,this);
+		player->move(toward(this));
+	}
 	draw();
 }
 
@@ -218,6 +222,15 @@ void Inventory::create() {
     break;
 	case ZZT_KEY:
 		if(m_fg<9) m_fg+=9;
+		break;
+	case ZZT_TORCH:
+		m_fg = 6;
+		break;
+	case ZZT_AMMO:
+		m_fg = 3;
+		break;
+	case ZZT_ENERGIZER:
+		m_fg = 5;
 		break;
 	}
 }
