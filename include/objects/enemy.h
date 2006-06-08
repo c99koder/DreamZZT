@@ -47,13 +47,25 @@
 #define ZZT_SPINNING_GUN_FLAGS F_OBJECT
 #define ZZT_SPINNING_GUN_CLASS SpinningGun
 
+#define ZZT_CENTIPEDE_HEAD_SHAPE 0xE9
+#define ZZT_CENTIPEDE_HEAD_NAME "centipede-head"
+#define ZZT_CENTIPEDE_HEAD_FLAGS F_ENEMY|F_OBJECT
+#define ZZT_CENTIPEDE_HEAD_CLASS Centipede
+
+#define ZZT_CENTIPEDE_BODY_SHAPE 'O'
+#define ZZT_CENTIPEDE_BODY_NAME "centipede-head"
+#define ZZT_CENTIPEDE_BODY_FLAGS F_ENEMY|F_OBJECT
+#define ZZT_CENTIPEDE_BODY_CLASS Centipede
+
 class Enemy : public ZZTObject {
 public:
 	Enemy(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
 		m_intel = 0;
 		m_bg = 0;
-		
-		switch(type) {
+	}
+	
+	void create() {
+		switch(m_type) {
 			case ZZT_LION:
 				m_fg = 12;
 				break;
@@ -65,6 +77,9 @@ public:
 				break;
 			case ZZT_RUFFIAN:
 				m_fg = 13;
+				break;
+			case ZZT_SHARK:
+				m_fg = 7;
 				break;
 		}
 	}
@@ -127,3 +142,41 @@ private:
 	int m_rate, m_animIndex;
 };
 
+class Centipede : public Enemy {
+public:
+	Centipede(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) {
+		m_nextHeading = IDLE;
+		m_discovery = false;
+		m_next = m_prev = NULL;
+	}
+
+	~Centipede() {
+		printf("~Centipede()\n");
+		if(m_prev != NULL) m_prev->unlinkNext();
+		if(m_next != NULL) m_next->unlinkPrev();
+	}
+	
+	bool isDiscovered() { return !(m_next==NULL && m_prev==NULL); }
+	void discover(Centipede *prev);
+	void doMove(direction d);
+	void create();
+	void update();
+	void message(ZZTObject *them, std::string msg);
+	void reverse() {
+		Centipede *tmp = m_next;
+		m_next = m_prev;
+		m_prev = tmp;
+		
+		if(m_prev != NULL) {
+			m_heading=m_nextHeading=toward(m_prev);
+			m_prev->reverse();
+		}
+	}
+	
+	void unlinkPrev() { m_prev = NULL; }
+	void unlinkNext() { m_next = NULL; }
+private:
+	direction m_nextHeading;
+	Centipede *m_next,*m_prev;
+	bool m_discovery;
+};

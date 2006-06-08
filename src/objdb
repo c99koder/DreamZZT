@@ -1,5 +1,5 @@
 
-//Generated on Sun May 28 19:47:05 EDT 2006 by sam 
+//Generated on Sat Jun  3 00:09:22 EDT 2006 by sam 
 
 int str_to_obj(std::string str) { 
   if(str == "") {
@@ -96,6 +96,10 @@ int str_to_obj(std::string str) {
     return ZZT_TIGER;
   } else if(str.find(ZZT_SPINNING_GUN_NAME) == 0) {
     return ZZT_SPINNING_GUN;
+  } else if(str.find(ZZT_CENTIPEDE_HEAD_NAME) == 0) {
+    return ZZT_CENTIPEDE_HEAD;
+  } else if(str.find(ZZT_CENTIPEDE_BODY_NAME) == 0) {
+    return ZZT_CENTIPEDE_BODY;
   } else {
     return -1;
   }
@@ -197,6 +201,10 @@ ZZTObject *create_object(int type, int x, int y) {
     return new ZZT_TIGER_CLASS(type, x, y, ZZT_TIGER_SHAPE, ZZT_TIGER_FLAGS, ZZT_TIGER_NAME);
   } else if(type == ZZT_SPINNING_GUN) {
     return new ZZT_SPINNING_GUN_CLASS(type, x, y, ZZT_SPINNING_GUN_SHAPE, ZZT_SPINNING_GUN_FLAGS, ZZT_SPINNING_GUN_NAME);
+  } else if(type == ZZT_CENTIPEDE_HEAD) {
+    return new ZZT_CENTIPEDE_HEAD_CLASS(type, x, y, ZZT_CENTIPEDE_HEAD_SHAPE, ZZT_CENTIPEDE_HEAD_FLAGS, ZZT_CENTIPEDE_HEAD_NAME);
+  } else if(type == ZZT_CENTIPEDE_BODY) {
+    return new ZZT_CENTIPEDE_BODY_CLASS(type, x, y, ZZT_CENTIPEDE_BODY_SHAPE, ZZT_CENTIPEDE_BODY_FLAGS, ZZT_CENTIPEDE_BODY_NAME);
   } else {
     return NULL;
   }
@@ -298,6 +306,10 @@ ZZTObject *create_copy(ZZTObject *source) {
     return new ZZT_TIGER_CLASS(*(ZZT_TIGER_CLASS *)source);
   } else if(source->getType() == ZZT_SPINNING_GUN) {
     return new ZZT_SPINNING_GUN_CLASS(*(ZZT_SPINNING_GUN_CLASS *)source);
+  } else if(source->getType() == ZZT_CENTIPEDE_HEAD) {
+    return new ZZT_CENTIPEDE_HEAD_CLASS(*(ZZT_CENTIPEDE_HEAD_CLASS *)source);
+  } else if(source->getType() == ZZT_CENTIPEDE_BODY) {
+    return new ZZT_CENTIPEDE_BODY_CLASS(*(ZZT_CENTIPEDE_BODY_CLASS *)source);
   } else {
     return NULL;
   }
