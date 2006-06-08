@@ -51,7 +51,8 @@ void Passage::message(ZZTObject *them, std::string message) {
 	
   if(message == "touch" && them->getType()==ZZT_PLAYER) {
     obj=get_obj_by_type(brd,ZZT_PLAYER);
-    obj2=get_obj_by_color(brd,ZZT_PASSAGE,*m_color);
+		
+    obj2=get_obj_by_color(brd,ZZT_PASSAGE,m_fg,m_bg);
 		pos = obj->getPosition();
 		
 		if(obj2!=NULL) {
