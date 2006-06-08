@@ -51,6 +51,8 @@ extern bool playerInputActive;
 extern bool gameFrozen;
 int debug_visible = 0;
 std::string debug_cmdline;
+enum debugSelectMode_t { NONE, WATCH, INSPECT} debugSelectMode = NONE;
+int debugselect_x=0, debugselect_y=0;
 
 Tiki::Thread::Thread *debug_thread;
 
@@ -64,14 +66,45 @@ void *process_debug(void *) {
 		debug_hidCookie = Hid::callbackReg(debug_hidCallback, NULL);
 		
 		while(debug_cmdline.length() == 0 || (debug_cmdline[debug_cmdline.length() - 1] != '\r')) {
-			Time::sleep(10000);
+			Time::sleep(1000);
+			if(debugSelectMode != NONE) {
+				ct->locate(debugselect_x, debugselect_y);
+				ct->color(WHITE | HIGH_INTENSITY, BLACK);
+				ct->printf("X");
+			}
 		}; //Wait for enter
 
 		Hid::callbackUnreg(debug_hidCookie);
 		
 		debug_cmdline.resize(debug_cmdline.length() - 1);
 
-		if(player==NULL) continue;
+		if(debugSelectMode != NONE) {
+			if(debugSelectMode == WATCH) {
+				if(currentbrd->board[debugselect_x][debugselect_y].obj->getProg() != "") {
+					((ZZTOOP *)(currentbrd->board[debugselect_x][debugselect_y].obj))->watch();
+					debug("Now watching %s\n",((ZZTOOP *)(currentbrd->board[debugselect_x][debugselect_y].obj))->get_zztobj_name().c_str());
+				} else {
+					debug("Not an object.");
+				}
+			} else if(debugSelectMode == INSPECT) {
+				if(currentbrd->board[debugselect_x][debugselect_y].obj->getProg() != "") {
+					dt->setANSI(false);
+					TextWindow t(dt,((ZZTOOP *)(currentbrd->board[debugselect_x][debugselect_y].obj))->get_zztobj_name(),currentbrd->board[debugselect_x][debugselect_y].obj->getProg().c_str());
+					t.doMenu();
+					dt->setANSI(true);
+					dt->color(GREY, BLACK);
+					dt->clear();
+					debug("");
+				} else {
+					debug("Not an object.");
+				}
+			}
+				
+			debugSelectMode = NONE;
+			gameFrozen = false;
+			
+			continue;
+		}
 		
 		*dt << ">>> " << debug_cmdline.c_str() << endl;
 		if(debug_cmdline == "+dark") {
@@ -111,6 +144,7 @@ void *process_debug(void *) {
 			take_torch(10);
 			debug("Decreased torches\n");
 		} else if(debug_cmdline == "zap") {
+			if(player==NULL) continue;
 			if(player->getPosition().x - 1 >= 0) remove_from_board(currentbrd,currentbrd->board[(int)player->getPosition().x-1][(int)player->getPosition().y].obj);
 			if(player->getPosition().y - 1 >= 0) remove_from_board(currentbrd,currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y-1].obj);
 			if(player->getPosition().x + 1 < BOARD_X) remove_from_board(currentbrd,currentbrd->board[(int)player->getPosition().x+1][(int)player->getPosition().y].obj);
@@ -123,6 +157,7 @@ void *process_debug(void *) {
 			draw_keys();
 			debug("Player now has all keys.\n");
 		} else if(debug_cmdline.find("warp ") == 0) {
+			if(player==NULL) continue;
 			switchbrd = atoi(debug_cmdline.c_str() + 5);
 			player->setFlag(F_SLEEPING);
 		} else if(debug_cmdline == "freeze") {
@@ -131,7 +166,24 @@ void *process_debug(void *) {
 		} else if(debug_cmdline == "unfreeze") {
 			gameFrozen = false;
 			debug("Game has been thawed\n");
+		} else if(debug_cmdline == "watch") {
+			gameFrozen = true;
+			debug("Select an object to watch.\n");
+			debugSelectMode = WATCH;
+			debugselect_x = 31;
+			debugselect_y = 13;
+		} else if(debug_cmdline == "inspect") {
+			gameFrozen = true;
+			debug("Select an object to inspect.\n");
+			debugSelectMode = INSPECT;
+			debugselect_x = 31;
+			debugselect_y = 13;
+		} else if(debug_cmdline == "flags") {
+			for(int i=0; i<10; i++) {
+				debug("%i: %s\n",i,world.flag[i].string);
+			}
 		} else if(debug_cmdline == "warp") {
+			gameFrozen = true;
 			int x=0;
 			char tmp[100];
 			struct board_info_node *current=board_list;
@@ -155,12 +207,14 @@ void *process_debug(void *) {
 			} else {
 				debug("");
 			}
+			gameFrozen = false;
 		} else if(debug_cmdline == "quit") {
 			switchbrd = -2;
 		} else if(debug_cmdline.find("play ") == 0) {
 			zm->setTune(debug_cmdline.c_str() + 5);
 			zm->start();
 		} else {
+			if(player==NULL) continue;
 			player->exec(debug_cmdline);
 		}
 		
@@ -176,38 +230,56 @@ void debug_hidCallback(const Event & evt, void * data) {
 	ct->locate(65,23);
 
 	if (evt.type == Hid::Event::EvtKeyDown) {
-		if(evt.key == '`') {
-			if(debug_visible==0) {
-				debug_visible = 1;
-				ct->setSize(640,240);
-				dt->setTranslate(Vector(320,120,0));
-				ct->setTranslate(Vector(320,360,0));
-				debug_cmdline = "";
-			} else {
-				debug_visible = 0;
-				ct->setSize(640,480);
-				ct->setTranslate(Vector(320,240,0));
-				dt->setTranslate(Vector(1024,360,0));
-				playerInputActive = true;
-				ct->setANSI(true);
-				*ct << "\x1b[k"; // clear EOL
-				ct->setANSI(false);
+		if(debugSelectMode != NONE) {
+			if(evt.key == Event::KeyUp) {
+				debugselect_y--;
+				if(debugselect_y < 0) debugselect_y=0;
+			} else if(evt.key == Event::KeyDown) {
+				debugselect_y++;
+				if(debugselect_y >= BOARD_Y) debugselect_y=BOARD_Y-1;
+			} else if(evt.key == Event::KeyLeft) {
+				debugselect_x--;
+				if(debugselect_x < 0) debugselect_x=0;
+			} else if(evt.key == Event::KeyRight) {
+				debugselect_x++;
+				if(debugselect_x >= BOARD_X) debugselect_x=BOARD_X-1;
+			} else if(evt.key == 13) {
+				debug_cmdline += '\r';
 			}
-		} else if (evt.key >= 32 && evt.key <= 128 && debug_visible) {
-			debug_cmdline += evt.key;
-			playerInputActive = false;
-			*dt << "\x1b[s"; // Save cursor position
-			dt->locate(0,24);
-			dt->color(GREY | HIGH_INTENSITY, BLACK);
-			*dt << "> \x1b[1;32m" << debug_cmdline.c_str() << "\x1b[k"; //clear EOL
-			*dt << "\x1b[u"; // Restore cursor position
-		} else if (evt.key == 13 && debug_visible) {
-			playerInputActive = true;
-			debug_cmdline += '\r';
+		} else {					
+			if(evt.key == '`') {
+				if(debug_visible==0) {
+					debug_visible = 1;
+					ct->setSize(640,240);
+					dt->setTranslate(Vector(320,120,0));
+					ct->setTranslate(Vector(320,360,0));
+					debug_cmdline = "";
+				} else {
+					debug_visible = 0;
+					ct->setSize(640,480);
+					ct->setTranslate(Vector(320,240,0));
+					dt->setTranslate(Vector(1024,360,0));
+					playerInputActive = true;
+					ct->setANSI(true);
+					*ct << "\x1b[k"; // clear EOL
+					ct->setANSI(false);
+				}
+			} else if (evt.key >= 32 && evt.key <= 128 && debug_visible) {
+				debug_cmdline += evt.key;
+				playerInputActive = false;
+				*dt << "\x1b[s"; // Save cursor position
+				dt->locate(0,24);
+				dt->color(GREY | HIGH_INTENSITY, BLACK);
+				*dt << "> \x1b[1;32m" << debug_cmdline.c_str() << "\x1b[k"; //clear EOL
+				*dt << "\x1b[u"; // Restore cursor position
+			} else if (evt.key == 13 && debug_visible) {
+				playerInputActive = true;
+				debug_cmdline += '\r';
+			}
 		}
 	}
 	
-	if(debug_visible) {
+	if(debug_visible && player != NULL) {
 		*ct << "X: " << (int)player->getPosition().x << " Y: " << (int)player->getPosition().y << "    ";
 	}
 }
