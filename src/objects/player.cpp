@@ -96,6 +96,9 @@ void Player::processEvent(const Event & evt) {
 					m_flags&=~F_SLEEPING;
 				}
 				break;
+			case Event::KeyEsc:
+				switchbrd=-3;
+				break;
 				/*case Event::KeyEsc:
 				TextWindow t("Game Menu",MENU);
 				t.doMenu();

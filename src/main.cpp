@@ -193,9 +193,19 @@ extern struct board_info_node *currentbrd;
 bool gameFrozen;
 extern bool playerInputActive;
 
+void titleHidCallback(const Event & evt, void * data) {
+	if (evt.type == Hid::Event::EvtQuit) {
+		switchbrd = -2;
+	}
+	if (evt.type == Hid::Event::EvtKeypress && evt.key == 13) {
+		switchbrd = world.start;
+	}
+}	
+
 void play_zzt(char *filename) {
 	int start;
 	char tmp[50];
+	int hidCookie = Hid::callbackReg(titleHidCallback, NULL);
 
 	gameFrozen = false;
 	playerInputActive = true;
@@ -209,7 +219,7 @@ void play_zzt(char *filename) {
 	start=world.start;
 	switch_board(0);
 	remove_from_board(currentbrd,player);
-	//player->arg1=1;
+	player=NULL;
 	ct->locate(BOARD_X+2,7);
   ct->color(14,1);
 	ct->printf("   World: ");
@@ -230,8 +240,10 @@ void play_zzt(char *filename) {
 		draw_msg();
 		render();
 		Time::sleep(80000);
-	} while(0);//poll_game_device(0)!=START_BTN);
-	//while(poll_game_device(0)==START_BTN);
+	} while(switchbrd==-1);
+	Hid::callbackUnreg(hidCookie);
+	if(switchbrd==-2) return;
+	switchbrd=-1;
 	free_world();
 	load_zzt(filename,0);
 	start=world.start;
@@ -262,6 +274,7 @@ void play_zzt(char *filename) {
 			break;
 		} else if(switchbrd==-3) {
 			//menu
+			break;
 		} else if(switchbrd==-4) {
 			save_game("saved.sav");
 			switchbrd=-1;
