@@ -85,6 +85,7 @@ struct board_info_node *get_board_list();
 struct board_data *get_block_by_type(int type, int &x, int &y);
 ZZTObject *get_obj_by_type(struct board_info_node *board, int type);
 ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color);
+ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int fg, int bg);
 struct board_info_node *get_current_board();
 int board_up();
 int board_down();

@@ -188,6 +188,18 @@ ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color) 
   return NULL;
 }
 
+ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int fg, int bg) {
+  int x,y;
+	
+  for(y=0;y<BOARD_Y;y++) {
+    for(x=0;x<BOARD_X;x++) {
+      if(board->board[x][y].obj->getType()==type && board->board[x][y].obj->getFg()==fg &&
+				 board->board[x][y].obj->getType()==type && board->board[x][y].obj->getBg()==bg) return board->board[x][y].obj;
+    }
+  }
+  return NULL;
+}
+
 ZZTObject *get_obj_by_type(struct board_info_node *board, int type) {
   int x,y;
 
@@ -202,12 +214,11 @@ ZZTObject *get_obj_by_type(struct board_info_node *board, int type) {
 void remove_from_board(struct board_info_node *brd, ZZTObject *me) {  
 	Vector pos = me->getPosition();
   brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
-  if(brd->board[(int)pos.x][(int)pos.y].obj==NULL) {
+  if(brd->board[(int)pos.x][(int)pos.y].obj==NULL || !brd->board[(int)pos.x][(int)pos.y].obj->isValid()) {
     brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY,pos.x,pos.y);
   }
   brd->board[(int)pos.x][(int)pos.y].under=NULL;
-  me->setFlags(F_DELETED);
-  draw_block((int)pos.x,(int)pos.y);
+  me->setFlag(F_DELETED);
 }
 
 struct board_info_node *get_board_list() {
@@ -535,7 +546,7 @@ void load_objects(File &fd, struct board_info_node *board) {
       board->board[x][y].under=create_object(ut,x,y);
       board->board[x][y].under->setFg(uc%16);
       board->board[x][y].under->setBg(uc/16);
-      //board->board[x][y].under->create();
+      board->board[x][y].under->create();
     } else {
       printf("Invalid object at: (%i,%i)\n",x,y);
     }
@@ -919,14 +930,14 @@ void update_brd() {
 		if(world_sec==0) world_sec=10;
 	}
 	
-	for(j=0; j<2; j++) {
-		i=0;
+	//for(j=0; j<2; j++) {
+		//i=0;
 		for(y=0;y<BOARD_Y;y++) {
 			for(x=0;x<BOARD_X;x++) {
 				o=current->board[x][y].obj;
-				if(o!=NULL && o->getUpdated()==0) { 
+				if(o!=NULL && o->isValid() && o->getUpdated()==0) { 
 					o->setTick(o->getTick()-1);
-					if(o->getTick()<=0 && i%2==j) {
+					if(o->getTick()<=0/* && i%2==j*/) {
 						//printf("Updating: %s\n",o->name);
 						o->update();
 						if(o->getFlags()&F_DELETED) {
@@ -938,11 +949,11 @@ void update_brd() {
 					}
 				}
 			}
-			if(o!=NULL) {
+			/*if(o!=NULL) {
 				i++; i%=2;
-			}							
+			}*/							
 		}
-	}
+	//}
 	
   for(y=0;y<BOARD_Y;y++) {
     for(x=0;x<BOARD_X;x++) {
