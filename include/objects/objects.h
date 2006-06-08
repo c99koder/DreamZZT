@@ -148,6 +148,7 @@ class ZZTOOP : public ZZTObject {
 public:
 	ZZTOOP(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
 		m_walk = IDLE;
+		m_watch = false;
 	}
 	void setParam(int arg, unsigned char val);
 	unsigned char getParam(int arg);
@@ -155,6 +156,7 @@ public:
 	void update();
 	void message(ZZTObject *them, std::string msg);
 	
+	void watch() { m_watch = !m_watch; }
 	void zzt_goto(std::string label);
 	void send(std::string cmd);
 	void zap(std::string label);
@@ -164,6 +166,7 @@ public:
 protected:
 	int playedLast,goagain;
 	direction m_walk;
+	bool m_watch;
 };
 
 //SCROLL
@@ -174,7 +177,15 @@ protected:
 
 class Scroll : public ZZTOOP {
 public:
-	Scroll(int type, int x, int y, int shape, int flags, std::string name) : ZZTOOP(type, x, y, shape, flags, name) { }
+	Scroll(int type, int x, int y, int shape, int flags, std::string name) : ZZTOOP(type, x, y, shape, flags, name) { 
+		m_shape=ZZT_SCROLL_SHAPE;
+	}
+	
+	void create() { 
+		m_fg = 15;
+		m_shape = ZZT_SCROLL_SHAPE;
+		m_progpos = -1;	
+	}
 	void message(ZZTObject *them, std::string msg);
 	void update();
 };
