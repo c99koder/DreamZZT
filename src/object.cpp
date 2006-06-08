@@ -73,42 +73,47 @@ direction ZZTObject::str_to_direction(string s) {
 	vector<string>::iterator words_iter;
 	
 	for(words_iter = words.begin(); words_iter != words.end(); words_iter++) {
-		if((*words_iter).find("opp") == 0) {
+		if((*words_iter) == "opp") {
 			neg=1;
-		} else if((*words_iter).find("cw") == 0) {
+		} else if((*words_iter) == "cw") {
 			neg=2;
-		} else if((*words_iter).find("ccw") == 0) {
+		} else if((*words_iter) == "ccw") {
 			neg=3;
-		} else if((*words_iter).find("rndp") == 0) {
+		} else if((*words_iter) == "rndp") {
 			if(rand()%2==0) {
 				neg=2;
 			} else {
 				neg=3;
 			}
-		} else if((*words_iter).find("flow") == 0) {
+		} else if((*words_iter) == "flow") {
 			res=m_heading;
-		} else if((*words_iter).find("seek") == 0) {
+		} else if((*words_iter) == "seek") {
 			res=toward(player);
-		} else if((*words_iter).find("rndns") == 0) {
+		} else if((*words_iter) == "rndns") {
 			if(rand()%2==1) {
 				res=UP;
 			} else {
 				res=DOWN;
 			}
-		} else if((*words_iter).find("rndne") == 0) {
+		} else if((*words_iter) == "rndne") {
 			if(rand()%2==1) {
 				res=UP;
 			} else {
 				res=RIGHT;
 			}
-		} else if((*words_iter).find("n") == 0) {
+			break;
+		} else if((*words_iter) == "n" || (*words_iter) == "north") {
 			res = UP;
-		} else if((*words_iter).find("s") == 0) {
+			break;
+		} else if((*words_iter) == "s" || (*words_iter) == "south") {
 			res = DOWN;
-		} else if((*words_iter).find("e") == 0) {
+			break;
+		} else if((*words_iter) == "e" || (*words_iter) == "east") {
 			res = RIGHT;
-		} else if((*words_iter).find("w") == 0) {
+			break;
+		} else if((*words_iter) == "w" || (*words_iter) == "west") {
 			res = LEFT;
+			break;
 		}
 	}
   if(neg==1) {
@@ -258,12 +263,17 @@ bool ZZTObject::move(enum direction dir, bool trying) {
     m_position.x=x;
     m_position.y=y;
     m_heading=dir;
+		if(!board->board[x][y].obj->isValid()) printf("Warning: putting invalid object under %i,%i\n",x,y);
     board->board[x][y].under=board->board[x][y].obj;
     board->board[x][y].obj=this;
     m_bg=board->board[x][y].under->getBg();
     board->board[oldx][oldy].obj=board->board[oldx][oldy].under;
+		if(board->board[oldx][oldy].obj != NULL && !board->board[oldx][oldy].obj->isValid()) {
+			printf("Warning: putting invalid object at %i,%i\n",oldx,oldy);
+			board->board[oldx][oldy].obj = NULL;
+		}
 		board->board[oldx][oldy].under=NULL;
-    if(board->board[oldx][oldy].obj==NULL) {
+    if(board->board[oldx][oldy].obj==NULL || !board->board[oldx][oldy].obj->isValid()) {
       board->board[oldx][oldy].obj=::create_object(ZZT_EMPTY,oldx,oldy);
     }
 		suc = 1;
@@ -290,7 +300,7 @@ bool ZZTObject::move(enum direction dir, bool trying) {
       }
       if(suc==0) {
         if(!trying && !(m_flags & F_SLEEPING)) message(them,"thud");
-        if(!trying && !(them->getFlags() & F_SLEEPING)) them->message(this,"touch");
+        if(!trying && !(them->getFlags() & F_SLEEPING) && m_type != ZZT_BULLET) them->message(this,"touch");
       } else {
         move(dir);
       }
@@ -391,7 +401,9 @@ ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string n
 void ZZTObject::draw() {
 	float a,b;
 	
-	Vector dist = getPosition() - player->getPosition();
+	Vector dist(0,0,0);
+	
+	if(player!=NULL) dist = getPosition() - player->getPosition();
 	
   a=(dist.x)*(dist.x)/2.0f;
   b=(dist.y)*(dist.y);
