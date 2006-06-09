@@ -164,7 +164,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 		if(!strcmp(t->getLabel(),"quit") || t->getLabel()[0]=='\0') {
 			break;
 		} else if(!strcmp(t->getLabel(),"new")) {
-			play_zzt("town.zzt");
+			play_zzt("/users/sam/dos/zzt/codered1.zzt");//"town.zzt");
 		} else if(!strcmp(t->getLabel(),"tutorial")) {
 			play_zzt("tutorial.zzt");
 		} else if(!strcmp(t->getLabel(),"restore")) {

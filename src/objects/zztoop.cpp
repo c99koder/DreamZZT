@@ -507,22 +507,22 @@ void ZZTOOP::exec(std::string text) {
 			lbl = words[3];
 		} else if(words[1] == "contact") {
 			lbl = words[2];
-			if(currentbrd->board[(int)m_position.x][(int)m_position.y-1].obj!=NULL) {
+			if(m_position.y > 0 && currentbrd->board[(int)m_position.x][(int)m_position.y-1].obj!=NULL) {
 				if(currentbrd->board[(int)m_position.x][(int)m_position.y-1].obj->getType()==ZZT_PLAYER) {
 					res=1;
 				}
 			}
-			if(currentbrd->board[(int)m_position.x][(int)m_position.y+1].obj!=NULL) {
+			if(m_position.y < BOARD_Y-1 && currentbrd->board[(int)m_position.x][(int)m_position.y+1].obj!=NULL) {
 				if(currentbrd->board[(int)m_position.x][(int)m_position.y+1].obj->getType()==ZZT_PLAYER) {
 					res=1;
 				}
 			}
-			if(currentbrd->board[(int)m_position.x-1][(int)m_position.y].obj!=NULL) {
+			if(m_position.x > 0 && currentbrd->board[(int)m_position.x-1][(int)m_position.y].obj!=NULL) {
 				if(currentbrd->board[(int)m_position.x-1][(int)m_position.y].obj->getType()==ZZT_PLAYER) {
 					res=1;
 				}
 			}
-			if(currentbrd->board[(int)m_position.x+1][(int)m_position.y].obj!=NULL) {
+			if(m_position.x < BOARD_X-1 && currentbrd->board[(int)m_position.x+1][(int)m_position.y].obj!=NULL) {
 				if(currentbrd->board[(int)m_position.x+1][(int)m_position.y].obj->getType()==ZZT_PLAYER) {
 					res=1;
 				}
