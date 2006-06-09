@@ -26,6 +26,7 @@ using namespace Tiki;
 using namespace Tiki::Audio;
 
 #include "sound.h"
+#include "drums.h"
 
 short drums[10][10] = {
 	{   0,   0, 175, 175, 100,  90,  80,  70,  60,  50},  /* 0 */
@@ -56,7 +57,7 @@ ZZTMusicStream::ZZTMusicStream() {
 	m_note_len=0;
 	m_octave = 4;
 	m_hfreq = 0;
-	m_drum = -1;
+	m_drum = NULL;
 	
 	m_locked = false;
 }
@@ -76,7 +77,7 @@ void ZZTMusicStream::setTune(std::string tune) {
 	m_octave = 5;
 	m_hfreq = 0;
 	osc = 1;
-	m_drum = -1;
+	m_drum = NULL;
 	m_note_duration = 32;
 	
 	Stream::create();	
@@ -103,22 +104,18 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 	}
 	
 	for(int i = 0; i < *numSamples; i++) {
-		if(m_note_len--<=0) {
-			if(m_drum != -1) {
-				m_drum_idx++;
-				if(m_drum_idx < 10) {
-					m_note_freq = drums[m_drum][m_drum_idx];
-					m_note_len = 0.002 * (float)m_freq;
-					i--;
-					continue;
-				} else {
-					m_drum = -1;
-					m_note_freq = 0;
-					m_note_len = ((float)m_freq*2.0f / (float)(m_note_duration)) - (0.002 * (float)m_freq);
-					i--;
-					continue;
-				}
+		if(m_drum != NULL) {
+			if(m_drum_idx < (drumsample_size / 2)) {
+				buffer[i] = m_drum[m_drum_idx++];
+				continue;
+			} else {
+				m_drum = NULL;
+				m_note_freq = 0;
+				m_note_len = ((float)m_freq*2.0f / (float)(m_note_duration)) - (drumsample_size / 2);
 			}
+		}
+		
+		if(m_note_len--<=0) {
 			if(m_tune_idx >= m_tune.length()) {
 				*numSamples = (i / 2);
 				return GDSuccess;
@@ -126,15 +123,57 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 			j=0;
 			osc=1;
 
-			if(m_tune[m_tune_idx] >= '0' && m_tune[m_tune_idx] <= '9') {
-				m_drum = m_tune[m_tune_idx] - '0';
-				m_drum_idx = 0;
-				m_tune_idx++;
-				i--;
-				continue;
-			}
-			
 			switch(m_tune[m_tune_idx++]) {
+				case '0':
+					m_drum = (uint16 *)drumsample0;
+					m_drum_idx = 0;
+					i--;
+					continue;
+				case '1':
+					m_drum = (uint16 *)drumsample1;
+					m_drum_idx = 0;
+					i--;
+					continue;
+				case '2':
+					m_drum = (uint16 *)drumsample2;
+					m_drum_idx = 0;
+					i--;
+					continue;					
+				/*case '3':
+					m_drum = (uint16 *)drumsample3;
+					m_drum_idx = 0;
+					i--;
+					continue;*/
+				case '4':
+					m_drum = (uint16 *)drumsample4;
+					m_drum_idx = 0;
+					i--;
+					continue;
+				case '5':
+					m_drum = (uint16 *)drumsample5;
+					m_drum_idx = 0;
+					i--;
+					continue;
+				case '6':
+					m_drum = (uint16 *)drumsample6;
+					m_drum_idx = 0;
+					i--;
+					continue;					
+				case '7':
+					m_drum = (uint16 *)drumsample7;
+					m_drum_idx = 0;
+					i--;
+					continue;
+				case '8':
+					m_drum = (uint16 *)drumsample8;
+					m_drum_idx = 0;
+					i--;
+					continue;
+				case '9':
+					m_drum = (uint16 *)drumsample9;
+					m_drum_idx = 0;
+					i--;
+					continue;
 				case '@':
 					m_note_len=0;
 					m_octave = 5;

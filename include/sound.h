@@ -54,8 +54,7 @@ private:
 			int m_hfreq;
 			bool m_locked;
 			int m_drum_idx;
-			int m_drum;
+			uint16 *m_drum;
 };
 
 #endif	/* __SOUND_H */
-
