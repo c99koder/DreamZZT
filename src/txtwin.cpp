@@ -217,7 +217,7 @@ void TextWindow::doMenu() {
         if(x+y<=maxy && x+y>=0) {
 					if(txt[x+y][44]=='!') {
 						console->color(13,1);
-						console->printf("   %c  ",16);
+						console->printf(" %c   ",16);
 						console->color(15,1);
 						/*if(6+x==13) {
 							color(13,1);
@@ -229,8 +229,8 @@ void TextWindow::doMenu() {
 						}*/
 					}
 					for(u=0; u<42 && txt[x+y][u] != '\0'; u++) {
-						console->putColor(((txt[x+y][44]=='!')?15:9)+u, 6+x, HIGH_INTENSITY | ((txt[x+y][44]=='$' || txt[x+y][44]=='!') ? WHITE : YELLOW) | (BLUE << 8));
-						console->putChar(((txt[x+y][44]=='!')?15:9)+u,6+x,txt[x+y][u]);
+						console->putColor(((txt[x+y][44]=='!')?14:9)+u, 6+x, HIGH_INTENSITY | ((txt[x+y][44]=='$' || txt[x+y][44]=='!') ? WHITE : YELLOW) | (BLUE << 8));
+						console->putChar(((txt[x+y][44]=='!')?14:9)+u,6+x,txt[x+y][u]);
 					}
 				}
       }
