@@ -164,7 +164,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 		if(!strcmp(t->getLabel(),"quit") || t->getLabel()[0]=='\0') {
 			break;
 		} else if(!strcmp(t->getLabel(),"new")) {
-			play_zzt("town.zzt");
+			play_zzt("enigma.zzt");
 		} else if(!strcmp(t->getLabel(),"tutorial")) {
 			play_zzt("tutorial.zzt");
 		} else if(!strcmp(t->getLabel(),"restore")) {
@@ -239,7 +239,7 @@ void play_zzt(char *filename) {
 		draw_board();
 		draw_msg();
 		render();
-		Time::sleep(80000);
+		Time::sleep(60000);
 	} while(switchbrd==-1);
 	Hid::callbackUnreg(hidCookie);
 	if(switchbrd==-2) return;
@@ -261,7 +261,7 @@ void play_zzt(char *filename) {
 		draw_board();
     draw_msg();
 		render();
-		Time::sleep(80000);
+		Time::sleep(60000);
     
 		if(switchbrd>-1) {
       switch_board(switchbrd);
