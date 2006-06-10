@@ -159,7 +159,8 @@ void ZZTOOP::zap(std::string label) {
   int x,y,newline=1,goagain=1;
 
 	if(m_watch) debug("%s zapping %s",get_zztobj_name().c_str(),label.c_str());
-  
+	//printf("%s zapping %s",get_zztobj_name().c_str(),label.c_str());
+  	
 	for(x=0;x<m_proglen;x++) {
     switch(m_prog[x]) {
     case '\r':
@@ -174,6 +175,8 @@ void ZZTOOP::zap(std::string label) {
 					text += m_prog[x+y];
 					y++;
 				}
+				
+				transform(text.begin(), text.end(), text.begin(), ::tolower);
 				
 				if(label == text) {
 					m_prog[x]='\'';
@@ -195,7 +198,10 @@ void ZZTOOP::restore(std::string label) {
   int x,y,newline=0,goagain=1;
 	
 	if(m_watch) debug("%s restoring %s\n",get_zztobj_name().c_str(),label.c_str());
+	
+	//printf("%s restoring %s\n",get_zztobj_name().c_str(),label.c_str());
   
+	
 	for(x=0;x<m_proglen;x++) {
     switch(m_prog[x]) {
     case '\r':
@@ -210,9 +216,10 @@ void ZZTOOP::restore(std::string label) {
 					y++;
 				}
 				
+				transform(text.begin(), text.end(), text.begin(), ::tolower);
+				
 				if(label == text) {
 					m_prog[x]=':';
-					return;
 				}
 				x+=y-1;
 				newline=0;
@@ -234,8 +241,12 @@ void ZZTOOP::zzt_goto(std::string label) {
 		label.erase(0,1);
   }
 
+	transform(label.begin(), label.end(), label.begin(), ::tolower);
+	
 	if(m_watch) debug("\x1b[1;37m%s\x1b[0;37m recieved \x1b[1;37m%s\n",get_zztobj_name().c_str(), label.c_str());
   
+	//printf("%s: recieved %s\n",get_zztobj_name().c_str(), label.c_str());
+	
 	for(x=0;x<m_proglen;x++) {
     switch(m_prog[x]) {
     case '\r':
@@ -250,6 +261,8 @@ void ZZTOOP::zzt_goto(std::string label) {
 					text += m_prog[x+y];
 					y++;
 				}
+				
+				transform(text.begin(), text.end(), text.begin(), ::tolower);
 				
 				//printf("%s comparing labels: '%s' and '%s'\n",get_zztobj_name().c_str(),label.c_str(),text.c_str());
 				if(label == text) {
@@ -297,9 +310,7 @@ void ZZTOOP::exec(std::string text) {
 	
 	if(words[0] == "go") {
 				res=str_to_direction(args);
-				if(move((direction)res,true)) {
-					move((direction)res);
-				} else {
+				if(!move((direction)res,true)) {
 					m_progpos-=(text.length()+2);
 				}
 				goagain=0;
@@ -310,7 +321,7 @@ void ZZTOOP::exec(std::string text) {
 	}
 	else if(words[0] == "play") {
 		if(zm != NULL) {
-			if(playedLast==0) {
+			if(playedLast==0 && !zm->isPlaying()) {
 				zm->setTune(args);
 			} else {
 				zm->appendTune(args);
@@ -347,30 +358,29 @@ void ZZTOOP::exec(std::string text) {
 		}
 		if(i>=0 && i<BOARD_X && j>=0 && j<BOARD_Y) {
 			b=&currentbrd->board[i][j];
-			if(b->obj->getType() != ZZT_PLAYER || ((b->obj->getType() == ZZT_PLAYER) && b->obj->move(str_to_direction(words[1])))) { 
-				if(str_to_obj(words[2])==-1) {
-					set_msg("ERR: undefined item");
-				} else {
-					b->under=b->obj;
-					b->obj=::create_object(str_to_obj(words[2]),i,j);
-					b->obj->setParam(1,b->under->getParam(1));
-					b->obj->setParam(2,b->under->getParam(2));
-					b->obj->setParam(3,b->under->getParam(3));
-					b->obj->setParam(4,b->under->getParam(4));
-					b->obj->setFg(b->under->getFg());
-					b->obj->setBg(b->under->getBg());									
-					if(b->obj->getType()==ZZT_OBJECT) {
-						b->obj->setShape(b->under->getShape());
-						b->obj->setProg(b->under->getProg(),b->under->getProgLen(),b->under->getProgPos());
-					}
-					b->obj->setColor(b->under->getColor());						
-					b->obj->create();
-					if(color!=-1) b->obj->setColor(color);
-					if(b->obj->getBg()>7) b->obj->setBg(b->obj->getBg() - 8);
-					draw_block(i,j);
-					delete b->under;
-					b->under= NULL;
+			if(b->obj->getFlags() & F_PUSHABLE) b->obj->move(str_to_direction(words[1]),true);				
+			if(str_to_obj(words[2])==-1) {
+				set_msg("ERR: undefined item");
+			} else {
+				b->under=b->obj;
+				b->obj=::create_object(str_to_obj(words[2]),i,j);
+				b->obj->setParam(1,b->under->getParam(1));
+				b->obj->setParam(2,b->under->getParam(2));
+				b->obj->setParam(3,b->under->getParam(3));
+				b->obj->setParam(4,b->under->getParam(4));
+				b->obj->setFg(b->under->getFg());
+				b->obj->setBg(b->under->getBg());									
+				if(b->obj->getType()==ZZT_OBJECT) {
+					b->obj->setShape(b->under->getShape());
+					b->obj->setProg(b->under->getProg(),b->under->getProgLen(),b->under->getProgPos());
 				}
+				b->obj->setColor(b->under->getColor());						
+				b->obj->create();
+				if(color!=-1) b->obj->setColor(color);
+				if(b->obj->getBg()>7) b->obj->setBg(b->obj->getBg() - 8);
+				draw_block(i,j);
+				delete b->under;
+				b->under= NULL;
 			}
 		}
 		goagain=1;
@@ -746,7 +756,7 @@ void ZZTOOP::update() {
     goagain=0;
     if(m_progpos>m_proglen || m_progpos==-1) { break; }
     text="";
-		if(m_watch) printf("%s: next characters: '%c,%c,%c,%c\n'",get_zztobj_name().c_str(),m_prog[m_progpos],m_prog[m_progpos+1],m_prog[m_progpos+2],m_prog[m_progpos+3]);
+		//if(m_watch) printf("%s: next characters: '%c,%c,%c,%c\n'",get_zztobj_name().c_str(),m_prog[m_progpos],m_prog[m_progpos+1],m_prog[m_progpos+2],m_prog[m_progpos+3]);
     switch(m_prog[m_progpos]) {
     case ':':
       while(m_prog[m_progpos]!='\r') {
@@ -765,7 +775,7 @@ void ZZTOOP::update() {
 				
 			if(m_watch) debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
 #ifdef DEBUG
-			//printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
+			printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
 #endif
 			move(str_to_direction(text), true);			
 			goagain=0;
@@ -779,7 +789,7 @@ void ZZTOOP::update() {
       }
 			if(m_watch) debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
 #ifdef DEBUG
-			//printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
+			printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
 #endif
 			
 			if(move(str_to_direction(text), true)) {
@@ -813,6 +823,7 @@ void ZZTOOP::update() {
 			exec(text);	
 			break;
     case '\r':
+			if(msg!="") msg += '\r';
       goagain=1;
       break;
     default:
@@ -828,7 +839,7 @@ void ZZTOOP::update() {
     if(went++>6) goagain=0;
   }
 
-	if(msg!="") {
+	if(msg!="" && msg!="\r") {
 #ifdef DEBUG
 		printf("%s: %s\n",get_zztobj_name().c_str(), msg.c_str());
 #endif
