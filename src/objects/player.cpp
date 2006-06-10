@@ -162,7 +162,7 @@ void Player::processEvent(const Event & evt) {
 					break;
 				case Event::KeyDown:
 					m_heading=DOWN;
-					if(m_position.y>=BOARD_Y-1&&board_down()>=0) {
+					if(m_position.y>=BOARD_Y-1&&board_down()>0) {
 						brd=get_board(board_down());
 						obj=get_obj_by_type(brd,ZZT_PLAYER);
 						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
@@ -177,7 +177,7 @@ void Player::processEvent(const Event & evt) {
 					break;
 				case Event::KeyLeft:
 					m_heading=LEFT;
-					if(m_position.x==0&&board_left()>=0) {
+					if(m_position.x==0&&board_left()>0) {
 						brd=get_board(board_left());
 						obj=get_obj_by_type(brd,ZZT_PLAYER);
 						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
@@ -192,7 +192,7 @@ void Player::processEvent(const Event & evt) {
 					break;
 				case Event::KeyRight:
 					m_heading=RIGHT;
-					if(m_position.x>=BOARD_X-1&&board_right()>=0) {
+					if(m_position.x>=BOARD_X-1&&board_right()>0) {
 						brd=get_board(board_right());
 						obj=get_obj_by_type(brd,ZZT_PLAYER);
 						brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
