@@ -358,10 +358,11 @@ void ZZTOOP::exec(std::string text) {
 		}
 		if(i>=0 && i<BOARD_X && j>=0 && j<BOARD_Y) {
 			b=&currentbrd->board[i][j];
-			if(b->obj->getFlags() & F_PUSHABLE) b->obj->move(str_to_direction(words[1]),true);				
 			if(str_to_obj(words[2])==-1) {
 				set_msg("ERR: undefined item");
+				return;
 			} else {
+				if(b->obj->getFlags() & F_PUSHABLE) b->obj->move(str_to_direction(words[1]),true);				
 				b->under=b->obj;
 				b->obj=::create_object(str_to_obj(words[2]),i,j);
 				b->obj->setParam(1,b->under->getParam(1));
@@ -407,10 +408,10 @@ void ZZTOOP::exec(std::string text) {
 			b->obj->setColor(b->under->getColor());
 			if(color!=-1) b->obj->setColor(color);
 			draw_block(m_position.x,m_position.y);
-			//delete b->under;
-			//b->under=NULL;
+			m_progpos = -1;
+			b->under->setFlags(F_DELETED);
+			return;
 		}
-		goagain=1;
 	}
 	else if(words[0] == "change") {
 		goagain=1;
@@ -428,10 +429,11 @@ void ZZTOOP::exec(std::string text) {
 							if(words[1] == words[2]) {
 								b->obj->setColor(color2);
 							} else {
-								b->obj->setFlag(F_DELETED);
 								if(str_to_obj(words[2])==-1) {
 									set_msg("ERR: undefined item");
+									return;
 								} else {
+									b->obj->setFlag(F_DELETED);
 									b->under=b->obj;
 									b->obj=::create_object(str_to_obj(words[2]),i,j);
 									b->obj->setParam(1,b->under->getParam(1));
@@ -817,7 +819,7 @@ void ZZTOOP::update() {
 	      m_progpos++;
       }
 #ifdef DEBUG
-			printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
+	  Debug::printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
 #endif
       
 			exec(text);	
