@@ -39,7 +39,7 @@ extern struct board_info_node *currentbrd;
 extern Player *player;
 
 void Lion::update() {
-  if(rand()%10<m_intel) {
+  if(player != NULL && rand()%10<m_intel) {
     move(toward(player));
   } else {
     move((direction)((rand()%4)+1));
@@ -47,7 +47,7 @@ void Lion::update() {
 }
 
 void Bear::update() {
-  if(dist_x(player) < (9-m_intel) || dist_y(player) < (9-m_intel)) {
+  if(player != NULL && (dist_x(player) < (9-m_intel) || dist_y(player) < (9-m_intel))) {
     move(toward(player));
   }
 }
@@ -99,7 +99,7 @@ void SpinningGun::update() {
   m_shape=gun[m_animIndex];
   draw();
 	
-  if(rand()%10<m_rate) {
+  if(player != NULL && rand()%10<m_rate) {
     if(rand()%10<m_intel) {
       if(((m_position - player->getPosition()).x >= -2 && (m_position - player->getPosition()).x <= 2) ||
         ((m_position - player->getPosition()).y >= -2 && (m_position - player->getPosition()).y <= 2)) {
@@ -129,15 +129,17 @@ void Tiger::update() {
 	Lion::update();
 
   if(rand()%10<m_rate) {
-		if(((m_position - player->getPosition()).x >= -1 && (m_position - player->getPosition()).x <= 1) ||
-			 ((m_position - player->getPosition()).y >= -1 && (m_position - player->getPosition()).y <= 1)) {
+		if(player != NULL && (((m_position - player->getPosition()).x >= -1 && (m_position - player->getPosition()).x <= 1) ||
+			 ((m_position - player->getPosition()).y >= -1 && (m_position - player->getPosition()).y <= 1))) {
 			shoot(toward(player));
 		}
   }
 }
 
 void Enemy::message(ZZTObject *them, std::string message) {
-  if((message == "shot" || them->getType()==ZZT_PLAYER || message == "bombed") && m_type != ZZT_SPINNING_GUN) {
+  if((
+			(message == "shot" && them->getType() == ZZT_BULLET && them->getParam(1) == 0)
+			 || them->getType()==ZZT_PLAYER || message == "bombed") && m_type != ZZT_SPINNING_GUN) {
     give_score(2);
     draw_score();
     if(message == "touch" || message == "thud") {
