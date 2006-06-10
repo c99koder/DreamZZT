@@ -53,6 +53,7 @@ int debug_visible = 0;
 std::string debug_cmdline;
 enum debugSelectMode_t { NONE, WATCH, INSPECT} debugSelectMode = NONE;
 int debugselect_x=0, debugselect_y=0;
+bool debug_show_objects=false;
 
 Tiki::Thread::Thread *debug_thread;
 
@@ -213,6 +214,12 @@ void *process_debug(void *) {
 		} else if(debug_cmdline.find("play ") == 0) {
 			zm->setTune(debug_cmdline.c_str() + 5);
 			zm->start();
+		} else if(debug_cmdline == "+reveal") {
+			debug_show_objects=true;
+			debug("Revealing objects.\n");
+		} else if(debug_cmdline == "-reveal") {
+			debug_show_objects=false;
+			debug("Returning objects to normal.\n");
 		} else {
 			if(player==NULL) continue;
 			player->exec(debug_cmdline);
