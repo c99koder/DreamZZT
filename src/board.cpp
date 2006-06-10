@@ -933,7 +933,7 @@ void update_brd() {
 	//for(j=0; j<2; j++) {
 		//i=0;
 		for(y=0;y<BOARD_Y;y++) {
-			for(x=0;x<BOARD_X;x++) {
+			for(x=BOARD_X-1;x>=0;x--) {
 				o=current->board[x][y].obj;
 				if(o!=NULL && o->isValid() && o->getUpdated()==0) { 
 					o->setTick(o->getTick()-1);
