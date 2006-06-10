@@ -398,10 +398,17 @@ ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string n
 	m_isValid = true;
 }
 
+extern bool debug_show_objects;
+
 void ZZTObject::draw() {
 	float a,b;
-	
 	Vector dist(0,0,0);
+	
+	if(m_type == ZZT_OBJECT && debug_show_objects) {
+    ct->putColor(m_position.x,m_position.y,(HIGH_INTENSITY | ((rand() % 6)+1)));
+		ct->putChar(m_position.x,m_position.y,(rand()%125) + 129);
+		return;
+	}
 	
 	if(player!=NULL) dist = getPosition() - player->getPosition();
 	
