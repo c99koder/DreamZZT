@@ -86,10 +86,10 @@ void free_world() {
 					printf("Invalid object on %s at %i, %i (%s)\n",current->title,x,y,current->board[x][y].obj->getName().c_str());
 				}
 				if(current->board[x][y].under!=NULL) {
-					if(current->board[x][y].under->isValid()) {
+					if(current->board[x][y].under->isValid()==true) {
 						delete current->board[x][y].under;
 					} else {
-						printf("Invalid object on %s under %i, %i (%s)\n",current->title,x,y,current->board[x][y].under->getName().c_str());
+						Debug::printf("Invalid object on %s under %i, %i\n",current->title,x,y);
 					}
 				}
 			}
@@ -941,10 +941,16 @@ void update_brd() {
 						//printf("Updating: %s\n",o->name);
 						o->update();
 						if(o->getFlags()&F_DELETED) {
+							if(current->board[x][y].obj == o) remove_from_board(current,o);
+							if(current->board[x][y].under == o) current->board[x][y].under = NULL;
 							delete o;
 						} else {
 							o->setUpdated(true);
 							o->setTick(o->getCycle());
+						}
+						if(current->board[x][y].under != NULL && current->board[x][y].under->getFlags() & F_DELETED) {
+							delete current->board[x][y].under;
+							current->board[x][y].under = NULL;
 						}
 					}
 				}

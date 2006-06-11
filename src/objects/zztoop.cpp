@@ -345,7 +345,7 @@ void ZZTOOP::exec(std::string text) {
 		color=str_to_color(words[2]);
 		if(color!=-1) {
 			words.erase(words.begin() + 2);
-			if(words.size() < 3) words.push_back(std::string("normal"));
+			if(words.size() < 3) words.push_back(std::string("empty"));
 		}
 		if(words[1].find("w") == 0) {
 			i=m_position.x-1; j=m_position.y;
@@ -452,8 +452,6 @@ void ZZTOOP::exec(std::string text) {
 									if(color2!=-1) b->obj->setColor(color2);
 									if(b->obj->getBg()>=8) b->obj->setBg(b->obj->getBg() - 8);
 									draw_block(i,j);
-									delete b->under;
-									b->under=NULL;
 								}
 							}
             }
@@ -721,7 +719,8 @@ void ZZTOOP::exec(std::string text) {
 		goagain=1;
 	}
 	else if(words[0] == "die") {
-		remove_from_board(currentbrd,this);
+		//remove_from_board(currentbrd,this);
+		m_flags = F_DELETED;
 		m_progpos=-1;
 	}
 	else if(words[0] == "end") {
@@ -747,7 +746,7 @@ void ZZTOOP::update() {
 	std::string text;
   int x=0,y=0,newline=0,linecount=0,ty=0,went=0;
 	std::string lbl;
-	std::string msg="";
+	std::string msg;
 	
 	if(m_proglen<1 || world.health<=0) return;
 	
@@ -825,12 +824,12 @@ void ZZTOOP::update() {
 			exec(text);	
 			break;
     case '\r':
-			if(msg!="") msg += '\r';
+			if(msg.size() > 0) msg += "\r";
       goagain=1;
       break;
     default:
-			if(msg!="") msg += '\r';
-      while(m_prog[m_progpos]!='\r') {
+		if(msg.size() > 0) msg += "\r";
+      while(m_prog[m_progpos]!='\r' && m_progpos < m_proglen) {
 	      msg += m_prog[m_progpos++];
       }
 			went=0;
@@ -841,9 +840,9 @@ void ZZTOOP::update() {
     if(went++>6) goagain=0;
   }
 
-	if(msg!="" && msg!="\r") {
+	if(msg.size() > 0 && msg!="\r") {
 #ifdef DEBUG
-		printf("%s: %s\n",get_zztobj_name().c_str(), msg.c_str());
+		Debug::printf("%s: %s\n",get_zztobj_name().c_str(), msg.c_str());
 #endif
 		if(msg.find("\r") != msg.npos) {
 			if(zm!=NULL) zm->start();
