@@ -425,7 +425,7 @@ void ZZTOOP::exec(std::string text) {
           b=get_block_by_type(str_to_obj(words[1]),i,j);
           if(b!=NULL) {
 						//printf("Type: %s\nColor: (%i) (%i)\n",b->obj->name,*b->obj->color,color);
-            if(color==-1 || b->obj->getColor()==color || (color>=8 && b->obj->getColor()==color-8)) {
+            if(color==-1 || b->obj->getColor()==color) {
 							if(words[1] == words[2]) {
 								b->obj->setColor(color2);
 							} else {
