@@ -1,3 +1,18 @@
+2006-06-25  sam
+
+	* ChangeLog: Update ChangeLog from svn history
+	* DreamZZT.xcodeproj/project.pbxproj: OS X project file update
+	* src/debug.cpp: Bug fix
+	* src/object.cpp: Allow is_empty to ignore the player
+	* include/board.h, include/object.h: Allow is_empty to ignore the
+	  player
+	* src/objects/zztoop.cpp: Switch to new popup-window API
+	* include/objects/enemy.h, src/objects/centipede.cpp: Update
+	  centipede AI
+	* src/board.cpp: Make things go really fast when you die
+	* src/main.cpp: Update credits, switch to new popup window API
+	* include/window.h, src/window.cpp: New popup-window API
+
 2006-06-11  sam
 
 	* src/board.cpp, src/objects/zztoop.cpp: Fix a double-free bug
