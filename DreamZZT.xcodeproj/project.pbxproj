@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		222084870A4CD20800D75C24 /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222084860A4CD20800D75C24 /* window.cpp */; };
+		2220848A0A4CD23700D75C24 /* window.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 222084890A4CD23700D75C24 /* window.h */; };
 		223229BE0A16C63C0035025E /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223229BC0A16C63C0035025E /* sound.cpp */; };
 		224200C30A0C569300F4BDF2 /* passage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B80A0C569300F4BDF2 /* passage.cpp */; };
 		224200C40A0C569300F4BDF2 /* terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B90A0C569300F4BDF2 /* terrain.cpp */; };
@@ -26,6 +28,7 @@
 		2242FDEA0A0C31F100F4BDF2 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2242FDE90A0C31F100F4BDF2 /* object.cpp */; };
 		2242FE470A0C373400F4BDF2 /* objdb in Resources */ = {isa = PBXBuildFile; fileRef = 2242FE460A0C373400F4BDF2 /* objdb */; };
 		2242FF2A0A0C442100F4BDF2 /* tutorial.zzt in Resources */ = {isa = PBXBuildFile; fileRef = 2242FF290A0C442100F4BDF2 /* tutorial.zzt */; };
+		2255DF130A39196600C3272B /* drums.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2255DF120A39196600C3272B /* drums.h */; };
 		22907D680A1A947800B9BB6D /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22907D660A1A947800B9BB6D /* debug.cpp */; };
 		22907F4D0A1AA9EC00B9BB6D /* Tiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22907F4C0A1AA9EC00B9BB6D /* Tiki.framework */; };
 		22907F5D0A1AAA4600B9BB6D /* Tiki.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22907F4C0A1AA9EC00B9BB6D /* Tiki.framework */; };
@@ -52,6 +55,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				22907F5D0A1AAA4600B9BB6D /* Tiki.framework in CopyFiles */,
+				2255DF130A39196600C3272B /* drums.h in CopyFiles */,
+				2220848A0A4CD23700D75C24 /* window.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +65,8 @@
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		222084860A4CD20800D75C24 /* window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = window.cpp; path = src/window.cpp; sourceTree = "<group>"; };
+		222084890A4CD23700D75C24 /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = window.h; path = include/window.h; sourceTree = "<group>"; };
 		223229BB0A16C63C0035025E /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sound.h; path = include/sound.h; sourceTree = "<group>"; };
 		223229BC0A16C63C0035025E /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sound.cpp; path = src/sound.cpp; sourceTree = "<group>"; };
 		224200B80A0C569300F4BDF2 /* passage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = passage.cpp; path = src/objects/passage.cpp; sourceTree = "<group>"; };
@@ -89,6 +96,7 @@
 		2242FDE90A0C31F100F4BDF2 /* object.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = object.cpp; path = src/object.cpp; sourceTree = "<group>"; };
 		2242FE460A0C373400F4BDF2 /* objdb */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = objdb; path = src/objdb; sourceTree = SOURCE_ROOT; };
 		2242FF290A0C442100F4BDF2 /* tutorial.zzt */ = {isa = PBXFileReference; lastKnownFileType = file; name = tutorial.zzt; path = resources/tutorial.zzt; sourceTree = "<group>"; };
+		2255DF120A39196600C3272B /* drums.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = drums.h; path = include/drums.h; sourceTree = "<group>"; };
 		22907D650A1A947800B9BB6D /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/debug.h; sourceTree = "<group>"; };
 		22907D660A1A947800B9BB6D /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debug.cpp; path = src/debug.cpp; sourceTree = "<group>"; };
 		22907F4C0A1AA9EC00B9BB6D /* Tiki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tiki.framework; path = ../../tiki/osx/build/Development/Tiki.framework; sourceTree = SOURCE_ROOT; };
@@ -138,6 +146,7 @@
 				223229BC0A16C63C0035025E /* sound.cpp */,
 				2242FDD40A0C312500F4BDF2 /* status.cpp */,
 				2242FBA40A0C104300F4BDF2 /* txtwin.cpp */,
+				222084860A4CD20800D75C24 /* window.cpp */,
 				2242FB9E0A0C104300F4BDF2 /* word.cpp */,
 			);
 			name = Classes;
@@ -173,6 +182,7 @@
 		2242FBC70A0C106500F4BDF2 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				2255DF120A39196600C3272B /* drums.h */,
 				2242FBC90A0C109000F4BDF2 /* objects */,
 				2242FBD00A0C109000F4BDF2 /* board.h */,
 				C4F50ECB0799E1350001D0D0 /* Controller.h */,
@@ -181,6 +191,7 @@
 				2242FBD30A0C109000F4BDF2 /* object.h */,
 				223229BB0A16C63C0035025E /* sound.h */,
 				2242FBD20A0C109000F4BDF2 /* status.h */,
+				222084890A4CD23700D75C24 /* window.h */,
 				2242FBCE0A0C109000F4BDF2 /* word.h */,
 			);
 			name = Headers;
@@ -364,6 +375,7 @@
 				22907D680A1A947800B9BB6D /* debug.cpp in Sources */,
 				229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */,
 				22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */,
+				222084870A4CD20800D75C24 /* window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
