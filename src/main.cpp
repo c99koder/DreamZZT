@@ -21,15 +21,13 @@
 #include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
+#include <Tiki/eventCollector.h>
 #include <Tiki/tikitime.h>
 #include <Tiki/thread.h>
 #include <string.h>
 #include <time.h>
 
 #include <Tiki/drawables/console.h>
-#include "board.h"
-#include "status.h"
-#include "debug.h"
 #include <Tiki/oggvorbis.h>
 
 using namespace Tiki;
@@ -38,7 +36,11 @@ using namespace Tiki::Hid;
 using namespace Tiki::Audio;
 using namespace Tiki::Thread;
 
+#include "window.h"
 #include "sound.h"
+#include "board.h"
+#include "status.h"
+#include "debug.h"
 
 Mutex zzt_screen_mutex;
 
@@ -63,7 +65,8 @@ $Original ZZT\r\r\
 Tim Sweeny - Epic Games\r\
 http://www.epicgames.com/\r\r\
 $ZZT file format specs\r\r\
-Kev Vance\r\r\
+Kev Vance\r\
+http://www.kvance.com\r\r\
 $Tiki\r\r\
 Cryptic Allusion, LLC\r\
 http://www.cadcdev.com/\r\r\
@@ -88,6 +91,7 @@ ConsoleText *ct;
 extern ConsoleText *dt;
 extern struct board_info_node *board_list;
 int switchbrd=-1;
+extern Player *player;
 
 void menu_background() {
 	int x,y;
@@ -112,13 +116,35 @@ pvr_init_params_t params = {
 
 ZZTMusicStream *zm = NULL;
 Tiki::Thread::Thread *render_thread;
+Texture *zzt_font;
 
 void render() {
+#if 0
+	int x,y,w,h;
+	if(player!=NULL) {
+		w=640;
+		h=480;
+		x=player->getPosition().x*8*-1 + (256/2) - 4;
+		y=player->getPosition().y*20 - (192*2) - 8;
+	}
+#endif	
 	zzt_screen_mutex.lock();
 	Frame::begin();
+	Frame::transEnable();
+#if 0
+	if(player!=NULL) {
+		zzt_font->select();
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+		glViewport(x,y,w,h);
+		ct->draw(Drawable::Opaque);
+		ct->draw(Drawable::Trans);
+	}		
+	zzt_font->select();
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glViewport(0,192,256/*+74*/,192);
+#endif
 	ct->draw(Drawable::Opaque);
 	dt->draw(Drawable::Opaque);
-	Frame::transEnable();
 	ct->draw(Drawable::Trans);
 	dt->draw(Drawable::Trans);
 	Frame::finish();
@@ -126,7 +152,7 @@ void render() {
 }
 
 extern "C" int tiki_main(int argc, char **argv) {
-	TextWindow *t, *c;
+	TUIWindow *t, *c;
 	srand(time(NULL));
 		
 	// Init Tiki
@@ -146,34 +172,64 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zm->setVolume(0.2);
 	
 	//initialize the screen		
-	ct = new ConsoleText(80,25,new Texture("zzt-ascii.png", true));
+	zzt_font = new Texture("zzt-ascii.png", true);
+	ct = new ConsoleText(80,25, zzt_font);
 	ct->setSize(640,480);
 	ct->translate(Vector(320,240,0));
 	
 	debug_init();
-
+	ct->color(15,1);
+	ct->clear();
+	dzzt_logo();
+	menu_background();
+		
+	/*TUIWindow w("Options");
+	w.addWidget(new TUILabel("General"));
+	w.addWidget(new TUIWidget());
+	TUIRadioGroup *sfx = new TUIRadioGroup("Sound:         ");
+	sfx->add("On");
+	sfx->add("Off");
+	w.addWidget(sfx);
+	TUIRadioGroup *web = new TUIRadioGroup("Online scores: ");
+	web->add("On");
+	web->add("Off");
+	w.addWidget(web);
+	w.addWidget(new TUIWidget());	
+	w.addWidget(new TUILabel("Special Effects"));
+	w.addWidget(new TUIWidget());
+	w.addWidget(new TUICheckBox("Pan between boards"));
+	w.addWidget(new TUICheckBox("Torch gradient",true));
+	w.addWidget(new TUICheckBox("Animated water"));
+	w.addWidget(new TUIWidget());	
+	w.addWidget(new TUIHyperLink("save","Save settings"));
+	w.addWidget(new TUIHyperLink("cancel","Cancel"));	
+	w.doMenu(ct);
+	return 0;*/
+		
 	while(1) {
 		ct->color(15,1);
 		ct->clear();
 		dzzt_logo();
 		menu_background();
 
-		t = new TextWindow(ct,"Main Menu",MAIN_MENU);
-		t->doMenu();
+		t = new TUIWindow("Main Menu");
+		t->buildFromString(MAIN_MENU);
+		t->doMenu(ct);
 		
-		if(!strcmp(t->getLabel(),"quit") || t->getLabel()[0]=='\0') {
+		if(t->getLabel() == "quit" || t->getLabel() =="\0") {
 			break;
-		} else if(!strcmp(t->getLabel(),"new")) {
-			play_zzt("enigma.zzt");
-		} else if(!strcmp(t->getLabel(),"tutorial")) {
+		} else if(t->getLabel() == "new") {
+			play_zzt("town.zzt");
+		} else if(t->getLabel() == "tutorial") {
 			play_zzt("tutorial.zzt");
-		} else if(!strcmp(t->getLabel(),"restore")) {
+		} else if(t->getLabel() == "restore") {
 			play_zzt("saved.sav");
 		/*} else if(!strcmp(tmp,"net")) {
 			net_menu();*/
-		} else if(!strcmp(t->getLabel(),"credits")) {
-			c = new TextWindow(ct,"Credits",CREDITS);
-			c->doMenu();
+		} else if(t->getLabel() == "credits") {
+			c = new TUIWindow("Credits");
+			c->buildFromString(CREDITS);
+			c->doMenu(ct);
 			
 			delete c;
 		}
@@ -261,7 +317,7 @@ void play_zzt(char *filename) {
 		draw_board();
     draw_msg();
 		render();
-		Time::sleep(60000);
+		if(world.health>0) Time::sleep(60000);
     
 		if(switchbrd>-1) {
       switch_board(switchbrd);
