@@ -19,6 +19,7 @@
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
+#include <Tiki/eventCollector.h>
 #include <stdlib.h>
 #include <string>
 #include <cctype>
@@ -38,6 +39,7 @@ using namespace std;
 #include "status.h"
 #include "http.h"
 #include "debug.h"
+#include "window.h"
 
 extern struct world_header world;
 extern Player *player;
@@ -846,10 +848,11 @@ void ZZTOOP::update() {
 #endif
 		if(msg.find("\r") != msg.npos) {
 			if(zm!=NULL) zm->start();
-			TextWindow *t= new TextWindow(ct,get_zztobj_name(),msg);
-			t->doMenu();
+			TUIWindow *t= new TUIWindow(get_zztobj_name());
+			t->buildFromString(msg);
+			t->doMenu(ct);
 			draw_board();
-			if(t->getLabel()!="") { zzt_goto(t->getLabel()); }
+			if(t->getLabel()!="\0") { zzt_goto(t->getLabel()); }
 			delete t;
 		} else {
 			//if(text[text.length() - 1] == '\r') text.resize(text.length() - 1);
