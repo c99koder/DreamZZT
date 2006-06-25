@@ -188,16 +188,16 @@ int dist(int x1, int y1, int x2, int y2) {
   return sqrt((float)a+b);
 }
 
-bool ZZTObject::is_empty(direction d) {
+bool ZZTObject::is_empty(direction d, bool ignorePlayer) {
 	switch(d) {
 		case UP:
-			return ::is_empty(currentbrd,m_position.x,m_position.y-1);
+			return ::is_empty(currentbrd,m_position.x,m_position.y-1,ignorePlayer);
 		case DOWN:
-			return ::is_empty(currentbrd,m_position.x,m_position.y+1);
+			return ::is_empty(currentbrd,m_position.x,m_position.y+1,ignorePlayer);
 		case LEFT:
-			return ::is_empty(currentbrd,m_position.x-1,m_position.y);
+			return ::is_empty(currentbrd,m_position.x-1,m_position.y,ignorePlayer);
 		case RIGHT:
-			return ::is_empty(currentbrd,m_position.x+1,m_position.y);
+			return ::is_empty(currentbrd,m_position.x+1,m_position.y,ignorePlayer);
 	}
 	return false;
 }
