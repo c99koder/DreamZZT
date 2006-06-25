@@ -73,7 +73,7 @@ void save_game(char *filename);
 void switch_board(int num);
 void update_brd();
 void free_world();
-int is_empty(struct board_info_node *curbrd, int x, int y);
+int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer=false);
 int block_bg(int x, int y);
 void draw_block(int x, int y);
 void draw_board();

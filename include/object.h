@@ -46,7 +46,7 @@ public:
 	int dist_x(ZZTObject *them);
 	int dist_y(ZZTObject *them);
 	bool move(direction d, bool trying=false);
-	bool is_empty(direction d);
+	bool is_empty(direction d, bool ignorePlayer=false);
 	ZZTObject *create_object(int type, direction d);
 	
 	Vector getPosition() { return m_position; }
