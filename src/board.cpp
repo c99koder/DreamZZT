@@ -135,9 +135,10 @@ void spinner_clear() {
   ct->printf("            ");
 }
 
-int is_empty(struct board_info_node *curbrd, int x, int y) {
+int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer) {
 	if(x<0 || y<0 || x>=BOARD_X || y >= BOARD_Y) return 0;
   if(curbrd->board[x][y].obj!=NULL && !(curbrd->board[x][y].obj->getFlags()&F_EMPTY)) {
+		if(ignorePlayer && curbrd->board[x][y].obj->getType() == ZZT_PLAYER) return 1;
     return 0;
   }
   return 1;
@@ -937,7 +938,7 @@ void update_brd() {
 				o=current->board[x][y].obj;
 				if(o!=NULL && o->isValid() && o->getUpdated()==0) { 
 					o->setTick(o->getTick()-1);
-					if(o->getTick()<=0/* && i%2==j*/) {
+					if(o->getTick()<=0 || world.health<=0/* && i%2==j*/) {
 						//printf("Updating: %s\n",o->name);
 						o->update();
 						if(o->getFlags()&F_DELETED) {
