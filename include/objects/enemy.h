@@ -148,6 +148,7 @@ public:
 		m_nextHeading = IDLE;
 		m_discovery = false;
 		m_next = m_prev = NULL;
+		m_deviance = 0;
 	}
 
 	~Centipede() {
@@ -162,6 +163,9 @@ public:
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);
+	void setParam(int arg, unsigned char val);
+	unsigned char getParam(int arg);
+		
 	void reverse() {
 		Centipede *tmp = m_next;
 		m_next = m_prev;
@@ -179,4 +183,5 @@ private:
 	direction m_nextHeading;
 	Centipede *m_next,*m_prev;
 	bool m_discovery;
+	int m_deviance;
 };

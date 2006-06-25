@@ -33,7 +33,7 @@ using namespace Tiki::Audio;
 #include "sound.h"
 
 extern ZZTMusicStream *zm;
-
+extern Player *player;
 extern struct board_info_node *currentbrd;
 
 char cgun[5] = {'0',27,26,24,25};
@@ -42,7 +42,21 @@ void Centipede::create() {
 	m_discovery = true;
 }
 
+void Centipede::setParam(int arg, unsigned char val) {
+	if(arg == 2) m_deviance = val;
+	
+	Enemy::setParam(arg,val);
+}
+
+unsigned char Centipede::getParam(int arg) {
+	if(arg == 2) return m_deviance;
+	
+	return Enemy::getParam(arg);
+}
+
 void Centipede::update() {
+	int x=0;
+	
 	if(m_type==ZZT_CENTIPEDE_HEAD) {
 		if(m_discovery) {
 			discover(NULL);
@@ -51,6 +65,15 @@ void Centipede::update() {
 			} else {
 				m_heading = m_nextHeading = direction((rand() % 4) + 1);
 			}
+		}
+		if(rand() % 10 < m_deviance) {
+			do {
+				if(player!=NULL && rand()%10 < m_intel && is_empty(toward(player),true)) { 
+					m_heading = m_nextHeading = toward(player);
+				} else {
+					m_heading = m_nextHeading = direction((rand() % 4) + 1);
+				}
+			} while (!is_empty(m_heading,true) && x++<10);
 		}
 		doMove(m_heading);
 	} else {
@@ -99,19 +122,24 @@ void Centipede::doMove(direction d) {
 }
 
 void Centipede::message(ZZTObject *them, std::string msg) {
-	if(m_type == ZZT_CENTIPEDE_HEAD && msg=="thud") {
-		m_heading = m_nextHeading = clockwise(m_heading);
-		if(rand() % 2 == 1) {
-			m_heading = m_nextHeading = opposite(m_heading);
+	if(m_type == ZZT_CENTIPEDE_HEAD && msg=="thud" && them->getType() != ZZT_PLAYER) {
+		if(player!=NULL && rand()%10 < m_intel && is_empty(toward(player))) { 
+			m_heading = m_nextHeading = toward(player);
+		} else {
+			m_heading = m_nextHeading = clockwise(m_heading);		
+			if(rand() % 2 == 1) {
+				m_heading = m_nextHeading = opposite(m_heading);
+			}
 		}
-		if(!is_empty(m_heading) && is_empty(opposite(m_heading))) {
+		if(!is_empty(m_heading,true) && is_empty(opposite(m_heading),true)) {
 			m_heading = m_nextHeading = opposite(m_heading);
 		}			
-		if(is_empty(m_heading)) {
+		if(is_empty(m_heading,true)) {
 			doMove(m_heading);
 		} else {
 			reverse();
 			m_type = ZZT_CENTIPEDE_BODY;
+			m_shape = ZZT_CENTIPEDE_BODY_SHAPE;
 		}
 	} else if(msg == "thud" || msg == "shot" || msg == "bombed") {
 		if(m_prev != NULL) m_prev->unlinkNext();
