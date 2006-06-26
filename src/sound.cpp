@@ -28,18 +28,23 @@ using namespace Tiki::Audio;
 #include "sound.h"
 #include "drums.h"
 
-short drums[10][10] = {
-	{   0,   0, 175, 175, 100,  90,  80,  70,  60,  50},  /* 0 */
-	{ 500, 300, 520, 320, 540, 340, 550, 350, 540, 340},  /* 1 */
-	{1000,1200,1250,1400,1100,1150,1300,1000,1200, 500},  /* 2 */
-	{   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},  /* 3 (not a sound) */
-	{ 950,1950, 750,1750, 550,1550, 350,1350, 150,1150},  /* 4 */
-	{ 200, 210, 220, 230, 240, 250, 260, 270, 280, 600},  /* 5 */
-	{ 900, 800, 700, 600, 500, 400, 300, 200, 100,   0},  /* 6 */
-	{ 300, 200, 290, 190, 280, 180, 270, 170, 260, 160},  /* 7 */
-	{ 400, 380, 360, 340, 320, 300, 280, 260, 250, 240},  /* 8 */
-	{ 150, 100, 140,  90, 130,  80, 120,  70, 110,  60}   /* 9 */
-};
+#include <machine/endian.h>
+#include <algorithm>
+
+#define ByteSwap5(x) ByteSwap((unsigned char *) &x,sizeof(x))   
+
+inline void ByteSwap(void * b, int n)
+{
+#if BYTE_ORDER == LITTLE_ENDIAN
+	register int i = 0;
+	register int j = n-1;
+	while (i<j)
+	{
+		std::swap(((unsigned char *)b)[i], ((unsigned char *)b)[j]);
+		i++, j--;
+	}
+#endif
+}
 
 ZZTMusicStream::ZZTMusicStream() {
 	setFrequency(44100);
@@ -107,6 +112,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 		if(m_drum != NULL) {
 			if(m_drum_idx < (drumsample_size / 2)) {
 				buffer[i] = m_drum[m_drum_idx++];
+				ByteSwap(&buffer[i],2);
 				continue;
 			} else {
 				m_drum = NULL;

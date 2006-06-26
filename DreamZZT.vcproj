@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;DEBUG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -144,6 +144,9 @@
 				RelativePath=".\src\txtwin.cpp">
 			</File>
 			<File
+				RelativePath=".\src\window.cpp">
+			</File>
+			<File
 				RelativePath=".\src\word.cpp">
 			</File>
 			<Filter
@@ -154,6 +157,9 @@
 				</File>
 				<File
 					RelativePath=".\src\objects\bullet.cpp">
+				</File>
+				<File
+					RelativePath=".\src\objects\centipede.cpp">
 				</File>
 				<File
 					RelativePath=".\src\objects\conveyer.cpp">

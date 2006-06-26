@@ -34,8 +34,11 @@ using namespace Tiki::Thread;
 #include <Tiki/drawables/console.h>
 
 #include "window.h"
+#include "object.h"
 
 void render();
+extern bool playerInputActive;
+extern Player *player;
 
 void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
   int fg=(console->getColor(x,y)/16)-8;
@@ -152,6 +155,7 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 	
 	m_loop = true;
 	m_widgets[m_offset]->focus(true);
+	playerInputActive=false;
 	
 	do {
 		i=0;
@@ -216,4 +220,6 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 			processHidEvent(evt);
 		}
 	} while(m_loop);
+
+	if(player!=NULL) playerInputActive=true;
 }

@@ -340,6 +340,7 @@ void play_zzt(char *filename) {
 	ct->clear();
 	dzzt_logo();
 	free_world();
+	player=NULL;
 }
 
 #if 0

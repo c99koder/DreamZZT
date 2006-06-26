@@ -67,7 +67,7 @@ void Player::processEvent(const Event & evt) {
 	struct board_info_node *brd;
 	ZZTObject *obj;
 	
-	if(!playerInputActive) return;
+	if(!playerInputActive || player==NULL) return;
 	
 	if (evt.type == Hid::Event::EvtQuit) {
 		switchbrd = -2;
