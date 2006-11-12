@@ -186,7 +186,7 @@ void Terrain::message(ZZTObject *them, std::string message) {
 			zm->start();
 			m_type=ZZT_NORMAL;
       m_shape=ZZT_NORMAL_SHAPE;
-      draw_block((int)m_position.x,(int)m_position.y);
+      draw();
       break;
     case ZZT_WATER:
       if(watermsg==0) {

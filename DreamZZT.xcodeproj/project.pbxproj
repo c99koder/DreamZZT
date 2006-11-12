@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		222084870A4CD20800D75C24 /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222084860A4CD20800D75C24 /* window.cpp */; };
-		2220848A0A4CD23700D75C24 /* window.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 222084890A4CD23700D75C24 /* window.h */; };
 		223229BE0A16C63C0035025E /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223229BC0A16C63C0035025E /* sound.cpp */; };
 		224200C30A0C569300F4BDF2 /* passage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B80A0C569300F4BDF2 /* passage.cpp */; };
 		224200C40A0C569300F4BDF2 /* terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B90A0C569300F4BDF2 /* terrain.cpp */; };
@@ -28,16 +27,16 @@
 		2242FDEA0A0C31F100F4BDF2 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2242FDE90A0C31F100F4BDF2 /* object.cpp */; };
 		2242FE470A0C373400F4BDF2 /* objdb in Resources */ = {isa = PBXBuildFile; fileRef = 2242FE460A0C373400F4BDF2 /* objdb */; };
 		2242FF2A0A0C442100F4BDF2 /* tutorial.zzt in Resources */ = {isa = PBXBuildFile; fileRef = 2242FF290A0C442100F4BDF2 /* tutorial.zzt */; };
-		2255DF130A39196600C3272B /* drums.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2255DF120A39196600C3272B /* drums.h */; };
+		228742DF0B07C44F0022A089 /* Tiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2287429B0B07C44F0022A089 /* Tiki.framework */; };
+		228742F60B07C7A70022A089 /* Tiki.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2287429B0B07C44F0022A089 /* Tiki.framework */; };
 		22907D680A1A947800B9BB6D /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22907D660A1A947800B9BB6D /* debug.cpp */; };
-		22907F4D0A1AA9EC00B9BB6D /* Tiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22907F4C0A1AA9EC00B9BB6D /* Tiki.framework */; };
-		22907F5D0A1AAA4600B9BB6D /* Tiki.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22907F4C0A1AA9EC00B9BB6D /* Tiki.framework */; };
 		2296D4F70A0D338E00BD96D2 /* zzt-ascii.png in Resources */ = {isa = PBXBuildFile; fileRef = 2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */; };
 		229B982A0A1F6F4400E85BB8 /* genobjects.sh in Resources */ = {isa = PBXBuildFile; fileRef = 229B98290A1F6F4400E85BB8 /* genobjects.sh */; };
 		229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */; };
 		22A983470A0C6C3100835D10 /* town.zzt in Resources */ = {isa = PBXBuildFile; fileRef = 22A983460A0C6C3100835D10 /* town.zzt */; };
 		22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22ABAB4D0A31145600B9C077 /* centipede.cpp */; };
 		22AD22CC0A13FAD8003E828E /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
+		22D2E46D0A55EAB200319F32 /* editor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22D2E46B0A55EAB100319F32 /* editor.cpp */; };
 		22EC1AC20A2B3FD700DEE79D /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 22EC1AC10A2B3FD600DEE79D /* icon.icns */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -54,9 +53,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				22907F5D0A1AAA4600B9BB6D /* Tiki.framework in CopyFiles */,
-				2255DF130A39196600C3272B /* drums.h in CopyFiles */,
-				2220848A0A4CD23700D75C24 /* window.h in CopyFiles */,
+				228742F60B07C7A70022A089 /* Tiki.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,15 +94,17 @@
 		2242FE460A0C373400F4BDF2 /* objdb */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = objdb; path = src/objdb; sourceTree = SOURCE_ROOT; };
 		2242FF290A0C442100F4BDF2 /* tutorial.zzt */ = {isa = PBXFileReference; lastKnownFileType = file; name = tutorial.zzt; path = resources/tutorial.zzt; sourceTree = "<group>"; };
 		2255DF120A39196600C3272B /* drums.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = drums.h; path = include/drums.h; sourceTree = "<group>"; };
+		2287429B0B07C44F0022A089 /* Tiki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tiki.framework; path = ../tiki/osx/build/Development/Tiki.framework; sourceTree = SOURCE_ROOT; };
 		22907D650A1A947800B9BB6D /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/debug.h; sourceTree = "<group>"; };
 		22907D660A1A947800B9BB6D /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debug.cpp; path = src/debug.cpp; sourceTree = "<group>"; };
-		22907F4C0A1AA9EC00B9BB6D /* Tiki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tiki.framework; path = ../../tiki/osx/build/Development/Tiki.framework; sourceTree = SOURCE_ROOT; };
 		2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "zzt-ascii.png"; path = "resources/zzt-ascii.png"; sourceTree = "<group>"; };
 		229B98290A1F6F4400E85BB8 /* genobjects.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = genobjects.sh; path = src/genobjects.sh; sourceTree = "<group>"; };
 		229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = conveyer.cpp; path = src/objects/conveyer.cpp; sourceTree = "<group>"; };
 		22A983460A0C6C3100835D10 /* town.zzt */ = {isa = PBXFileReference; lastKnownFileType = file; name = town.zzt; path = resources/town.zzt; sourceTree = "<group>"; };
 		22ABAB4D0A31145600B9C077 /* centipede.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = centipede.cpp; path = src/objects/centipede.cpp; sourceTree = "<group>"; };
 		22AD22CB0A13FAD8003E828E /* http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = http.cpp; path = src/http.cpp; sourceTree = "<group>"; };
+		22D2E46B0A55EAB100319F32 /* editor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = editor.cpp; path = src/editor.cpp; sourceTree = "<group>"; };
+		22D2E4700A55EAC000319F32 /* editor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = editor.h; path = include/editor.h; sourceTree = "<group>"; };
 		22EC1AC10A2B3FD600DEE79D /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
@@ -126,7 +125,7 @@
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				C4F50EEF0799E5B40001D0D0 /* OpenGL.framework in Frameworks */,
-				22907F4D0A1AA9EC00B9BB6D /* Tiki.framework in Frameworks */,
+				228742DF0B07C44F0022A089 /* Tiki.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +139,7 @@
 				2242FDA40A0C26F500F4BDF2 /* board.cpp */,
 				C4F50ECC0799E1350001D0D0 /* Controller.m */,
 				22907D660A1A947800B9BB6D /* debug.cpp */,
+				22D2E46B0A55EAB100319F32 /* editor.cpp */,
 				22AD22CB0A13FAD8003E828E /* http.cpp */,
 				2242FBDF0A0C11DF00F4BDF2 /* main.cpp */,
 				2242FDE90A0C31F100F4BDF2 /* object.cpp */,
@@ -155,7 +155,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				22907F4C0A1AA9EC00B9BB6D /* Tiki.framework */,
+				2287429B0B07C44F0022A089 /* Tiki.framework */,
 				C4F50EEE0799E5B40001D0D0 /* OpenGL.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
@@ -182,11 +182,12 @@
 		2242FBC70A0C106500F4BDF2 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				2255DF120A39196600C3272B /* drums.h */,
 				2242FBC90A0C109000F4BDF2 /* objects */,
 				2242FBD00A0C109000F4BDF2 /* board.h */,
 				C4F50ECB0799E1350001D0D0 /* Controller.h */,
 				22907D650A1A947800B9BB6D /* debug.h */,
+				2255DF120A39196600C3272B /* drums.h */,
+				22D2E4700A55EAC000319F32 /* editor.h */,
 				2242FBCF0A0C109000F4BDF2 /* http.h */,
 				2242FBD30A0C109000F4BDF2 /* object.h */,
 				223229BB0A16C63C0035025E /* sound.h */,
@@ -307,6 +308,7 @@
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* DreamZZT */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* DreamZZT */,
 			);
@@ -376,6 +378,7 @@
 				229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */,
 				22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */,
 				222084870A4CD20800D75C24 /* window.cpp in Sources */,
+				22D2E46D0A55EAB200319F32 /* editor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,7 +412,9 @@
 					../../osx/build/Development/,
 					"$(SRCROOT)/../../tiki/osx/build/Development",
 					"$(SRCROOT)/../../tiki/osx/build/Deployment",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../tiki/osx/build/Development\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -438,7 +443,9 @@
 					../../osx/build/Deployment/,
 					"$(SRCROOT)/../../tiki/osx/build/Development",
 					"$(SRCROOT)/../../tiki/osx/build/Deployment",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../tiki/osx/build/Development\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -459,7 +466,9 @@
 					../../osx/build/Development/,
 					"$(SRCROOT)/../../tiki/osx/build/Development",
 					"$(SRCROOT)/../../tiki/osx/build/Deployment",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../tiki/osx/build/Development\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = DreamZZT_Prefix.pch;
