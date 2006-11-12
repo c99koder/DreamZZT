@@ -102,6 +102,81 @@ void free_world() {
 	currentbrd=NULL;
 }
 
+void put(ZZTObject *o) {
+	if(currentbrd->board[(int)o->getPosition().x][(int)o->getPosition().y].under != NULL) delete currentbrd->board[(int)o->getPosition().x][(int)o->getPosition().y].under;
+	
+	if(o->getFlags() & F_OBJECT) 
+		currentbrd->board[(int)o->getPosition().x][(int)o->getPosition().y].under = currentbrd->board[(int)o->getPosition().x][(int)o->getPosition().y].obj;
+	else
+		currentbrd->board[(int)o->getPosition().x][(int)o->getPosition().y].under = NULL;
+	
+	currentbrd->board[(int)o->getPosition().x][(int)o->getPosition().y].obj = o;
+	o->create();
+}
+
+void new_board(char *title) {
+	struct board_info_node *current=board_list;
+	struct board_info_node *prev=NULL;
+	
+	while(current!=NULL) {
+		prev=current;
+	}
+	
+	current=new board_info_node;
+	
+	if(prev!=NULL) prev->next=current;
+	else board_list=current;
+	
+	strncpy(current->title,title,34);
+	current->num=world.board_count++;
+	current->maxshots=0;
+	current->dark=0;
+	current->board_up=0;
+	current->board_down=0;
+	current->board_left=0;
+	current->board_right=0;
+	current->reenter=0;
+	current->time=0;
+	current->message[0]='\0';
+	current->msgcount=0;
+	current->next=NULL;
+	
+	for(int y=0; y<BOARD_Y; y++) {
+		for(int x=0; x<BOARD_X; x++) {
+			current->board[x][y].obj = create_object(ZZT_EMPTY,x,y);
+			current->board[x][y].under = NULL;
+		}
+	}
+	
+	currentbrd=current;
+	
+	put(create_object(ZZT_PLAYER,BOARD_X/2,BOARD_Y/2));
+}
+
+void new_world() {
+	free_world();
+	
+	world.magic=65535;
+	world.board_count=0;
+	world.ammo=0;
+	world.gems=0;
+	memset(world.keys,0,7);
+	world.health=100;
+	world.start=0;
+	world.torches=0;
+	world.torch_cycle=0;
+	world.energizer_cycle=0;
+	world.pad1=0;
+	world.score=0;
+	world.title.string[0]='\0';
+	world.title.len=0;
+	for(int i=0; i<10; i++) world.flag[i].len = 0;
+	world.time=0;
+	world.saved=0;
+	
+	new_board("Title Screen");
+}
+
 Thread::Thread *spinner_thread;
 bool spinner_active = false;
 
@@ -618,7 +693,8 @@ int load_zzt(char *filename, int titleonly) {
 #ifdef DEBUG
     printf("Board title: %s\n",current->title);
 #endif
-    for(x=0;x<16;x++) { fd.read(&cod,1); } //padding
+		fd.read(&current->animatedWater,1);
+    for(x=0;x<15;x++) { fd.read(&cod,1); } //padding
     //here comes the RLE data!
     x=0;y=0;z=0; prev=NULL; curobj=NULL;
     while(z<1500) {
@@ -851,7 +927,8 @@ void save_game(char *filename) {
 		fd.write(&x,1);
 		fd.write(curbrd->message,60);
 		write_zzt_int(fd,curbrd->time);
-		for(x=0;x<16;x++) fd.write("\0",1);
+		fd.write(&curbrd->animatedWater,1);
+		for(x=0;x<15;x++) fd.write("\0",1);
 		z=0;
 		for(y=0;y<BOARD_Y;y++) {
 			for(x=0;x<BOARD_X;x++) {

@@ -38,6 +38,7 @@ struct board_info_node {
   char board_right;
   char reenter;
   short int time;
+	char animatedWater;
 	char message[60];
 	int msgcount;
 	struct board_data board[BOARD_X][BOARD_Y];
@@ -73,6 +74,9 @@ void save_game(char *filename);
 void switch_board(int num);
 void update_brd();
 void free_world();
+void new_world();
+void new_board(char *title);
+void put(ZZTObject *o);
 int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer=false);
 int block_bg(int x, int y);
 void draw_block(int x, int y);

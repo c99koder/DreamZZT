@@ -89,7 +89,7 @@ private:
 };
 
 //PUSHER
-#define ZZT_PUSHER_SHAPE 227
+#define ZZT_PUSHER_SHAPE 0x10
 #define ZZT_PUSHER_NAME "pusher"
 #define ZZT_PUSHER_FLAGS F_OBJECT
 #define ZZT_PUSHER_CLASS Pusher
@@ -139,7 +139,7 @@ private:
 };
 
 //OBJECT
-#define ZZT_OBJECT_SHAPE 'O'
+#define ZZT_OBJECT_SHAPE 0x01
 #define ZZT_OBJECT_NAME "object"
 #define ZZT_OBJECT_FLAGS F_OBJECT
 #define ZZT_OBJECT_CLASS ZZTOOP
@@ -228,7 +228,7 @@ private:
 };
 
 //PLAYER
-#define ZZT_PLAYER_SHAPE 1
+#define ZZT_PLAYER_SHAPE 2
 #define ZZT_PLAYER_NAME "player"
 #define ZZT_PLAYER_FLAGS F_PUSHABLE | F_GLOW |F_OBJECT
 #define ZZT_PLAYER_CLASS Player
@@ -236,7 +236,6 @@ private:
 class Player : public ZZTOOP {
 public:
 	Player(int type, int x, int y, int shape, int flags, std::string name) : ZZTOOP(type, x, y, shape, flags, name) {
-		printf("Player created at %i, %i\n",x,y);
 	}
 	void create();
 	void update();

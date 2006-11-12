@@ -42,9 +42,9 @@
 #define ZZT_AMMO_FLAGS F_ITEM
 #define ZZT_AMMO_CLASS Inventory
 
-#define ZZT_DOOR_SHAPE 0x0c
+#define ZZT_DOOR_SHAPE 0x08
 #define ZZT_DOOR_NAME "door"
-#define ZZT_DOOR_FLAGS F_NONE
+#define ZZT_DOOR_FLAGS F_ITEM
 #define ZZT_DOOR_CLASS Inventory
 
 class Inventory : public ZZTObject {

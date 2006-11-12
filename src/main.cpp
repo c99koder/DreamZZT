@@ -41,6 +41,7 @@ using namespace Tiki::Thread;
 #include "board.h"
 #include "status.h"
 #include "debug.h"
+#include "editor.h"
 
 Mutex zzt_screen_mutex;
 
@@ -167,8 +168,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 
 	zm = new ZZTMusicStream;
-	zm->setTune("cdefgab+c");
-	zm->start();
+	//zm->setTune("cdefgab+c");
+	//zm->start();
 	zm->setVolume(0.2);
 	
 	//initialize the screen		
@@ -182,30 +183,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 	ct->clear();
 	dzzt_logo();
 	menu_background();
-		
-	/*TUIWindow w("Options");
-	w.addWidget(new TUILabel("General"));
-	w.addWidget(new TUIWidget());
-	TUIRadioGroup *sfx = new TUIRadioGroup("Sound:         ");
-	sfx->add("On");
-	sfx->add("Off");
-	w.addWidget(sfx);
-	TUIRadioGroup *web = new TUIRadioGroup("Online scores: ");
-	web->add("On");
-	web->add("Off");
-	w.addWidget(web);
-	w.addWidget(new TUIWidget());	
-	w.addWidget(new TUILabel("Special Effects"));
-	w.addWidget(new TUIWidget());
-	w.addWidget(new TUICheckBox("Pan between boards"));
-	w.addWidget(new TUICheckBox("Torch gradient",true));
-	w.addWidget(new TUICheckBox("Animated water"));
-	w.addWidget(new TUIWidget());	
-	w.addWidget(new TUIHyperLink("save","Save settings"));
-	w.addWidget(new TUIHyperLink("cancel","Cancel"));	
-	w.doMenu(ct);
-	return 0;*/
-		
+
+	new_world();
+	edit_zzt();
+	
 	while(1) {
 		ct->color(15,1);
 		ct->clear();
@@ -334,6 +315,13 @@ void play_zzt(char *filename) {
 		} else if(switchbrd==-4) {
 			save_game("saved.sav");
 			switchbrd=-1;
+		} else if(switchbrd==-5) {
+			edit_zzt();
+			switchbrd=-1;
+			ct->color(15,1);
+			ct->clear();
+			dzzt_logo();
+			draw_hud_ingame();
 		}
   }
 	ct->color(15,1);

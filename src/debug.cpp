@@ -179,6 +179,8 @@ void *process_debug(void *) {
 			debugSelectMode = INSPECT;
 			debugselect_x = 31;
 			debugselect_y = 13;
+		} else if(debug_cmdline == "edit") {
+			switchbrd=-5;
 		} else if(debug_cmdline == "flags") {
 			for(int i=0; i<10; i++) {
 				debug("%i: %s\n",i,world.flag[i].string);
