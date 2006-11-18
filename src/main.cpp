@@ -249,8 +249,9 @@ void play_zzt(char *filename) {
 	
 	switchbrd=-1;
   if(load_zzt(filename,1)==-1) {
-		TextWindow t(ct,"Error","Unable to load world\r\r!ok;Ok");
-		t.doMenu();
+		TUIWindow t("Error");
+		t.buildFromString("Unable to load world\r\r!ok;Ok");
+		t.doMenu(ct);
 		return;
 	}
 	start=world.start;

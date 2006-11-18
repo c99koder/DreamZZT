@@ -21,6 +21,7 @@
 #include <string.h>
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
+#include <Tiki/eventCollector.h>
 #include <Tiki/thread.h>
 #include <Tiki/tikitime.h>
 #include <Tiki/drawables/console.h>
@@ -35,12 +36,14 @@ using namespace Tiki::Thread;
 #include "board.h"
 #include "status.h"
 #include "sound.h"
+#include "window.h"
 
 extern struct board_info_node *currentbrd;
 extern struct board_info_node *board_list;
 extern struct world_header world;
 extern int switchbrd;
 extern ZZTMusicStream *zm;
+extern Texture *zzt_font;
 
 ConsoleText *dt=NULL;
 extern ConsoleText *ct;
@@ -90,8 +93,9 @@ void *process_debug(void *) {
 			} else if(debugSelectMode == INSPECT) {
 				if(currentbrd->board[debugselect_x][debugselect_y].obj->getProg() != "") {
 					dt->setANSI(false);
-					TextWindow t(dt,((ZZTOOP *)(currentbrd->board[debugselect_x][debugselect_y].obj))->get_zztobj_name(),currentbrd->board[debugselect_x][debugselect_y].obj->getProg().c_str());
-					t.doMenu();
+					TUIWindow t(((ZZTOOP *)(currentbrd->board[debugselect_x][debugselect_y].obj))->get_zztobj_name());
+					t.buildFromString(currentbrd->board[debugselect_x][debugselect_y].obj->getProg());
+					t.doMenu(dt);
 					dt->setANSI(true);
 					dt->color(GREY, BLACK);
 					dt->clear();
@@ -198,14 +202,15 @@ void *process_debug(void *) {
 				current=current->next;
 			}
 			dt->setANSI(false);
-			TextWindow t(dt,"Select a board",(char *)boardmenu.c_str());
-			t.doMenu();
+			TUIWindow t("Select a board");
+			t.buildFromString(boardmenu);
+			t.doMenu(dt);
 			dt->setANSI(true);
 			dt->color(GREY, BLACK);
 			dt->clear();
-			if(atoi(t.getLabel()) > 0) {
-				debug("Warping to board %i\n",atoi(t.getLabel()));
-				switchbrd = atoi(t.getLabel());
+			if(atoi(t.getLabel().c_str()) > 0) {
+				debug("Warping to board %i\n",atoi(t.getLabel().c_str()));
+				switchbrd = atoi(t.getLabel().c_str());
 				player->setFlag(F_SLEEPING);
 			} else {
 				debug("");
@@ -295,7 +300,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 }
 
 void debug_init() {
-	dt = new ConsoleText(80,25,new Texture("zzt-ascii.png", true));
+	dt = new ConsoleText(80,25,zzt_font);
 	dt->setSize(640,240);
 	dt->setTranslate(Vector(1024,360,0));
 	dt->setANSI(true);
