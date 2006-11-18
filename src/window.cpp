@@ -41,9 +41,9 @@ extern bool playerInputActive;
 extern Player *player;
 
 void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
-  int fg=(console->getColor(x,y)/16)-8;
-  if(fg<0) fg=8;
-	console->putColor(x,y, fg);
+  //int fg=(console->getColor(x,y)/16)-8;
+  //if(fg<0) fg=8;
+	console->putColor(x,y, BLACK|HIGH_INTENSITY);
 }
 
 void TUIWindow::processHidEvent(const Hid::Event &evt) {
@@ -104,7 +104,7 @@ void TUIWindow::buildFromString(std::string s) {
 	} while (i < s.length());
 }
 
-void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,int bg) {
+void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,int bg, bool shadow) {
   int i,j,f;
   //draw a box using IBM extended ASCII
   console->putColor(x,y,fg | (bg << 8));
@@ -130,8 +130,8 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 		console->putColor(x+j+1,y+i+1,fg | (bg << 8));
 		console->putChar(x+j+1,y+i+1,179);
 		
-    draw_shadow(console,x+w+2,y+i+1);
-    draw_shadow(console,x+w+3,y+i+1);
+    if(shadow) draw_shadow(console,x+w+2,y+i+1);
+    if(shadow) draw_shadow(console,x+w+3,y+i+1);
     console->color(fg,bg);
   }
   
@@ -144,7 +144,7 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
   draw_shadow(console,x+w+3,y+h+1);
 	
   for(i=0;i<w+2;i++)
-    draw_shadow(console,x+2+i,y+h+2);
+    if (shadow) draw_shadow(console,x+2+i,y+h+2);
 }
 
 void TUIWindow::doMenu(ConsoleText *ct) {
@@ -156,10 +156,12 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 	m_loop = true;
 	m_widgets[m_offset]->focus(true);
 	playerInputActive=false;
+
+	draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
 	
 	do {
 		i=0;
-		draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
+		draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE, false);
 		ct->color(YELLOW | HIGH_INTENSITY, BLUE);
 		if(m_widgets[m_offset]->getHelpText() != "\0") {
 			ct->locate(m_x+(m_w-m_widgets[m_offset]->getHelpText().length()-1)/2,m_y+1);
