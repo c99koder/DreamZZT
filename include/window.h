@@ -168,7 +168,7 @@ public:
 	}
 
 	void draw_shadow(ConsoleText *console, int x, int y);
-	void draw_box(ConsoleText *console, int x, int y, int w, int h, int fg, int bg);
+	void draw_box(ConsoleText *console, int x, int y, int w, int h, int fg, int bg, bool shadow=true);
 	void buildFromString(std::string s);
 	void doMenu(ConsoleText *ct);
 	void addWidget(TUIWidget *w) {

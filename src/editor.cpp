@@ -217,6 +217,85 @@ void draw_creature() {
 	ct->setANSI(false);
 }
 
+void draw_terrain() {
+	ct->color(15,1);
+	ct->clear();
+	dzzt_logo();
+	ct->setANSI(true);
+	
+	ct->locate(BOARD_X+1,5);
+	*ct << "\x1b[1;33;44m    Terrains: ";
+	ct->locate(BOARD_X+1,6);
+	*ct << "\x1b[0;30;47m W \x1b[1;37;44m Water ";
+	ct->locate(78,6);
+	ct->color(BLUE,WHITE);
+	*ct << (char)ZZT_WATER_SHAPE;
+	ct->locate(BOARD_X+1,7);
+	*ct << "\x1b[0;30;46m F \x1b[1;37;44m Forest ";
+	ct->locate(78,7);
+	ct->color(BLUE,GREEN);
+	*ct << (char)ZZT_FOREST_SHAPE;
+
+	ct->locate(BOARD_X+1,9);
+	*ct << "\x1b[1;33;44m    Walls: ";
+	ct->locate(BOARD_X+1,10);
+	*ct << "\x1b[0;30;47m S \x1b[1;37;44m Solid ";
+	ct->locate(78,10);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_SOLID_SHAPE;
+	ct->locate(BOARD_X+1,11);
+	*ct << "\x1b[0;30;46m N \x1b[1;37;44m Normal ";
+	ct->locate(78,11);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_NORMAL_SHAPE;
+	ct->locate(BOARD_X+1,12);
+	*ct << "\x1b[0;30;47m B \x1b[1;37;44m Breakable ";
+	ct->locate(78,12);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_BREAKABLE_SHAPE;
+	ct->locate(BOARD_X+1,13);
+	*ct << "\x1b[0;30;46m O \x1b[1;37;44m Boulder ";
+	ct->locate(78,13);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_BOULDER_SHAPE;
+	ct->locate(BOARD_X+1,14);
+	*ct << "\x1b[0;30;47m 1 \x1b[1;37;44m Slider (NS) ";
+	ct->locate(78,14);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_SLIDER_NS_SHAPE;
+	ct->locate(BOARD_X+1,15);
+	*ct << "\x1b[0;30;46m 2 \x1b[1;37;44m Slider (EW) ";
+	ct->locate(78,15);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_SLIDER_EW_SHAPE;
+	ct->locate(BOARD_X+1,16);
+	*ct << "\x1b[0;30;47m A \x1b[1;37;44m Fake ";
+	ct->locate(78,16);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_FAKE_SHAPE;
+	ct->locate(BOARD_X+1,17);
+	*ct << "\x1b[0;30;46m I \x1b[1;37;44m Invisible ";
+	ct->locate(78,17);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_INVISIBLE_SHAPE;
+	ct->locate(BOARD_X+1,18);
+	*ct << "\x1b[0;30;47m L \x1b[1;37;44m Blink wall ";
+	ct->locate(78,18);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_BLINK_SHAPE;
+	ct->locate(BOARD_X+1,19);
+	*ct << "\x1b[0;30;46m T \x1b[1;37;44m Transporter ";
+	ct->locate(78,19);
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << (char)ZZT_TRANSPORTER_SHAPE;
+	ct->locate(BOARD_X+1,20);
+	*ct << "\x1b[0;30;47m R \x1b[1;37;44m Ricochet ";
+	ct->locate(78,20);
+	ct->color(GREEN|HIGH_INTENSITY,BLUE);
+	//*ct << (char)ZZT_RICOCHET_SHAPE;
+	
+	ct->setANSI(false);
+}
 
 void draw_color(int fg, int bg) {
 	for(int i=0; i<8; i++) {
@@ -232,10 +311,13 @@ void draw_color(int fg, int bg) {
 }
 
 void draw_pattern(ZZTObject *pattern[5], int pat) {
+	Vector p;
 	for(int i=0; i<5; i++) {
+		p = pattern[i]->getPosition();
 		pattern[i]->setPosition(Vector(BOARD_X+1+i, 22, 0));
 		if(i<4) pattern[i]->setColor(15);
 		pattern[i]->draw();
+		pattern[i]->setPosition(p);
 		ct->color(WHITE|HIGH_INTENSITY,BLUE);
 		ct->locate(BOARD_X+1+i,23);
 		*ct << ((i==pat)?'\x1e':' ');
@@ -306,21 +388,19 @@ void edit_zzt() {
 						} else {
 							edit_menu_mode=NONE;
 							draw_main();
-							draw_color(edit_fg,edit_bg);
-							draw_pattern(pattern,edit_pat);
 						}
 						break;
 					case Event::KeyF1:
 						edit_menu_mode=ITEM;
 						draw_item();
-						draw_color(edit_fg,edit_bg);
-						draw_pattern(pattern,edit_pat);
 						break;
 					case Event::KeyF2:
 						edit_menu_mode=CREATURE;
 						draw_creature();
-						draw_color(edit_fg,edit_bg);
-						draw_pattern(pattern,edit_pat);
+						break;
+					case Event::KeyF3:
+						edit_menu_mode=TERRAIN;
+						draw_terrain();
 						break;
 					case 'q':
 						edit_loop = false;
@@ -333,16 +413,13 @@ void edit_zzt() {
 							edit_fg++;
 							if(edit_fg>15) edit_fg=8;
 						}
-						draw_color(edit_fg,edit_bg);
-						draw_pattern(pattern,edit_pat);
 						break;
 					case 'p':
 						edit_pat++;
 						if(edit_pat>4) edit_pat=0;
-						draw_pattern(pattern,edit_pat);
 						break;
 					case 32:
-						if(edit_pat<4) pattern[edit_pat]->setColor(edit_fg + (edit_bg * 16));
+						if(edit_pat<4) pattern[edit_pat]->setColor(edit_fg, edit_bg);
 						o=create_copy(pattern[edit_pat]);
 						o->setPosition(Vector(edit_x,edit_y,0));
 						put(o);
@@ -368,30 +445,37 @@ void edit_zzt() {
 							break;
 						case 'g':
 							o=pattern[4]=create_object(ZZT_GEM,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
 							put(o);
 							break;
 						case 'k':
 							o=pattern[4]=create_object(ZZT_KEY,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
 							put(o);
 							break;
 						case 'd':
 							o=pattern[4]=create_object(ZZT_DOOR,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
 							put(o);
 							break;
 						case 's':
 							o=pattern[4]=create_object(ZZT_SCROLL,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
 							put(o);
 							break;
 						case 'p':
 							o=pattern[4]=create_object(ZZT_PASSAGE,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
 							put(o);
 							break;
 						case 'u':
 							o=pattern[4]=create_object(ZZT_DUPLICATOR,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
 							put(o);
 							break;
 						case 'b':
 							o=pattern[4]=create_object(ZZT_BOMB,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
 							put(o);
 							break;
 						case 'e':
@@ -407,20 +491,124 @@ void edit_zzt() {
 							o=pattern[4]=create_object(ZZT_BEAR,edit_x,edit_y);
 							put(o);
 							break;
-						case 'l':
-							o=pattern[4]=create_object(ZZT_LION,edit_x,edit_y);
-							put(o);
-							break;
 						case 'r':
 							o=pattern[4]=create_object(ZZT_RUFFIAN,edit_x,edit_y);
+							put(o);
+							break;
+						case 'o':
+							o=pattern[4]=create_object(ZZT_OBJECT,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'v':
+							//o=pattern[4]=create_object(ZZT_SLIME,edit_x,edit_y);
+							//o->setColor(edit_fg, edit_bg);
+							//put(o);
+							break;
+						case 'y':
+							o=pattern[4]=create_object(ZZT_SHARK,edit_x,edit_y);
+							put(o);
+							break;
+						case 'g':
+							o=pattern[4]=create_object(ZZT_SPINNING_GUN,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'p':
+							o=pattern[4]=create_object(ZZT_PUSHER,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'l':
+							o=pattern[4]=create_object(ZZT_LION,edit_x,edit_y);
 							put(o);
 							break;
 						case 't':
 							o=pattern[4]=create_object(ZZT_TIGER,edit_x,edit_y);
 							put(o);
 							break;
+						case 'h':
+							o=pattern[4]=create_object(ZZT_CENTIPEDE_HEAD,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 's':
+							o=pattern[4]=create_object(ZZT_CENTIPEDE_BODY,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;					
 					}
 				}
+				
+				if(edit_menu_mode==TERRAIN) {
+					switch(evt.key) {
+						case 'w':
+							o=pattern[4]=create_object(ZZT_WATER,edit_x,edit_y);
+							put(o);
+							break;
+						case 'f':
+							o=pattern[4]=create_object(ZZT_FOREST,edit_x,edit_y);
+							put(o);
+							break;
+						case 's':
+							o=pattern[4]=create_object(ZZT_SOLID,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'n':
+							o=pattern[4]=create_object(ZZT_NORMAL,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'b':
+							o=pattern[4]=create_object(ZZT_BREAKABLE,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'o':
+							o=pattern[4]=create_object(ZZT_BOULDER,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case '1':
+							o=pattern[4]=create_object(ZZT_SLIDER_NS,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case '2':
+							o=pattern[4]=create_object(ZZT_SLIDER_EW,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'a':
+							o=pattern[4]=create_object(ZZT_FAKE,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'i':
+							o=pattern[4]=create_object(ZZT_INVISIBLE,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'l':
+							o=pattern[4]=create_object(ZZT_BLINK,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 't':
+							o=pattern[4]=create_object(ZZT_TRANSPORTER,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
+							put(o);
+							break;
+						case 'r':
+							//o=pattern[4]=create_object(ZZT_RICOCHET,edit_x,edit_y);
+							put(o);
+							break;
+					}
+				}
+				
+				draw_color(edit_fg,edit_bg);
+				draw_pattern(pattern,edit_pat);
 			}			
 		}
 	} while(edit_loop);

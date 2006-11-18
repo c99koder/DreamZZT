@@ -57,6 +57,10 @@ public:
 	void setShape(int s) { m_shape = s; }
 	int getColor() { return *m_color; }
 	void setColor(int c) { *m_color = c; }
+	int setColor(int fg, int bg) {
+		m_fg = fg;
+		m_bg = bg;
+	}
 	int getType() { return m_type; }
 	int getFg() { return m_fg; }
 	void setFg(int f) { m_fg = f; }
