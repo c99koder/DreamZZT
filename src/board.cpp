@@ -321,8 +321,8 @@ void boardTransition(direction d, board_info_node *newbrd) {
 	
 	switch(d) {
 		case IDLE:
-			for(i=0; i<(BOARD_X * BOARD_Y)/80; i++) {
-				for(j=0; j<80; j++) {
+			for(i=0; i<(BOARD_X * BOARD_Y)/100; i++) {
+				for(j=0; j<100; j++) {
 					do {
 						x=rand()%BOARD_X;
 						y=rand()%BOARD_Y;
