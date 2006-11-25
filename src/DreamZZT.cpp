@@ -18,10 +18,10 @@
  */ 
 
 #include <Tiki/tiki.h>
+#include "os.h"
 
 #if TIKI_PLAT == TIKI_WIN32
 #include <windows.h>
-
 #include "pch.h"
 
 static char szAppName[] = "DreamZZT";
@@ -81,3 +81,37 @@ int main(int argc, char *argv[])
   return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
 #endif
 }
+
+#ifdef WIN32
+std::string os_select_file(std::string title, std::string path, std::string filter) {
+	OPENFILENAME ofn;       // common dialog box structure
+	char szFile[260];       // buffer for file name
+	std::string output;
+
+	// Initialize OPENFILENAME
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.lpstrFile = szFile;
+	//
+	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+	// use the contents of szFile to initialize itself.
+	//
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = "ZZT Games\0*.zzt\0All\0*.*\0";
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+	ofn.lpstrDefExt = "zzt";
+
+	if (GetOpenFileName(&ofn)==TRUE) {
+		output = ofn.lpstrFile;
+	} else {
+		output = "";
+	}
+
+	return output;
+}
+#endif
