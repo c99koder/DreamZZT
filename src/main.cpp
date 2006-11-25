@@ -58,7 +58,7 @@ menu below:\r\
 !credits;Credits\r\
 !quit;Quit DreamZZT\r\
 \r\
-(C) 2006 Sam Steele"
+(C) 2006 Sam Steele\r"
 
 #define CREDITS "$Programming\r\r\
 Sam Steele\r\
