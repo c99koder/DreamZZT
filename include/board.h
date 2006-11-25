@@ -69,8 +69,8 @@ struct world_header {
 	unsigned char saved;
 };
 
-int load_zzt(char *filename, int titleonly);
-void save_game(char *filename);
+int load_zzt(const char *filename, int titleonly);
+void save_game(const char *filename);
 void switch_board(int num);
 void update_brd();
 void free_world();

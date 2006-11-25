@@ -42,6 +42,7 @@ using namespace Tiki::Thread;
 #include "status.h"
 #include "debug.h"
 #include "editor.h"
+#include "os.h"
 
 Mutex zzt_screen_mutex;
 
@@ -85,7 +86,7 @@ $DreamZZT is (C) 2006 Sam Steele\r\
 $For more information, please visit\r\
 $http://www.c99.org/dc/dzzt/\r"
 
-void play_zzt(char *filename);
+void play_zzt(const char *filename);
 void net_menu();
 
 ConsoleText *ct;
@@ -183,9 +184,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 	ct->clear();
 	dzzt_logo();
 	menu_background();
-
-	new_world();
-	edit_zzt();
+	
+	//new_world();
+	//edit_zzt();
 	
 	while(1) {
 		ct->color(15,1);
@@ -200,11 +201,13 @@ extern "C" int tiki_main(int argc, char **argv) {
 		if(t->getLabel() == "quit" || t->getLabel() =="\0") {
 			break;
 		} else if(t->getLabel() == "new") {
-			play_zzt("town.zzt");
+			std::string s = os_select_file("Select a game","zzt");
+			if(s!="")	play_zzt(s.c_str());
 		} else if(t->getLabel() == "tutorial") {
 			play_zzt("tutorial.zzt");
 		} else if(t->getLabel() == "restore") {
-			play_zzt("saved.sav");
+			std::string s = os_select_file("Select a saved game","sav");
+			if(s!="")	play_zzt(s.c_str());
 		/*} else if(!strcmp(tmp,"net")) {
 			net_menu();*/
 		} else if(t->getLabel() == "credits") {
@@ -239,7 +242,7 @@ void titleHidCallback(const Event & evt, void * data) {
 	}
 }	
 
-void play_zzt(char *filename) {
+void play_zzt(const char *filename) {
 	int start;
 	char tmp[50];
 	int hidCookie = Hid::callbackReg(titleHidCallback, NULL);
@@ -314,7 +317,8 @@ void play_zzt(char *filename) {
 			//menu
 			break;
 		} else if(switchbrd==-4) {
-			save_game("saved.sav");
+			std::string s = os_save_file("Save a game","saved.sav","sav");
+			if(s!="") save_game(s.c_str());
 			switchbrd=-1;
 		} else if(switchbrd==-5) {
 			edit_zzt();

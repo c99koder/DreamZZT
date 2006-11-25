@@ -629,7 +629,7 @@ void load_objects(File &fd, struct board_info_node *board) {
   }
 }
 
-int load_zzt(char *filename, int titleonly) {
+int load_zzt(const char *filename, int titleonly) {
   unsigned int c,x,y,z,sum=0,q;
 	unsigned char len,col,cod;
   struct board_info_node *current=NULL;
@@ -838,7 +838,7 @@ void write_object(File &fd, ZZTObject *obj, ZZTObject *under) {
 	fd.write(obj->getProg().c_str(),obj->getProgLen());
 }
 
-void save_game(char *filename) {
+void save_game(const char *filename) {
 	int i;
 	short int x,y,z;
 	unsigned char c,code,color,code2,color2;
