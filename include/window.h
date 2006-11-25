@@ -165,6 +165,7 @@ public:
 		m_title=title;
 		m_label="\0";
 		m_offset=0;
+		m_dirty=0;
 	}
 
 	void draw_shadow(ConsoleText *console, int x, int y);
@@ -183,4 +184,5 @@ private:
 	int m_x, m_y, m_w, m_h, m_offset;
 	std::vector<TUIWidget *> m_widgets;
 	bool m_loop;
+	bool m_dirty;
 };

@@ -49,7 +49,8 @@ void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
 void TUIWindow::processHidEvent(const Hid::Event &evt) {
 	if(evt.type == Event::EvtQuit) {
 		m_loop = false;
-	} else if(evt.type == Event::EvtKeyDown) {
+	} else if(evt.type == Event::EvtKeypress && m_dirty==0) {
+		m_dirty=1;
 		switch(evt.key) {
 			case Event::KeyDown:
 				m_widgets[m_offset]->focus(false);
@@ -82,13 +83,13 @@ void TUIWindow::buildFromString(std::string s) {
 		
 		switch(s[i+j++]) {
 			case '!':
-				while(s[i+j]!=';') label += s[i+j++];
+				while(((i+j) < s.length()) && s[i+j]!=';') label += s[i+j++];
 				j++;
-				while(s[i+j]!='\r') text += s[i+j++];
+				while(((i+j) < s.length()) && s[i+j]!='\r') text += s[i+j++];
 				addWidget(new TUIHyperLink(label,text));
 				break;
 			case '$':
-				while(s[i+j]!='\r') text += s[i+j++];
+				while(((i+j) < s.length()) && s[i+j]!='\r') text += s[i+j++];
 				for(int x=0; x< (m_w - text.length() - 4) / 2; x++) {
 					label += " ";
 				}
@@ -96,7 +97,7 @@ void TUIWindow::buildFromString(std::string s) {
 				break;	
 			default:
 				j--;
-				while(s[i+j]!='\r') text += s[i+j++];
+				while(((i+j) < s.length()) && s[i+j]!='\r') text += s[i+j++];
 				addWidget(new TUILabel(text));
 				break;	
 		}
@@ -152,7 +153,7 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 	Event evt;
 	std::vector<TUIWidget *>::iterator widget_iter;
 	int i=0;
-	
+	m_dirty = 1;
 	m_loop = true;
 	m_widgets[m_offset]->focus(true);
 	playerInputActive=false;
@@ -160,64 +161,67 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 	draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
 	
 	do {
-		i=0;
-		draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE, false);
-		ct->color(YELLOW | HIGH_INTENSITY, BLUE);
-		if(m_widgets[m_offset]->getHelpText() != "\0") {
-			ct->locate(m_x+(m_w-m_widgets[m_offset]->getHelpText().length()-1)/2,m_y+1);
-			*ct << "\xae " << m_widgets[m_offset]->getHelpText() << " \xaf";
-		} else {
-			ct->locate(m_x+(m_w-m_title.length()+2)/2,m_y+1);
-			*ct << m_title;
-		}
-		ct->locate(m_x,m_y+2);
-		ct->color(WHITE|HIGH_INTENSITY,BLUE);
-		ct->printf("%c",195);
-		for(int x=0;x<m_w;x++)
-			ct->printf("%c",196);
-		ct->printf("%c",180); 
-		ct->color(RED|HIGH_INTENSITY,BLUE);
-		ct->locate(m_x+1,m_h/2+m_y+1);
-		ct->printf("%c",175);
-		ct->locate(m_x+m_w,m_h/2+m_y+1);
-		ct->printf("%c",174);
-		
-		if(m_offset < m_h/2-2) {
-			for(i=0; i < m_h/2-2-m_offset; i++) {
-				ct->locate(m_x+(m_w/2)-20,m_y+3+i);
-				if(m_h/2-2 - m_offset - i == 4) {
-					ct->setANSI(true);
-					*ct << " \x1b[1;36mUse \x1b[37m\x18 \x1b[36mand \x1b[37m\x19 \x1b[36mto scroll and press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? "Start " : "Enter ") << "\x1b[36mor";
-					ct->setANSI(false);
-        }
-        if(m_h/2-2 - m_offset - i == 3) {
-					ct->setANSI(true);
-          *ct << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC) ? "Fire " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? " B  " : "ESC ") << "\x1b[36mto close.    ";
-					ct->setANSI(false);
-        }
-        if(m_h/2-2 - m_offset - i == 1) {
-					ct->color(YELLOW|HIGH_INTENSITY,BLUE);
-          for(int u=0;u<m_w-3;u++) {
-            ct->printf("%c",u%5==0?7:' ');
-          }
-        }
+		if(m_dirty) {
+			m_dirty=0;
+			i=0;
+			draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE, false);
+			ct->color(YELLOW | HIGH_INTENSITY, BLUE);
+			if(m_widgets[m_offset]->getHelpText() != "\0") {
+				ct->locate(m_x+(m_w-m_widgets[m_offset]->getHelpText().length()-1)/2,m_y+1);
+				*ct << "\xae " << m_widgets[m_offset]->getHelpText() << " \xaf";
+			} else {
+				ct->locate(m_x+(m_w-m_title.length()+2)/2,m_y+1);
+				*ct << m_title;
 			}
-		}		
-		
-		for(widget_iter = m_widgets.begin() + ((m_offset <=  m_h/2-2)?0:(m_offset -  m_h/2 + 2)); widget_iter != m_widgets.end() && i < m_h-2; widget_iter++) {
-			ct->locate(m_x+3,m_y+3+i++);
-			(*widget_iter)->update();
-			(*widget_iter)->draw(ct);
-		}
+			ct->locate(m_x,m_y+2);
+			ct->color(WHITE|HIGH_INTENSITY,BLUE);
+			ct->printf("%c",195);
+			for(int x=0;x<m_w;x++)
+				ct->printf("%c",196);
+			ct->printf("%c",180); 
+			ct->color(RED|HIGH_INTENSITY,BLUE);
+			ct->locate(m_x+1,m_h/2+m_y+1);
+			ct->printf("%c",175);
+			ct->locate(m_x+m_w,m_h/2+m_y+1);
+			ct->printf("%c",174);
+			
+			if(m_offset < m_h/2-2) {
+				for(i=0; i < m_h/2-2-m_offset; i++) {
+					ct->locate(m_x+(m_w/2)-20,m_y+3+i);
+					if(m_h/2-2 - m_offset - i == 4) {
+						ct->setANSI(true);
+						*ct << " \x1b[1;36mUse \x1b[37m\x18 \x1b[36mand \x1b[37m\x19 \x1b[36mto scroll and press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? "Start " : "Enter ") << "\x1b[36mor";
+						ct->setANSI(false);
+					}
+					if(m_h/2-2 - m_offset - i == 3) {
+						ct->setANSI(true);
+						*ct << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC) ? "Fire " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? " B  " : "ESC ") << "\x1b[36mto close.    ";
+						ct->setANSI(false);
+					}
+					if(m_h/2-2 - m_offset - i == 1) {
+						ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+						for(int u=0;u<m_w-3;u++) {
+							ct->printf("%c",u%5==0?7:' ');
+						}
+					}
+				}
+			}		
+			
+			for(widget_iter = m_widgets.begin() + ((m_offset <=  m_h/2-2)?0:(m_offset -  m_h/2 + 2)); widget_iter != m_widgets.end() && i < m_h-2; widget_iter++) {
+				ct->locate(m_x+3,m_y+3+i++);
+				(*widget_iter)->update();
+				(*widget_iter)->draw(ct);
+			}
 
-		if(i < m_h-2) {
-			ct->locate(m_x+2,m_y+3+i++);
-			ct->color(YELLOW|HIGH_INTENSITY,BLUE);
-			for(int u=0;u<m_w-3;u++) {
-				ct->printf("%c",u%5==0?7:' ');
+			if(i < m_h-2) {
+				ct->locate(m_x+2,m_y+3+i++);
+				ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+				for(int u=0;u<m_w-3;u++) {
+					ct->printf("%c",u%5==0?7:' ');
+				}
 			}
+			render();
 		}
-		render();
 		while (ec.getEvent(evt)) {
 			processHidEvent(evt);
 		}
