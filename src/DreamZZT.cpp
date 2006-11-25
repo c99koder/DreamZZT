@@ -83,10 +83,13 @@ int main(int argc, char *argv[])
 }
 
 #ifdef WIN32
-std::string os_select_file(std::string title, std::string path, std::string filter) {
+std::string os_select_file(std::string title, std::string filter) {
 	OPENFILENAME ofn;       // common dialog box structure
 	char szFile[260];       // buffer for file name
 	std::string output;
+	char szFilter[260];
+
+	sprintf(szFilter,"*.%s%c*.%s%cAll Files (*.*)%c*.*%c",filter.c_str(),'\0',filter.c_str(),'\0','\0','\0');
 
 	// Initialize OPENFILENAME
 	ZeroMemory(&ofn, sizeof(ofn));
@@ -98,15 +101,52 @@ std::string os_select_file(std::string title, std::string path, std::string filt
 	//
 	ofn.lpstrFile[0] = '\0';
 	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrFilter = "ZZT Games\0*.zzt\0All\0*.*\0";
+	ofn.lpstrFilter = szFilter;
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = NULL;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-	ofn.lpstrDefExt = "zzt";
+	ofn.lpstrDefExt = filter.c_str();
+	ofn.lpstrTitle = title.c_str();
 
 	if (GetOpenFileName(&ofn)==TRUE) {
+		output = ofn.lpstrFile;
+	} else {
+		output = "";
+	}
+
+	return output;
+}
+
+std::string os_save_file(std::string title, std::string filename, std::string filter) {
+	OPENFILENAME ofn;       // common dialog box structure
+	char szFile[260];       // buffer for file name
+	std::string output;
+	char szFilter[260];
+
+	sprintf(szFilter,"*.%s%c*.%s%cAll Files (*.*)%c*.*%c",filter.c_str(),'\0',filter.c_str(),'\0','\0','\0');
+
+	// Initialize OPENFILENAME
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.lpstrFile = szFile;
+	//
+	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+	// use the contents of szFile to initialize itself.
+	//
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = szFilter;
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST;
+	ofn.lpstrDefExt = filter.c_str();
+	ofn.lpstrTitle = title.c_str();
+
+	if (GetSaveFileName(&ofn)==TRUE) {
 		output = ofn.lpstrFile;
 	} else {
 		output = "";
