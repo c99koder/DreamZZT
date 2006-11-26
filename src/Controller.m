@@ -22,8 +22,13 @@
 #import <assert.h>
 
 void tiki_main();
+extern char *default_file;
 
 @implementation Controller
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
+{
+	openFileName = filename;
+}
 
 - (void) applicationDidFinishLaunching: (NSNotification *) note
 {
@@ -31,7 +36,7 @@ void tiki_main();
 	chdir([resPath cString]);
 	TikiMain * otm = [[TikiMain alloc] retain];
 	tm = otm;
-	[tm doMainWithWindow: mainWindow andView: mainView andMainFunc: tiki_main];
+	[tm doMainWithWindow: mainWindow andView: mainView andMainFunc: tiki_main andOpenFile: openFileName];
 	tm = nil;
 	[otm release];
 }

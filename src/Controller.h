@@ -26,5 +26,6 @@
     IBOutlet NSWindow *mainWindow;
     
     TikiMain * tm;
+		NSString * openFileName;
 }
 @end
