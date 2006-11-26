@@ -37,7 +37,6 @@
 		2296D4F70A0D338E00BD96D2 /* zzt-ascii.png in Resources */ = {isa = PBXBuildFile; fileRef = 2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */; };
 		229B982A0A1F6F4400E85BB8 /* genobjects.sh in Resources */ = {isa = PBXBuildFile; fileRef = 229B98290A1F6F4400E85BB8 /* genobjects.sh */; };
 		229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */; };
-		22A983470A0C6C3100835D10 /* town.zzt in Resources */ = {isa = PBXBuildFile; fileRef = 22A983460A0C6C3100835D10 /* town.zzt */; };
 		22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22ABAB4D0A31145600B9C077 /* centipede.cpp */; };
 		22AD22CC0A13FAD8003E828E /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
 		22D2E46D0A55EAB200319F32 /* editor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22D2E46B0A55EAB100319F32 /* editor.cpp */; };
@@ -108,7 +107,6 @@
 		2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "zzt-ascii.png"; path = "resources/zzt-ascii.png"; sourceTree = "<group>"; };
 		229B98290A1F6F4400E85BB8 /* genobjects.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = genobjects.sh; path = src/genobjects.sh; sourceTree = "<group>"; };
 		229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = conveyer.cpp; path = src/objects/conveyer.cpp; sourceTree = "<group>"; };
-		22A983460A0C6C3100835D10 /* town.zzt */ = {isa = PBXFileReference; lastKnownFileType = file; name = town.zzt; path = resources/town.zzt; sourceTree = "<group>"; };
 		22ABAB4D0A31145600B9C077 /* centipede.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = centipede.cpp; path = src/objects/centipede.cpp; sourceTree = "<group>"; };
 		22AD22CB0A13FAD8003E828E /* http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = http.cpp; path = src/http.cpp; sourceTree = "<group>"; };
 		22D2E46B0A55EAB100319F32 /* editor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = editor.cpp; path = src/editor.cpp; sourceTree = "<group>"; };
@@ -268,7 +266,6 @@
 				226F41BB0B19024300FC07AE /* doc_icon.icns */,
 				22EC1AC10A2B3FD600DEE79D /* icon.icns */,
 				2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */,
-				22A983460A0C6C3100835D10 /* town.zzt */,
 				2242FF290A0C442100F4BDF2 /* tutorial.zzt */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -334,7 +331,6 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				2242FE470A0C373400F4BDF2 /* objdb in Resources */,
 				2242FF2A0A0C442100F4BDF2 /* tutorial.zzt in Resources */,
-				22A983470A0C6C3100835D10 /* town.zzt in Resources */,
 				2296D4F70A0D338E00BD96D2 /* zzt-ascii.png in Resources */,
 				229B982A0A1F6F4400E85BB8 /* genobjects.sh in Resources */,
 				22EC1AC20A2B3FD700DEE79D /* icon.icns in Resources */,

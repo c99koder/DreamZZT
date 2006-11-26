@@ -85,7 +85,7 @@ BEGIN
             VALUE "FileDescription", "DreamZZT 3.0.4b2"
             VALUE "FileVersion", "3, 0, 4, 2"
             VALUE "InternalName", "dreamzzt"
-            VALUE "LegalCopyright", "Copyright (C) 2006 Sam Steele"
+            VALUE "LegalCopyright", "Copyright (C) 1999-2006 Sam Steele, All Rights Reserved."
             VALUE "OriginalFilename", "dreamzzt.rc"
             VALUE "ProductName", " DreamZZT 3.0.4b2"
             VALUE "ProductVersion", "3, 0, 4, 2"
