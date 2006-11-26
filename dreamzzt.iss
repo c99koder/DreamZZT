@@ -12,13 +12,18 @@ DefaultDirName={pf}\DreamZZT
 DefaultGroupName=DreamZZT
 OutputBaseFilename=setup
 Compression=lzma
-SolidCompression=yes
+SolidCompression=true
 MinVersion=4.1.2222,5.0.2195
 LicenseFile=C:\Documents and Settings\Sam\Desktop\DreamZZT\COPYING
 ChangesAssociations=true
 AppVersion=3.0.4b2
 UninstallDisplayIcon={app}\DreamZZT.exe
 UninstallDisplayName=DreamZZT 3.0.4b2
+VersionInfoVersion=3.0.4.2
+VersionInfoCompany=Sam Steele
+VersionInfoDescription=DreamZZT 3.0.4b2
+VersionInfoTextVersion=3.0.4b2
+VersionInfoCopyright=Copyright (C) 1999-2006 Sam Steele, All Rights Reserved.
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
