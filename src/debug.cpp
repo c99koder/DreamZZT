@@ -306,7 +306,7 @@ void debug_init() {
 	dt->setANSI(true);
 	dt->color(GREY, BLACK);
 	dt->clear();
-	debug("\n\nDreamZZT 3.0\n(C) 2006 Sam Steele\n\nREADY.\n");	
+	debug("\n\nDreamZZT 3.0.4b2\n(C) 1999-2006 Sam Steele, All Rights Reserved.\n\nREADY.\n");	
 	
 	debug_thread = new Tiki::Thread::Thread(process_debug,NULL);
 }
