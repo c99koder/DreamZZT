@@ -29,6 +29,8 @@
 		226F40B10B18BCD800FC07AE /* os.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 226F40B00B18BCD800FC07AE /* os.h */; };
 		226F410D0B18BF9C00FC07AE /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 226F410C0B18BF9C00FC07AE /* Controller.m */; };
 		226F41110B18BFFB00FC07AE /* os.mm in Sources */ = {isa = PBXBuildFile; fileRef = 226F41100B18BFFB00FC07AE /* os.mm */; };
+		226F41BC0B19024300FC07AE /* doc_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 226F41BB0B19024300FC07AE /* doc_icon.icns */; };
+		226F41CA0B1909D800FC07AE /* sav_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 226F41C90B1909D800FC07AE /* sav_icon.icns */; };
 		228745A10B0F92580022A089 /* Tiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2287455D0B0F92570022A089 /* Tiki.framework */; };
 		228745A20B0F925E0022A089 /* Tiki.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2287455D0B0F92570022A089 /* Tiki.framework */; };
 		22907D680A1A947800B9BB6D /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22907D660A1A947800B9BB6D /* debug.cpp */; };
@@ -98,6 +100,8 @@
 		226F40B00B18BCD800FC07AE /* os.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = os.h; path = include/os.h; sourceTree = "<group>"; };
 		226F410C0B18BF9C00FC07AE /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Controller.m; path = src/Controller.m; sourceTree = "<group>"; };
 		226F41100B18BFFB00FC07AE /* os.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = os.mm; path = src/os.mm; sourceTree = "<group>"; };
+		226F41BB0B19024300FC07AE /* doc_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_icon.icns; sourceTree = "<group>"; };
+		226F41C90B1909D800FC07AE /* sav_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sav_icon.icns; sourceTree = "<group>"; };
 		2287455D0B0F92570022A089 /* Tiki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tiki.framework; path = ../tiki/osx/build/Deployment/Tiki.framework; sourceTree = SOURCE_ROOT; };
 		22907D650A1A947800B9BB6D /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/debug.h; sourceTree = "<group>"; };
 		22907D660A1A947800B9BB6D /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debug.cpp; path = src/debug.cpp; sourceTree = "<group>"; };
@@ -260,6 +264,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				226F41C90B1909D800FC07AE /* sav_icon.icns */,
+				226F41BB0B19024300FC07AE /* doc_icon.icns */,
 				22EC1AC10A2B3FD600DEE79D /* icon.icns */,
 				2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */,
 				22A983460A0C6C3100835D10 /* town.zzt */,
@@ -332,6 +338,8 @@
 				2296D4F70A0D338E00BD96D2 /* zzt-ascii.png in Resources */,
 				229B982A0A1F6F4400E85BB8 /* genobjects.sh in Resources */,
 				22EC1AC20A2B3FD700DEE79D /* icon.icns in Resources */,
+				226F41BC0B19024300FC07AE /* doc_icon.icns in Resources */,
+				226F41CA0B1909D800FC07AE /* sav_icon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
