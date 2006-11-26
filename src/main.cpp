@@ -58,7 +58,7 @@ menu below:\r\
 !credits;Credits\r\
 !quit;Quit DreamZZT\r\
 \r\
-Copyright (C) 1999-2006 Sam Steele\r
+Copyright (C) 1999-2006 Sam Steele\r\
 All Rights Reserved.\r"
 
 #define CREDITS "$Programming\r\r\
