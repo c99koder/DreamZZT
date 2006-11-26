@@ -188,7 +188,11 @@ extern "C" int tiki_main(int argc, char **argv) {
 	//new_world();
 	//edit_zzt();
 	
-	while(1) {
+	if(argc > 1) {
+		play_zzt(argv[argc-1]);
+	}
+	
+	while(switchbrd != -2) {
 		ct->color(15,1);
 		ct->clear();
 		dzzt_logo();
@@ -219,8 +223,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 		}
 		
 		delete t;
-		
-		if(switchbrd==-2) break;
 	}
 
 	if(zm!=NULL && zm->isPlaying()) zm->stop();
@@ -281,7 +283,7 @@ void play_zzt(const char *filename) {
 		draw_msg();
 		render();
 		Time::sleep(60000);
-	} while(switchbrd==-1);
+	} while(world.saved==0 && switchbrd==-1);
 	Hid::callbackUnreg(hidCookie);
 	if(switchbrd==-2) return;
 	switchbrd=-1;
