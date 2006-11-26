@@ -166,7 +166,6 @@ void Inventory::message(ZZTObject *them, std::string message) {
         ok=0;
       } else {
         world.keys[m_fg-9]=1;
-				printf("world.keys[%i]=%i\n",m_fg-9,world.keys[m_fg-9]);
         sprintf(tmp,"You now have the %s key",int_to_color(*m_color).c_str());
         draw_keys();
 				zm->setTune("t+cegcegceg+sc");

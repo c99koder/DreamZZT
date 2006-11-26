@@ -68,7 +68,9 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 				m_loop = false;
 				m_label = m_widgets[m_offset]->getReturnValue();
 				break;
-		}
+		} 
+	} else if(evt.type == Event::EvtKeyUp && evt.key == Event::KeyEsc) {
+			m_loop = false;
 	}
 }
 

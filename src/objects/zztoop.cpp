@@ -343,7 +343,7 @@ void ZZTOOP::exec(std::string text) {
 		if(m_cycle==0) m_cycle=1;
 		goagain=1;
 	}
-	else if(words[0] == "put") {
+	else if(words[0] == "put" && words.size() > 2) {
 		color=str_to_color(words[2]);
 		if(color!=-1) {
 			words.erase(words.begin() + 2);
@@ -415,7 +415,7 @@ void ZZTOOP::exec(std::string text) {
 			return;
 		}
 	}
-	else if(words[0] == "change") {
+	else if(words[0] == "change" && words.size() > 2) {
 		goagain=1;
 		color=str_to_color(words[1]);
 		if(color!=-1) words.erase(words.begin() + 1);
@@ -467,9 +467,8 @@ void ZZTOOP::exec(std::string text) {
 	}
 	else if(words[0] == "set") {
 		for(i=0;i<10;i++) {
-			printf("Flag[%i].len=%i\n",i,world.flag[i].len);
 			if(world.flag[i].len==0) {
-				printf("Storing flag in slot %i\n",i);
+				debug("\x1b[0;37mFlag \x1b[1;37m%s\x1b[0;37m set\n",words[1].c_str());
 				strcpy((char *)world.flag[i].string,words[1].c_str());
 				world.flag[i].len=words[1].length();
 				break;
@@ -480,6 +479,7 @@ void ZZTOOP::exec(std::string text) {
 	else if(words[0] == "clear") {
 		for(i=0;i<10;i++) {
 			if(std::string((const char *)world.flag[i].string) == words[1]) {
+				debug("\x1b[0;37mFlag \x1b[1;37m%s\x1b[0;37m cleared\n",words[1].c_str());
 				world.flag[i].string[0]='\0';
 				world.flag[i].len=0;
 				break;
