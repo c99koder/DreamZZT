@@ -5,14 +5,20 @@
 AppName=DreamZZT
 AppVerName=DreamZZT 3.0.4b2
 AppPublisher=Sam Steele
-AppPublisherURL=http://www.c99.org/dc/dzzt/
-AppSupportURL=http://www.c99.org/dc/dzzt/
+AppPublisherURL=http://www.c99.org/
+AppSupportURL=http://forums.c99.org/
 AppUpdatesURL=http://www.c99.org/dc/dzzt/
 DefaultDirName={pf}\DreamZZT
 DefaultGroupName=DreamZZT
 OutputBaseFilename=setup
 Compression=lzma
 SolidCompression=yes
+MinVersion=4.1.2222,5.0.2195
+LicenseFile=C:\Documents and Settings\Sam\Desktop\DreamZZT\COPYING
+ChangesAssociations=true
+AppVersion=3.0.4b2
+UninstallDisplayIcon={app}\DreamZZT.exe
+UninstallDisplayName=DreamZZT 3.0.4b2
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
@@ -31,6 +37,8 @@ Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\town.zzt; DestD
 Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\tutorial.zzt; DestDir: {app}; Flags: ignoreversion
 Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\wrap_oal.dll; DestDir: {app}; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: ChangeLog; DestDir: {app}
+Source: COPYING; DestDir: {app}
 
 [INI]
 Filename: {app}\DreamZZT.url; Section: InternetShortcut; Key: URL; String: http://www.c99.org/dc/dzzt/
