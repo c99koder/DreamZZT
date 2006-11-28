@@ -49,10 +49,10 @@ Source: COPYING; DestDir: {app}
 Filename: {app}\DreamZZT.url; Section: InternetShortcut; Key: URL; String: http://www.c99.org/dc/dzzt/
 
 [Icons]
-Name: {group}\DreamZZT; Filename: {app}\DreamZZT.exe
+Name: {group}\DreamZZT; Filename: {app}\DreamZZT.exe; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; IconIndex: 0; Comment: DreamZZT - Open Source ZZT Engine
 Name: {group}\{cm:ProgramOnTheWeb,DreamZZT}; Filename: {app}\DreamZZT.url
 Name: {group}\{cm:UninstallProgram,DreamZZT}; Filename: {uninstallexe}
-Name: {userdesktop}\DreamZZT; Filename: {app}\DreamZZT.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; Comment: DreamZZT - Open-Source ZZT Engine; IconIndex: 0
+Name: {userdesktop}\DreamZZT; Filename: {app}\DreamZZT.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; Comment: DreamZZT - Open Source ZZT Engine; IconIndex: 0
 
 [Run]
 Filename: {app}\DreamZZT.exe; Description: {cm:LaunchProgram,DreamZZT}; Flags: nowait postinstall skipifsilent
