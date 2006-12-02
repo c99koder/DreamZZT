@@ -19,7 +19,7 @@
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
-#include <Tiki/eventCollector.h>
+#include <Tiki/eventcollector.h>
 #include <stdlib.h>
 #include <string>
 #include <cctype>

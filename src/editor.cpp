@@ -21,7 +21,7 @@
 #include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
-#include <Tiki/eventCollector.h>
+#include <Tiki/eventcollector.h>
 #include <Tiki/tikitime.h>
 #include <Tiki/thread.h>
 #include <string.h>

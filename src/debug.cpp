@@ -21,7 +21,7 @@
 #include <string.h>
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
-#include <Tiki/eventCollector.h>
+#include <Tiki/eventcollector.h>
 #include <Tiki/thread.h>
 #include <Tiki/tikitime.h>
 #include <Tiki/drawables/console.h>
