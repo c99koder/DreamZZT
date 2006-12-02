@@ -543,19 +543,6 @@ int board_right() {
   return currentbrd->board_right;
 }
 
-int read_zzt_int(File &fd) {
-	/*unsigned char a,b;
-	fd.read(&a,1);
-	fd.read(&b,1);
-	
-	return (b*256) + a;*/
-	short int i;
-	
-	fd.read(&i,2);
-	ByteSwap(&i,2);
-	return i;
-}
-
 void write_zzt_int(File &fd, short int i) {
 	ByteSwap(&i,2);
 	fd.write(&i,2);
@@ -563,14 +550,13 @@ void write_zzt_int(File &fd, short int i) {
 
 void load_objects(File &fd, struct board_info_node *board) {
   short int len,proglen;
-  unsigned char x,y,z,cnt, p1, p2, p3, ut, uc;
-  short int xstep,ystep,cycle,dumb,progpos,leader,follower;
+  unsigned char x,y,z, p1, p2, p3, ut, uc;
+  short int cnt, xstep,ystep,cycle,dumb,progpos,leader,follower;
   char *tmp;
 	char pad[20];
 	ZZTObject *curobj=NULL;
 	
-	cnt = read_zzt_int(fd);
-  //fd.readle16(&cnt,1); //number of objects
+  fd.readle16(&cnt,1); //number of objects
 #ifdef DEBUG
   printf("Loading %i objects...\n",cnt);
 #endif
@@ -603,13 +589,8 @@ void load_objects(File &fd, struct board_info_node *board) {
 		if(curobj==NULL) printf("Null object at %i,%i\n",x,y);
     if(proglen>0/* && (curobj->getType()==ZZT_OBJECT || curobj->getType()==ZZT_SCROLL)*/) {
 	    tmp=(char *)malloc(proglen+1);
-      /*for(len=0;len<proglen;len++) {
-      	tmp[len]=file_read_byte(fd);
-				//if(tmp[len]=='\r') tmp[len]='\n';
-      }*/
 			fd.read(tmp,proglen);
       tmp[proglen]='\0';
-			//printf("Program (%i/%i): %s\n",len,proglen,tmp);
     }
     if(curobj!=NULL && x>=0 && y>=0) {
 			curobj->setStep(Vector(xstep,ystep,0));
@@ -683,10 +664,8 @@ int load_zzt(const char *filename, int titleonly) {
   board_list=current;
 	if(titleonly==1) world.board_count=1;
   for(q=0;q<=world.board_count;q++) {
-    //current->objlist=NULL;
     curobj=NULL;
-		//fd.readle16(&c, 1);
-    read_zzt_int(fd);//size (in bytes) of the board
+		fd.readle16(&c, 1); //size (in bytes) of the board
 		fd.read(&len,1);
     fd.read(current->title,34);
     current->title[len]='\0';
@@ -870,7 +849,7 @@ void save_game(const char *filename) {
 	fd.seek(0x200,SEEK_SET);
 	
 	while(curbrd!=NULL) {
-		printf("Writing %s...\n",curbrd->title);
+		//printf("Writing %s...\n",curbrd->title);
 		fd.write("\0\0",2); //size (int bytes) of the board, unused by DreamZZT
 		c=strlen(curbrd->title);
 		fd.write(&c,1);
@@ -940,7 +919,7 @@ void save_game(const char *filename) {
 			}
 		}
 		z--;
-		printf("Writing %i objects\n",z);
+		//printf("Writing %i objects\n",z);
 		write_zzt_int(fd,z);
 
 		write_object(fd,curplayer,curbrd->board[(int)curplayer->getPosition().x][(int)curplayer->getPosition().y].under);
