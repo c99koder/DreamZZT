@@ -22,21 +22,14 @@
 #include "word.h"
 
 std::vector<std::string> wordify(std::string s, char seperator) {
-  unsigned int x=0;
 	std::vector<std::string> list;
-	std::string tmp;
+	int pos=0,oldpos=0;
 	
-  for(x=0;x<s.length();x++) {
-    if(s[x]==seperator && tmp.length() > 0) {
-			list.push_back(tmp);
-			tmp = "";
-      continue;
-    } else if(s[x]!=seperator) {
-			tmp += s[x];
-    }
-  }
+	while((pos = s.find(seperator, oldpos)) != std::string::npos) {
+		list.push_back(s.substr(oldpos,(pos-oldpos)));
+		oldpos = pos+1;
+	}
 	
-	list.push_back(tmp); //Stuff in the last word
-	
+	list.push_back(s.substr(oldpos)); //Stuff in the last word
 	return list;
 }
