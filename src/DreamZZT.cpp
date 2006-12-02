@@ -28,6 +28,8 @@ static char szAppName[] = "DreamZZT";
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 #else
 #if TIKI_PLAT == TIKI_SDL
+#include <qt3/qapplication.h>
+#include <qt3/qfiledialog.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #endif
@@ -74,6 +76,7 @@ int main(int argc, char *argv[])
   }
 
   chdir(text);
+  QApplication app(argc,argv); //Initialize QT
 #endif
 
   return tiki_main(argc, argv);
@@ -148,6 +151,34 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 
 	if (GetSaveFileName(&ofn)==TRUE) {
 		output = ofn.lpstrFile;
+	} else {
+		output = "";
+	}
+
+	return output;
+}
+#endif
+
+#if TIKI_PLAT == TIKI_SDL
+std::string os_select_file(std::string title, std::string filter) {
+	QString f = QFileDialog::getOpenFileName( QString::null, (std::string("*.") + filter).c_str());
+	std::string output;
+
+	if( !f.isEmpty() ) {
+		output = f.latin1();
+	} else {
+		output = "";
+	}
+
+	return output;
+}
+
+std::string os_save_file(std::string title, std::string filename, std::string filter) {
+	QString f = QFileDialog::getOpenFileName( filename.c_str(), (std::string("*.") + filter).c_str());
+	std::string output;
+
+	if( !f.isEmpty() ) {
+		output = f.latin1();
 	} else {
 		output = "";
 	}
