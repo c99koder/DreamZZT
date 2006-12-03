@@ -40,6 +40,9 @@ int main(int argc, char *argv[])
 {
 #if TIKI_PLAT != TIKI_WIN32
 #if TIKI_PLAT == TIKI_SDL
+#if defined(DATA_PATH)
+chdir(DATA_PATH);
+#else
 //Locate our data files by searching PATH for our binary
 //and following the symblink to our installed location
   char text[200];
@@ -76,6 +79,7 @@ int main(int argc, char *argv[])
   }
 
   chdir(text);
+#endif
   QApplication app(argc,argv); //Initialize QT
 #endif
 
