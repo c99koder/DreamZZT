@@ -72,7 +72,7 @@ void Player::processEvent(const Event & evt) {
 	if (evt.type == Hid::Event::EvtQuit) {
 		switchbrd = -2;
 	}
-	if (evt.type == Hid::Event::EvtKeyDown) {
+	if (evt.type == Hid::Event::EvtKeyUp) {
 		switch(evt.key) {
 			case 's':
 				switchbrd=-4;
@@ -89,12 +89,8 @@ void Player::processEvent(const Event & evt) {
 					set_msg("You don't have any torches!");
 				}
 				break;
-			case 13:
-				if(m_flags&F_SLEEPING) {
-					m_flags|=F_SLEEPING;
-				} else {
-					m_flags&=~F_SLEEPING;
-				}
+			case 'p':
+				setFlag(F_SLEEPING);
 				break;
 			case Event::KeyEsc:
 				switchbrd=-3;
