@@ -4,6 +4,7 @@ BIN = $(DESTDIR)/usr/bin
 DATA = $(DESTDIR)/usr/share/dreamzzt
 PIXMAPS = $(DESTDIR)/usr/share/pixmaps
 DOC = $(DESTDIR)/usr/share/doc/dreamzzt
+APPLICATIONS = $(DESTDIR)/usr/share/applications
 
 CFLAGS = -I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -Iinclude -DDATA_PATH="\"$(DATA)\""
 OBJS = src/DreamZZT.o src/debug.o src/sound.o src/http.o src/word.o src/main.o src/window.o src/board.o src/status.o src/object.o src/editor.o \
@@ -20,10 +21,11 @@ clean:
 	-rm -f $(OBJS) dreamzzt
 
 install: dreamzzt
-	install -d $(BIN) $(DATA) $(PIXMAPS) $(DOC)
+	install -d $(BIN) $(DATA) $(PIXMAPS) $(APPLICATIONS) $(DOC)
 	install -s dreamzzt $(BIN)
 	install -m644 resources/* $(DATA)
 	install -m644 dreamzzt.png dreamzzt-document.png $(PIXMAPS)
+	install -m644 dreamzzt.desktop $(APPLICATIONS)
 	install -m644 ChangeLog doc/* $(DOC)
 
 package: dreamzzt

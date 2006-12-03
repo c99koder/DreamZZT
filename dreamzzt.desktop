@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=DreamZZT
+Comment=Open-source ZZT engine
+Icon=/usr/share/pixmaps/dreamzzt.png
+Exec=dreamzzt %f
+MimeType=application/x-zzt-game;application/x-zzt-save
+Terminal=false
+Type=Application
+Categories=Games;
+
