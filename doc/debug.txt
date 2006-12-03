@@ -6,30 +6,42 @@ as well as perform various operations on the game world.  To show or hide the
 debug console, press the tilde key during a game.
 
 Below is a description of the currently supported debug commands.  The debug
-console also allows you to execute ZZT-OOP statements directly, which will
-not be covered here.
+console also allows you to execute ZZT-OOP statements directly.  Some useful
+ZZT-OOP commands are "change invisible normal" to change all invisible walls
+to normal walls, and "give health 100" to increase your health by 100.
 
-+ammo / -ammo: Increases or decreases the player's ammo by 10
++ammo / -ammo: Increases or decreases the player's ammo by 10.
 
-+dark / -dark: Toggles darkness on the current board
++dark / -dark: Toggles darkness on the current board.
+
+edit: Enter the editor.
+
+flags: Display all the ZZT flags that are currently set.
 
 freeze / unfreeze: Pause and unpause the game world.  This does not affect
 the player, only the other objects on the board.
 
-+gems / -gems: Increases or decreases the player's gems by 10
++gems / -gems: Increases or decreases the player's gems by 10.
 
-+health / -health: Increases or decreases the player's health by 10
++health / -health: Increases or decreases the player's health by 10.
 
-keys: Gives the player all the keys
+inspect: Displays the ZZT-OOP program for the selected object.
 
-quit: Quit DreamZZT
+keys: Gives the player all the keys.
 
-+score / -score: Increases or decreases the player's score by 10
+quit: Quit DreamZZT.
 
-+torch / -torch: Increases or decreases the player's torches by 10
++reveal / -reveal: Highlight all ZZT-OOP objects on the board.
+
++score / -score: Increases or decreases the player's score by 10.
+
++torch / -torch: Increases or decreases the player's torches by 10.
 
 warp: Switch to a different board.  'warp' by itself will display a list
 of boards to choose from.  If you know the board's number, you can instead 
 use 'warp x' where x is the board number to warp to.
 
-zap: Clears the spaces north, south, east, and west of the player
+watch: Allows you to select a ZZT-OOP object to watch.  All ZZT-OOP commands
+that are executed by that object will be displayed in the debug console.
+
+zap: Clears the spaces north, south, east, and west of the player.
