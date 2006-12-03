@@ -222,11 +222,11 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 					ct->printf("%c",u%5==0?7:' ');
 				}
 			}
-			render();
 		}
 		while (ec.getEvent(evt)) {
 			processHidEvent(evt);
 		}
+		render();
 	} while(m_loop);
 
 	if(player!=NULL) playerInputActive=true;
