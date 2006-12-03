@@ -53,3 +53,4 @@ public:
 	void create();
 	void message(ZZTObject *them, std::string msg);
 };
+

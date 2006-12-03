@@ -178,3 +178,4 @@ public:
 	Text(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
 	void create();
 };
+

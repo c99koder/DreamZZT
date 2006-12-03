@@ -31,3 +31,4 @@ void set_status_callback(http_status_callback *fn);
 void http_get_file(char *fn, const char *host, int port, const char *filename, char *content_type, int *content_length);
 unsigned long resolve(char *name);
 char *strtolower(char *str);
+
