@@ -335,8 +335,8 @@ void play_zzt(const char *filename) {
 	ct->color(15,1);
 	ct->clear();
 	dzzt_logo();
-	free_world();
 	player=NULL;
+	free_world();
 }
 
 #if 0
