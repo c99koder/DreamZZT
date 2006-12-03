@@ -121,7 +121,7 @@ void Player::processEvent(const Event & evt) {
 					draw_board();
 				}*/		
 		}	
-	} else if (evt.type == Hid::Event::EvtKeypress) {
+	} else if (evt.type == Hid::Event::EvtKeypress && world.health > 0) {
 		m_flags&=~F_SLEEPING;
 		
 		if(evt.mod & Hid::Event::KeyShift) {
