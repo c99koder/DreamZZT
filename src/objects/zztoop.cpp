@@ -846,7 +846,7 @@ void ZZTOOP::update() {
 #ifdef DEBUG
 		Debug::printf("%s: %s\n",get_zztobj_name().c_str(), msg.c_str());
 #endif
-		if(msg.find("\r") != msg.npos) {
+		if(msg.find("\r") != msg.npos && msg.find("\r") != (msg.length() - 1)) {
 			if(zm!=NULL) zm->start();
 			TUIWindow *t= new TUIWindow(get_zztobj_name());
 			t->buildFromString(msg);
@@ -855,9 +855,8 @@ void ZZTOOP::update() {
 			if(t->getLabel()!="\0") { zzt_goto(t->getLabel()); }
 			delete t;
 		} else {
-			//if(text[text.length() - 1] == '\r') text.resize(text.length() - 1);
+			if(msg[msg.length() -1] == '\r') msg.resize(msg.length()-1);
 			set_msg((char *)msg.c_str());
-			//goagain=1;
 		}
 	}
 
