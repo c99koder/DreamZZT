@@ -214,7 +214,7 @@ void Player::processEvent(const Event & evt) {
 }
 
 void hints_menu() {
-#ifdef NET
+#if 0
   char *buf=NULL;
   char tmp[50];
 	char args[20];
