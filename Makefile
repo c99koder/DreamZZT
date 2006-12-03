@@ -3,6 +3,7 @@ TIKI_PLAT = sdl
 BIN = $(DESTDIR)/usr/bin
 DATA = $(DESTDIR)/usr/share/dreamzzt
 PIXMAPS = $(DESTDIR)/usr/share/pixmaps
+ICONS = $(DESTDIR)/usr/share/icons/hicolor
 DOC = $(DESTDIR)/usr/share/doc/dreamzzt
 APPLICATIONS = $(DESTDIR)/usr/share/applications
 
@@ -21,10 +22,11 @@ clean:
 	-rm -f $(OBJS) dreamzzt
 
 install: dreamzzt
-	install -d $(BIN) $(DATA) $(PIXMAPS) $(APPLICATIONS) $(DOC)
+	install -d $(BIN) $(DATA) $(PIXMAPS) $(ICONS)/48x48/mimetypes $(APPLICATIONS) $(DOC)
 	install -s dreamzzt $(BIN)
 	install -m644 resources/* $(DATA)
-	install -m644 dreamzzt.png dreamzzt-document.png $(PIXMAPS)
+	install -m644 dreamzzt.png $(PIXMAPS)
+	install -m644 application-x-zzt-*.png $(ICONS)/48x48/mimetypes
 	install -m644 dreamzzt.desktop $(APPLICATIONS)
 	install -m644 ChangeLog doc/* $(DOC)
 
