@@ -37,7 +37,7 @@ struct board_info_node {
   char board_left;
   char board_right;
   char reenter;
-  short int time;
+  unsigned short int time;
 	char animatedWater;
 	char message[60];
 	int msgcount;
