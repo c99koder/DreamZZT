@@ -1,0 +1,1 @@
+shlibs:Depends=libalut0, libc6 (>= 2.4-1), libgcc1 (>= 1:4.1.1-12), libgl1-mesa | libgl1, libglu1-mesa | libglu1, libopenal0a, libqt3-mt (>= 3:3.3.6), libsdl1.2debian (>= 1.2.10-1), libstdc++6 (>= 4.1.1-12)

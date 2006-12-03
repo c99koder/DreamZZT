@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+	<mime-type type="application/x-zzt-game">
+		<comment>ZZT Game</comment>
+		<glob pattern="*.zzt"/>
+	</mime-type>
+	<mime-type type="application/x-zzt-save">
+		<comment>ZZT Saved Game</comment>
+		<glob pattern="*.sav"/>
+	</mime-type>
+</mime-info>

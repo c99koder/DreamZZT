@@ -1,0 +1,2 @@
+?package(dreamzzt):needs="X11" section="Games/Adventure"\
+  title="dreamzzt" command="/usr/bin/dreamzzt"

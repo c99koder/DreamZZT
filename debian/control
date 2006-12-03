@@ -1,0 +1,12 @@
+Source: dreamzzt
+Section: games
+Priority: optional
+Maintainer: Sam Steele <sam.steele@gmail.com>
+Build-Depends: debhelper (>= 5), libsdl1.2-dev, libopenal-dev, libqt3-mt-dev
+Standards-Version: 3.7.2
+
+Package: dreamzzt
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Open-source ZZT engine
+ DreamZZT is an open-source ZZT engine.
