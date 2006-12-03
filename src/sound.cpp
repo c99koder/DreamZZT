@@ -65,6 +65,7 @@ ZZTMusicStream::ZZTMusicStream() {
 	m_drum = NULL;
 	
 	m_locked = false;
+	Stream::create();	
 }
 
 ZZTMusicStream::~ZZTMusicStream() {
@@ -84,8 +85,6 @@ void ZZTMusicStream::setTune(std::string tune) {
 	osc = 1;
 	m_drum = NULL;
 	m_note_duration = 32;
-	
-	Stream::create();	
 }
 
 void ZZTMusicStream::appendTune(std::string tune) {
