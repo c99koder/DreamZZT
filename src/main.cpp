@@ -36,6 +36,10 @@ using namespace Tiki::Hid;
 using namespace Tiki::Audio;
 using namespace Tiki::Thread;
 
+#if TIKI_PLAT == TIKI_WIN32
+#include <wininet.h>
+#endif
+
 #include "window.h"
 #include "sound.h"
 #include "board.h"
@@ -43,6 +47,7 @@ using namespace Tiki::Thread;
 #include "debug.h"
 #include "editor.h"
 #include "os.h"
+#include "http.h"
 
 Mutex zzt_screen_mutex;
 
@@ -63,7 +68,7 @@ All Rights Reserved.\r"
 
 #define CREDITS "$Programming\r\r\
 Sam Steele\r\
-http://www.c99.org/dc/\r\r\
+http://www.c99.org/\r\r\
 $Original ZZT\r\r\
 Tim Sweeny - Epic Games\r\
 http://www.epicgames.com/\r\r\
@@ -95,6 +100,39 @@ extern ConsoleText *dt;
 extern struct board_info_node *board_list;
 int switchbrd=-1;
 extern Player *player;
+
+void check_updates() {
+#if TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER)
+	char tempPath[160];
+	char cn[160]; //content-type
+	char ver[160]; //version
+	int len=0;
+	Tiki::File fd;
+#if TIKI_PLAT == TIKI_WIN32
+	DWORD flags;
+	if(!InternetGetConnectedState(&flags,0)) return;
+
+  GetTempPath(160, tempPath); 
+#else
+	strcpy(tempPath, "/tmp/");
+#endif
+	strcat(tempPath,"dzzthttp");
+
+	http_get_file(tempPath, "www.c99.org", 80, "/dc/dzzt/LATEST", cn, &len);
+	fd.open(tempPath, "r");
+	fd.read(ver,fd.total());
+	ver[fd.total()] = '\0';
+	fd.close();
+
+	if(strcmp(ver,"3.0.4b2")) {
+		TUIWindow t("Update available");
+		t.buildFromString("A new version of DreamZZT is available.\rPlease visit http://www.c99.org/dc/dzzt/\rfor more information.\r\r!ok;Ok\r");
+		t.doMenu(ct);
+	}
+
+	unlink(tempPath);
+#endif
+}
 
 void menu_background() {
 	int x,y;
@@ -185,7 +223,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 	ct->clear();
 	dzzt_logo();
 	menu_background();
-	
+	render();
+	check_updates();
+
 	//new_world();
 	//edit_zzt();
 	

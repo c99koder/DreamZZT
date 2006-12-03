@@ -85,6 +85,16 @@ chdir(DATA_PATH);
 
   return tiki_main(argc, argv);
 #else
+	WORD sockVersion;
+	WSADATA wsaData;
+	int nret;
+
+	sockVersion = MAKEWORD(1, 1);			// We'd like Winsock version 1.1
+
+
+	// We begin by initializing Winsock
+	WSAStartup(sockVersion, &wsaData);
+
   return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
 #endif
 }
