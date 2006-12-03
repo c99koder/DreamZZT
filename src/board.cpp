@@ -30,21 +30,6 @@
 #include <machine/endian.h>
 #include <algorithm>
 
-#define ByteSwap5(x) ByteSwap((unsigned char *) &x,sizeof(x))   
-
-inline void ByteSwap(void * b, int n)
-{
-#if BYTE_ORDER == BIG_ENDIAN
-	register int i = 0;
-	register int j = n-1;
-	while (i<j)
-	{
-		std::swap(((unsigned char *)b)[i], ((unsigned char *)b)[j]);
-		i++, j--;
-	}
-#endif
-}
-
 using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
@@ -543,11 +528,6 @@ int board_right() {
   return currentbrd->board_right;
 }
 
-void write_zzt_int(File &fd, short int i) {
-	ByteSwap(&i,2);
-	fd.write(&i,2);
-}
-
 void load_objects(File &fd, struct board_info_node *board) {
   short int len,proglen;
   unsigned char x,y,z, p1, p2, p3, ut, uc;
@@ -787,6 +767,7 @@ int load_zzt(const char *filename, int titleonly) {
 
 void write_object(File &fd, ZZTObject *obj, ZZTObject *under) {
 	unsigned char ut,uc,x,y,j;
+	unsigned short int cnt, xstep,ystep,cycle,dumb,progpos,proglen,leader,follower;
 	
 	if(under!=NULL) {
 		ut=under->getType();
@@ -797,12 +778,17 @@ void write_object(File &fd, ZZTObject *obj, ZZTObject *under) {
 	}
 	x=obj->getPosition().x+1;
 	y=obj->getPosition().y+1;
+	xstep=obj->getStep().x;
+	ystep=obj->getStep().y;
+	cycle=obj->getCycle();
+	progpos=obj->getProgPos();
+	proglen=obj->getProgLen();
 	//printf("Storing parameters at %i, %i for a %s (%i)\n",x,y,obj->getName().c_str(),obj->isValid());
 	fd.write(&x,1);
 	fd.write(&y,1);
-	write_zzt_int(fd,obj->getStep().x);
-	write_zzt_int(fd,obj->getStep().y);
-	write_zzt_int(fd,obj->getCycle());
+	fd.writele16(&xstep,1);
+	fd.writele16(&ystep,1);
+	fd.writele16(&cycle,1);
 	for(int i=0; i<3; i++) {
 		j = obj->getParam(i+1);
 		fd.write(&j,1);
@@ -811,15 +797,15 @@ void write_object(File &fd, ZZTObject *obj, ZZTObject *under) {
 	fd.write(&ut,1);
 	fd.write(&uc,1);
 	fd.write("\0\0\0\0",4);
-	write_zzt_int(fd,obj->getProgPos());
-	write_zzt_int(fd,obj->getProgLen());
+	fd.writele16(&progpos,1);
+	fd.writele16(&proglen,1);
 	fd.write("\0\0\0\0\0\0\0\0",8);
 	fd.write(obj->getProg().c_str(),obj->getProgLen());
 }
 
 void save_game(const char *filename) {
 	int i;
-	short int x,y,z;
+	unsigned short int x,y,z;
 	unsigned char c,code,color,code2,color2;
 	struct board_info_node *curbrd=board_list;
 	ZZTObject *curplayer;
@@ -829,22 +815,22 @@ void save_game(const char *filename) {
   spinner("Saving");
 	world.saved=1;	
 	
-	write_zzt_int(fd,world.magic);
-	write_zzt_int(fd,world.board_count);
-	write_zzt_int(fd,world.ammo);
-	write_zzt_int(fd,world.gems);
+	fd.writele16(&world.magic,1);
+	fd.writele16(&world.board_count,1);
+	fd.writele16(&world.ammo,1);
+	fd.writele16(&world.gems,1);
 	fd.write(world.keys,7);
-	write_zzt_int(fd,world.health);
-	write_zzt_int(fd,world.start);
-	write_zzt_int(fd,world.torches);
-	write_zzt_int(fd,world.torch_cycle);
-	write_zzt_int(fd,world.energizer_cycle);
-	write_zzt_int(fd,world.pad1);
-	write_zzt_int(fd,world.score);
+	fd.writele16(&world.health,1);
+	fd.writele16(&world.start,1);
+	fd.writele16(&world.torches,1);
+	fd.writele16(&world.torch_cycle,1);
+	fd.writele16(&world.energizer_cycle,1);
+	fd.writele16(&world.pad1,1);
+	fd.writele16(&world.score,1);
 	fd.write(&world.title,sizeof(zzt_string));
 	fd.write(world.flag,sizeof(zzt_string) * 10);
-	write_zzt_int(fd,world.time);
-	write_zzt_int(fd,world.saved);
+	fd.writele16(&world.time,1);
+	fd.write(&world.saved,1);
 	
 	fd.seek(0x200,SEEK_SET);
 	
@@ -905,7 +891,7 @@ void save_game(const char *filename) {
 		x=strlen(curbrd->message);
 		fd.write(&x,1);
 		fd.write(curbrd->message,60);
-		write_zzt_int(fd,curbrd->time);
+		fd.writele16(&curbrd->time,1);
 		fd.write(&curbrd->animatedWater,1);
 		for(x=0;x<15;x++) fd.write("\0",1);
 		z=0;
@@ -920,7 +906,7 @@ void save_game(const char *filename) {
 		}
 		z--;
 		//printf("Writing %i objects\n",z);
-		write_zzt_int(fd,z);
+		fd.writele16(&z,1);
 
 		write_object(fd,curplayer,curbrd->board[(int)curplayer->getPosition().x][(int)curplayer->getPosition().y].under);
 		for(y=0;y<BOARD_Y;y++) {
