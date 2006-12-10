@@ -30,15 +30,17 @@ struct board_data {
 struct board_info_node {
   char title[34];
   int num;
-  char maxshots;
-  char dark;
-  char board_up;
-  char board_down;
-  char board_left;
-  char board_right;
-  char reenter;
+  unsigned char maxshots;
+  unsigned char dark;
+  unsigned char board_up;
+  unsigned char board_down;
+  unsigned char board_left;
+  unsigned char board_right;
+  unsigned char reenter;
+	unsigned char reenter_x;
+	unsigned char reenter_y;
   unsigned short int time;
-	char animatedWater;
+	unsigned char animatedWater;
 	char message[60];
 	int msgcount;
 	struct board_data board[BOARD_X][BOARD_Y];
@@ -67,6 +69,7 @@ struct world_header {
   struct zzt_string flag[10];
   unsigned short int time;
 	unsigned char saved;
+	unsigned char editing;
 };
 
 int load_zzt(const char *filename, int titleonly);

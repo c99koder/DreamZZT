@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 using namespace Tiki;
+using namespace Tiki::GL;
 using namespace Tiki::Hid;
 using namespace Tiki::Audio;
 
@@ -173,27 +174,16 @@ void Inventory::message(ZZTObject *them, std::string message) {
       }
       set_msg(tmp);
       break;
-    }
-		if(ok) debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was picked up.\n",m_name.c_str());
-  } else if(message == "shot") {
-    switch(m_type) {
-    case ZZT_GEM:
-      ok=1;
-      //remove_from_board(currentbrd,me);
-      break;
-    }
-  } else if(message == "touch") {
-    switch(m_type) {
     case ZZT_DOOR:
       if(them->getType()==ZZT_PLAYER) {
         if(world.keys[(m_bg%8)-1]==1) {
-          ok=0;
+          //ok=0;
           sprintf(tmp,"The %s door is now open!",int_to_color(*m_color).c_str());
           set_msg(tmp);
           world.keys[(m_bg%8)-1]=0;
           draw_keys();
-          remove_from_board(currentbrd, this);
-          them->move(toward(this));
+          //remove_from_board(currentbrd, this);
+          //them->move(toward(this));
 					zm->setTune("tcgbcgb+ic");
 					zm->start();					
         } else {
@@ -205,6 +195,18 @@ void Inventory::message(ZZTObject *them, std::string message) {
         }
       }
       break;
+    }
+		if(ok) debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was picked up.\n",m_name.c_str());
+  } else if(message == "shot") {
+    switch(m_type) {
+    case ZZT_GEM:
+      ok=1;
+      //remove_from_board(currentbrd,me);
+      break;
+    }
+  } else if(message == "touch") {
+    switch(m_type) {
+
     }
   }
   if(ok) {

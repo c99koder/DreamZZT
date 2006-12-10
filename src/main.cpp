@@ -60,6 +60,7 @@ menu below:\r\
 !new;Start a New Game\r\
 !restore;Restore a Saved Game\r\
 !tutorial;DreamZZT Tutorial\r\
+!edit;ZZT Editor\r\
 !credits;Credits\r\
 !quit;Quit DreamZZT\r\
 \r\
@@ -208,9 +209,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 
 	zm = new ZZTMusicStream;
-	//zm->setTune("cdefgab+c");
-	//zm->start();
-	zm->setVolume(0.2);
+	zm->setVolume(0.6);
 	
 	//initialize the screen		
 	zzt_font = new Texture("zzt-ascii.png", true);
@@ -225,11 +224,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	menu_background();
 	render();
 	check_updates();
-
-	//new_world();
-	//edit_zzt();
 	
-	if(argc > 1) {
+	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
 	}
 	
@@ -253,8 +249,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 		} else if(t->getLabel() == "restore") {
 			std::string s = os_select_file("Select a saved game","sav");
 			if(s!="")	play_zzt(s.c_str());
-		/*} else if(!strcmp(tmp,"net")) {
-			net_menu();*/
+		} else if(t->getLabel() == "edit") {
+			new_world();
+			edit_zzt();
 		} else if(t->getLabel() == "credits") {
 			c = new TUIWindow("Credits");
 			c->buildFromString(CREDITS);

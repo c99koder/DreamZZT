@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 using namespace Tiki;
+using namespace Tiki::GL;
 using namespace Tiki::Hid;
 
 #include "object.h"

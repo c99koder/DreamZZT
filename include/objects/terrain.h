@@ -154,11 +154,21 @@ private:
 
 class Blink : public ZZTObject {
 public:
-	Blink(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	Blink(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+		m_step.x=0;
+		m_step.y=-1;
+		m_start = 4;
+		m_fire = 4;
+	}
 	void setParam(int arg, unsigned char val);
 	unsigned char getParam(int arg);
 	void create();
 	void update();
+	void addEditWidgets(TUIWindow *w) {
+		w->addWidget(new TUIDirection("Direction            ",&m_step));
+		w->addWidget(new TUISlider   ("Start Time           ",&m_start));
+		w->addWidget(new TUISlider   ("Period               ",&m_fire));
+	}	
 private:
 	int m_start, m_fire, m_counter;
 };

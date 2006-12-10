@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 using namespace Tiki;
+using namespace Tiki::GL;
 using namespace Tiki::Hid;
 using namespace Tiki::Audio;
 
@@ -49,7 +50,7 @@ void Passage::message(ZZTObject *them, std::string message) {
   board_info_node *brd=get_board(m_dest);
   Vector pos;
 	
-  if(message == "touch" && them->getType()==ZZT_PLAYER) {
+  if(message == "touch" && them->getType()==ZZT_PLAYER && brd!=NULL) {
     obj=get_obj_by_type(brd,ZZT_PLAYER);
 		
     obj2=get_obj_by_color(brd,ZZT_PASSAGE,m_fg,m_bg);
@@ -66,7 +67,7 @@ void Passage::message(ZZTObject *them, std::string message) {
       brd->board[(int)pos.x][(int)pos.y].obj=obj;
     }
 
-    switchbrd=m_dest;
+    if(brd!=NULL) switchbrd=m_dest;
     obj->setFlag(F_SLEEPING);
 		zm->setTune("tceg tc#fg# tdf#a td#ga# teg#+c");
 		zm->start();

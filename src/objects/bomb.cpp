@@ -25,6 +25,7 @@
 #include <stdlib.h>
 
 using namespace Tiki;
+using namespace Tiki::GL;
 using namespace Tiki::Hid;
 using namespace Tiki::Audio;
 
@@ -99,6 +100,10 @@ void Bomb::update() {
 
 void Bomb::create() {
   m_counter=4;
+	if(m_start > 0)
+		m_shape=m_start + '0';
+	else
+		m_shape=ZZT_BOMB_SHAPE;
 }
 
 void Explosion::create() {

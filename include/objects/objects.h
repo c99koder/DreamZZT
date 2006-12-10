@@ -18,17 +18,23 @@
  */ 
 
 //TRANSPORTER
-#define ZZT_TRANSPORTER_SHAPE 0xE8
+#define ZZT_TRANSPORTER_SHAPE '<'
 #define ZZT_TRANSPORTER_NAME "transporter"
 #define ZZT_TRANSPORTER_FLAGS F_OBJECT
 #define ZZT_TRANSPORTER_CLASS Transporter
 
 class Transporter : public ZZTObject {
 public:
-	Transporter(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	Transporter(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
+		m_step.x=0;
+		m_step.y=1;
+	}
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);
+	void addEditWidgets(TUIWindow *w) {
+		w->addWidget(new TUIDirection("Direction            ",&m_step));
+	}
 private:
 	int m_counter, m_anim;
 };
@@ -36,19 +42,36 @@ private:
 //BOMB
 #define ZZT_BOMB_SHAPE 0x0B
 #define ZZT_BOMB_NAME "bomb"
-#define ZZT_BOMB_FLAGS F_NONE
+#define ZZT_BOMB_FLAGS F_OBJECT
 #define ZZT_BOMB_CLASS Bomb
 
 class Bomb : public ZZTObject {
 public:
 	Bomb(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
 		m_counter = 0;
+		m_start = 0;
 	}
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);
+	void setParam(int arg, unsigned char val) { if(arg==1) m_start = val; }
+	unsigned char getParam(int arg) { if(arg==1) return (m_shape==ZZT_BOMB_SHAPE)?0:(m_shape) - '0'; }
+	void addEditWidgets(TUIWindow *w) {
+		TUIRadioGroup *rg = new TUIRadioGroup("Direction            ",&m_start);
+		rg->add("Inactive");
+		rg->add("1");
+		rg->add("2");
+		rg->add("3");
+		rg->add("4");
+		rg->add("5");
+		rg->add("6");
+		rg->add("7");
+		rg->add("8");
+		rg->add("9");
+		w->addWidget(rg);
+	}
 private:
-	int m_counter;
+	unsigned short int m_counter,m_start;
 };
 
 //EXPLOSION
@@ -67,7 +90,7 @@ private:
 };
 
 //BULLET
-#define ZZT_BULLET_SHAPE (unsigned char)249
+#define ZZT_BULLET_SHAPE 249
 #define ZZT_BULLET_NAME "bullet"
 #define ZZT_BULLET_FLAGS F_OBJECT
 #define ZZT_BULLET_CLASS Bullet
@@ -84,8 +107,14 @@ public:
 	unsigned char getParam(int arg);
 	void update();
 	void message(ZZTObject *them, std::string msg);
+	void addEditWidgets(TUIWindow *w) {
+		TUIRadioGroup *rg = new TUIRadioGroup("Fired By             ",&m_owner);
+		rg->add("Player");
+		rg->add("Creature");
+		w->addWidget(new TUIDirection("Direction            ",&m_step));
+	}
 private:
-	int m_owner;
+	unsigned short int m_owner;
 };
 
 //PUSHER
@@ -96,9 +125,15 @@ private:
 
 class Pusher : public ZZTObject {
 public:
-	Pusher(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	Pusher(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+		m_step.x=0;
+		m_step.y=-1;
+	}
 	void create();
 	void update();
+	void addEditWidgets(TUIWindow *w) {
+		w->addWidget(new TUIDirection("Direction            ",&m_step));
+	}
 };
 
 //SLIDER NS
@@ -116,13 +151,13 @@ public:
 //CONVEYER CW
 #define ZZT_CONVEYER_CW_SHAPE '/'
 #define ZZT_CONVEYER_CW_NAME "conveyercw"
-#define ZZT_CONVEYER_CW_FLAGS F_NONE
+#define ZZT_CONVEYER_CW_FLAGS F_OBJECT
 #define ZZT_CONVEYER_CW_CLASS Conveyer
 
 //CONVEYER CCW
 #define ZZT_CONVEYER_CCW_SHAPE '\\'
 #define ZZT_CONVEYER_CCW_NAME "conveyerccw"
-#define ZZT_CONVEYER_CCW_FLAGS F_NONE
+#define ZZT_CONVEYER_CCW_FLAGS F_OBJECT
 #define ZZT_CONVEYER_CCW_CLASS Conveyer
 
 class Conveyer : public ZZTObject {
@@ -198,13 +233,18 @@ public:
 
 class Passage : public ZZTObject {
 public:
-	Passage(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	Passage(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
+		m_dest = 0;
+	}
 	void setParam(int arg, unsigned char val);
 	unsigned char getParam(int arg);
 	void create();
 	void message(ZZTObject *them, std::string msg);
+	void addEditWidgets(TUIWindow *w) {
+		w->addWidget(new TUIBoardList("Destination          ",&m_dest));
+	}	
 private:
-	int m_dest;
+	unsigned char m_dest;
 };
 
 //DUPLICATOR

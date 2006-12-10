@@ -121,6 +121,8 @@ void new_board(char *title) {
 	current->board_left=0;
 	current->board_right=0;
 	current->reenter=0;
+	current->reenter_x=254;
+	current->reenter_y=254;
 	current->time=0;
 	current->message[0]='\0';
 	current->msgcount=0;
@@ -158,6 +160,7 @@ void new_world() {
 	for(int i=0; i<10; i++) world.flag[i].len = 0;
 	world.time=0;
 	world.saved=0;
+	world.editing=0;
 	
 	new_board("Title Screen");
 }
@@ -561,7 +564,7 @@ void load_objects(File &fd, struct board_info_node *board) {
     fd.readle16(&proglen,1); //length of ZZT-OOP code
 		fd.read(&pad,8);
 		tmp=NULL;
-		if(x<0 || y<0 || x > BOARD_X || y > BOARD_Y) {
+		if(x > BOARD_X || y > BOARD_Y) {
 			printf("Ignoring bad object at %i,%i\n",x,y);
 			continue;
 		}
@@ -572,7 +575,7 @@ void load_objects(File &fd, struct board_info_node *board) {
 			fd.read(tmp,proglen);
       tmp[proglen]='\0';
     }
-    if(curobj!=NULL && x>=0 && y>=0) {
+    if(curobj!=NULL) {
 			curobj->setStep(Vector(xstep,ystep,0));
 			curobj->setCycle(cycle);
       curobj->setParam(1,p1);
@@ -618,6 +621,7 @@ int load_zzt(const char *filename, int titleonly) {
 	fd.read(world.flag, sizeof(zzt_string) * 10);
 	fd.readle16(&world.time,1);
 	fd.read(&world.saved, 1);
+	world.editing = 0;
 	
   world.title.string[world.title.len]='\0';
 	for(x=0;x<10;x++) {
@@ -647,13 +651,11 @@ int load_zzt(const char *filename, int titleonly) {
     curobj=NULL;
 		fd.readle16(&c, 1); //size (in bytes) of the board
 		fd.read(&len,1);
-    fd.read(current->title,34);
+    fd.read(current->title,50);
     current->title[len]='\0';
 #ifdef DEBUG
     printf("Board title: %s\n",current->title);
 #endif
-		fd.read(&current->animatedWater,1);
-    for(x=0;x<15;x++) { fd.read(&cod,1); } //padding
     //here comes the RLE data!
     x=0;y=0;z=0; prev=NULL; curobj=NULL;
     while(z<1500) {
@@ -746,10 +748,13 @@ int load_zzt(const char *filename, int titleonly) {
     fd.read(&current->reenter,1);
 		current->msgcount=0;
 		fd.read(&cod,1);
-		fd.read(&current->message,60);
+		fd.read(&current->message,58);
 		//printf("Message: %s\n",current->message);
+		fd.read(&current->reenter_x,1);
+		fd.read(&current->reenter_y,1);
 		fd.readle16(&current->time,1);
-    for(x=0;x<16;x++) { fd.read(&cod,1); } //more padding
+		fd.read(&current->animatedWater,1);
+    for(x=0;x<15;x++) { fd.read(&cod,1); } //more padding
     load_objects(fd,current);
     //printf("q: %i world.board_count: %i\n",q,world.board_count);
     if(q<world.board_count) {

@@ -60,7 +60,7 @@
 class Enemy : public ZZTObject {
 public:
 	Enemy(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
-		m_intel = 0;
+		m_intel = 4;
 		m_bg = 0;
 	}
 	
@@ -87,6 +87,11 @@ public:
 	void setParam(int arg, unsigned char val) { if(arg==1) m_intel = val; }
 	unsigned char getParam(int arg) { if(arg==1) return m_intel; }
 	void message(ZZTObject *them, std::string msg);
+	
+	void addEditWidgets(TUIWindow *w) {
+		w->addWidget(new TUISlider("Intelligence         ",&m_intel));
+	}
+	
 protected:
 	int m_intel;
 };
@@ -99,20 +104,30 @@ public:
 
 class Bear : public Enemy {
 public:
-	Bear(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) { }
+	Bear(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) { 
+		m_intel = 8;
+	}
 	void update();
+
+	void addEditWidgets(TUIWindow *w) {
+		w->addWidget(new TUISlider("Sensitivity          ",&m_intel));
+	}
 };
 
 class Ruffian : public Enemy {
 public:
 	Ruffian(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) { 
-		m_rest=0;
+		m_rest=4;
 		m_restCounter=0;
 		m_moveCounter=0;
 	}
 	void setParam(int arg, unsigned char val);
 	unsigned char getParam(int arg);
 	void update();
+	void addEditWidgets(TUIWindow *w) {
+		Enemy::addEditWidgets(w);
+		w->addWidget(new TUISlider("Rest Time            ",&m_rest));
+	}	
 private:
 	int m_rest, m_restCounter, m_moveCounter;
 };
@@ -120,11 +135,15 @@ private:
 class Tiger : public Lion {
 public:
 	Tiger(int type, int x, int y, int shape, int flags, std::string name) : Lion(type, x, y, shape, flags, name) { 
-		m_rate = 0;
+		m_rate = 4;
 	}
 	void setParam(int arg, unsigned char val);
 	unsigned char getParam(int arg);
 	void update();
+	void addEditWidgets(TUIWindow *w) {
+		Enemy::addEditWidgets(w);
+		w->addWidget(new TUISlider("Firing Rate          ",&m_rate));
+	}
 private:
 	int m_rate;
 };
@@ -132,12 +151,16 @@ private:
 class SpinningGun : public Enemy {
 public:
 	SpinningGun(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) { 
-		m_rate = 0;
+		m_rate = 4;
 		m_animIndex = 0;
 	}
 	void setParam(int arg, unsigned char val);
 	unsigned char getParam(int arg);
 	void update();
+	void addEditWidgets(TUIWindow *w) {
+		Enemy::addEditWidgets(w);
+		w->addWidget(new TUISlider("Firing Rate          ",&m_rate));
+	}
 private:
 	int m_rate, m_animIndex;
 };

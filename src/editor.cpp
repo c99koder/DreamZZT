@@ -37,6 +37,7 @@ using namespace Tiki::Thread;
 #include "object.h"
 #include "board.h"
 #include "status.h"
+#include "os.h"
 
 extern ConsoleText *ct;
 
@@ -335,6 +336,7 @@ void edit_zzt() {
 	bool edit_loop=true;
 	ZZTObject *pattern[5];
 	ZZTObject *o=NULL;
+	std::string s;
 	int flash=0;
 	enum { NONE, ITEM, CREATURE, TERRAIN, TEXT } edit_menu_mode = NONE;
 
@@ -343,6 +345,8 @@ void edit_zzt() {
 	pattern[2] = create_object(ZZT_EMPTY,0,0);
 	pattern[3] = create_object(ZZT_LINE,0,0);
 	pattern[4] = create_object(ZZT_EMPTY,0,0);
+	
+	world.editing=1;
 	
 	draw_main();
 	draw_color(edit_fg,edit_bg);
@@ -363,25 +367,28 @@ void edit_zzt() {
 		while (ec.getEvent(evt)) {
 			if(evt.type == Event::EvtQuit) {
 				edit_loop = false;
-			} else if(evt.type == Event::EvtKeyDown) {
+			} else if(evt.type == Event::EvtKeypress) {
 				flash=0;
 				switch(evt.key) {
 					case Event::KeyUp:
 						edit_y--;
 						if(edit_y<0) edit_y=0;
-						break;
+							break;
 					case Event::KeyDown:
 						edit_y++;
 						if(edit_y>=BOARD_Y) edit_y=BOARD_Y-1;
-						break;
+							break;
 					case Event::KeyLeft:
 						edit_x--;
 						if(edit_x<0) edit_x=0;
-						break;
+							break;
 					case Event::KeyRight:
 						edit_x++;
 						if(edit_x>=BOARD_X) edit_x=BOARD_X-1;
-						break;
+							break;
+				}
+			} else if(evt.type == Event::EvtKeyUp) {
+				switch(evt.key) {
 					case Event::KeyEsc:
 						if(edit_menu_mode==NONE) {
 							edit_loop=false;
@@ -390,6 +397,9 @@ void edit_zzt() {
 							draw_main();
 						}
 						break;
+				}
+			} else if(evt.type == Event::EvtKeyDown) {
+				switch(evt.key) {		
 					case Event::KeyF1:
 						edit_menu_mode=ITEM;
 						draw_item();
@@ -402,8 +412,69 @@ void edit_zzt() {
 						edit_menu_mode=TERRAIN;
 						draw_terrain();
 						break;
-					case 'q':
-						edit_loop = false;
+					case 32:
+						if(edit_pat<4) pattern[edit_pat]->setColor(edit_fg, edit_bg);
+						o=create_copy(pattern[edit_pat]);
+						o->setPosition(Vector(edit_x,edit_y,0));
+						put(o);
+						break;
+					case 13:
+						if(currentbrd->board[edit_x][edit_y].obj->getFlags() & F_OBJECT) {
+							ec.stop();
+							currentbrd->board[edit_x][edit_y].obj->edit();
+							ec.start();
+						}
+						pattern[4]=currentbrd->board[edit_x][edit_y].obj;
+						break;
+				}
+				
+				if(edit_menu_mode==NONE) {
+					switch(evt.key) {					
+						case 'q':
+							edit_loop = false;
+							break;
+						case 'l':
+						s = os_select_file("Select a game","zzt");
+						if(s!="") {
+							free_world();
+							edit_menu_mode=NONE;
+							ct->color(15,1);
+							ct->clear();
+							dzzt_logo();
+							load_zzt(s.c_str(),0);
+							draw_main();
+							switch_board(world.start);
+						}
+						break;
+					case 'i':
+					{
+						TUIWindow t("Board Info");
+						TUIRadioGroup *rg;
+						
+						rg=new TUIRadioGroup            ("          Board is dark: ",&currentbrd->dark);
+						rg->add("No");
+						rg->add("Yes");
+						t.addWidget(rg);
+
+						rg=new TUIRadioGroup            ("   Re-Enter When Zapped: ",&currentbrd->reenter);
+						rg->add("No");
+						rg->add("Yes");
+						t.addWidget(rg);
+
+						t.addWidget(new TUINumericInput("             Re-Enter X: ",&currentbrd->reenter_x,0,254));
+						t.addWidget(new TUINumericInput("             Re-Enter Y: ",&currentbrd->reenter_y,0,254));
+						t.addWidget(new TUINumericInput("             Time Limit: ",&currentbrd->time,0,32767,10));						
+						t.addWidget(new TUINumericInput("          Maximum Shots: ",&currentbrd->maxshots,0,254));
+						t.addWidget(new TUIWidget());
+						t.addWidget(new TUILabel       ("              Adjacent Boards",true));
+						t.addWidget(new TUIBoardList   (" North: ", &currentbrd->board_up));
+						t.addWidget(new TUIBoardList   (" South: ", &currentbrd->board_down));
+						t.addWidget(new TUIBoardList   ("  East: ", &currentbrd->board_right));
+						t.addWidget(new TUIBoardList   ("  West: ", &currentbrd->board_left));
+						ec.stop();
+						t.doMenu(ct);
+						ec.start();
+					}
 						break;
 					case 'c':
 						if(evt.mod & Event::KeyShift) {
@@ -418,15 +489,7 @@ void edit_zzt() {
 						edit_pat++;
 						if(edit_pat>4) edit_pat=0;
 						break;
-					case 32:
-						if(edit_pat<4) pattern[edit_pat]->setColor(edit_fg, edit_bg);
-						o=create_copy(pattern[edit_pat]);
-						o->setPosition(Vector(edit_x,edit_y,0));
-						put(o);
-						break;
-					case 13:
-						pattern[4]=currentbrd->board[edit_x][edit_y].obj;
-						break;
+					}
 				}
 
 				if(edit_menu_mode==ITEM) {
@@ -612,4 +675,5 @@ void edit_zzt() {
 			}			
 		}
 	} while(edit_loop);
+	world.editing=0;
 }

@@ -17,6 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */ 
 
+#ifndef _WINDOW_H
+#define _WINDOW_H
+
+#include <Tiki/eventcollector.h>
+#include <Tiki/drawables/console.h>
+
 class TUIWidget {
 public:
 	TUIWidget() {
@@ -24,25 +30,9 @@ public:
 	}
 	
 	virtual void draw(ConsoleText *ct) {};
-	void focus(bool f) {
-		m_focus = f;
-		if(f) {
-			m_ec->start();
-		} else {
-			m_ec->stop();
-		}
-	}
-	
-	void update() {
-		// Check for regular HID events.
-		Hid::Event evt;
-		while (m_ec->getEvent(evt)) {
-			processHidEvent(evt);
-		}
-	}
-	
+	void focus(bool f);	
+	void update();	
 	virtual void processHidEvent(const Hid::Event &evt) {};
-	
 	virtual const std::string getHelpText() { return "\0"; }
 	virtual const std::string getReturnValue() { return "\0"; }
 	
@@ -69,68 +59,90 @@ private:
 
 class TUICheckBox : public TUIWidget {
 public:
-	TUICheckBox(std::string text, bool checked=false) {
+	TUICheckBox(std::string text, bool *checked) {
 		m_text=text;
 		m_checked=checked;
 	}
 	
 	void draw(ConsoleText *ct) {
 		ct->color(WHITE|HIGH_INTENSITY,BLUE);
-		*ct << "  [" << (m_checked?"\xfb":" ") << "] " << m_text;
+		*ct << "  [" << ((*m_checked)?"\xfb":" ") << "] " << m_text;
 	}
 	
 	const std::string getHelpText() { return "Press SPACE to toggle this"; }
 	
 	void processHidEvent(const Hid::Event &evt) {
-		if(evt.type == Event::EvtKeypress && evt.key == ' ') m_checked = !m_checked;
+		if(evt.type == Event::EvtKeypress && evt.key == ' ') (*m_checked) = !(*m_checked);
 	}
 private:
 	std::string m_text;
-	bool m_checked;
+	bool *m_checked;
 };
 
 class TUIRadioGroup : public TUIWidget {
 public:
-	TUIRadioGroup(std::string text) {
-		m_text=text;
-		m_selected=0;
-	}
+	TUIRadioGroup(std::string text, int *selected);	
+	TUIRadioGroup(std::string text, unsigned short *selected);	
+	TUIRadioGroup(std::string text, float *selected);	
+	TUIRadioGroup(std::string text, unsigned char *selected);	
 	
 	void add(std::string text) {
 		m_options.push_back(text);
 	}
 	
-	void draw(ConsoleText *ct) {
-		std::list<std::string>::iterator options_iter;
-		int i=0;
-		
-		ct->color(YELLOW|HIGH_INTENSITY,BLUE);
-		*ct << m_text;
-		
-		ct->color(WHITE|HIGH_INTENSITY,BLUE);
-		
-		for(options_iter = m_options.begin(); options_iter != m_options.end(); options_iter++) {
-			*ct << "  (" << ((m_selected==i++)?"\x7":" ") << ") " << (*options_iter);
-		}
-	}
-	
+	void draw(ConsoleText *ct);	
 	const std::string getHelpText() { return "Press LEFT or RIGHT to change this"; }
 
-	void processHidEvent(const Hid::Event &evt) {
-		if(evt.type == Event::EvtKeypress && evt.key == Event::KeyLeft) {
-			m_selected--;
-			if(m_selected < 0) m_selected=0;
-		}
-		if(evt.type == Event::EvtKeypress && evt.key == Event::KeyRight) {
-			m_selected++;
-			if(m_selected >= m_options.size()) m_selected=m_options.size()-1;
-		}
-	}
-
-private:
+	void processHidEvent(const Hid::Event &evt);
+protected:
 	std::string m_text;
-	int m_selected;
-	std::list<std::string> m_options;
+	int *m_selectedi;
+	unsigned short int *m_selecteds;
+	float *m_selectedf;
+	unsigned char *m_selectedc;
+	int m_val;
+	std::vector<std::string> m_options;
+};
+
+class TUIBoardList : public TUIRadioGroup {
+public:
+	TUIBoardList(std::string text, unsigned char *board);
+};
+
+class TUIDirection : public TUIRadioGroup {
+public:
+	TUIDirection(std::string text, Vector *direction);	
+	void processHidEvent(const Hid::Event &evt);
+private:
+	unsigned short int m_select;
+	Vector *m_direction;
+};
+	
+class TUINumericInput : public TUIWidget {
+public:
+	TUINumericInput(std::string text, int *num, int min, int max, int step=1);
+	TUINumericInput(std::string text, unsigned short int *num, int min, int max, int step=1);	
+	TUINumericInput(std::string text, float *num, int min, int max, int step=1);	
+	TUINumericInput(std::string text, unsigned char *num, int min, int max, int step=1);	
+	void draw(ConsoleText *ct);	
+	const std::string getHelpText() { return "Press LEFT or RIGHT to change this"; }
+	void processHidEvent(const Hid::Event &evt);	
+protected:
+	int *m_numi;
+	unsigned short int *m_nums;
+	float *m_numf;
+	unsigned char *m_numc;
+	int m_val;
+	std::string m_text;
+	int m_min, m_max, m_step;
+};
+
+class TUISlider : public TUINumericInput {
+public:
+	TUISlider(std::string text, int *slide) : TUINumericInput(text, slide, 0, 8) {
+	}
+	
+	void draw(ConsoleText *ct);
 };
 
 class TUIHyperLink : public TUIWidget {
@@ -186,3 +198,5 @@ private:
 	bool m_loop;
 	bool m_dirty;
 };
+
+#endif

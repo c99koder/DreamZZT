@@ -23,6 +23,7 @@
 #include <Tiki/vector.h>
 #include <Tiki/file.h>
 using namespace Tiki::Math;
+#include "window.h"
 
 enum direction { IDLE, LEFT, RIGHT, UP, DOWN };
 
@@ -86,6 +87,8 @@ public:
 	int getProgPos() { return m_progpos; }
 	
 	void draw();
+	void edit();
+	virtual void addEditWidgets(TUIWindow *w) { };
 	
 	virtual void setParam(int arg, unsigned char val) { };
 	virtual unsigned char getParam(int arg) { return 0; }
@@ -98,7 +101,7 @@ public:
 protected:
 	Vector m_position;
 	Vector m_step;
-  short m_cycle;
+  unsigned short m_cycle;
   int m_tick;
   int m_fg;
   int m_bg;
