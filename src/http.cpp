@@ -17,83 +17,28 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */ 
 
-#ifdef WIN32
-#include <windows.h>
-#include <winsock.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#define uint32_t u_long
-#endif
-#ifdef UNIX
-#include<sys/types.h>
-#include<sys/socket.h>
-#include<sys/stat.h>
-#include<netinet/in.h>
-#include<fcntl.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#define SOCKET int
-#endif
-#ifdef DREAMCAST
-#include <kos.h>
-#include <lwip/lwip.h>
-#include <lwip/sockets.h>
-#define SOCKET int
-#endif
-#include <string.h>
-#include <math.h>
-#include <stdio.h>
-#ifndef DREAMCAST
-#include <fstream>
-using namespace std;
-#endif
+#include <string>
+#include <curl/curl.h>
+#include <curl/types.h>
+#include <curl/easy.h>
+#include <Tiki/tiki.h>
+#include <Tiki/file.h>
 
-#ifdef NET
+using namespace Tiki;
+
 #include "http.h"
 
 #ifdef DREAMCAST
 #define USER_AGENT "DreamZZT/3.0.6 (Dreamcast)"
 #endif
-#ifdef LINUX
+#if TIKI_PLAT == TIKI_SDL
 #define USER_AGENT "DreamZZT/3.0.6 (Linux)"
 #endif
-#ifdef WIN32
+#if TIKI_PLAT == TIKI_WIN32
 #define USER_AGENT "DreamZZT/3.0.6 (Windows)"
 #endif
-#ifdef MACOS
+#if TIKI_PLAT == TIKI_OSX
 #define USER_AGENT "DreamZZT/3.0.6 (Macintosh)"
-#endif
-
-void (*status_callback)(char *)=NULL;
-fd_set socks;
-
-void set_status_callback(http_status_callback *fn) {
-  status_callback=fn;
-}
-
-int net_readline(SOCKET sock, char *buf, int bufsize) {
-  int r, rt;
-  char c;
-
-  rt = 0;
-  buf[0]='\0';
-  do {
-    r = recv(sock, &c, 1,0);
-    if (r<1)
-      return -1;
-    if (rt < bufsize)
-      buf[rt++] = c;
-  } while (c != '\n');
-
-  buf[rt-1] = 0;
-  if (buf[rt-2] == '\r')
-    buf[rt-2] = 0;
-  return 0;
-}
-
-int net_writeline(SOCKET sock, char *buf) {
-  return send(sock,buf,strlen(buf),0);
-}
 #endif
 
 int hex_to_int(char c) {
@@ -122,219 +67,87 @@ char *strtolower(char *str) {
   return buf;
 }
 
-#ifdef NET
+struct MemoryStruct {
+  char *memory;
+  size_t size;
+};
 
-#ifdef WIN32
-uint32_t resolve(char *name) {
-  char tmp[200];
-  struct hostent *h=gethostbyname(name);
-  if(h==NULL) {
-		printf("Gethostbyname: %i\n",WSAGetLastError());
-		return 0;
-	}
-  return *(int *)h->h_addr;
-}
-#endif
-#ifdef UNIX
-long unsigned int resolve(char *name) {
-  char tmp[200];
-  struct hostent *h=gethostbyname(name);
-  if(h==NULL) {
-		perror("gethostbyname");
-		return 0;
-	}
-  return *(int *)h->h_addr;
-}
-#endif
-#ifdef DREAMCAST
-uint32 resolve(char *name) {
-    struct sockaddr_in sinRemote;
-	char msg[200];
-	uint8 ip[4];
-  uint32 host_ip;
-#define READIP(dst, src) \
-        dst = ((src[0]) << 24) | \
-                ((src[1]) << 16) | \
-                ((src[2]) << 8) | \
-                ((src[3]) << 0)
-				
-  sinRemote.sin_family = AF_INET;
-  sinRemote.sin_addr.s_addr = htonl(lwip_netcfg.dns[0]);
-  sinRemote.sin_port = htons(53);
-  status_callback("Resolving host...");
-  if(lwip_gethostbyname(&sinRemote,name,ip)<0) return 0;
-  READIP(host_ip,ip);
-  sprintf(msg,"%i.%i.%i.%i",ip[0],ip[1],ip[2],ip[3]);
-  status_callback(msg);
-  return htonl(host_ip);
-}
-#endif
-
-#endif
-
-#ifdef NET
-void http_get_file(char *fn, const char *host, int port, const char *filename, char *content_type, int *content_length) {
-  SOCKET s;
-  struct sockaddr_in sinRemote;
-  char *tmp;
-  char name[256];
-  char value[256];
-  int x,y=0,z=0;
-  FILE *fd;
-  int mode=0,len=0;
-  char msg[300];
-
-  if(status_callback!=NULL) {
-    sprintf(msg,"Connecting to %s...",host);
-    status_callback(msg);
+size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data) {
+	size_t realsize = size * nmemb;
+	struct MemoryStruct *mem = (struct MemoryStruct *)data;
+	mem->memory = (char *)realloc(mem->memory, mem->size + realsize + 1);
+	if (mem->memory) {
+    memcpy(&(mem->memory[mem->size]), ptr, realsize);
+    mem->size += realsize;
+    mem->memory[mem->size] = 0;
   }
+  return realsize;
+}
 
-  s = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+size_t WriteTikiFileCallback(void *ptr, size_t size, size_t nmemb, void *data) {
+	return ((File *)data)->write(ptr,size * nmemb);
+}
 
-  sinRemote.sin_family = AF_INET;
-  sinRemote.sin_addr.s_addr = resolve((char *)host);
-	if(sinRemote.sin_addr.s_addr==0) return;
-  sinRemote.sin_port = htons(port);
+std::string http_get_string(std::string URL) {
+	CURL *curl_handle;
+  struct MemoryStruct chunk;
+	std::string output;
+	
+  chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
+	chunk.size = 0;    /* no data at this point */
+	
+  /* init the curl session */
+  curl_handle = curl_easy_init();
+	
+  /* specify URL to get */
+  curl_easy_setopt(curl_handle, CURLOPT_URL, URL.c_str());
+	
+  /* send all data to this function  */
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+	
+  /* we pass our 'chunk' struct to the callback function */
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
   
-  connect(s, (struct sockaddr*)&sinRemote, sizeof(struct sockaddr_in));
+	/* some servers don't like requests that are made without a user-agent
+		field, so we provide one */
+  curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
+	
+  /* get it! */
+  curl_easy_perform(curl_handle);
+	
+  /* cleanup curl stuff */
+  curl_easy_cleanup(curl_handle);
+
+	output.append((const char *)chunk.memory);
+	free(chunk.memory);
+	return output;
+}
+
+bool http_get_file(std::string filename, std::string URL) {
+	CURL *curl_handle;
+	File f(filename,"wb");
+	
+  /* init the curl session */
+  curl_handle = curl_easy_init();
+	
+  /* specify URL to get */
+  curl_easy_setopt(curl_handle, CURLOPT_URL, URL.c_str());
+	
+  /* send all data to this function  */
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteTikiFileCallback);
+	
+  /* we pass our 'chunk' struct to the callback function */
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&f);
   
-  if(status_callback!=NULL) {
-    sprintf(msg,"Requesting %s...",filename);
-    status_callback(msg);
-  }
-
-  tmp=(char *)malloc(1024);
-  sprintf(tmp,"GET %s HTTP/1.1\r\n\
-Host: %s:%i\r\n\
-User-Agent: %s\r\n\
-Connection: keep-alive\r\n\
-\r\n",filename,host,port,USER_AGENT);
-  if(net_writeline(s,tmp)<0) return;
-
-  net_readline(s,tmp,255);
-  strtok(tmp," "); //HTTP/1.1
-
-  *content_length=0;
-  strcpy(content_type,"unknown");
-
-if(!strcmp("200",strtok(NULL," "))) {
-
-  do {
-	tmp[0]='\0';
-    if(net_readline(s,tmp,255)==-1) break;
-    if(tmp[0]!='\0') {
-      //printf("Header: %s (%i)\n",tmp,strlen(tmp));
-      strcpy(name,strtolower(strtok(tmp,":")));
-      strcpy(value,strtolower(strtok(NULL," ")));
-      if(value[0]==' ') {
-        for(x=0;x<strlen(value)-1;x++) {
-          value[x]=value[x+1];
-        }
-      }
-      if(name!=NULL) {
-        if(!strcmp("transfer-encoding",name) && !strcmp("chunked",value)) {
-          mode=1;
-        }
-        if(!strcmp("content-length",name)) {
-          len=atoi(value);
-          *content_length=len;
-        }
-        if(!strcmp("content-type",name)) {
-          strcpy(content_type,strtok(value,";"));
-        }
-      }
-    }
-  } while(tmp[0]!='\0');
-
-  z=0;
-  free(tmp);
-
-  if(status_callback!=NULL) {
-    sprintf(msg,"Downloading...");
-    status_callback(msg);
-  }
-  fd=fopen(fn,"wb");
-  if(!fd) {
-    status_callback("Cannot open file.\n");
-    return;
-  }
-  //printf("Opened %s as %i\n",fn,fd);
-
-  if(mode==1) {
-    *content_length=http_recieve_chunked(s,fd);
-  } else if(len>0) {
-    tmp=(char *)malloc(2048);
-    while(y<len) {
-	  do {
-      x=recv(s,tmp,2048,0);
-	  } while (x<1);
-      fwrite(tmp,1,x,fd);
-      y+=x;
-      if(status_callback!=NULL) {
-        sprintf(msg,"Downloading %s (%i%%)...",filename,(int)(((float)y/(float)len)*100.0f));
-        status_callback(msg);
-      }
-    }
-    free(tmp);
-  }
-} else {
-  if(status_callback!=NULL) {
-    sprintf(msg,"Unable to download file");
-    status_callback(msg);
-  }
+	/* some servers don't like requests that are made without a user-agent
+		field, so we provide one */
+  curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
+	
+	/* get it! */
+  curl_easy_perform(curl_handle);
+	
+  /* cleanup curl stuff */
+  curl_easy_cleanup(curl_handle);
+	
+	f.close();
 }
-  shutdown(s,1);
-#ifdef WIN32
-  closesocket(s);
-#else
-  close(s);
-#endif
-fclose(fd);
-  //printf("Payload: %s\n",buf);
-  if(status_callback!=NULL) {
-    sprintf(msg,"Done!");
-    status_callback(msg);
-  }
-}
-
-int http_recieve_chunked(SOCKET s, FILE *fd) {
-  int x,z,y,chunksize;
-  char *tmp;
-
-  y=0;
-  do {
-    tmp=(char *)malloc(100);
-	do { //sometimes apache sends us blank lines, so keep looping until we reach another chunk
-		if(net_readline(s,tmp,255)==-1) return -1; //chunk size
-	} while(strlen(tmp)<1);
-    for(z=0;z<strlen(tmp);z++) { //eliminate whitespace
-      if(hex_to_int(tmp[z])==-1) {
-        tmp[z]='\0';
-        break;
-      }
-    }
-    chunksize=0;
-    if(strlen(tmp)>0) {
-      for(z=0;z<strlen(tmp);z++) {
-        x=pow(16.0f,int(strlen(tmp)-z-1));
-        chunksize+=hex_to_int(tmp[z])*x;
-      }
-    }
-    //printf("Chunksize: %i bytes (%s)\n",chunksize,tmp);
-    free(tmp);
-
-    tmp=(char *)malloc(chunksize+1);
-		z=0;
-    if(chunksize>0) {
-			while(z<chunksize) {
-				x=recv(s,tmp,chunksize,0);
-				fwrite(tmp,1,x,fd);
-				z+=x;
-			}
-    }
-    free(tmp);
-    y+=chunksize;
-  } while(chunksize>0);
-  return y;
-}
-#endif

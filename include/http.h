@@ -17,18 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */ 
 
-#ifndef WIN32
-#define SOCKET int
-#else
-#include <windows.h>
-#define uint32_t unsigned long
-#endif
-typedef void (http_status_callback)(char *msg);
-int net_readline(SOCKET sock, char *buf, int bufsize);
-int net_writeline(SOCKET sock, char *buf);
-int http_recieve_chunked(SOCKET s, FILE *fd);
-void set_status_callback(http_status_callback *fn);
-void http_get_file(char *fn, const char *host, int port, const char *filename, char *content_type, int *content_length);
-unsigned long resolve(char *name);
+bool http_get_file(std::string filename, std::string URL);
+std::string http_get_string(std::string URL);
 char *strtolower(char *str);
 
