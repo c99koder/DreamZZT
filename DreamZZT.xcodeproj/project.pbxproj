@@ -442,6 +442,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-lcurl",
+					"-lssl",
+					"-lcrypto",
+					"-lz",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = DreamZZT;
 				WRAPPER_EXTENSION = app;
@@ -470,6 +476,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-lcurl",
+					"-lssl",
+					"-lcrypto",
+					"-lz",
+				);
 				PRODUCT_NAME = DreamZZT;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
@@ -498,6 +510,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-lcurl",
+					"-lssl",
+					"-lcrypto",
+					"-lz",
+				);
 				PRODUCT_NAME = DreamZZT;
 				WRAPPER_EXTENSION = app;
 			};
