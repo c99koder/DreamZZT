@@ -332,11 +332,11 @@ void TUIWindow::buildFromString(std::string s) {
 			case '!':
 				while(((i+j) < s.length()) && s[i+j]!=';') label += s[i+j++];
 				j++;
-				while(((i+j) < s.length()) && s[i+j]!='\r') text += s[i+j++];
+				while(((i+j) < s.length()) && s[i+j]!='\r' && s[i+j]!='\n') text += s[i+j++];
 				addWidget(new TUIHyperLink(label,text));
 				break;
 			case '$':
-				while(((i+j) < s.length()) && s[i+j]!='\r') text += s[i+j++];
+				while(((i+j) < s.length()) && s[i+j]!='\r' && s[i+j]!='\n') text += s[i+j++];
 				for(int x=0; x< (m_w - text.length() - 4) / 2; x++) {
 					label += " ";
 				}
@@ -344,7 +344,7 @@ void TUIWindow::buildFromString(std::string s) {
 				break;	
 			default:
 				j--;
-				while(((i+j) < s.length()) && s[i+j]!='\r') text += s[i+j++];
+				while(((i+j) < s.length()) && s[i+j]!='\r' && s[i+j]!='\n') text += s[i+j++];
 				addWidget(new TUILabel(text));
 				break;	
 		}
