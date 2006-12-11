@@ -288,7 +288,7 @@ bool ZZTObject::move(enum direction dir, bool trying) {
       }
       else if(suc==0 && them->getFlags()&F_PUSHABLE && m_type!=ZZT_BULLET/*&& m_flags&F_PUSHER*/) {
         //printf("Trying to push...\n");
-        if(!(m_flags&F_ENEMY)/* || (m_flags&F_ENEMY && them->getType()!=ZZT_PLAYER)*/) {
+        if(!(m_flags&F_ENEMY) || (m_flags&F_ENEMY && them->getType()!=ZZT_PLAYER)) {
           if(them->move(dir,trying)) {
             //printf("Success!\n");
             //move(me,dir);
