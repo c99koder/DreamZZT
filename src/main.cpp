@@ -26,7 +26,7 @@
 #include <Tiki/thread.h>
 #include <string.h>
 #include <time.h>
-
+#include <curl/curl.h>
 #include <Tiki/drawables/console.h>
 #include <Tiki/oggvorbis.h>
 
@@ -61,6 +61,7 @@ menu below:\r\
 !restore;Restore a Saved Game\r\
 !tutorial;DreamZZT Tutorial\r\
 !edit;ZZT Editor\r\
+!net;Homepage\r\
 !credits;Credits\r\
 !quit;Quit DreamZZT\r\
 \r\
@@ -79,17 +80,20 @@ http://www.kvance.com\r\r\
 $Tiki\r\r\
 Cryptic Allusion, LLC\r\
 http://www.cadcdev.com/\r\r\
-$Simple DirectMedia Layer - Linux\r\r\
-This software may be dynamically linked\r\
-to libSDL, an LGPL licensed library.\r\
-http://www.libsdl.org/\r\r\
 $Testing, Special Thanks and Shoutouts\r\r\
 Jason Costa - Necrocosm Software\r\
 http://www.necrocosm.com\r\r\
 Chris 'Kilokahn' Haslage\r\
 http://www.kkwow.net\r\r\
 Brian Pinney\r\r\
-$DreamZZT is (C) 2006 Sam Steele\r\
+$cURL File Transfer Library\r\
+Copyright (c) 1996 - 2006, Daniel Stenberg\r\
+<daniel@haxx.se>. All Rights Reserved.\r\r\
+$Simple DirectMedia Layer\r\
+This software may be dynamically linked\r\
+to libSDL, an LGPL licensed library.\r\
+http://www.libsdl.org/\r\r\
+$DreamZZT is (C) 2000 - 2006 Sam Steele\r\
 $For more information, please visit\r\
 $http://www.c99.org/dc/dzzt/\r"
 
@@ -103,35 +107,21 @@ int switchbrd=-1;
 extern Player *player;
 
 void check_updates() {
-#if TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER)
-	char tempPath[160];
-	char cn[160]; //content-type
-	char ver[160]; //version
-	int len=0;
-	Tiki::File fd;
+#if (TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER))
+	std::string ver;
 #if TIKI_PLAT == TIKI_WIN32
 	DWORD flags;
 	if(!InternetGetConnectedState(&flags,0)) return;
-
-  GetTempPath(160, tempPath); 
-#else
-	strcpy(tempPath, "/tmp/");
 #endif
-	strcat(tempPath,"dzzthttp");
+	ver = http_get_string("http://www.c99.org/dc/dzzt/LATEST");
 
-	http_get_file(tempPath, "www.c99.org", 80, "/dc/dzzt/LATEST", cn, &len);
-	fd.open(tempPath, "r");
-	fd.read(ver,fd.total());
-	ver[fd.total()] = '\0';
-	fd.close();
-
-	if(strcmp(ver,"3.0.4b2")) {
+	Debug::printf("Latest version: %s\n", ver.c_str());
+	
+	if(ver != "3.0.4b2") {
 		TUIWindow t("Update available");
 		t.buildFromString("A new version of DreamZZT is available.\rPlease visit http://www.c99.org/dc/dzzt/\rfor more information.\r\r!ok;Ok\r");
 		t.doMenu(ct);
 	}
-
-	unlink(tempPath);
 #endif
 }
 
@@ -202,6 +192,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	Tiki::setName("DreamZZT", NULL);
 	//Hid::callbackReg(tkCallback, NULL);
 	
+	curl_global_init(CURL_GLOBAL_ALL);
+	
 #if TIKI_PLAT == TIKI_DC
 	fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
 	
@@ -224,6 +216,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	menu_background();
 	render();
 	check_updates();
+	
+	//net_menu();
 	
 	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
@@ -252,6 +246,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 		} else if(t->getLabel() == "edit") {
 			new_world();
 			edit_zzt();
+		} else if(t->getLabel() == "net") {
+			net_menu();
 		} else if(t->getLabel() == "credits") {
 			c = new TUIWindow("Credits");
 			c->buildFromString(CREDITS);
@@ -376,125 +372,37 @@ void play_zzt(const char *filename) {
 	free_world();
 }
 
-#if 0
+#define DZZTNET_BASE "http://www.c99.org/dzztnet/"
 
 void net_menu() {
-#ifdef NET
-  char *buf=NULL;
-  char tmp[50];
-  char msg[100];
-  char url[100];
-  char tmp2[50];
-  char title[50];
-  char type[100];
-  int len=0;
-  int x,y,fd;
-#ifdef DREAMCAST
-	if(c99_net_check()==0) {
-		text_window("Error","$Broadband Settings Missing\r\
-\r\
-This function requires an internet\r\
-connection.  Please configure your\r\
-Dreamcast with a static IP in Dream\r\
-Passport or Broadband Passport and\r\
-try again.\r\r\
-!ok;Back to main menu\r",tmp,NULL);
-		return;
-	}		
-	ct->color(15,1);
-	clear_screen();
-	dzzt_logo();
-	fs_chdir("/ram");
-#endif
-#ifdef LINUX
-	chdir("/tmp");
-#endif
-  unlink("online.tmp");
-  set_status_callback(status);
-  strcpy(tmp,"index.php");
+	std::string url = "index.php";
+	std::string tmp;
   do {
-    ct->color(1,0);
-    for(y=0;y<BOARD_Y;y++) {
-      for(x=0;x<BOARD_X;x++) {
-        ct->locate(x,y);
-        ct->printf("%c",177);
-      }
-    }
-    video_refresh();
-    ct->locate(0,0);
-    ct->color(15,1);
-    strcpy(url,"/dzztnet/");
-    strcat(url,tmp);
-    //ct->printf("%s\n",url);
-    //video_refresh();
-    http_get_file("online.tmp","www.c99.org",80,url,type,&len);
-    if(!strcmp(type,"application/x-zzt-oop")) {
-      if(buf!=NULL) free(buf);
-      buf=malloc(len+1);
-      fd=open("online.tmp",O_RDONLY);
-      read(fd,buf,len);
-      buf[len]='\0';
-      close(fd);
-      strcpy(title,"Online Content");
-      x=0;
-      if(buf[0]=='$') {
-        do {
-          title[x]=buf[x+1];
-          x++;
-        } while(buf[x+1]!='\r' && buf[x+1]!='\n');
-        title[x]='\0';
-        x+=2;
-      }
-      text_window(title,buf+x,tmp,NULL);
-    } else if(!strcmp(type,"application/x-zzt-game")) {
-      if(buf!=NULL) free(buf);
-      buf=malloc(len+1);
-      fd=open("online.tmp",O_RDONLY);
-      read(fd,buf,len);
-      buf[len]='\0';
-      close(fd);
-      sprintf(msg,"$Download Complete\r\r\
-%s has been downloaded.\r\
-Would you like to play it now?\r\r\
-!yes;Yes\r\
-!no;No\r\r",tmp);
-      text_window("File Download",msg,tmp2,NULL);
-      if(!strcmp(tmp2,"yes")) {
-        play_zzt("online.tmp");
-      }
-      x=0;
-      if(buf[0]=='$') {
-        do {
-          title[x]=buf[x+1];
-          x++;
-        } while(buf[x+1]!='\r' && buf[x+1]!='\n');
-        title[x]='\0';
-        x+=2;
-      }
-      text_window(title,buf+x,tmp,NULL);
-    } else {
-      text_window("Error","Invalid URL or invalid file type\r\rPress Start to Continue\r\r",tmp,NULL);
-      x=0;
-      if(buf[0]=='$') {
-        do {
-          title[x]=buf[x+1];
-          x++;
-        } while(buf[x+1]!='\r' && buf[x+1]!='\n');
-        title[x]='\0';
-        x+=2;
-      }
-      text_window(title,buf+x,tmp,NULL);
-    }
-    unlink("online.tmp");
-  } while(tmp[0]!='\0');
-  free(buf);
-#ifdef DREAMCAST
-	fs_chdir("/rd");
-#endif
-#ifdef LINUX
-	chdir(PACKAGE_DATA_DIR);
-#endif
-#endif
+		ct->color(15,1);
+		ct->clear();
+		menu_background();
+		dzzt_logo();
+		
+		if(url.find(".zzt") != std::string::npos) {
+			http_get_file("/tmp/dzzthttp",DZZTNET_BASE + url);
+			play_zzt("/tmp/dzzthttp");
+			unlink("/tmp/dzzthttp");
+			url = "index.php";
+		} else {
+			tmp = http_get_string(DZZTNET_BASE + url);
+			if(tmp != "") {
+				std::string title;
+				if(tmp[0]=='$') { //The first line of the document is the window title
+					title = tmp.substr(1,tmp.find("\n"));
+					tmp.erase(0,tmp.find("\n")+1);
+				} else {
+					title = "Online Content";
+				}
+				TUIWindow t(title);
+				t.buildFromString(tmp);
+				t.doMenu(ct);
+				url = t.getLabel();
+			}
+		}
+	} while(url != "");
 }
-
-#endif
