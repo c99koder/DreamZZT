@@ -16,7 +16,7 @@ src/objects/conveyer.o src/objects/player.o src/objects/centipede.o
 all: dreamzzt
 
 dreamzzt: $(OBJS)
-	$(CXX) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -lalut -lqt-mt -o dreamzzt
+	$(CXX) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -lalut -lqt-mt `curl-config --libs` -o dreamzzt
 	
 clean:
 	-rm -f $(OBJS) dreamzzt
