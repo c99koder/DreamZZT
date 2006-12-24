@@ -500,7 +500,7 @@ void ZZTOOP::exec(std::string text) {
 		if(words.size()>3 && words[3] == "then") words.erase(words.begin() + 3);
 		
 		if(words[1] == "alligned" || words[1] == "aligned") {
-			if(player->getPosition().x==m_position.x || player->getPosition().y == m_position.y) res=1;
+			if(player != NULL && (player->getPosition().x==m_position.x || player->getPosition().y == m_position.y)) res=1;
 			lbl = words[2];
 		} else if(words[1] == "any") {
 			color=str_to_color(words[2]);
