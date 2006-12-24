@@ -21,6 +21,7 @@
 #include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
+#include <Tiki/eventcollector.h>
 #include <Tiki/tikitime.h>
 #include <Tiki/thread.h>
 #include <Tiki/file.h>
@@ -50,7 +51,7 @@ struct world_header world;
 struct board_info_node *board_list=NULL;
 struct board_info_node *currentbrd=NULL;
 extern Player *player;
-extern bool playerInputActive;
+extern EventCollector *playerEventCollector;
 
 struct board_info_node *get_current_board() { return currentbrd; }
 int world_sec=10;
@@ -191,7 +192,6 @@ void spinner(char *text) {
 
 void spinner_clear() {
 	spinner_active = false;
-	delete spinner_thread;
 	
   ct->locate(BOARD_X+3,5);
   ct->color(15,1);
@@ -305,7 +305,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 	struct board_info_node *board=newbrd;
 	bool changed[BOARD_X][BOARD_Y] = {0};
 	
-	playerInputActive=false;
+	if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
 	
 	switch(d) {
 		case IDLE:
@@ -489,7 +489,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 			break;
 	}
 	
-	playerInputActive = true;
+	if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 }
 
 void switch_board(int num) {

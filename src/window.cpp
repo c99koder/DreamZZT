@@ -38,7 +38,7 @@ using namespace Tiki::Thread;
 #include "board.h"
 
 void render();
-extern bool playerInputActive;
+extern EventCollector *playerEventCollector;
 extern Player *player;
 extern int switchbrd;
 extern struct board_info_node *board_list;
@@ -403,7 +403,7 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 	m_dirty = 1;
 	m_loop = true;
 	m_widgets[m_offset]->focus(true);
-	playerInputActive=false;
+	if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
 
 	draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
 	
@@ -474,5 +474,5 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 		render();
 	} while(m_loop);
 
-	if(player!=NULL) playerInputActive=true;
+	if(playerEventCollector != NULL) playerEventCollector->start();
 }

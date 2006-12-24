@@ -50,7 +50,7 @@ extern ConsoleText *ct;
 
 int debug_hidCookie=-1;
 extern Player *player;
-extern bool playerInputActive;
+extern EventCollector *playerEventCollector;
 extern bool gameFrozen;
 int debug_visible = 0;
 std::string debug_cmdline;
@@ -270,7 +270,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 					ct->setSize(640,480);
 					ct->setTranslate(Vector(320,240,0));
 					dt->setTranslate(Vector(1024,360,0));
-					playerInputActive = true;
+					if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 					ct->color(WHITE|HIGH_INTENSITY, BLUE);
 					ct->locate(65,23);
 					ct->setANSI(true);
@@ -279,14 +279,14 @@ void debug_hidCallback(const Event & evt, void * data) {
 				}
 			} else if (evt.key >= 32 && evt.key <= 128 && debug_visible) {
 				debug_cmdline += evt.key;
-				playerInputActive = false;
+				if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
 				*dt << "\x1b[s"; // Save cursor position
 				dt->locate(0,24);
 				dt->color(GREY | HIGH_INTENSITY, BLACK);
 				*dt << "> \x1b[1;32m" << debug_cmdline.c_str() << "\x1b[k"; //clear EOL
 				*dt << "\x1b[u"; // Restore cursor position
 			} else if (evt.key == 13 && debug_visible) {
-				playerInputActive = true;
+				if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 				debug_cmdline += '\r';
 			}
 		}

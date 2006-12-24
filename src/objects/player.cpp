@@ -23,6 +23,7 @@
 #include <Tiki/hid.h>
 #include <Tiki/tikitime.h>
 #include <Tiki/thread.h>
+#include <Tiki/eventcollector.h>
 #include <string.h>
 
 using namespace Tiki;
@@ -54,20 +55,11 @@ void status(char *text);
 !hints;Online hints\r\
 !quit;Quit game"
 
-int player_hidCookie=-1;
-
-bool playerInputActive;
-
-void player_hidCallback(const Event & evt, void * data) {
-	//((Player *)data)->processEvent(evt);
-	if(player!=NULL) player->processEvent(evt);
-}
+EventCollector *playerEventCollector=NULL;
 
 void Player::processEvent(const Event & evt) {
 	struct board_info_node *brd;
 	ZZTObject *obj;
-	
-	if(!playerInputActive || player==NULL) return;
 	
 	if (evt.type == Hid::Event::EvtQuit) {
 		switchbrd = -2;
@@ -297,9 +289,9 @@ void Player::create() {
   m_bg=1;
   m_shoot = m_move = IDLE;
 	
-	if(player_hidCookie == -1) {
+	if(playerEventCollector==NULL) {
 		printf("Registering player callback\n");
-		player_hidCookie = Hid::callbackReg(player_hidCallback, this);
+		playerEventCollector = new EventCollector();
 	}
 }
 
@@ -345,6 +337,7 @@ void whip(struct object *me, int x, int y, char shape) {
 
 void Player::update() {
 	int s=0;
+	Event evt;
   
 	if(m_flags&F_SLEEPING) {
     ct->locate(BOARD_X+4,6);
@@ -363,6 +356,9 @@ void Player::update() {
 			draw_msg();
 			render();
 			Time::sleep(100000);
+			while (playerEventCollector->getEvent(evt)) {
+				processEvent(evt);
+			}	
     } while(m_flags&F_SLEEPING);
     ct->locate(BOARD_X+4,6);
     ct->color(15,1);
@@ -379,6 +375,10 @@ void Player::update() {
 		m_fg=15;
 		m_bg=5;
 	}
+
+	while (playerEventCollector->getEvent(evt)) {
+		processEvent(evt);
+	}	
 	
 	if(m_move!=IDLE) {
 		move(m_move);
