@@ -1,11 +1,12 @@
-TIKI_DIR = ../../tiki
+TIKI_DIR = ../tiki
 TIKI_PLAT = dc
 
 CFLAGS=-I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -Iinclude -DDEBUG
-OBJS = src/DreamZZT.o src/sound.o src/http.o src/word.o src/main.o src/txtwin.o src/board.o src/status.o src/object.o \
+
+OBJS = src/DreamZZT.o src/debug.o src/sound.o src/task.o src/console.o src/word.o src/main.o src/window.o src/board.o src/status.o src/object.o src/editor.o \
 src/objects/passage.o src/objects/terrain.o src/objects/bullet.o src/objects/enemy.o \
 src/objects/dup.o src/objects/zztoop.o src/objects/pusher.o src/objects/bomb.o src/objects/items.o \
-src/objects/conveyer.o src/objects/player.o #romdisk.o
+src/objects/conveyer.o src/objects/player.o src/objects/centipede.o
 
 all: $(OBJS)
 	kos-c++ -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -o dreamzzt
