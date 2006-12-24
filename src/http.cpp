@@ -72,6 +72,8 @@ struct MemoryStruct {
   size_t size;
 };
 
+std::string curl_auth_string;
+
 size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data) {
 	size_t realsize = size * nmemb;
 	struct MemoryStruct *mem = (struct MemoryStruct *)data;
@@ -113,7 +115,7 @@ std::string http_get_string(std::string URL) {
   curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
 	
 	/* DreamZZT.NET authentication */
-	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, "c99koder:027325");
+	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, curl_auth_string.c_str());
 	
   /* get it! */
   curl_easy_perform(curl_handle);
@@ -121,8 +123,10 @@ std::string http_get_string(std::string URL) {
   /* cleanup curl stuff */
   curl_easy_cleanup(curl_handle);
 
-	output.append((const char *)chunk.memory);
-	free(chunk.memory);
+	if(chunk.memory != NULL) {
+		output.append((const char *)chunk.memory);
+		free(chunk.memory);
+	}
 	return output;
 }
 
@@ -147,7 +151,7 @@ bool http_get_file(std::string filename, std::string URL) {
   curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
 	
 	/* DreamZZT.NET authentication */
-	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, "c99koder:027325");
+	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, curl_auth_string.c_str());
 	
 	/* get it! */
   curl_easy_perform(curl_handle);
@@ -192,7 +196,7 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
   curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
 	
 	/* DreamZZT.NET authentication */
-	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, "c99koder:027325");
+	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, curl_auth_string.c_str());
 	
 	/* get it! */
   curl_easy_perform(curl_handle);
