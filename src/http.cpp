@@ -112,6 +112,9 @@ std::string http_get_string(std::string URL) {
 		field, so we provide one */
   curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
 	
+	/* DreamZZT.NET authentication */
+	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, "c99koder:027325");
+	
   /* get it! */
   curl_easy_perform(curl_handle);
 	
@@ -143,6 +146,9 @@ bool http_get_file(std::string filename, std::string URL) {
 		field, so we provide one */
   curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
 	
+	/* DreamZZT.NET authentication */
+	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, "c99koder:027325");
+	
 	/* get it! */
   curl_easy_perform(curl_handle);
 	
@@ -151,3 +157,51 @@ bool http_get_file(std::string filename, std::string URL) {
 	
 	f.close();
 }
+
+std::string http_post_file(std::string filename, std::string contentType, std::string URL) {
+	CURL *curl_handle;
+	struct curl_httppost* post = NULL;
+  struct curl_httppost* last = NULL;
+  struct MemoryStruct chunk;
+	std::string output;
+	
+  chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
+	chunk.size = 0;    /* no data at this point */	
+  /* init the curl session */
+  curl_handle = curl_easy_init();
+	
+  /* specify URL to get */
+  curl_easy_setopt(curl_handle, CURLOPT_URL, URL.c_str());
+	
+  /* send all data to this function  */
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+	
+  /* we pass our 'chunk' struct to the callback function */
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+	
+	/* Add file/contenttype section */
+	curl_formadd(&post, &last, CURLFORM_COPYNAME, "File",
+							 CURLFORM_FILE, filename.c_str(),
+							 CURLFORM_CONTENTTYPE, contentType.c_str(), CURLFORM_END);
+	
+	/* Set the form info */
+  curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, post);
+  
+	/* some servers don't like requests that are made without a user-agent
+		field, so we provide one */
+  curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
+	
+	/* DreamZZT.NET authentication */
+	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, "c99koder:027325");
+	
+	/* get it! */
+  curl_easy_perform(curl_handle);
+	
+  /* cleanup curl stuff */
+  curl_easy_cleanup(curl_handle);
+	
+	output.append((const char *)chunk.memory);
+	free(chunk.memory);
+	return output;
+}
+
