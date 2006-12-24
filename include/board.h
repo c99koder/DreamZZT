@@ -70,6 +70,7 @@ struct world_header {
   unsigned short int time;
 	unsigned char saved;
 	unsigned char editing;
+	unsigned char online;
 };
 
 int load_zzt(const char *filename, int titleonly);

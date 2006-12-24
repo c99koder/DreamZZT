@@ -26,6 +26,7 @@
 		2242FDEA0A0C31F100F4BDF2 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2242FDE90A0C31F100F4BDF2 /* object.cpp */; };
 		2242FE470A0C373400F4BDF2 /* objdb in Resources */ = {isa = PBXBuildFile; fileRef = 2242FE460A0C373400F4BDF2 /* objdb */; };
 		2242FF2A0A0C442100F4BDF2 /* tutorial.zzt in Resources */ = {isa = PBXBuildFile; fileRef = 2242FF290A0C442100F4BDF2 /* tutorial.zzt */; };
+		2260B7180B3EABB1003AE79A /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2260B7170B3EABB1003AE79A /* console.cpp */; };
 		226F410D0B18BF9C00FC07AE /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 226F410C0B18BF9C00FC07AE /* Controller.m */; };
 		226F41110B18BFFB00FC07AE /* os.mm in Sources */ = {isa = PBXBuildFile; fileRef = 226F41100B18BFFB00FC07AE /* os.mm */; };
 		226F41BC0B19024300FC07AE /* doc_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 226F41BB0B19024300FC07AE /* doc_icon.icns */; };
@@ -36,6 +37,7 @@
 		229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */; };
 		229DC1870B2332B8004C0FF9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 229DC1860B2332B8004C0FF9 /* Sparkle.framework */; };
 		229DC19D0B2332C1004C0FF9 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 229DC1860B2332B8004C0FF9 /* Sparkle.framework */; };
+		229DC8160B2E2F86004C0FF9 /* task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229DC8150B2E2F86004C0FF9 /* task.cpp */; };
 		22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22ABAB4D0A31145600B9C077 /* centipede.cpp */; };
 		22AD22CC0A13FAD8003E828E /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
 		22C01BB80B1A67A100218E4C /* Tiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C01BB70B1A67A100218E4C /* Tiki.framework */; };
@@ -97,6 +99,7 @@
 		2242FE460A0C373400F4BDF2 /* objdb */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = objdb; path = src/objdb; sourceTree = SOURCE_ROOT; };
 		2242FF290A0C442100F4BDF2 /* tutorial.zzt */ = {isa = PBXFileReference; lastKnownFileType = file; name = tutorial.zzt; path = resources/tutorial.zzt; sourceTree = "<group>"; };
 		2255DF120A39196600C3272B /* drums.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = drums.h; path = include/drums.h; sourceTree = "<group>"; };
+		2260B7170B3EABB1003AE79A /* console.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = console.cpp; path = src/console.cpp; sourceTree = "<group>"; };
 		226F40B00B18BCD800FC07AE /* os.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = os.h; path = include/os.h; sourceTree = "<group>"; };
 		226F410C0B18BF9C00FC07AE /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Controller.m; path = src/Controller.m; sourceTree = "<group>"; };
 		226F41100B18BFFB00FC07AE /* os.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = os.mm; path = src/os.mm; sourceTree = "<group>"; };
@@ -108,6 +111,8 @@
 		229B98290A1F6F4400E85BB8 /* genobjects.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = genobjects.sh; path = src/genobjects.sh; sourceTree = "<group>"; };
 		229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = conveyer.cpp; path = src/objects/conveyer.cpp; sourceTree = "<group>"; };
 		229DC1860B2332B8004C0FF9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		229DC8150B2E2F86004C0FF9 /* task.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = task.cpp; path = src/task.cpp; sourceTree = "<group>"; };
+		229DC8170B2E2F9B004C0FF9 /* task.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = task.h; path = include/task.h; sourceTree = "<group>"; };
 		22ABAB4D0A31145600B9C077 /* centipede.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = centipede.cpp; path = src/objects/centipede.cpp; sourceTree = "<group>"; };
 		22AD22CB0A13FAD8003E828E /* http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = http.cpp; path = src/http.cpp; sourceTree = "<group>"; };
 		22C01BB70B1A67A100218E4C /* Tiki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tiki.framework; path = ../tiki/osx/build/Deployment/Tiki.framework; sourceTree = SOURCE_ROOT; };
@@ -143,6 +148,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2260B7170B3EABB1003AE79A /* console.cpp */,
 				226F410C0B18BF9C00FC07AE /* Controller.m */,
 				2242FE330A0C349300F4BDF2 /* Objects */,
 				2242FDA40A0C26F500F4BDF2 /* board.cpp */,
@@ -156,6 +162,7 @@
 				222084860A4CD20800D75C24 /* window.cpp */,
 				2242FB9E0A0C104300F4BDF2 /* word.cpp */,
 				226F41100B18BFFB00FC07AE /* os.mm */,
+				229DC8150B2E2F86004C0FF9 /* task.cpp */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -204,6 +211,7 @@
 				2242FBD20A0C109000F4BDF2 /* status.h */,
 				222084890A4CD23700D75C24 /* window.h */,
 				2242FBCE0A0C109000F4BDF2 /* word.h */,
+				229DC8170B2E2F9B004C0FF9 /* task.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -391,6 +399,8 @@
 				22D2E46D0A55EAB200319F32 /* editor.cpp in Sources */,
 				226F410D0B18BF9C00FC07AE /* Controller.m in Sources */,
 				226F41110B18BFFB00FC07AE /* os.mm in Sources */,
+				229DC8160B2E2F86004C0FF9 /* task.cpp in Sources */,
+				2260B7180B3EABB1003AE79A /* console.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,7 +449,10 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = DreamZZT_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					DEBUG,
+					NET,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -473,7 +486,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = DreamZZT_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = NET;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (

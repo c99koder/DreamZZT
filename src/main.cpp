@@ -26,7 +26,9 @@
 #include <Tiki/thread.h>
 #include <string.h>
 #include <time.h>
+#ifdef NET
 #include <curl/curl.h>
+#endif
 #include <Tiki/drawables/console.h>
 #include <Tiki/oggvorbis.h>
 
@@ -48,6 +50,8 @@ using namespace Tiki::Thread;
 #include "editor.h"
 #include "os.h"
 #include "http.h"
+#include "task.h"
+#include "word.h"
 
 Mutex zzt_screen_mutex;
 
@@ -65,7 +69,7 @@ menu below:\r\
 !credits;Credits\r\
 !quit;Quit DreamZZT\r\
 \r\
-Copyright (C) 1999-2006 Sam Steele\r\
+Copyright (C) 2000-2006 Sam Steele\r\
 All Rights Reserved.\r"
 
 #define CREDITS "$Programming\r\r\
@@ -105,6 +109,11 @@ extern ConsoleText *dt;
 extern struct board_info_node *board_list;
 int switchbrd=-1;
 extern Player *player;
+extern EventCollector *playerEventCollector;
+extern std::string curl_auth_string;
+
+#define DZZTNET_HOST std::string("http://forums.c99.org")
+#define DZZTNET_HOME std::string("/extensions/DreamZZT/dzztnet.php")
 
 void check_updates() {
 #if (TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER))
@@ -139,11 +148,6 @@ void menu_background() {
 #if TIKI_PLAT == TIKI_DC
 //extern uint8 romdisk[];
 //KOS_INIT_ROMDISK(romdisk);
-
-pvr_init_params_t params = {
-	{ PVR_BINSIZE_16, PVR_BINSIZE_8, PVR_BINSIZE_16, PVR_BINSIZE_8, PVR_BINSIZE_0 },
-	512*1024,0,0
-};
 #endif
 
 ZZTMusicStream *zm = NULL;
@@ -192,12 +196,14 @@ extern "C" int tiki_main(int argc, char **argv) {
 	Tiki::setName("DreamZZT", NULL);
 	//Hid::callbackReg(tkCallback, NULL);
 	
+#ifdef NET
 	curl_global_init(CURL_GLOBAL_ALL);
+	
+	curl_auth_string="c99koder:027325";
+#endif	
 	
 #if TIKI_PLAT == TIKI_DC
 	fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
-	
-	pvr_init(&params);
 #endif
 
 	zm = new ZZTMusicStream;
@@ -217,7 +223,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	render();
 	check_updates();
 	
-	//net_menu();
+	world.online=0;
 	
 	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
@@ -264,10 +270,8 @@ extern "C" int tiki_main(int argc, char **argv) {
   return 0;
 }
 
-extern Player *player;
 extern struct board_info_node *currentbrd;
 bool gameFrozen;
-extern bool playerInputActive;
 
 void titleHidCallback(const Event & evt, void * data) {
 	if (evt.type == Hid::Event::EvtQuit) {
@@ -279,12 +283,14 @@ void titleHidCallback(const Event & evt, void * data) {
 }	
 
 void play_zzt(const char *filename) {
-	int start;
-	char tmp[50];
+	int start,tasktype;
+	std::string tmp;
+	std::vector<std::string> tasks;
+	std::vector<std::string> params;
+	std::vector<std::string>::iterator tasks_iter;
 	int hidCookie = Hid::callbackReg(titleHidCallback, NULL);
 
 	gameFrozen = false;
-	playerInputActive = true;
 	
 	switchbrd=-1;
   if(load_zzt(filename,1)==-1) {
@@ -293,6 +299,25 @@ void play_zzt(const char *filename) {
 		t.doMenu(ct);
 		return;
 	}
+	
+	if(world.online==1) {
+		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + std::string((const char *)world.title.string));
+		tasks = wordify(tmp,'\n');
+		for(tasks_iter=tasks.begin(); tasks_iter!=tasks.end(); tasks_iter++) {
+			params = wordify((*tasks_iter),'|');
+			tasktype = atoi(params[0].c_str());
+			params.erase(params.begin());
+			switch(tasktype) {
+				case 1:
+					add_task(new TaskCollect(params));
+					break;
+				case 2:
+					add_task(new TaskUseTorch(params));
+					break;
+			}
+		}
+	}
+				
 	start=world.start;
 	switch_board(0);
 	remove_from_board(currentbrd,player);
@@ -334,7 +359,10 @@ void play_zzt(const char *filename) {
   player->setFlag(F_SLEEPING);
   player->update();
   while(1) {
-    if(!gameFrozen) update_brd();
+    if(!gameFrozen) {
+			check_tasks();
+			update_brd();
+		}
 		draw_board();
     draw_msg();
 		render();
@@ -353,8 +381,13 @@ void play_zzt(const char *filename) {
 			//menu
 			break;
 		} else if(switchbrd==-4) {
-			std::string s = os_save_file("Save a game","saved.sav","sav");
-			if(s!="") save_game(s.c_str());
+#ifdef NET
+			save_game("/tmp/saved.sav");
+			std::string s = http_post_file("/tmp/saved.sav","application/x-zzt-save", DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=ProcessSave"));
+			Debug::printf("Upload result: %s\n",s.c_str());
+#endif
+			//std::string s = os_save_file("Save a game","saved.sav","sav");
+			//if(s!="") save_game(s.c_str());
 			switchbrd=-1;
 		} else if(switchbrd==-5) {
 			edit_zzt();
@@ -369,13 +402,14 @@ void play_zzt(const char *filename) {
 	ct->clear();
 	dzzt_logo();
 	player=NULL;
+	delete playerEventCollector;
+	playerEventCollector=NULL;
 	free_world();
 }
 
-#define DZZTNET_BASE "http://www.c99.org/dzztnet/"
-
 void net_menu() {
-	std::string url = "index.php";
+#ifdef NET
+	std::string url = DZZTNET_HOST + DZZTNET_HOME;
 	std::string tmp;
   do {
 		ct->color(15,1);
@@ -383,13 +417,17 @@ void net_menu() {
 		menu_background();
 		dzzt_logo();
 		
-		if(url.find(".zzt") != std::string::npos) {
-			http_get_file("/tmp/dzzthttp",DZZTNET_BASE + url);
+		if((url.find(".zzt") != std::string::npos) || (url.find(".ZZT") != std::string::npos) || (url.find(".sav") != std::string::npos) || (url.find(".SAV") != std::string::npos)) {
+			Debug::printf("Downloading: %s\n", url.c_str());
+			http_get_file("/tmp/dzzthttp", url);
+			world.online=1;
 			play_zzt("/tmp/dzzthttp");
+			world.online=0;
 			unlink("/tmp/dzzthttp");
-			url = "index.php";
+			url = DZZTNET_HOST + DZZTNET_HOME;
 		} else {
-			tmp = http_get_string(DZZTNET_BASE + url);
+			Debug::printf("Loading: %s\n", url.c_str());
+			tmp = http_get_string(url);
 			if(tmp != "") {
 				std::string title;
 				if(tmp[0]=='$') { //The first line of the document is the window title
@@ -402,7 +440,15 @@ void net_menu() {
 				t.buildFromString(tmp);
 				t.doMenu(ct);
 				url = t.getLabel();
+				if(url != "") {
+					if(url[0] == '/') {
+						url = DZZTNET_HOST + url;
+					} else {
+						url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=" + url;
+					}
+				}
 			}
 		}
 	} while(url != "");
+#endif
 }

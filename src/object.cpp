@@ -35,12 +35,14 @@ using namespace std;
 #include "board.h"
 #include "word.h"
 #include "sound.h"
+#include "task.h"
 
 extern int zztascii[];
 extern Player *player;
 extern ZZTMusicStream *zm;
 extern struct world_header world;
 extern ConsoleText *ct;
+extern struct board_info_node *currentbrd;
 
 int dir_to_delta[5] = { 0,-1,1,-1,1 };
 extern struct board_info_node *currentbrd;
@@ -219,7 +221,7 @@ ZZTObject *ZZTObject::create_object(int type, direction d) {
 bool ZZTObject::move(enum direction dir, bool trying) {
   //move in the specified direction
   ZZTObject *them=NULL;
-  struct board_info_node *board=get_current_board();
+  struct board_info_node *board=currentbrd;
   int d;
   int x,y,oldx,oldy,suc=0;
   char tmp[200];
@@ -284,6 +286,7 @@ bool ZZTObject::move(enum direction dir, bool trying) {
         them->message(this,"get");
         if(is_empty(dir)) {
           suc=1;
+					task_get(them);
         }
       }
       else if(suc==0 && them->getFlags()&F_PUSHABLE && m_type!=ZZT_BULLET/*&& m_flags&F_PUSHER*/) {
@@ -300,7 +303,10 @@ bool ZZTObject::move(enum direction dir, bool trying) {
       }
       if(suc==0) {
         if(!trying && !(m_flags & F_SLEEPING)) message(them,"thud");
-        if(!trying && !(them->getFlags() & F_SLEEPING) && m_type != ZZT_BULLET) them->message(this,"touch");
+        if(!trying && !(them->getFlags() & F_SLEEPING) && m_type != ZZT_BULLET) {
+					them->message(this,"touch");
+					task_touch(them);
+				}
       } else {
         move(dir);
       }
