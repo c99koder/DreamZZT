@@ -37,7 +37,7 @@ extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
 
-char dupanim[5]={'.',7,'o','O','.' };
+char dupanim[6]={'.',7,248,'o','O','.' };
 
 void Duplicator::setParam(int arg, unsigned char val) {
 	if(arg==2) m_rate = val;
@@ -55,9 +55,9 @@ void Duplicator::update() {
   m_shape=dupanim[m_animIndex++];
   draw();
 	
-  if(m_animIndex==5) {
+  if(m_animIndex==6) {
     obj=currentbrd->board[(int)(m_position.x + m_step.x)][(int)(m_position.y + m_step.y)].obj;
-    if(currentbrd->board[x][y].obj->getFlags()&F_PUSHABLE) {
+    if(currentbrd->board[x][y].obj->getFlags()&F_PUSHABLE || currentbrd->board[x][y].obj->getType() == obj->getType()) {
       if(m_step.x==-1) currentbrd->board[x][y].obj->move(RIGHT);
       if(m_step.x==1) currentbrd->board[x][y].obj->move(LEFT);
       if(m_step.y==-1) currentbrd->board[x][y].obj->move(DOWN);
@@ -77,9 +77,9 @@ void Duplicator::update() {
 			zm->start();
 		}
   }
-  m_animIndex%=5;
+  m_animIndex%=6;
 }
 
 void Duplicator::create() {
-  m_cycle=(10-m_rate)+2;
+  m_cycle=(9-m_rate)*2;
 }
