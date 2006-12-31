@@ -290,7 +290,6 @@ void Player::create() {
   m_shoot = m_move = IDLE;
 	
 	if(playerEventCollector==NULL) {
-		printf("Registering player callback\n");
 		playerEventCollector = new EventCollector();
 	}
 }
@@ -299,7 +298,7 @@ void Player::message(ZZTObject *them, std::string message) {
   if(message == "shot" || message == "bombed" || message == "time") {
 		if(world.energizer_cycle==0 || message == "time") {
 			take_health(10);
-			if(message != "time") {
+			if(message != "time" && world.health > 0) {
 				set_msg("Ouch!");
 				zm->setTune("t--c+c---c+d#");
 				zm->start();
@@ -339,7 +338,7 @@ void Player::update() {
 	int s=0;
 	Event evt;
   
-	if(m_flags&F_SLEEPING) {
+	if(m_flags&F_SLEEPING && world.health > 0) {
     ct->locate(BOARD_X+4,6);
     ct->color(15,1);
     ct->printf("Pausing...");
