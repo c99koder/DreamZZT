@@ -57,15 +57,15 @@ Mutex zzt_screen_mutex;
 
 extern struct world_header world;
 
-#define MAIN_MENU "$Welcome to DreamZZT 3.0\r\r\
+#define MAIN_MENU "$Welcome to DreamZZT 3.0.6\r\r\
 Please select an option from the\r\
 menu below:\r\
 \r\
 !new;Start a New Game\r\
 !restore;Restore a Saved Game\r\
-!tutorial;DreamZZT Tutorial\r\
-!edit;ZZT Editor\r\
-!net;Homepage\r\
+!tutorial;Tutorial\r\
+!net;DreamZZT Online\r\
+!edit;Editor\r\
 !credits;Credits\r\
 !quit;Quit DreamZZT\r\
 \r\
@@ -111,9 +111,6 @@ int switchbrd=-1;
 extern Player *player;
 extern EventCollector *playerEventCollector;
 extern std::string curl_auth_string;
-
-#define DZZTNET_HOST std::string("http://forums.c99.org")
-#define DZZTNET_HOME std::string("/extensions/DreamZZT/dzztnet.php")
 
 void check_updates() {
 #if (TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER))
@@ -283,7 +280,7 @@ void titleHidCallback(const Event & evt, void * data) {
 }	
 
 void play_zzt(const char *filename) {
-	int start,tasktype;
+	int start,tasktype,complete;
 	std::string tmp;
 	std::vector<std::string> tasks;
 	std::vector<std::string> params;
@@ -298,24 +295,6 @@ void play_zzt(const char *filename) {
 		t.buildFromString("Unable to load world\r\r!ok;Ok");
 		t.doMenu(ct);
 		return;
-	}
-	
-	if(world.online==1) {
-		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + std::string((const char *)world.title.string));
-		tasks = wordify(tmp,'\n');
-		for(tasks_iter=tasks.begin(); tasks_iter!=tasks.end(); tasks_iter++) {
-			params = wordify((*tasks_iter),'|');
-			tasktype = atoi(params[0].c_str());
-			params.erase(params.begin());
-			switch(tasktype) {
-				case 1:
-					add_task(new TaskCollect(params));
-					break;
-				case 2:
-					add_task(new TaskUseTorch(params));
-					break;
-			}
-		}
 	}
 				
 	start=world.start;
@@ -341,13 +320,53 @@ void play_zzt(const char *filename) {
 		draw_board();
 		draw_msg();
 		render();
-		Time::sleep(60000);
+		Time::sleep(80000);
 	} while(world.saved==0 && switchbrd==-1);
 	Hid::callbackUnreg(hidCookie);
 	if(switchbrd==-2) return;
 	switchbrd=-1;
 	free_world();
 	load_zzt(filename,0);
+	if(world.online==1) {
+		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + std::string((const char *)world.title.string));
+		tasks = wordify(tmp,'\n');
+		for(tasks_iter=tasks.begin(); tasks_iter!=tasks.end(); tasks_iter++) {
+			params = wordify((*tasks_iter),'|');
+			if(params.size() > 2) {
+				tasktype = atoi(params[0].c_str());
+				complete = atoi(params[1].c_str());
+				params.erase(params.begin(), params.begin() + 2);			
+				switch(tasktype) {
+					case 0: //End of list
+						break;
+					case TASK_COLLECT:
+						add_task(new TaskCollect(params),complete);
+						break;
+					case TASK_TORCH:
+						add_task(new TaskUseTorch(params),complete);
+						break;
+					case TASK_KILL_ENEMY:
+						add_task(new TaskKillEnemy(params),complete);
+						break;
+					case TASK_KILL_OBJECT:
+						add_task(new TaskKillObject(params),complete);
+						break;
+					case TASK_TOUCH_OBJECT:
+						add_task(new TaskTouchObject(params),complete);
+						break;
+					case TASK_SHOOT_OBJECT:
+						add_task(new TaskShootObject(params),complete);
+						break;
+					case TASK_PLAYER_POSITION:
+						add_task(new TaskPlayerPosition(params),complete);
+						break;
+					default:
+						Debug::printf("Warning: unknown task type: %i\n",tasktype);
+						break;
+				}
+			}
+		}
+	}	
 	start=world.start;
 	ct->color(15,1);
 	ct->clear();
@@ -366,7 +385,11 @@ void play_zzt(const char *filename) {
 		draw_board();
     draw_msg();
 		render();
-		if(world.health>0) Time::sleep(60000);
+		if(world.health>0) {
+			Time::sleep(80000);
+		} else {
+			Time::sleep(10000);
+		}
     
 		if(switchbrd>-1) {
       switch_board(switchbrd);
@@ -384,7 +407,11 @@ void play_zzt(const char *filename) {
 #ifdef NET
 			save_game("/tmp/saved.sav");
 			std::string s = http_post_file("/tmp/saved.sav","application/x-zzt-save", DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=ProcessSave"));
-			Debug::printf("Upload result: %s\n",s.c_str());
+			if(s!="OK") {
+				TUIWindow t("");
+				t.buildFromString(s);
+				t.doMenu(ct);
+			}
 #endif
 			//std::string s = os_save_file("Save a game","saved.sav","sav");
 			//if(s!="") save_game(s.c_str());
@@ -418,7 +445,9 @@ void net_menu() {
 		dzzt_logo();
 		
 		if((url.find(".zzt") != std::string::npos) || (url.find(".ZZT") != std::string::npos) || (url.find(".sav") != std::string::npos) || (url.find(".SAV") != std::string::npos)) {
+#ifdef DEBUG
 			Debug::printf("Downloading: %s\n", url.c_str());
+#endif
 			http_get_file("/tmp/dzzthttp", url);
 			world.online=1;
 			play_zzt("/tmp/dzzthttp");
@@ -426,7 +455,9 @@ void net_menu() {
 			unlink("/tmp/dzzthttp");
 			url = DZZTNET_HOST + DZZTNET_HOME;
 		} else {
+#ifdef DEBUG
 			Debug::printf("Loading: %s\n", url.c_str());
+#endif
 			tmp = http_get_string(url);
 			if(tmp != "") {
 				std::string title;
@@ -449,6 +480,6 @@ void net_menu() {
 				}
 			}
 		}
-	} while(url != "");
+	} while(url != "" && switchbrd != -2);
 #endif
 }

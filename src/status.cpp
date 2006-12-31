@@ -170,6 +170,7 @@ void draw_torch() {
 }
 
 void take_torch(int count) {
+	if(world.health<=0) return;
   if(world.torches < count) 
 		world.torches=0;
 	else world.torches-=count;
@@ -177,6 +178,7 @@ void take_torch(int count) {
 }
 
 void give_torch(int count) {
+	if(world.health<=0) return;
   world.torches+=count;
   draw_torch();
 }
@@ -191,6 +193,7 @@ void draw_gems() {
 }
 
 void take_gems(int count) {
+	if(world.health<=0) return;
   if(world.gems < count) 
 		world.gems = 0;
 	else world.gems-=count;
@@ -198,6 +201,7 @@ void take_gems(int count) {
 }
 
 void give_gems(int count) {
+	if(world.health<=0) return;
   world.gems+=count;
   draw_gems();
 }
@@ -205,10 +209,11 @@ void give_gems(int count) {
 void draw_score() {
   ct->locate(BOARD_X+3,12);
   ct->color(14,1);
-  ct->printf("   Score:%i  ",world.score);
+  ct->printf("   Score:%i  ",world.score + world.task_points);
 }
 
 void take_score(int count) {
+	if(world.health<=0) return;
 	if(world.score < count)
 		world.score = 0;
 	else world.score-=count;
@@ -216,6 +221,7 @@ void take_score(int count) {
 }
 
 void give_score(int count) {
+	if(world.health<=0) return;
   world.score+=count;
   draw_score();
 }
