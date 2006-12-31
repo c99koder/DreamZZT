@@ -344,7 +344,16 @@ void TUIWindow::buildFromString(std::string s) {
 				break;	
 			default:
 				j--;
-				while(((i+j) < s.length()) && s[i+j]!='\r' && s[i+j]!='\n') text += s[i+j++];
+				while(((i+j) < s.length()) && s[i+j]!='\r' && s[i+j]!='\n') {
+					if(s[i+j] == '\t') {
+						for(int t=(10 - (text.length() % 10)); t>0; t--) {
+							text += " ";
+						}
+					} else {
+						text += s[i+j];
+					}
+					j++;
+				}
 				addWidget(new TUILabel(text));
 				break;	
 		}
@@ -474,5 +483,5 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 		render();
 	} while(m_loop);
 
-	if(playerEventCollector != NULL) playerEventCollector->start();
+	if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 }
