@@ -35,9 +35,10 @@ using namespace Tiki::Hid;
 #include "object.h"
 #include "task.h"
 #include "status.h"
+#include "http.h"
 
 extern ConsoleText *ct;
-
+extern Player *player;
 extern struct board_info_node *currentbrd;
 extern struct world_header world;
 
@@ -51,8 +52,77 @@ bool TaskCollect::check() {
 
 void TaskCollect::get(ZZTObject *obj) {
 	if(obj->getType() == m_type) {
+		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
 		m_count--;
 	}
+}
+
+bool TaskKillEnemy::check() {
+	if(m_count <= 0) {
+		m_complete = true;
+	}
+	
+	return m_complete;
+}
+
+void TaskKillEnemy::kill(ZZTObject *obj) {
+	if(obj->getType() == m_type) {
+		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
+		m_count--;
+	}
+}
+
+bool TaskKillObject::check() {
+	if(m_count <= 0) {
+		m_complete = true;
+	}
+	
+	return m_complete;
+}
+
+void TaskKillObject::kill(ZZTObject *obj) {
+	if(obj->getType() == ZZT_OBJECT && ((ZZTOOP*)obj)->get_zztobj_name() == m_name) {
+		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
+		m_count--;
+	}
+}
+
+bool TaskShootObject::check() {
+	if(m_count <= 0) {
+		m_complete = true;
+	}
+	
+	return m_complete;
+}
+
+void TaskShootObject::shoot(ZZTObject *obj) {
+	if(obj->getType() == ZZT_OBJECT && ((ZZTOOP*)obj)->get_zztobj_name() == m_name) {
+		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
+		m_count--;
+	}
+}
+
+bool TaskTouchObject::check() {
+	if(m_count <= 0) {
+		m_complete = true;
+	}
+	
+	return m_complete;
+}
+
+void TaskTouchObject::touch(ZZTObject *obj) {
+	if(obj->getType() == ZZT_OBJECT && ((ZZTOOP*)obj)->get_zztobj_name() == m_name) {
+		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
+		m_count--;
+	}
+}
+
+bool TaskPlayerPosition::check() {
+	Vector p = player->getPosition();
+	if((m_board==0 || m_board==currentbrd->num)  && (p.x <= m_max.x && p.y <= m_max.y && p.x >= m_min.x && p.y >= m_min.y))
+		m_complete = true;
+	
+	return m_complete;
 }
 
 bool TaskUseTorch::check() {
@@ -65,7 +135,9 @@ bool TaskUseTorch::check() {
 
 std::list<Task*> taskList;
 
-void add_task(Task *task) {
+void add_task(Task *task, bool complete) {
+	if(complete) world.task_points += task->getValue();
+	task->setComplete(complete);
 	taskList.push_back(task);
 }
 
@@ -84,15 +156,23 @@ void check_tasks() {
 		if(!((*task_iter)->getComplete())) {
 			if((*task_iter)->check()) {
 				Debug::printf("Task complete: %s\n",(*task_iter)->getTitle().c_str());
-				give_score((*task_iter)->getValue());
-				TUIWindow t("Task Complete");
-				t.buildFromString("Congratulations!  You have completed\r\
+				std::string s = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=CompleteTask&TaskID=") + ToString((*task_iter)->getID()));
+				if(s=="OK") {
+					world.task_points += (*task_iter)->getValue();
+					draw_score();
+					TUIWindow t("Task Complete");
+					t.buildFromString("Congratulations!  You have completed\r\
 the following task:\r\
 \r\
-$" + ((*task_iter)->getTitle()) + "\r" + ((*task_iter)->getDescription()) + "\r\
+$" + ((*task_iter)->getTitle()) + "\r\r" + ((*task_iter)->getDescription()) + "\r\
 \r\
 You've earned a bonus of " + ToString((*task_iter)->getValue()) + " points.\r");
-				t.doMenu(ct);
+					t.doMenu(ct);
+				} else {
+					TUIWindow t("Task Submission Error");
+					t.buildFromString("The task may already be complete or\nhas been removed from the server.\n\nThis may also indicate an invalid\nusername or password.\n\nTaskID: " + ToString((*task_iter)->getID()) + "\n");
+					t.doMenu(ct);
+				}
 			}
 		}
 	}
@@ -102,7 +182,7 @@ void task_touch(ZZTObject *obj) {
 	std::list<Task*>::iterator task_iter;
 	
 	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
-		if(!((*task_iter)->getComplete())) {
+		if(((*task_iter)->getBoard() == 0 || (*task_iter)->getBoard() == currentbrd->num) && !((*task_iter)->getComplete())) {
 			(*task_iter)->touch(obj);
 		}
 	}
@@ -112,7 +192,7 @@ void task_get(ZZTObject *obj) {
 	std::list<Task*>::iterator task_iter;
 	
 	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
-		if(!((*task_iter)->getComplete())) {
+		if(((*task_iter)->getBoard() == 0 || (*task_iter)->getBoard() == currentbrd->num) && !((*task_iter)->getComplete())) {
 			(*task_iter)->get(obj);
 		}
 	}
@@ -122,8 +202,18 @@ void task_kill(ZZTObject *obj) {
 	std::list<Task*>::iterator task_iter;
 	
 	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
-		if(!((*task_iter)->getComplete())) {
+		if(((*task_iter)->getBoard() == 0 || (*task_iter)->getBoard() == currentbrd->num) && !((*task_iter)->getComplete())) {
 			(*task_iter)->kill(obj);
+		}
+	}
+}
+
+void task_shoot(ZZTObject *obj) {
+	std::list<Task*>::iterator task_iter;
+	
+	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
+		if(((*task_iter)->getBoard() == 0 || (*task_iter)->getBoard() == currentbrd->num) && !((*task_iter)->getComplete())) {
+			(*task_iter)->shoot(obj);
 		}
 	}
 }

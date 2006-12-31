@@ -33,6 +33,7 @@ using namespace Tiki::Audio;
 #include "status.h"
 #include "sound.h"
 #include "debug.h"
+#include "task.h"
 
 extern ZZTMusicStream *zm;
 
@@ -149,6 +150,7 @@ void Enemy::message(ZZTObject *them, std::string message) {
 		zm->setTune("t+c---c++++c--c");
 		zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
+		task_kill(this);
     remove_from_board(currentbrd,this);
   }
 	if(m_type == ZZT_BEAR && them->getType() == ZZT_BREAKABLE) {

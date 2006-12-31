@@ -40,6 +40,7 @@ using namespace std;
 #include "http.h"
 #include "debug.h"
 #include "window.h"
+#include "task.h"
 
 extern struct world_header world;
 extern Player *player;
@@ -61,7 +62,10 @@ void ZZTOOP::create() {
 }
 
 void ZZTOOP::message(ZZTObject *them, std::string message) {
-  if(!(m_flags & F_SLEEPING)) zzt_goto(message);
+  if(!(m_flags & F_SLEEPING)) {
+		if(message=="shot") task_shoot(this);
+		zzt_goto(message);
+	}
 }
 
 extern struct board_info_node *currentbrd;
@@ -412,6 +416,7 @@ void ZZTOOP::exec(std::string text) {
 			draw_block(m_position.x,m_position.y);
 			m_progpos = -1;
 			b->under->setFlags(F_DELETED);
+			task_kill(this);
 			return;
 		}
 	}
@@ -722,6 +727,7 @@ void ZZTOOP::exec(std::string text) {
 	}
 	else if(words[0] == "die") {
 		//remove_from_board(currentbrd,this);
+		task_kill(this);
 		m_flags = F_DELETED;
 		m_progpos=-1;
 	}
