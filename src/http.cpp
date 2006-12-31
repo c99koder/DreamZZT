@@ -23,8 +23,10 @@
 #include <curl/easy.h>
 #include <Tiki/tiki.h>
 #include <Tiki/file.h>
+#include <Tiki/drawables/console.h>
 
 using namespace Tiki;
+using namespace Tiki::GL;
 
 #include "http.h"
 
@@ -90,39 +92,95 @@ size_t WriteTikiFileCallback(void *ptr, size_t size, size_t nmemb, void *data) {
 	return ((File *)data)->write(ptr,size * nmemb);
 }
 
-std::string http_get_string(std::string URL) {
+extern ConsoleText *ct;
+void render();
+
+int http_progress(void *clientp,
+									double dltotal,
+									double dlnow,
+									double ultotal,
+									double ulnow) {
+	ct->locate(0,24);
+	ct->color(0,7);
+	for(int i=0; i<60; i++) {
+		*ct << " ";
+	}
+	ct->locate(0,24);
+	if(dltotal > 0) {
+		*ct << "Downloading... (" << (int)(((float)dlnow/(float)dltotal) * 100.0f) << "%)";
+	} else if(ultotal > 0) {
+		*ct << "Uploading... (" << (int)(((float)ulnow/(float)ultotal) * 100.0f) << "%)";
+	}
+	render();
+	return 0;
+}
+
+CURL *http_begin(std::string URL) {
 	CURL *curl_handle;
-  struct MemoryStruct chunk;
-	std::string output;
-	
-  chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
-	chunk.size = 0;    /* no data at this point */
+
+	ct->locate(0,24);
+	ct->color(0,7);
+	for(int i=0; i<60; i++) {
+		*ct << " ";
+	}
+	ct->locate(0,24);
+	*ct << "Loading...";
+	render();
 	
   /* init the curl session */
   curl_handle = curl_easy_init();
 	
   /* specify URL to get */
   curl_easy_setopt(curl_handle, CURLOPT_URL, URL.c_str());
+
+	/* some servers don't like requests that are made without a user-agent
+		field, so we provide one */
+  curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
+	
+	/* DreamZZT Online authentication */
+	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, curl_auth_string.c_str());
+	
+	/* Progress function */
+	curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, false);
+	curl_easy_setopt(curl_handle, CURLOPT_PROGRESSFUNCTION, http_progress);
+	
+	return curl_handle;
+}
+
+void http_finish(CURL *curl_handle) {
+  /* get it! */
+  curl_easy_perform(curl_handle);
+	
+  /* cleanup curl stuff */
+  curl_easy_cleanup(curl_handle);
+	
+	ct->locate(0,24);
+	ct->color(0,7);
+	for(int i=0; i<60; i++) {
+		*ct << " ";
+	}
+	ct->locate(0,24);
+
+	render();	
+}
+
+std::string http_get_string(std::string URL) {
+	CURL *curl_handle = http_begin(URL);
+  struct MemoryStruct chunk;
+	std::string output;
+	
+  chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
+	chunk.size = 0;    /* no data at this point */
+	
 	
   /* send all data to this function  */
   curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
 	
   /* we pass our 'chunk' struct to the callback function */
   curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
-  
-	/* some servers don't like requests that are made without a user-agent
-		field, so we provide one */
-  curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
-	
-	/* DreamZZT.NET authentication */
-	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, curl_auth_string.c_str());
-	
-  /* get it! */
-  curl_easy_perform(curl_handle);
-	
-  /* cleanup curl stuff */
-  curl_easy_cleanup(curl_handle);
 
+	http_finish(curl_handle);
+	
 	if(chunk.memory != NULL) {
 		output.append((const char *)chunk.memory);
 		free(chunk.memory);
@@ -131,14 +189,8 @@ std::string http_get_string(std::string URL) {
 }
 
 bool http_get_file(std::string filename, std::string URL) {
-	CURL *curl_handle;
+	CURL *curl_handle = http_begin(URL);
 	File f(filename,"wb");
-	
-  /* init the curl session */
-  curl_handle = curl_easy_init();
-	
-  /* specify URL to get */
-  curl_easy_setopt(curl_handle, CURLOPT_URL, URL.c_str());
 	
   /* send all data to this function  */
   curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteTikiFileCallback);
@@ -146,24 +198,13 @@ bool http_get_file(std::string filename, std::string URL) {
   /* we pass our 'chunk' struct to the callback function */
   curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&f);
   
-	/* some servers don't like requests that are made without a user-agent
-		field, so we provide one */
-  curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
-	
-	/* DreamZZT.NET authentication */
-	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, curl_auth_string.c_str());
-	
-	/* get it! */
-  curl_easy_perform(curl_handle);
-	
-  /* cleanup curl stuff */
-  curl_easy_cleanup(curl_handle);
+	http_finish(curl_handle);
 	
 	f.close();
 }
 
 std::string http_post_file(std::string filename, std::string contentType, std::string URL) {
-	CURL *curl_handle;
+	CURL *curl_handle = http_begin(URL);
 	struct curl_httppost* post = NULL;
   struct curl_httppost* last = NULL;
   struct MemoryStruct chunk;
@@ -171,11 +212,6 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 	
   chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
 	chunk.size = 0;    /* no data at this point */	
-  /* init the curl session */
-  curl_handle = curl_easy_init();
-	
-  /* specify URL to get */
-  curl_easy_setopt(curl_handle, CURLOPT_URL, URL.c_str());
 	
   /* send all data to this function  */
   curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
@@ -191,18 +227,7 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 	/* Set the form info */
   curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, post);
   
-	/* some servers don't like requests that are made without a user-agent
-		field, so we provide one */
-  curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
-	
-	/* DreamZZT.NET authentication */
-	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, curl_auth_string.c_str());
-	
-	/* get it! */
-  curl_easy_perform(curl_handle);
-	
-  /* cleanup curl stuff */
-  curl_easy_cleanup(curl_handle);
+	http_finish(curl_handle);
 	
 	output.append((const char *)chunk.memory);
 	free(chunk.memory);

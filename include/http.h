@@ -22,3 +22,5 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 std::string http_get_string(std::string URL);
 char *strtolower(char *str);
 
+#define DZZTNET_HOST std::string("http://forums.c99.org")
+#define DZZTNET_HOME std::string("/extensions/DreamZZT/dzztnet.php")
