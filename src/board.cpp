@@ -162,6 +162,7 @@ void new_world() {
 	world.time=0;
 	world.saved=0;
 	world.editing=0;
+	world.task_points=0;
 	
 	new_board("Title Screen");
 }
@@ -337,6 +338,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
+				Time::sleep(8000);
 			}
 			break;
 		case UP:
@@ -373,7 +375,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
-				Time::sleep(1000);
+				Time::sleep(6000);
 			}
 			break;
 		case DOWN:
@@ -410,7 +412,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
-				Time::sleep(1000);
+				Time::sleep(6000);
 			}
 		break;
 		case LEFT:
@@ -447,7 +449,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
-				Time::sleep(1000);
+				Time::sleep(6000);
 			}
 			break;
 		case RIGHT:
@@ -484,7 +486,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
-				Time::sleep(1000);
+				Time::sleep(6000);
 			}
 			break;
 	}
@@ -622,6 +624,7 @@ int load_zzt(const char *filename, int titleonly) {
 	fd.readle16(&world.time,1);
 	fd.read(&world.saved, 1);
 	world.editing = 0;
+	world.task_points = 0;
 	
   world.title.string[world.title.len]='\0';
 	for(x=0;x<10;x++) {
