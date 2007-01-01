@@ -259,7 +259,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 			}
 		} else {					
 			if(evt.key == '`') {
-				if(debug_visible==0) {
+				if(debug_visible==0 && world.online == 0) {
 					debug_visible = 1;
 					ct->setSize(640,240);
 					dt->setTranslate(Vector(320,120,0));
@@ -277,7 +277,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 					*ct << "\x1b[k"; // clear EOL
 					ct->setANSI(false);
 				}
-			} else if (evt.key >= 32 && evt.key <= 128 && debug_visible) {
+			} else if (evt.key >= 32 && evt.key <= 128 && debug_visible && world.online == 0) {
 				debug_cmdline += evt.key;
 				if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
 				*dt << "\x1b[s"; // Save cursor position
@@ -285,7 +285,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 				dt->color(GREY | HIGH_INTENSITY, BLACK);
 				*dt << "> \x1b[1;32m" << debug_cmdline.c_str() << "\x1b[k"; //clear EOL
 				*dt << "\x1b[u"; // Restore cursor position
-			} else if (evt.key == 13 && debug_visible) {
+			} else if (evt.key == 13 && debug_visible && world.online == 0) {
 				if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 				debug_cmdline += '\r';
 			}
