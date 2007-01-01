@@ -52,7 +52,7 @@
 	<key>CFBundleSignature</key>
 	<string>DZZT</string>
 	<key>CFBundleVersion</key>
-	<string>3.0.4b2</string>
+	<string>3.0.6</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

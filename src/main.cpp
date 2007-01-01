@@ -123,7 +123,7 @@ void check_updates() {
 
 	Debug::printf("Latest version: %s\n", ver.c_str());
 	
-	if(ver != "3.0.4b2") {
+	if(ver != "3.0.6") {
 		TUIWindow t("Update available");
 		t.buildFromString("A new version of DreamZZT is available.\rPlease visit http://www.c99.org/dc/dzzt/\rfor more information.\r\r!ok;Ok\r");
 		t.doMenu(ct);
@@ -196,7 +196,23 @@ extern "C" int tiki_main(int argc, char **argv) {
 #ifdef NET
 	curl_global_init(CURL_GLOBAL_ALL);
 	
-	curl_auth_string = "";
+	char authtmp[256];
+	std::string filename;
+	File f;
+#if TIKI_PLAT == TIKI_WIN32
+	//blah
+#else
+	filename = std::string(getenv("HOME")) + std::string("/.dzztauth");
+#endif
+	f.open(filename.c_str(),"rb");
+	if(f.isValid()) {
+		int len = f.read(authtmp,256);
+		if(len > 0) {
+			authtmp[len]='\0';
+			curl_auth_string = authtmp;
+		}
+		f.close();
+	}
 #endif	
 	
 #if TIKI_PLAT == TIKI_DC
@@ -263,6 +279,18 @@ extern "C" int tiki_main(int argc, char **argv) {
 	}
 
 	if(zm!=NULL && zm->isPlaying()) zm->stop();
+#ifdef NET
+#if TIKI_PLAT == TIKI_WIN32
+	//blah
+#else
+	filename = std::string(getenv("HOME")) + std::string("/.dzztauth");
+#endif
+	f.open(filename.c_str(),"wb");
+	if(f.isValid()) {
+		f.write(curl_auth_string.c_str(),curl_auth_string.length()+1);
+		f.close();
+	}
+#endif	
 	Tiki::shutdown();
   return 0;
 }
@@ -404,25 +432,28 @@ void play_zzt(const char *filename) {
 			//menu
 			break;
 		} else if(switchbrd==-4) {
+			if(world.online) {
 #ifdef NET
-			std::string filename;
+				std::string filename;
 #if TIKI_PLAT == TIKI_WIN32
-			char path[128];
-			GetTempPath(128,path);
-			filename = path + std::string("saved.sav");
+				char path[128];
+				GetTempPath(128,path);
+				filename = path + std::string("saved.sav");
 #else 
-			filename = "/tmp/saved.sav";
+				filename = "/tmp/saved.sav";
 #endif
-			save_game(filename.c_str());
-			std::string s = http_post_file(filename,"application/x-zzt-save", DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=ProcessSave"));
-			if(s!="OK") {
-				TUIWindow t("");
-				t.buildFromString(s);
-				t.doMenu(ct);
+				save_game(filename.c_str());
+				std::string s = http_post_file(filename,"application/x-zzt-save", DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=ProcessSave"));
+				if(s!="OK") {
+					TUIWindow t("");
+					t.buildFromString(s);
+					t.doMenu(ct);
+				}
+#endif
+			} else {
+				std::string s = os_save_file("Save a game","saved.sav","sav");
+				if(s!="") save_game(s.c_str());
 			}
-#endif
-			//std::string s = os_save_file("Save a game","saved.sav","sav");
-			//if(s!="") save_game(s.c_str());
 			switchbrd=-1;
 		} else if(switchbrd==-5) {
 			edit_zzt();
@@ -439,6 +470,25 @@ void play_zzt(const char *filename) {
 	player=NULL;
 	delete playerEventCollector;
 	playerEventCollector=NULL;
+	if(world.online && switchbrd != -2) {
+		std::string url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=SubmitScore";
+		url += "&GameID=" + std::string((const char *)world.title.string);
+		url += "&Score=" + ToString((int)world.score);
+		std::string tmp = http_get_string(url);
+		if(tmp!="OK") {
+			TUIWindow *t;
+			std::string title;
+			if(tmp[0]=='$') { //The first line of the document is the window title
+				title = tmp.substr(1,tmp.find("\n"));
+				tmp.erase(0,tmp.find("\n")+1);
+			} else {
+				title = "Score Submission Error";
+			}
+			t = new TUIWindow(title);
+			t->buildFromString(tmp);
+			t->doMenu(ct);
+		}
+	}
 	free_world();
 }
 
@@ -598,6 +648,9 @@ C99.ORG Forums account.\n\
 				if(url != "") {
 					if(url[0] == '/') {
 						url = DZZTNET_HOST + url;
+					} else if(url == "logout") {
+						curl_auth_string="";
+						url = "";
 					} else {
 						url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=" + url;
 					}
@@ -605,5 +658,6 @@ C99.ORG Forums account.\n\
 			}
 		}
 	} while(url != "" && switchbrd != -2);
+
 #endif
 }
