@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=DreamZZT
-AppVerName=DreamZZT 3.0.4b2
+AppVerName=DreamZZT 3.0.6
 AppPublisher=Sam Steele
 AppPublisherURL=http://www.c99.org/
 AppSupportURL=http://forums.c99.org/
@@ -16,14 +16,14 @@ SolidCompression=true
 MinVersion=4.1.2222,5.0.2195
 LicenseFile=C:\Documents and Settings\Sam\Desktop\DreamZZT\COPYING
 ChangesAssociations=true
-AppVersion=3.0.4b2
+AppVersion=3.0.6
 UninstallDisplayIcon={app}\DreamZZT.exe
-UninstallDisplayName=DreamZZT 3.0.4b2
-VersionInfoVersion=3.0.4.2
+UninstallDisplayName=DreamZZT 3.0.6
+VersionInfoVersion=3.0.6
 VersionInfoCompany=Sam Steele
-VersionInfoDescription=DreamZZT 3.0.4b2
-VersionInfoTextVersion=3.0.4b2
-VersionInfoCopyright=Copyright (C) 1999-2006 Sam Steele, All Rights Reserved.
+VersionInfoDescription=DreamZZT 3.0.6
+VersionInfoTextVersion=3.0.6
+VersionInfoCopyright=Copyright (C) 2000 - 2007 Sam Steele, All Rights Reserved.
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
@@ -44,21 +44,25 @@ Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\wrap_oal.dll; D
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: ChangeLog; DestDir: {app}
 Source: COPYING; DestDir: {app}
+Source: win32\libcurl.dll; DestDir: {app}; Flags: ignoreversion; Tasks: 
 
 [INI]
 Filename: {app}\DreamZZT.url; Section: InternetShortcut; Key: URL; String: http://www.c99.org/dc/dzzt/
+Filename: {app}\Forums.url; Section: InternetShortcut; Key: URL; String: http://forums.c99.org/
 
 [Icons]
 Name: {group}\DreamZZT; Filename: {app}\DreamZZT.exe; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; IconIndex: 0; Comment: DreamZZT - Open Source ZZT Engine
-Name: {group}\{cm:ProgramOnTheWeb,DreamZZT}; Filename: {app}\DreamZZT.url
+Name: {group}\{cm:ProgramOnTheWeb,DreamZZT}; Filename: {app}\DreamZZT.url; Tasks: ; Languages: 
 Name: {group}\{cm:UninstallProgram,DreamZZT}; Filename: {uninstallexe}
 Name: {userdesktop}\DreamZZT; Filename: {app}\DreamZZT.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; Comment: DreamZZT - Open Source ZZT Engine; IconIndex: 0
+Name: {group}\C99.ORG Forums; Filename: {app}\Forums.url
 
 [Run]
 Filename: {app}\DreamZZT.exe; Description: {cm:LaunchProgram,DreamZZT}; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
 Type: files; Name: {app}\DreamZZT.url
+Type: files; Name: {app}\Forums.url
 
 [Registry]
 Root: HKCR; SubKey: .zzt; ValueType: string; ValueData: ZZTGame; Flags: uninsdeletekey; Tasks: registerzzt

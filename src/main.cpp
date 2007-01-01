@@ -40,6 +40,7 @@ using namespace Tiki::Thread;
 
 #if TIKI_PLAT == TIKI_WIN32
 #include <wininet.h>
+#include <shlobj.h>
 #endif
 
 #include "window.h"
@@ -200,7 +201,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 	std::string filename;
 	File f;
 #if TIKI_PLAT == TIKI_WIN32
-	//blah
+	TCHAR szPath[MAX_PATH];
+	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
+	filename = std::string(szPath) + std::string("\\dzztauth.dat");
 #else
 	filename = std::string(getenv("HOME")) + std::string("/.dzztauth");
 #endif
@@ -281,7 +284,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	if(zm!=NULL && zm->isPlaying()) zm->stop();
 #ifdef NET
 #if TIKI_PLAT == TIKI_WIN32
-	//blah
+	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
+	filename = std::string(szPath) + std::string("\\dzztauth.dat");
 #else
 	filename = std::string(getenv("HOME")) + std::string("/.dzztauth");
 #endif
