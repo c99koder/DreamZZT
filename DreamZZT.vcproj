@@ -40,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;DEBUG"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include;C:\libcurl\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;DEBUG;NET"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -61,10 +61,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib"
+				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib"
 				OutputFile="$(OutDir)/DreamZZT.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\Debug&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\Debug&quot;;c:\libcurl"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/DreamZZT.pdb"
 				SubSystem="2"
@@ -120,8 +120,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include;C:\libcurl\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NET"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -139,10 +139,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib"
+				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib"
 				OutputFile="$(OutDir)/DreamZZT.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\Release&quot;"
+				AdditionalLibraryDirectories="C:\libcurl;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\Release&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -188,6 +188,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\console.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\debug.cpp"
 				>
 			</File>
@@ -217,6 +221,10 @@
 			</File>
 			<File
 				RelativePath=".\src\status.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\task.cpp"
 				>
 			</File>
 			<File
@@ -311,6 +319,10 @@
 			</File>
 			<File
 				RelativePath=".\include\status.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\task.h"
 				>
 			</File>
 			<File

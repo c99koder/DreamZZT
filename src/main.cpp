@@ -405,8 +405,16 @@ void play_zzt(const char *filename) {
 			break;
 		} else if(switchbrd==-4) {
 #ifdef NET
-			save_game("/tmp/saved.sav");
-			std::string s = http_post_file("/tmp/saved.sav","application/x-zzt-save", DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=ProcessSave"));
+			std::string filename;
+#if TIKI_PLAT == TIKI_WIN32
+			char path[128];
+			GetTempPath(128,path);
+			filename = path + std::string("saved.sav");
+#else 
+			filename = "/tmp/saved.sav";
+#endif
+			save_game(filename.c_str());
+			std::string s = http_post_file(filename,"application/x-zzt-save", DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=ProcessSave"));
 			if(s!="OK") {
 				TUIWindow t("");
 				t.buildFromString(s);
@@ -437,7 +445,7 @@ void play_zzt(const char *filename) {
 void net_menu() {
 #ifdef NET
 	std::string url = DZZTNET_HOST + DZZTNET_HOME;
-	std::string tmp;
+	std::string tmp,filename;
 	if(curl_auth_string == "") {
 		TUIWindow *t;
 		t = new TUIWindow("DreamZZT Online");
@@ -557,11 +565,18 @@ C99.ORG Forums account.\n\
 #ifdef DEBUG
 			Debug::printf("Downloading: %s\n", url.c_str());
 #endif
-			http_get_file("/tmp/dzzthttp", url);
+#if TIKI_PLAT == TIKI_WIN32
+			char path[128];
+			GetTempPath(128,path);
+			filename = path + std::string("dzzthttp");
+#else 
+			filename = "/tmp/dzzthttp";
+#endif
+			http_get_file(filename, url);
 			world.online=1;
-			play_zzt("/tmp/dzzthttp");
+			play_zzt(filename.c_str());
 			world.online=0;
-			unlink("/tmp/dzzthttp");
+			unlink(filename.c_str());
 			url = DZZTNET_HOST + DZZTNET_HOME;
 		} else {
 #ifdef DEBUG

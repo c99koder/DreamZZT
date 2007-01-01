@@ -27,6 +27,7 @@ class TUIWidget {
 public:
 	TUIWidget() {
 		m_ec = new Hid::EventCollector(false);
+		m_focus = false;
 	}
 	
 	virtual void draw(ConsoleText *ct) {};

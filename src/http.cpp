@@ -74,7 +74,7 @@ struct MemoryStruct {
   size_t size;
 };
 
-std::string curl_auth_string;
+std::string curl_auth_string = "";
 
 size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data) {
 	size_t realsize = size * nmemb;
@@ -115,8 +115,22 @@ int http_progress(void *clientp,
 	return 0;
 }
 
+int debug_callback(CURL *curl_handle, curl_infotype type, char *txt, size_t len, void *data) {
+	char tmp[1024];
+
+	strncpy(tmp,txt,len);
+	tmp[len]='\0';
+	Debug::printf("%s\n",tmp);
+	return 0;
+}
+
 CURL *http_begin(std::string URL) {
 	CURL *curl_handle;
+	static char url[256];
+	static char auth[256];
+
+	strncpy(url,URL.c_str(),256); //Windows... sigh.
+	strncpy(auth,curl_auth_string.c_str(),256); //Windows... sigh.
 
 	ct->locate(0,24);
 	ct->color(0,7);
@@ -129,16 +143,18 @@ CURL *http_begin(std::string URL) {
 	
   /* init the curl session */
   curl_handle = curl_easy_init();
-	
+	//curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1);
+	//curl_easy_setopt(curl_handle, CURLOPT_DEBUGFUNCTION, debug_callback);
+
   /* specify URL to get */
-  curl_easy_setopt(curl_handle, CURLOPT_URL, URL.c_str());
+	curl_easy_setopt(curl_handle, CURLOPT_URL, url);
 
 	/* some servers don't like requests that are made without a user-agent
 		field, so we provide one */
   curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
 	
 	/* DreamZZT Online authentication */
-	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, curl_auth_string.c_str());
+	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, auth);
 	
 	/* Progress function */
 	curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, false);
@@ -149,7 +165,7 @@ CURL *http_begin(std::string URL) {
 
 void http_finish(CURL *curl_handle) {
   /* get it! */
-  curl_easy_perform(curl_handle);
+	Debug::printf("Status: %s\n",curl_easy_strerror(curl_easy_perform(curl_handle)));
 	
   /* cleanup curl stuff */
   curl_easy_cleanup(curl_handle);
@@ -190,7 +206,7 @@ std::string http_get_string(std::string URL) {
 
 bool http_get_file(std::string filename, std::string URL) {
 	CURL *curl_handle = http_begin(URL);
-	File f(filename,"wb");
+	static File f(filename,"wb");
 	
   /* send all data to this function  */
   curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteTikiFileCallback);
@@ -201,6 +217,7 @@ bool http_get_file(std::string filename, std::string URL) {
 	http_finish(curl_handle);
 	
 	f.close();
+	return true;
 }
 
 std::string http_post_file(std::string filename, std::string contentType, std::string URL) {
