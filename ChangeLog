@@ -1,5 +1,380 @@
-2006-12-03  Sam Steele <sam.steele@gmail.com>
+2007-01-01  sam
 
+	* dreamzzt.iss, dreamzzt.rc, src/main.cpp: Win32 build fixes
+	* English.lproj/InfoPlist.strings, Info.plist, src/main.cpp:
+	  Version bump, store user credentials, submit score to DreamZZT
+	  Online at end of game
+	* src/http.cpp: Remove debug info
+	* DreamZZT.vcproj, include/window.h, src/DreamZZT.cpp,
+	  src/http.cpp, src/main.cpp, win32/libcurl.dll: Win32 build fixes
+	* include/board.h, include/debug.h, include/drums.h,
+	  include/editor.h, include/http.h, include/object.h,
+	  include/objects/enemy.h, include/objects/items.h,
+	  include/objects/objects.h, include/objects/terrain.h,
+	  include/os.h, include/sound.h, include/status.h, include/task.h,
+	  include/window.h, include/word.h, src/Controller.h,
+	  src/Controller.m, src/DreamZZT.cpp, src/board.cpp,
+	  src/console.cpp, src/debug.cpp, src/editor.cpp, src/http.cpp,
+	  src/main.cpp, src/object.cpp, src/objects/bomb.cpp,
+	  src/objects/bullet.cpp, src/objects/centipede.cpp,
+	  src/objects/conveyer.cpp, src/objects/dup.cpp,
+	  src/objects/enemy.cpp, src/objects/items.cpp,
+	  src/objects/passage.cpp, src/objects/player.cpp,
+	  src/objects/pusher.cpp, src/objects/terrain.cpp,
+	  src/objects/zztoop.cpp, src/os.mm, src/sound.cpp, src/status.cpp,
+	  src/task.cpp, src/window.cpp, src/word.cpp: Happy new year\!
+	* include/window.h, src/main.cpp: Allow client to register new
+	  accounts
+	* src/window.cpp: Always render TUIWindows
+	* include/task.h, src/task.cpp: Make ToString() public
+
+2006-12-31  sam
+
+	* include/objects/enemy.h: Make centipedes not pushable
+	* include/task.h, src/board.cpp: Task points
+	* include/board.h, src/main.cpp, src/status.cpp: Task scores
+	* src/objects/player.cpp: Misc. bug fixes when player has no health
+	* src/objects/enemy.cpp, src/objects/zztoop.cpp, src/task.cpp:
+	  Additional Task types
+	* src/window.cpp: Handle tab characters in TUIWindows
+	* include/http.h, src/http.cpp: Cleanup CURL wrappers
+
+2006-12-29  sam
+
+	* src/objects/dup.cpp: Fix timing on duplicators
+
+2006-12-24  sam
+
+	* DreamZZT.xcodeproj/project.pbxproj, include/board.h,
+	  src/main.cpp, src/object.cpp, src/task.cpp: DreamZZT Online tasks
+	* src/http.cpp: libcurl HTTP authentication
+	* src/console.cpp: Optimized ConsoleText class
+	* Makefile.dc, src/DreamZZT.cpp: Update Dreamcast build
+	* src/objects/zztoop.cpp: Fix null-pointer exception
+	* include/http.h, src/http.cpp: Switch http code to libcurl
+	* src/board.cpp, src/debug.cpp, src/objects/player.cpp,
+	  src/window.cpp: Switch player input to EventCollector model
+
+2006-12-17  sam
+
+	* doc_icon.png, dreamzzt-document.png, icon.png, sav_icon.png:
+	  Remove obsolete files
+	* Makefile: Update linux Makefile to link against libcurl
+
+2006-12-11  sam
+
+	* src/main.cpp: Revive DZZT.NET browser
+	* DreamZZT.xcodeproj/project.pbxproj: Update XCode project to link
+	  against libcurl
+	* include/http.h, src/http.cpp: Replace old-and-busted HTTP code
+	  with libcurl
+	* src/window.cpp: Recognize \n as a newline character
+	* include/objects/enemy.h, src/object.cpp: Make enemies pushable
+
+2006-12-10  sam
+
+	* include/board.h, include/object.h, include/objects/enemy.h,
+	  include/objects/items.h, include/objects/objects.h,
+	  include/objects/terrain.h, include/window.h, src/board.cpp,
+	  src/editor.cpp, src/main.cpp, src/object.cpp,
+	  src/objects/bomb.cpp, src/objects/bullet.cpp,
+	  src/objects/centipede.cpp, src/objects/conveyer.cpp,
+	  src/objects/dup.cpp, src/objects/enemy.cpp,
+	  src/objects/items.cpp, src/objects/passage.cpp,
+	  src/objects/pusher.cpp, src/objects/terrain.cpp, src/window.cpp:
+	  Editor enhancements
+	* Sparkle.framework, Sparkle.framework/Headers,
+	  Sparkle.framework/Resources, Sparkle.framework/Sparkle,
+	  Sparkle.framework/Versions, Sparkle.framework/Versions/A,
+	  Sparkle.framework/Versions/A/Headers,
+	  Sparkle.framework/Versions/A/Headers/NSApplication+AppCopies.h,
+	  Sparkle.framework/Versions/A/Headers/NSFileManager+Authentication.h,
+	  Sparkle.framework/Versions/A/Headers/NSFileManager+Verification.h,
+	  Sparkle.framework/Versions/A/Headers/NSString+extras.h,
+	  Sparkle.framework/Versions/A/Headers/RSS.h,
+	  Sparkle.framework/Versions/A/Headers/SUAppcast.h,
+	  Sparkle.framework/Versions/A/Headers/SUAppcastItem.h,
+	  Sparkle.framework/Versions/A/Headers/SUAutomaticUpdateAlert.h,
+	  Sparkle.framework/Versions/A/Headers/SUConstants.h,
+	  Sparkle.framework/Versions/A/Headers/SUStatusChecker.h,
+	  Sparkle.framework/Versions/A/Headers/SUStatusController.h,
+	  Sparkle.framework/Versions/A/Headers/SUUnarchiver.h,
+	  Sparkle.framework/Versions/A/Headers/SUUpdateAlert.h,
+	  Sparkle.framework/Versions/A/Headers/SUUpdater.h,
+	  Sparkle.framework/Versions/A/Headers/SUUtilities.h,
+	  Sparkle.framework/Versions/A/Headers/Sparkle.h,
+	  Sparkle.framework/Versions/A/Resources,
+	  Sparkle.framework/Versions/A/Resources/Info.plist,
+	  Sparkle.framework/Versions/A/Resources/SUStatus.nib,
+	  Sparkle.framework/Versions/A/Resources/SUStatus.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/SUStatus.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/SUStatus.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/ca.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/cs.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/cy.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/da.lproj,
+	  Sparkle.framework/Versions/A/Resources/da.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/da.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/da.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/da.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/da.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/da.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/da.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/da.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/da.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/de.lproj,
+	  Sparkle.framework/Versions/A/Resources/de.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/de.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/de.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/de.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/de.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/de.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/de.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/de.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/de.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/en.lproj,
+	  Sparkle.framework/Versions/A/Resources/en.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/en.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/en.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/en.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/en.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/en.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/en.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/en.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/en.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/es.lproj,
+	  Sparkle.framework/Versions/A/Resources/es.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/es.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/es.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/es.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/es.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/es.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/es.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/es.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/es.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/fi.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/fr.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/he.lproj,
+	  Sparkle.framework/Versions/A/Resources/he.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/he.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/he.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/he.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/he.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/he.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/he.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/he.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/he.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/hu.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/id.lproj,
+	  Sparkle.framework/Versions/A/Resources/id.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/id.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/id.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/id.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/id.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/id.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/id.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/id.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/id.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/is.lproj,
+	  Sparkle.framework/Versions/A/Resources/is.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/is.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/is.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/is.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/is.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/is.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/is.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/is.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/is.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/it.lproj,
+	  Sparkle.framework/Versions/A/Resources/it.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/it.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/it.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/it.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/it.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/it.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/it.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/it.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/it.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/ja.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/ko.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/nl.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/no.lproj,
+	  Sparkle.framework/Versions/A/Resources/no.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/no.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/no.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/no.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/no.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/no.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/no.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/no.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/no.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/pl.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/ru.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/sk.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/sv.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/th.lproj,
+	  Sparkle.framework/Versions/A/Resources/th.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/th.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/th.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/th.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/th.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/th.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/th.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/th.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/th.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/tr.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_CN.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj/SUAutomaticUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj/SUAutomaticUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj/SUAutomaticUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj/SUAutomaticUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj/SUUpdateAlert.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj/SUUpdateAlert.nib/classes.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj/SUUpdateAlert.nib/info.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj/SUUpdateAlert.nib/keyedobjects.nib,
+	  Sparkle.framework/Versions/A/Resources/zh_TW.lproj/Sparkle.strings,
+	  Sparkle.framework/Versions/A/Sparkle,
+	  Sparkle.framework/Versions/Current: Sparkle framework for OS X
+
+2006-12-03  sam
+
+	* ChangeLog, debian/changelog, doc/debug.txt: Documentation update
 	* src/window.cpp: Always render the screen during
 	  TUIWindow::doMenu()
 	* src/DreamZZT.cpp, src/main.cpp: Add online update checker for
@@ -48,7 +423,7 @@
 	  loki/setup.data/bin/Linux/x86/setup,
 	  loki/setup.data/bin/Linux/x86/uninstall: Upgrade loki installer
 
-2006-12-02  Sam Steele <sam.steele@gmail.com>
+2006-12-02  sam
 
 	* Makefile, src/debug.cpp, src/editor.cpp, src/main.cpp,
 	  src/objects/zztoop.cpp, src/window.cpp: Linux build fixes
@@ -57,11 +432,11 @@
 	* src/os.mm: Add GPL header
 	* src/word.cpp: Simplify wordify function
 
-2006-11-28  Sam Steele <sam.steele@gmail.com>
+2006-11-28  sam
 
 	* dreamzzt.iss: Set working directory on start menu icon
 
-2006-11-26  Sam Steele <sam.steele@gmail.com>
+2006-11-26  sam
 
 	* src/main.cpp: Fix typo in main menu
 	* dreamzzt.iss: Update installer version info
@@ -86,7 +461,7 @@
 	* English.lproj/MainMenu.nib/info.nib,
 	  English.lproj/MainMenu.nib/objects.nib: Update OS X menu
 
-2006-11-25  Sam Steele <sam.steele@gmail.com>
+2006-11-25  sam
 
 	* include/window.h, src/window.cpp: Perform bounds checking during
 	  TUIWindow::buildFromString
@@ -102,7 +477,7 @@
 	* include/object.h: Correct type for setColor method
 	* include/status.h: remove old TextWindow API
 
-2006-11-18  Sam Steele <sam.steele@gmail.com>
+2006-11-18  sam
 
 	* DreamZZT.xcodeproj/project.pbxproj, include/object.h,
 	  include/objects/items.h, include/window.h, src/editor.cpp: Add
@@ -112,7 +487,7 @@
 	* src/window.cpp: Tweak shadow effect
 	* src/debug.cpp, src/main.cpp: Switch to TUIWindow
 
-2006-11-12  Sam Steele <sam.steele@gmail.com>
+2006-11-12  sam
 
 	* include/editor.h: Initial checkin of DreamZZT editor
 	* DreamZZT.xcodeproj/project.pbxproj,
@@ -124,12 +499,12 @@
 	  src/board.cpp, src/debug.cpp, src/editor.cpp, src/main.cpp:
 	  Initial checkin of DreamZZT editor
 
-2006-06-26  Sam Steele <sam.steele@gmail.com>
+2006-06-26  sam
 
 	* DreamZZT.vcproj, src/main.cpp, src/objects/player.cpp,
 	  src/sound.cpp, src/window.cpp: Win32 build fixes
 
-2006-06-25  Sam Steele <sam.steele@gmail.com>
+2006-06-25  sam
 
 	* ChangeLog: Update ChangeLog from svn history
 	* ChangeLog: Update ChangeLog from svn history
@@ -145,12 +520,12 @@
 	* src/main.cpp: Update credits, switch to new popup window API
 	* include/window.h, src/window.cpp: New popup-window API
 
-2006-06-11  Sam Steele <sam.steele@gmail.com>
+2006-06-11  sam
 
 	* src/board.cpp, src/objects/zztoop.cpp: Fix a double-free bug
 	* src/objects/zztoop.cpp: ZZT-OOP fixes
 
-2006-06-10  Sam Steele <sam.steele@gmail.com>
+2006-06-10  sam
 
 	* src/objects/zztoop.cpp: ZZT-OOP bug fixes
 	* src/objects/zztoop.cpp: ZZT-OOP bug fixes
@@ -164,7 +539,7 @@
 	* src/object.cpp: New debug commands: +reveal, -reveal
 	* src/debug.cpp: New debug commands: +reveal, -reveal
 
-2006-06-09  Sam Steele <sam.steele@gmail.com>
+2006-06-09  sam
 
 	* include/drums.h, include/sound.h, src/sound.cpp: Digitized drum
 	  samples
@@ -172,7 +547,7 @@
 	* src/main.cpp, src/objects/zztoop.cpp: Bounds checking on #if
 	  contact
 
-2006-06-08  Sam Steele <sam.steele@gmail.com>
+2006-06-08  sam
 
 	* ChangeLog, DreamZZT.xcodeproj/project.pbxproj: Generate ChangeLog
 	  from svn log history
@@ -195,7 +570,7 @@
 	* include/objects/enemy.h, src/genobjects.sh, src/objdb,
 	  src/objects/centipede.cpp: Centipedes: part one
 
-2006-05-29  Sam Steele <sam.steele@gmail.com>
+2006-05-29  sam
 
 	* ChangeLog: Generate ChangeLog from svn history
 	* DreamZZT.xcodeproj/project.pbxproj, Info.plist: Update icon file
@@ -258,7 +633,7 @@
 	  src/objects/enemy.cpp: Sharks
 	* src/genobjects.sh, src/objdb, src/object.cpp: sharks
 
-2006-05-28  Sam Steele <sam.steele@gmail.com>
+2006-05-28  sam
 
 	* include/objects/objects.h, include/sound.h, src/debug.cpp,
 	  src/objects/bomb.cpp, src/objects/player.cpp, src/sound.cpp:
@@ -277,7 +652,7 @@
 	  src/objects/items.cpp, src/objects/player.cpp, src/sound.cpp: SFX
 	  update
 
-2006-05-27  Sam Steele <sam.steele@gmail.com>
+2006-05-27  sam
 
 	* ChangeLog:
 	* src/board.cpp, src/objects/passage.cpp, src/objects/player.cpp:
@@ -327,7 +702,7 @@
 	  ZZT-OOP
 	* src/main.cpp: Decrease audio volume to below deafening
 
-2006-05-25  Sam Steele <sam.steele@gmail.com>
+2006-05-25  sam
 
 	* COPYING: GPL COPYING file
 	* Makefile, Makefile.dc: Makefile update
@@ -344,11 +719,11 @@
 	  src/objects/spinner.cpp, src/objects/terrain.cpp,
 	  src/objects/zztoop.cpp, src/txtwin.cpp, src/word.cpp: C++ rewrite
 
-2006-05-21  Sam Steele <sam.steele@gmail.com>
+2006-05-21  sam
 
 	* src/objects/conveyer.cpp: Rename spinner to conveyer
 
-2006-05-17  Sam Steele <sam.steele@gmail.com>
+2006-05-17  sam
 
 	* include/debug.h, src/debug.cpp: Debug mode
 	* Makefile, src/objects/zztoop.cpp: Debug mode
@@ -357,12 +732,12 @@
 	  src/objects/player.cpp, src/objects/zztoop.cpp, src/txtwin.cpp:
 	  Debug mode
 
-2006-05-15  Sam Steele <sam.steele@gmail.com>
+2006-05-15  sam
 
 	* src/board.cpp, src/objects/zztoop.cpp, src/sound.cpp: Sound fixes
 	* src/main.cpp: Change default to town.zzt
 
-2006-05-14  Sam Steele <sam.steele@gmail.com>
+2006-05-14  sam
 
 	* DreamZZT.xcodeproj/project.pbxproj, Makefile.dc, src/main.cpp,
 	  src/objects/zztoop.cpp, src/sound.cpp: Sound fixes
@@ -387,27 +762,27 @@
 	* include/objects/enemy.h, src/board.cpp, src/genobjects.sh,
 	  src/objdb, src/objects/enemy.cpp, src/objects/zztoop.cpp: Bears\!
 
-2006-05-13  Sam Steele <sam.steele@gmail.com>
+2006-05-13  sam
 
 	* DreamZZT.xcodeproj/project.pbxproj, include/drawables,
 	  src/Drawables, src/board.cpp, src/main.cpp,
 	  src/objects/player.cpp, src/status.cpp, src/txtwin.cpp: Integrate
 	  ConsoleText with Tiki, add ANSI support, misc other bug fixes
 
-2006-05-12  Sam Steele <sam.steele@gmail.com>
+2006-05-12  sam
 
 	* Makefile, src/Drawables/ConsoleText.cpp, src/main.cpp: Linux
 	  makefile update
 	* Makefile.dc: Dreamcast makefile
 
-2006-05-11  Sam Steele <sam.steele@gmail.com>
+2006-05-11  sam
 
 	* DreamZZT.xcodeproj/project.pbxproj, include/http.h,
 	  src/board.cpp, src/dirxn.cpp, src/http.cpp, src/main.cpp,
 	  src/objects/player.cpp, src/objects/zztoop.cpp: Misc. bug fixes,
 	  Town should now be playable
 
-2006-05-07  Sam Steele <sam.steele@gmail.com>
+2006-05-07  sam
 
 	* src/DreamZZT.cpp: win32 build fix
 	* src/board.cpp: Enhanced torch effect
@@ -419,7 +794,7 @@
 	* DreamZZT.xcodeproj/project.pbxproj, src/main.cpp,
 	  src/objects/player.cpp, src/txtwin.cpp: Additional key controls
 
-2006-05-06  Sam Steele <sam.steele@gmail.com>
+2006-05-06  sam
 
 	* Makefile, src/Drawables/ConsoleText.cpp, src/DreamZZT.cpp: Linux
 	  build fixes
