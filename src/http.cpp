@@ -143,8 +143,6 @@ CURL *http_begin(std::string URL) {
 	
   /* init the curl session */
   curl_handle = curl_easy_init();
-	//curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1);
-	//curl_easy_setopt(curl_handle, CURLOPT_DEBUGFUNCTION, debug_callback);
 
   /* specify URL to get */
 	curl_easy_setopt(curl_handle, CURLOPT_URL, url);
@@ -165,7 +163,7 @@ CURL *http_begin(std::string URL) {
 
 void http_finish(CURL *curl_handle) {
   /* get it! */
-	Debug::printf("Status: %s\n",curl_easy_strerror(curl_easy_perform(curl_handle)));
+	curl_easy_perform(curl_handle);
 	
   /* cleanup curl stuff */
   curl_easy_cleanup(curl_handle);
