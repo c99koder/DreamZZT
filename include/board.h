@@ -1,5 +1,5 @@
 /* board.h - World load / save and utility functions
- * Copyright (c) 2000-2006 Sam Steele
+ * Copyright (c) 2000 - 2007 Sam Steele
  *
  * This file is part of DreamZZT.
  *

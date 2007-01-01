@@ -1,5 +1,5 @@
 /* main.cpp - DreamZZT: A reimplementation of the ZZT engine
- * Copyright (c) 2000-2006 Sam Steele
+ * Copyright (C) 2000 - 2007 Sam Steele
  *
  * This file is part of DreamZZT.
  *
@@ -69,7 +69,7 @@ menu below:\r\
 !credits;Credits\r\
 !quit;Quit DreamZZT\r\
 \r\
-Copyright (C) 2000-2006 Sam Steele\r\
+Copyright (C) 2000 - 2007 Sam Steele\r\
 All Rights Reserved.\r"
 
 #define CREDITS "$Programming\r\r\
@@ -97,7 +97,7 @@ $Simple DirectMedia Layer\r\
 This software may be dynamically linked\r\
 to libSDL, an LGPL licensed library.\r\
 http://www.libsdl.org/\r\r\
-$DreamZZT is (C) 2000 - 2006 Sam Steele\r\
+$DreamZZT is (C) 2000 - 2007 Sam Steele\r\
 $For more information, please visit\r\
 $http://www.c99.org/dc/dzzt/\r"
 

@@ -1,5 +1,5 @@
 /* terrain.cpp - ZZT terrain
- * Copyright (c) 2000-2006 Sam Steele
+ * Copyright (C) 2000 - 2007 Sam Steele
  *
  * This file is part of DreamZZT.
  *
