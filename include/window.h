@@ -32,9 +32,11 @@ public:
 	virtual void draw(ConsoleText *ct) {};
 	void focus(bool f);	
 	void update();	
+	bool getFocus() { return m_focus; }
 	virtual void processHidEvent(const Hid::Event &evt) {};
 	virtual const std::string getHelpText() { return "\0"; }
 	virtual const std::string getReturnValue() { return "\0"; }
+	virtual const bool getCloseOnEnter() { return true; }
 	
 private:
 	bool m_focus;
@@ -55,6 +57,33 @@ public:
 private:
 	std::string m_text;
 	bool m_bold;
+};
+
+class TUITextInput : public TUIWidget {
+public:
+	TUITextInput(std::string label, std::string *text) {
+		m_label=label;
+		m_text=text;
+		m_blink=false;
+		m_blinkTimer=1;
+	}
+	
+	void draw(ConsoleText *ct);	
+	const std::string getHelpText() { return "Use keyboard to edit text"; }
+	const bool getCloseOnEnter() { return false; }
+	
+	void processHidEvent(const Hid::Event &evt);
+protected:
+	std::string m_label;
+	std::string *m_text;
+	bool m_blink;
+	int m_blinkTimer;
+};
+
+class TUIPasswordInput : public TUITextInput {
+public:
+	TUIPasswordInput(std::string label, std::string *text) : TUITextInput(label,text) { }	
+	void draw(ConsoleText *ct);	
 };
 
 class TUICheckBox : public TUIWidget {

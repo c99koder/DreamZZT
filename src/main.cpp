@@ -196,7 +196,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 #ifdef NET
 	curl_global_init(CURL_GLOBAL_ALL);
 	
-	curl_auth_string="c99koder:027325";
+	curl_auth_string = "";
 #endif	
 	
 #if TIKI_PLAT == TIKI_DC
@@ -438,6 +438,115 @@ void net_menu() {
 #ifdef NET
 	std::string url = DZZTNET_HOST + DZZTNET_HOME;
 	std::string tmp;
+	if(curl_auth_string == "") {
+		TUIWindow *t;
+		t = new TUIWindow("DreamZZT Online");
+		t->buildFromString("DreamZZT Online allows you to compete\n\
+against players around the world to\n\
+get the highest score.  Before you can\n\
+access DreamZZT Online, you'll need a\n\
+C99.ORG Forums account.\n\
+\n\
+!Create;Create new account\n\
+!Existing;Use existing acount\n");
+		t->doMenu(ct);
+		if(switchbrd==-2 || t->getLabel() == "") return;
+		
+		if(t->getLabel() == "Existing") {
+			do {
+				std::string user="",pass="";
+				delete t;
+				t = new TUIWindow("DreamZZT Online");
+				t->addWidget(new TUILabel("Please enter your C99.ORG details:"));
+				t->addWidget(new TUIWidget());
+				t->addWidget(new TUITextInput("      Username: ",&user));
+				t->addWidget(new TUIPasswordInput("      Password: ",&pass));
+				t->addWidget(new TUIWidget());
+				t->addWidget(new TUIHyperLink("login","Login to C99.ORG"));
+				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
+				t->doMenu(ct);
+				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "") return;
+				curl_auth_string = user + std::string(":") + pass;
+				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
+				tmp = http_get_string(url);
+				if(tmp!="OK") {
+					delete t;
+					std::string title;
+					if(tmp[0]=='$') { //The first line of the document is the window title
+						title = tmp.substr(1,tmp.find("\n"));
+						tmp.erase(0,tmp.find("\n")+1);
+					} else {
+						title = "Authentication Error";
+					}
+					t = new TUIWindow(title);
+					t->buildFromString(tmp);
+					t->doMenu(ct);
+					if(switchbrd==-2) return;
+				}
+			} while(tmp != "OK" && switchbrd != -2);
+		} else if(t->getLabel() == "Create") {
+			std::string user="",first="",last="",pass1="",pass2="",email="";
+			bool useEmail=false,useName=false,acceptTOS=false;
+			do {
+				delete t;
+				t = new TUIWindow("DreamZZT Online");
+				t->addWidget(new TUILabel("Please enter your information:"));
+				t->addWidget(new TUIWidget());
+				t->addWidget(new TUITextInput    ("         * Username: ",&user));
+				t->addWidget(new TUIPasswordInput("         * Password: ",&pass1));
+				t->addWidget(new TUIPasswordInput(" * Confirm Password: ",&pass2));
+				t->addWidget(new TUITextInput    ("    * Email Address: ",&email));
+				t->addWidget(new TUITextInput    ("         First Name: ",&first));
+				t->addWidget(new TUITextInput    ("          Last Name: ",&last));
+				t->addWidget(new TUIWidget());
+				t->addWidget(new TUICheckBox     ("Display full name",&useName));
+				t->addWidget(new TUICheckBox     ("Display email address",&useEmail));
+				t->addWidget(new TUICheckBox     ("I accept the terms of service",&acceptTOS));
+				t->addWidget(new TUIWidget());
+				t->addWidget(new TUIHyperLink("register","Register account"));
+				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
+				t->addWidget(new TUIWidget());
+				t->addWidget(new TUILabel("* Indicates a required field",true));			
+				t->addWidget(new TUIWidget());
+				t->addWidget(new TUILabel("The terms of service can be viewed at",true));							
+				t->addWidget(new TUILabel("http://forums.c99.org/",true));							
+				t->doMenu(ct);
+				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "") return;
+				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=Register";
+				url += "&Name=" + user;
+				url += "&NewPassword=" + pass1;
+				url += "&ConfirmPassword=" + pass2;
+				url += "&Email=" + email;
+				url += "&FirstName=" + first;
+				url += "&LastName=" + last;
+				url += "&ShowName=" + ToString((int)useName);
+				url += "&UtilizeEmail=" + ToString((int)useEmail);
+				url += "&AgreeToTerms=" + ToString((int)acceptTOS);
+				
+				tmp = http_get_string(url);
+				if(tmp!="OK") {
+					delete t;
+					std::string title;
+					if(tmp[0]=='$') { //The first line of the document is the window title
+						title = tmp.substr(1,tmp.find("\n"));
+						tmp.erase(0,tmp.find("\n")+1);
+					} else {
+						title = "Registration Error";
+					}
+					t = new TUIWindow(title);
+					t->buildFromString(tmp);
+					t->doMenu(ct);
+					if(switchbrd==-2) return;
+				}
+			} while(tmp != "OK" && switchbrd != -2);
+			if(tmp=="OK") curl_auth_string = user + ":" + pass1;
+		} else {
+			return; 
+		}
+	}
+	
+	url = DZZTNET_HOST + DZZTNET_HOME;
+	
   do {
 		ct->color(15,1);
 		ct->clear();
