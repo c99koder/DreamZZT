@@ -223,7 +223,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 
 	zm = new ZZTMusicStream;
-	zm->setVolume(0.6);
+	zm->setVolume(0.4);
 	
 	//initialize the screen		
 	zzt_font = new Texture("zzt-ascii.png", true);
