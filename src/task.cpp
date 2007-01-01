@@ -149,6 +149,7 @@ std::string ToString(T aValue)
 	return ss.str();
 }
 
+
 void check_tasks() {
 	std::list<Task*>::iterator task_iter;
 	

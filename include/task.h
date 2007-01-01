@@ -20,6 +20,9 @@
 #define TASK_SHOOT_OBJECT 6
 #define TASK_PLAYER_POSITION 7
 
+template <typename T>
+std::string ToString(T aValue);
+
 class Task {
 public:
 	Task(int id, int board, std::string title, std::string description, int value) {
