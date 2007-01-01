@@ -261,6 +261,55 @@ void TUINumericInput::processHidEvent(const Hid::Event &evt) {
 	if(m_numc!=NULL) (*m_numc)=m_val;
 }
 
+void TUITextInput::draw(ConsoleText *ct) {
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << m_label;
+	
+	ct->color(WHITE|HIGH_INTENSITY,BLUE);
+	*ct << *m_text;
+	if(m_blink && getFocus()) *ct << "_";
+	m_blinkTimer--;
+	if(m_blinkTimer == 0) {
+		m_blink = !m_blink;
+		m_blinkTimer = 10;
+	}
+	if(!getFocus()) {
+		m_blink=false;
+		m_blinkTimer = 1;
+	}
+}
+
+void TUITextInput::processHidEvent(const Hid::Event &evt) {
+	if(evt.type == Event::EvtKeypress) {
+		if(evt.key >= 32 && evt.key < 127 && (m_text->length() + m_label.length() <= 40)) {
+			*m_text += evt.key;
+		}
+		if((evt.key == 8 || evt.key == 127) && m_text->length() > 0) {
+			m_text->erase(m_text->end() - 1);
+		}
+	}
+}
+
+void TUIPasswordInput::draw(ConsoleText *ct) {
+	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	*ct << m_label;
+	
+	ct->color(WHITE|HIGH_INTENSITY,BLUE);
+	for(int i=0; i<m_text->length(); i++) {
+		*ct << "*";
+	}
+	if(m_blink && getFocus()) *ct << "_";
+	m_blinkTimer--;
+	if(m_blinkTimer == 0) {
+		m_blink = !m_blink;
+		m_blinkTimer = 10;
+	}
+	if(!getFocus()) {
+		m_blink=false;
+		m_blinkTimer = 1;
+	}
+}
+
 void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
   //int fg=(console->getColor(x,y)/16)-8;
   //if(fg<0) fg=8;
@@ -294,15 +343,8 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 	if(evt.type == Event::EvtQuit) {
 		m_loop = false;
 		switchbrd = -2;
-	} else if(evt.type == Event::EvtKeypress && m_dirty==0) {
-		m_dirty=1;
+	} else if(evt.type == Event::EvtKeypress) {
 		switch(evt.key) {
-			case Event::KeyDown:
-				m_widgets[m_offset]->focus(false);
-				m_offset++;
-				if(m_offset >= m_widgets.size()) m_offset = m_widgets.size() - 1;
-				m_widgets[m_offset]->focus(true);
-				break;
 			case Event::KeyUp:
 				m_widgets[m_offset]->focus(false);
 				m_offset--;
@@ -310,8 +352,16 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 				m_widgets[m_offset]->focus(true);
 				break;
 			case 13:
-				m_loop = false;
-				m_label = m_widgets[m_offset]->getReturnValue();
+				if(m_widgets[m_offset]->getCloseOnEnter()) {
+					m_loop = false;
+					m_label = m_widgets[m_offset]->getReturnValue();
+					break;
+				}
+			case Event::KeyDown:
+				m_widgets[m_offset]->focus(false);
+				m_offset++;
+				if(m_offset >= m_widgets.size()) m_offset = m_widgets.size() - 1;
+					m_widgets[m_offset]->focus(true);
 				break;
 		} 
 	} else if(evt.type == Event::EvtKeyUp && evt.key == Event::KeyEsc) {
@@ -417,8 +467,8 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 	draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
 	
 	do {
-		if(m_dirty) {
-			m_dirty=0;
+		//if(m_dirty) {
+			//m_dirty=0;
 			i=0;
 			draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE, false);
 			ct->color(YELLOW | HIGH_INTENSITY, BLUE);
@@ -476,11 +526,11 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 					ct->printf("%c",u%5==0?7:' ');
 				}
 			}
-		}
+		//}
+		render();
 		while (ec.getEvent(evt)) {
 			processHidEvent(evt);
 		}
-		render();
 	} while(m_loop);
 
 	if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
