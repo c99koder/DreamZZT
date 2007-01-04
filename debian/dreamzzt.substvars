@@ -1,1 +1,1 @@
-shlibs:Depends=libalut0, libc6 (>= 2.4-1), libgcc1 (>= 1:4.1.1-12), libgl1-mesa | libgl1, libglu1-mesa | libglu1, libopenal0a, libqt3-mt (>= 3:3.3.6), libsdl1.2debian (>= 1.2.10-1), libstdc++6 (>= 4.1.1-12)
+shlibs:Depends=libalut0, libc6 (>= 2.4-1), libcomerr2 (>= 1.33-3), libcurl3 (>= 7.15.4-1), libgcc1 (>= 1:4.1.1-12), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libidn11 (>= 0.5.18), libkrb53 (>= 1.4.2), libopenal0a, libqt3-mt (>= 3:3.3.6), libsdl1.2debian (>= 1.2.10-1), libssl0.9.8 (>= 0.9.8b-1), libstdc++6 (>= 4.1.1-12), zlib1g (>= 1:1.2.1)
