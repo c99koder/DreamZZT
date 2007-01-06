@@ -120,7 +120,7 @@ private:
 //PUSHER
 #define ZZT_PUSHER_SHAPE 0x10
 #define ZZT_PUSHER_NAME "pusher"
-#define ZZT_PUSHER_FLAGS F_OBJECT
+#define ZZT_PUSHER_FLAGS F_OBJECT | F_PUSHER
 #define ZZT_PUSHER_CLASS Pusher
 
 class Pusher : public ZZTObject {
@@ -176,7 +176,7 @@ private:
 //OBJECT
 #define ZZT_OBJECT_SHAPE 0x01
 #define ZZT_OBJECT_NAME "object"
-#define ZZT_OBJECT_FLAGS F_OBJECT
+#define ZZT_OBJECT_FLAGS F_OBJECT | F_PUSHER
 #define ZZT_OBJECT_CLASS ZZTOOP
 
 class ZZTOOP : public ZZTObject {
@@ -250,7 +250,7 @@ private:
 //DUPLICATOR
 #define ZZT_DUPLICATOR_SHAPE '.'
 #define ZZT_DUPLICATOR_NAME "duplicator"
-#define ZZT_DUPLICATOR_FLAGS F_OBJECT
+#define ZZT_DUPLICATOR_FLAGS F_OBJECT|F_PUSHER
 #define ZZT_DUPLICATOR_CLASS Duplicator
 
 class Duplicator : public ZZTObject {
@@ -270,7 +270,7 @@ private:
 //PLAYER
 #define ZZT_PLAYER_SHAPE 2
 #define ZZT_PLAYER_NAME "player"
-#define ZZT_PLAYER_FLAGS F_PUSHABLE | F_GLOW |F_OBJECT
+#define ZZT_PLAYER_FLAGS F_PUSHABLE | F_GLOW | F_OBJECT | F_PUSHER
 #define ZZT_PLAYER_CLASS Player
 
 class Player : public ZZTOOP {

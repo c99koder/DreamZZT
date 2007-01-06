@@ -46,7 +46,7 @@ public:
 	int distance(ZZTObject *them);
 	int dist_x(ZZTObject *them);
 	int dist_y(ZZTObject *them);
-	bool move(direction d, bool trying=false);
+	bool move(direction d, bool trying=false, bool origin=true);
 	bool is_empty(direction d, bool ignorePlayer=false);
 	ZZTObject *create_object(int type, direction d);
 	
@@ -198,6 +198,7 @@ private:
 #define F_ENEMY 32
 #define F_GLOW 64
 #define F_OBJECT 128
+#define F_PUSHER 256
 
 #include "objects/objects.h"
 #include "objects/terrain.h"
