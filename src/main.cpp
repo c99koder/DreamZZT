@@ -58,7 +58,7 @@ Mutex zzt_screen_mutex;
 
 extern struct world_header world;
 
-#define MAIN_MENU "$Welcome to DreamZZT 3.0.6\r\r\
+#define MAIN_MENU "$Welcome to DreamZZT 3.0.6b2\r\r\
 Please select an option from the\r\
 menu below:\r\
 \r\
