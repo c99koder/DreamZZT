@@ -160,6 +160,9 @@ void Enemy::message(ZZTObject *them, std::string message) {
 		zm->start();
 	}
 	if(message == "crush") {
+		zm->setTune("t+c---c++++c--c");
+		zm->start();
+		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was crushed.\n",m_name.c_str());
 		remove_from_board(currentbrd,this);
 	}
 }
