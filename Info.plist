@@ -58,6 +58,6 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>
-	<string>http://www.c99.org/dc/dzzt/sparkle.xml</string>
+	<string>http://dev.c99.org/DreamZZT/sparkle.xml</string>
 </dict>
 </plist>
