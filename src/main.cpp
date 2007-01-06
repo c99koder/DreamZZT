@@ -100,7 +100,7 @@ to libSDL, an LGPL licensed library.\r\
 http://www.libsdl.org/\r\r\
 $DreamZZT is (C) 2000 - 2007 Sam Steele\r\
 $For more information, please visit\r\
-$http://www.c99.org/dc/dzzt/\r"
+$http://dev.c99.org/DreamZZT/\r"
 
 void play_zzt(const char *filename);
 void net_menu();
@@ -120,13 +120,11 @@ void check_updates() {
 	DWORD flags;
 	if(!InternetGetConnectedState(&flags,0)) return;
 #endif
-	ver = http_get_string("http://www.c99.org/dc/dzzt/LATEST");
+	ver = http_get_string("http://dev.c99.org/DreamZZT/LATEST");
 
-	Debug::printf("Latest version: %s\n", ver.c_str());
-	
-	if(ver != "3.0.6") {
+	if(ver != "3.0.6b2") {
 		TUIWindow t("Update available");
-		t.buildFromString("A new version of DreamZZT is available.\rPlease visit http://www.c99.org/dc/dzzt/\rfor more information.\r\r!ok;Ok\r");
+		t.buildFromString("A new version of DreamZZT is available.\rPlease visit http://dev.c99.org/DreamZZT/\rfor more information.\r\r!ok;Ok\r");
 		t.doMenu(ct);
 	}
 #endif
