@@ -57,7 +57,12 @@ public:
 	char getShape() { return m_shape; }
 	void setShape(int s) { m_shape = s; }
 	int getColor() { return *m_color; }
-	void setColor(int c) { *m_color = c; }
+	void setColor(int c) { 
+		if(m_color == &m_bg && c > 7) { //Force background to low-intensity
+			c -= 8;
+		}
+		*m_color = c; 
+	}
 	void setColor(int fg, int bg) {
 		m_fg = fg;
 		m_bg = bg;
