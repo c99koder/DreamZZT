@@ -63,8 +63,10 @@ void Centipede::update() {
 			discover(NULL);
 			if(m_next!=NULL) {
 				m_heading = m_nextHeading = opposite(toward(m_next));
+				m_flags&=~F_PUSHABLE;
 			} else {
 				m_heading = m_nextHeading = direction((rand() % 4) + 1);
+				m_flags|=F_PUSHABLE;
 			}
 		}
 		if(rand() % 10 < m_deviance) {
