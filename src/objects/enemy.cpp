@@ -159,4 +159,7 @@ void Enemy::message(ZZTObject *them, std::string message) {
 		zm->setTune("t+c-c-c");
 		zm->start();
 	}
+	if(message == "crush") {
+		remove_from_board(currentbrd,this);
+	}
 }

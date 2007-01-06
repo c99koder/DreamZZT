@@ -218,7 +218,7 @@ ZZTObject *ZZTObject::create_object(int type, direction d) {
 	return false;
 }
 
-bool ZZTObject::move(enum direction dir, bool trying) {
+bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
   //move in the specified direction
   ZZTObject *them=NULL;
   struct board_info_node *board=currentbrd;
@@ -289,17 +289,23 @@ bool ZZTObject::move(enum direction dir, bool trying) {
 					task_get(them);
         }
       }
-      else if(suc==0 && them->getFlags()&F_PUSHABLE && m_type!=ZZT_BULLET/*&& m_flags&F_PUSHER*/) {
+      else if(suc==0 && them->getFlags()&F_PUSHABLE && m_type!=ZZT_BULLET && (m_flags&F_PUSHER || !origin) ) {
         //printf("Trying to push...\n");
-        if(!(m_flags&F_ENEMY) || (m_flags&F_ENEMY && them->getType()!=ZZT_PLAYER)) {
-          if(them->move(dir,trying)) {
+        //if(!(m_flags&F_ENEMY) || (m_flags&F_ENEMY && them->getType()!=ZZT_PLAYER)) {
+          if(them->move(dir,trying,false)) {
             //printf("Success!\n");
             //move(me,dir);
             suc=1;
 						//zm->setTune("t--f");
 						//zm->start();
-          }
-        }
+					} else {
+		        them->message(this,"crush");
+						if(is_empty(dir)) {
+							suc=1;
+							task_get(them);	
+						}
+					}
+        //}
       }
       if(suc==0) {
         if(!trying && !(m_flags & F_SLEEPING)) message(them,"thud");
