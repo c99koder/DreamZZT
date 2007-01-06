@@ -85,7 +85,7 @@ public:
 	}
 		
 	void setParam(int arg, unsigned char val) { if(arg==1) m_intel = val; }
-	unsigned char getParam(int arg) { if(arg==1) return m_intel; }
+	unsigned char getParam(int arg) { if(arg==1) return m_intel; else return 0; }
 	void message(ZZTObject *them, std::string msg);
 	
 	void addEditWidgets(TUIWindow *w) {

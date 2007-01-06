@@ -42,6 +42,7 @@ void Passage::setParam(int arg, unsigned char val) {
 
 unsigned char Passage::getParam(int arg) {
 	if(arg == 3) return m_dest;
+	return 0;
 }
 
 void Passage::message(ZZTObject *them, std::string message) {

@@ -55,7 +55,7 @@ public:
 	void update();
 	void message(ZZTObject *them, std::string msg);
 	void setParam(int arg, unsigned char val) { if(arg==1) m_start = val; }
-	unsigned char getParam(int arg) { if(arg==1) return (m_shape==ZZT_BOMB_SHAPE)?0:(m_shape) - '0'; }
+	unsigned char getParam(int arg) { if(arg==1) return (m_shape==ZZT_BOMB_SHAPE)?0:(m_shape) - '0'; else return 0; }
 	void addEditWidgets(TUIWindow *w) {
 		TUIRadioGroup *rg = new TUIRadioGroup("Direction            ",&m_start);
 		rg->add("Inactive");

@@ -54,6 +54,7 @@ void Bullet::setParam(int arg, unsigned char val) {
 unsigned char Bullet::getParam(int arg) {
 	if(arg == 1) return m_owner;
 	if(arg == 2) return m_heading;
+	return 0;
 }
 
 void Bullet::update() {

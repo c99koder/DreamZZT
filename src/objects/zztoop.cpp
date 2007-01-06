@@ -55,6 +55,7 @@ void ZZTOOP::setParam(int arg, unsigned char val) {
 unsigned char ZZTOOP::getParam(int arg) {
 	if(arg == 1) return m_shape;
 	if(arg == 3) return (int)m_walk;
+	return 0;
 }
 
 void ZZTOOP::create() {

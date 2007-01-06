@@ -45,6 +45,7 @@ void Duplicator::setParam(int arg, unsigned char val) {
 
 unsigned char Duplicator::getParam(int arg) {
 	if(arg==2) return m_rate;
+	return 0;
 }
 
 void Duplicator::update() {

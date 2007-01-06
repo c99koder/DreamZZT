@@ -44,6 +44,7 @@ void Laser::setParam(int arg, unsigned char val) {
 
 unsigned char Laser::getParam(int arg) {
 	if(arg == 1) return m_time;
+	return 0;
 }
 
 void Laser::update() {
@@ -61,6 +62,7 @@ void Blink::setParam(int arg, unsigned char val) {
 unsigned char Blink::getParam(int arg) {
 	if(arg == 1) return m_start;
 	if(arg == 2) return m_fire;
+	return 0;
 }
 
 
@@ -133,36 +135,38 @@ void Terrain::create() {
 }
 
 void Water::update() {
-  /*if(rand()%8==1) {
-    m_counter=1;
-    m_cstep=1;
-  }
-  switch(m_counter) {
-  case 0:
-    m_cstep=0;
-    m_fg=1;
-    m_shape=0xb0;
-    break;
-  case 1:
-    m_fg=9;
-    m_shape=0xb0;
-    break;
-  case 2:
-    m_fg=9;
-    m_shape=0xb1;
-    break;
-  case 3:
-    m_fg=9;
-    m_shape=0xb2;
-    break;
-  case 4:
-    m_fg=9;
-    m_shape=0xdb;
-    m_cstep=-1;
-    break;
-  }
-  m_counter+=m_cstep;
-  draw_block((int)m_position.x,(int)m_position.y);*/
+	if(currentbrd->animatedWater) {
+		if(rand()%8==1) {
+			m_counter=1;
+			m_cstep=1;
+		}
+		switch(m_counter) {
+		case 0:
+			m_cstep=0;
+			m_fg=1;
+			m_shape=0xb0;
+			break;
+		case 1:
+			m_fg=9;
+			m_shape=0xb0;
+			break;
+		case 2:
+			m_fg=9;
+			m_shape=0xb1;
+			break;
+		case 3:
+			m_fg=9;
+			m_shape=0xb2;
+			break;
+		case 4:
+			m_fg=9;
+			m_shape=0xdb;
+			m_cstep=-1;
+			break;
+		}
+		m_counter+=m_cstep;
+		draw_block((int)m_position.x,(int)m_position.y);
+	}
 }
 
 void Terrain::message(ZZTObject *them, std::string message) {
