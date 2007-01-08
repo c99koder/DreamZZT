@@ -473,6 +473,11 @@ void edit_zzt() {
 							t.addWidget(new TUINumericInput("             Re-Enter Y: ",&currentbrd->reenter_y,0,254));
 							t.addWidget(new TUINumericInput("             Time Limit: ",&currentbrd->time,0,32767,10));						
 							t.addWidget(new TUINumericInput("          Maximum Shots: ",&currentbrd->maxshots,0,254));
+							rg=new TUIRadioGroup           ("         Animated Water: ",&currentbrd->animatedWater);
+							rg->add("Disabled");
+							rg->add("Enabled");
+							t.addWidget(rg);
+
 							t.addWidget(new TUIWidget());
 							t.addWidget(new TUILabel       ("              Adjacent Boards",true));
 							t.addWidget(new TUIBoardList   (" North: ", &currentbrd->board_up));
@@ -616,6 +621,7 @@ void edit_zzt() {
 					switch(evt.key) {
 						case 'w':
 							o=pattern[4]=create_object(ZZT_WATER,edit_x,edit_y);
+							o->setColor(edit_fg, edit_bg);
 							put(o);
 							break;
 						case 'f':
