@@ -28,7 +28,7 @@ struct board_data {
 };
 
 struct board_info_node {
-  char title[34];
+  char title[50];
   int num;
   unsigned char maxshots;
   unsigned char dark;
