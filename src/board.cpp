@@ -503,11 +503,14 @@ void switch_board(int num) {
 	
   world.start=num;
 	player=(Player *)get_obj_by_type(get_board(num),ZZT_PLAYER);
-	player->setStep(player->getPosition());
+	//player->setStep(player->getPosition());
+	
 
 	if(player!=NULL && currentbrd!=NULL && !world.editing) boardTransition(h,get_board(num));
 	
   currentbrd=get_board(num);
+	currentbrd->reenter_x = player->getPosition().x;
+	currentbrd->reenter_y = player->getPosition().y;
 	world.time=currentbrd->time;
 	world_sec=10;
 	draw_time();
@@ -901,7 +904,9 @@ void save_game(const char *filename) {
 		fd.write(&curbrd->reenter,1);
 		x=strlen(curbrd->message);
 		fd.write(&x,1);
-		fd.write(curbrd->message,60);
+		fd.write(curbrd->message,58);
+		fd.write(&current->reenter_x,1);
+		fd.write(&current->reenter_y,1);
 		fd.writele16(&curbrd->time,1);
 		fd.write(&curbrd->animatedWater,1);
 		for(x=0;x<15;x++) fd.write("\0",1);

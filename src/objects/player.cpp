@@ -309,7 +309,8 @@ void Player::message(ZZTObject *them, std::string message) {
 				currentbrd->board[(int)m_position.x][(int)m_position.y].obj=currentbrd->board[(int)m_position.x][(int)m_position.y].under;
 				currentbrd->board[(int)m_position.x][(int)m_position.y].under=NULL;
 				draw_block(m_position.x,m_position.y);
-				m_position=m_step;
+				m_position.x=currentbrd->reenter_x;
+				m_position.y=currentbrd->reenter_y;				
 				currentbrd->board[(int)m_position.x][(int)m_position.y].under=currentbrd->board[(int)m_position.x][(int)m_position.y].obj;
 				currentbrd->board[(int)m_position.x][(int)m_position.y].obj=this;
 				draw_block(m_position.x,m_position.y);

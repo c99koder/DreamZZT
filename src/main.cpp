@@ -330,6 +330,7 @@ void play_zzt(const char *filename) {
 	start=world.start;
 	switch_board(0);
 	remove_from_board(currentbrd,player);
+	playerEventCollector->stop();
 	player=NULL;
 	ct->locate(BOARD_X+2,7);
   ct->color(14,1);
@@ -403,6 +404,9 @@ void play_zzt(const char *filename) {
 	dzzt_logo();
   draw_hud_ingame();
   switch_board(start);
+	playerEventCollector->start();
+	if(currentbrd->reenter_x == 254) currentbrd->reenter_x=player->getPosition().x;
+	if(currentbrd->reenter_y == 254) currentbrd->reenter_y=player->getPosition().y;	
   srand(time(0));
   draw_board();
   player->setFlag(F_SLEEPING);
