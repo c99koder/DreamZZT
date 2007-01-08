@@ -451,6 +451,34 @@ void edit_zzt() {
 								draw_main();
 							}
 							break;
+						case 'b':
+						{
+							struct board_info_node *current=board_list;
+							std::string boardmenu = "!create;(Create new board)\r";
+							char tmp[100];
+							int x=0;
+							
+							while(current!=NULL) {
+								sprintf(tmp,"!%i;%s\r",x,current->title);
+								boardmenu += tmp;
+								x++;
+								current=current->next;
+							}
+
+							TUIWindow t("Select a board");
+							t.buildFromString(boardmenu);
+							t.doMenu(ct);
+							
+							if(t.getLabel() != "") {
+								if(t.getLabel() == "create") {
+									new_board("untitled");
+									switch_board(currentbrd->num);
+								} else {
+									switch_board(atoi(t.getLabel().c_str()));
+								}
+							}
+						}
+						break;
 						case 'i':
 						{
 							TUIWindow t("Board Info");

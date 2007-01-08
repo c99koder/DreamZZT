@@ -103,9 +103,12 @@ void put(ZZTObject *o) {
 void new_board(char *title) {
 	struct board_info_node *current=board_list;
 	struct board_info_node *prev=NULL;
+	int num=0;
 	
 	while(current!=NULL) {
 		prev=current;
+		current=current->next;
+		num++;
 	}
 	
 	current=new board_info_node;
@@ -113,8 +116,8 @@ void new_board(char *title) {
 	if(prev!=NULL) prev->next=current;
 	else board_list=current;
 	
-	strncpy(current->title,title,34);
-	current->num=world.board_count++;
+	strncpy(current->title,title,50);
+	current->num=num;
 	current->maxshots=0;
 	current->dark=0;
 	current->board_up=0;
@@ -137,6 +140,7 @@ void new_board(char *title) {
 	}
 	
 	currentbrd=current;
+	world.board_count=num;
 	
 	put(create_object(ZZT_PLAYER,BOARD_X/2,BOARD_Y/2));
 }
@@ -501,7 +505,7 @@ void switch_board(int num) {
 	player=(Player *)get_obj_by_type(get_board(num),ZZT_PLAYER);
 	player->setStep(player->getPosition());
 
-	if(player!=NULL && currentbrd!=NULL) boardTransition(h,get_board(num));
+	if(player!=NULL && currentbrd!=NULL && !world.editing) boardTransition(h,get_board(num));
 	
   currentbrd=get_board(num);
 	world.time=currentbrd->time;
