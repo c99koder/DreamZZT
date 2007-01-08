@@ -262,6 +262,11 @@ void TUINumericInput::processHidEvent(const Hid::Event &evt) {
 }
 
 void TUITextInput::draw(ConsoleText *ct) {
+	if(m_center && (m_text->length() + m_label.length() < 40)) {
+		for(int i=0; i< 20 - ((m_text->length() + m_label.length()) / 2); i++) {
+			*ct << " ";
+		}
+	}
 	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
 	*ct << m_label;
 	

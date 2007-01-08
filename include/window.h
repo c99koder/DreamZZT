@@ -62,11 +62,12 @@ private:
 
 class TUITextInput : public TUIWidget {
 public:
-	TUITextInput(std::string label, std::string *text) {
+	TUITextInput(std::string label, std::string *text, bool centered=false) {
 		m_label=label;
 		m_text=text;
 		m_blink=false;
 		m_blinkTimer=1;
+		m_center = centered;
 	}
 	
 	void draw(ConsoleText *ct);	
@@ -77,7 +78,7 @@ public:
 protected:
 	std::string m_label;
 	std::string *m_text;
-	bool m_blink;
+	bool m_blink,m_center;
 	int m_blinkTimer;
 };
 

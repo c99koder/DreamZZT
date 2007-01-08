@@ -449,6 +449,9 @@ void edit_zzt() {
 					case 'i':
 					{
 						TUIWindow t("Board Info");
+						std::string title = currentbrd->title;
+						
+						t.addWidget(new TUITextInput(   "", &title, true));
 						TUIRadioGroup *rg;
 						
 						rg=new TUIRadioGroup            ("          Board is dark: ",&currentbrd->dark);
@@ -473,6 +476,7 @@ void edit_zzt() {
 						t.addWidget(new TUIBoardList   ("  West: ", &currentbrd->board_left));
 						ec.stop();
 						t.doMenu(ct);
+						strcpy(currentbrd->title, title.c_str());
 						ec.start();
 					}
 						break;
