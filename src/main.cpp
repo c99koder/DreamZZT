@@ -320,7 +320,7 @@ void play_zzt(const char *filename) {
 	gameFrozen = false;
 	
 	switchbrd=-1;
-  if(load_zzt(filename,1)==-1) {
+  if(load_zzt(filename,0)==-1) {
 		TUIWindow t("Error");
 		t.buildFromString("Unable to load world\r\r!ok;Ok");
 		t.doMenu(ct);
@@ -356,8 +356,7 @@ void play_zzt(const char *filename) {
 	Hid::callbackUnreg(hidCookie);
 	if(switchbrd==-2) return;
 	switchbrd=-1;
-	free_world();
-	load_zzt(filename,0);
+
 	if(world.online==1) {
 		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + std::string((const char *)world.title.string));
 		tasks = wordify(tmp,'\n');
@@ -398,19 +397,19 @@ void play_zzt(const char *filename) {
 			}
 		}
 	}	
-	start=world.start;
+
 	ct->color(15,1);
 	ct->clear();
 	dzzt_logo();
   draw_hud_ingame();
   switch_board(start);
-	playerEventCollector->start();
-	if(currentbrd->reenter_x == 254) currentbrd->reenter_x=player->getPosition().x;
-	if(currentbrd->reenter_y == 254) currentbrd->reenter_y=player->getPosition().y;	
+	if(!playerEventCollector->listening()) playerEventCollector->start();
+	if(currentbrd->reenter_x == 254 && player!=NULL) currentbrd->reenter_x=player->getPosition().x;
+	if(currentbrd->reenter_y == 254 && player!=NULL) currentbrd->reenter_y=player->getPosition().y;	
   srand(time(0));
   draw_board();
-  player->setFlag(F_SLEEPING);
-  player->update();
+  if(player!=NULL) player->setFlag(F_SLEEPING);
+  if(player!=NULL) player->update();
   while(1) {
     if(!gameFrozen) {
 			check_tasks();
