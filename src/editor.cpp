@@ -390,12 +390,10 @@ void edit_zzt() {
 			} else if(evt.type == Event::EvtKeyUp) {
 				switch(evt.key) {
 					case Event::KeyEsc:
-						if(edit_menu_mode==NONE) {
-							edit_loop=false;
-						} else {
-							edit_menu_mode=NONE;
-							draw_main();
-						}
+						edit_menu_mode=NONE;
+						draw_main();
+						draw_color(edit_fg,edit_bg);
+						draw_pattern(pattern,edit_pat);							
 						break;
 				}
 			} else if(evt.type == Event::EvtKeyDown) {
@@ -434,65 +432,72 @@ void edit_zzt() {
 							edit_loop = false;
 							break;
 						case 'l':
-						s = os_select_file("Select a game","zzt");
-						if(s!="") {
-							free_world();
-							edit_menu_mode=NONE;
-							ct->color(15,1);
-							ct->clear();
-							dzzt_logo();
-							load_zzt(s.c_str(),0);
-							draw_main();
-							switch_board(world.start);
+							s = os_select_file("Select a game","zzt");
+							if(s!="") {
+								free_world();
+								edit_menu_mode=NONE;
+								ct->color(15,1);
+								ct->clear();
+								dzzt_logo();
+								load_zzt(s.c_str(),0);
+								draw_main();
+								switch_board(world.start);
+							}
+							break;
+						case 's':
+							s = os_save_file("Select a game",std::string((const char *)world.title.string) + std::string(".zzt"),"zzt");
+							if(s!="") {
+								save_game(s.c_str());
+								draw_main();
+							}
+							break;
+						case 'i':
+						{
+							TUIWindow t("Board Info");
+							std::string title = currentbrd->title;
+							
+							t.addWidget(new TUITextInput(   "", &title, true));
+							TUIRadioGroup *rg;
+							
+							rg=new TUIRadioGroup            ("          Board is dark: ",&currentbrd->dark);
+							rg->add("No");
+							rg->add("Yes");
+							t.addWidget(rg);
+
+							rg=new TUIRadioGroup            ("   Re-Enter When Zapped: ",&currentbrd->reenter);
+							rg->add("No");
+							rg->add("Yes");
+							t.addWidget(rg);
+
+							t.addWidget(new TUINumericInput("             Re-Enter X: ",&currentbrd->reenter_x,0,254));
+							t.addWidget(new TUINumericInput("             Re-Enter Y: ",&currentbrd->reenter_y,0,254));
+							t.addWidget(new TUINumericInput("             Time Limit: ",&currentbrd->time,0,32767,10));						
+							t.addWidget(new TUINumericInput("          Maximum Shots: ",&currentbrd->maxshots,0,254));
+							t.addWidget(new TUIWidget());
+							t.addWidget(new TUILabel       ("              Adjacent Boards",true));
+							t.addWidget(new TUIBoardList   (" North: ", &currentbrd->board_up));
+							t.addWidget(new TUIBoardList   (" South: ", &currentbrd->board_down));
+							t.addWidget(new TUIBoardList   ("  East: ", &currentbrd->board_right));
+							t.addWidget(new TUIBoardList   ("  West: ", &currentbrd->board_left));
+							ec.stop();
+							t.doMenu(ct);
+							strcpy(currentbrd->title, title.c_str());
+							ec.start();
 						}
 						break;
-					case 'i':
-					{
-						TUIWindow t("Board Info");
-						std::string title = currentbrd->title;
-						
-						t.addWidget(new TUITextInput(   "", &title, true));
-						TUIRadioGroup *rg;
-						
-						rg=new TUIRadioGroup            ("          Board is dark: ",&currentbrd->dark);
-						rg->add("No");
-						rg->add("Yes");
-						t.addWidget(rg);
-
-						rg=new TUIRadioGroup            ("   Re-Enter When Zapped: ",&currentbrd->reenter);
-						rg->add("No");
-						rg->add("Yes");
-						t.addWidget(rg);
-
-						t.addWidget(new TUINumericInput("             Re-Enter X: ",&currentbrd->reenter_x,0,254));
-						t.addWidget(new TUINumericInput("             Re-Enter Y: ",&currentbrd->reenter_y,0,254));
-						t.addWidget(new TUINumericInput("             Time Limit: ",&currentbrd->time,0,32767,10));						
-						t.addWidget(new TUINumericInput("          Maximum Shots: ",&currentbrd->maxshots,0,254));
-						t.addWidget(new TUIWidget());
-						t.addWidget(new TUILabel       ("              Adjacent Boards",true));
-						t.addWidget(new TUIBoardList   (" North: ", &currentbrd->board_up));
-						t.addWidget(new TUIBoardList   (" South: ", &currentbrd->board_down));
-						t.addWidget(new TUIBoardList   ("  East: ", &currentbrd->board_right));
-						t.addWidget(new TUIBoardList   ("  West: ", &currentbrd->board_left));
-						ec.stop();
-						t.doMenu(ct);
-						strcpy(currentbrd->title, title.c_str());
-						ec.start();
-					}
-						break;
-					case 'c':
-						if(evt.mod & Event::KeyShift) {
-							edit_bg++;
-							if(edit_bg>7) edit_bg=0;
-						} else {
-							edit_fg++;
-							if(edit_fg>15) edit_fg=8;
-						}
-						break;
-					case 'p':
-						edit_pat++;
-						if(edit_pat>4) edit_pat=0;
-						break;
+						case 'c':
+							if(evt.mod & Event::KeyShift) {
+								edit_bg++;
+								if(edit_bg>7) edit_bg=0;
+							} else {
+								edit_fg++;
+								if(edit_fg>15) edit_fg=8;
+							}
+							break;
+						case 'p':
+							edit_pat++;
+							if(edit_pat>4) edit_pat=0;
+							break;
 					}
 				}
 

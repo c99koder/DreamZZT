@@ -434,6 +434,7 @@ void play_zzt(const char *filename) {
 			//menu
 			break;
 		} else if(switchbrd==-4) {
+			world.saved=1;	
 			if(world.online) {
 #ifdef NET
 				std::string filename;

@@ -821,7 +821,6 @@ void save_game(const char *filename) {
   File fd(filename,"wb");
 	
   spinner("Saving");
-	world.saved=1;	
 	
 	fd.writele16(&world.magic,1);
 	fd.writele16(&world.board_count,1);
