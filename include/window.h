@@ -30,6 +30,9 @@ public:
 		m_focus = false;
 	}
 	
+	virtual ~TUIWidget() {
+	}
+	
 	virtual void draw(ConsoleText *ct) {};
 	void focus(bool f);	
 	void update();	
@@ -50,6 +53,8 @@ public:
 		m_text=text;
 		m_bold=bold;
 	}
+	
+	~TUILabel() {}
 	
 	void draw(ConsoleText *ct) {
 		ct->color((m_bold?WHITE:YELLOW)|HIGH_INTENSITY,BLUE);
@@ -209,6 +214,15 @@ public:
 		m_label="\0";
 		m_offset=0;
 		m_dirty=0;
+	}
+	
+	~TUIWindow() {
+		TUIWidget *t;
+		while(!m_widgets.empty()) {
+			t = m_widgets[m_widgets.size()-1];
+			m_widgets.pop_back();
+			delete t;
+		}
 	}
 
 	void draw_shadow(ConsoleText *console, int x, int y);
