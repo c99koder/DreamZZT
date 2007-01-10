@@ -64,6 +64,8 @@ public:
 		m_bg = 0;
 	}
 	
+	virtual ~Enemy() { }
+	
 	void create() {
 		switch(m_type) {
 			case ZZT_LION:
@@ -175,7 +177,6 @@ public:
 	}
 
 	~Centipede() {
-		printf("~Centipede()\n");
 		if(m_prev != NULL) m_prev->unlinkNext();
 		if(m_next != NULL) m_next->unlinkPrev();
 	}

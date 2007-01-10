@@ -30,7 +30,7 @@ enum direction { IDLE, LEFT, RIGHT, UP, DOWN };
 class ZZTObject {
 public:
 	ZZTObject(int type, int x, int y, int shape, int flags, std::string name);
-	~ZZTObject() { m_isValid = false; }
+	virtual ~ZZTObject() { m_isValid = false; }
 	
 	
 	direction opposite(enum direction dir);
