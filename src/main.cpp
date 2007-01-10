@@ -226,7 +226,11 @@ extern "C" int tiki_main(int argc, char **argv) {
 	//initialize the screen		
 	zzt_font = new Texture("zzt-ascii.png", true);
 	ct = new ConsoleText(80,25, zzt_font);
+#if TIKI_PLAT == TIKI_DC
+	ct->setSize(640,424);
+#else
 	ct->setSize(640,480);
+#endif
 	ct->translate(Vector(320,240,0));
 	
 	debug_init();
@@ -238,11 +242,11 @@ extern "C" int tiki_main(int argc, char **argv) {
 	check_updates();
 	
 	world.online=0;
-	
+
 	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
 	}
-	
+
 	while(switchbrd != -2) {
 		ct->color(15,1);
 		ct->clear();
@@ -328,35 +332,38 @@ void play_zzt(const char *filename) {
 	}
 				
 	start=world.start;
-	switch_board(0);
-	remove_from_board(currentbrd,player);
-	playerEventCollector->stop();
-	player=NULL;
-	ct->locate(BOARD_X+2,7);
-  ct->color(14,1);
-	ct->printf("   World: ");
-	ct->color(15,1);
-	ct->printf("%s",world.title.string);
-	ct->locate(BOARD_X+2,9);
-#ifdef DREAMCAST
-	ct->printf("   Press Start");
-#else
-	ct->printf("   Press Enter");
-#endif
-	ct->locate(BOARD_X+2,10);
-	ct->printf("    to begin!");
-	draw_board();
-	do {
-		if(!gameFrozen) update_brd();
+	if(world.saved==0) {
+		switch_board(0);
+		//if(player!=NULL) remove_from_board(currentbrd,player);
+		playerEventCollector->stop();
+		player=NULL;
+		ct->locate(BOARD_X+2,7);
+		ct->color(14,1);
+		ct->printf("   World: ");
+		ct->color(15,1);
+		ct->printf("%s",world.title.string);
+		ct->locate(BOARD_X+2,9);
+	#ifdef DREAMCAST
+		ct->printf("   Press Start");
+	#else
+		ct->printf("   Press Enter");
+	#endif
+		ct->locate(BOARD_X+2,10);
+		ct->printf("    to begin!");
 		draw_board();
-		draw_msg();
-		render();
-		Time::sleep(80000);
-	} while(world.saved==0 && switchbrd==-1);
-	Hid::callbackUnreg(hidCookie);
-	if(switchbrd==-2) return;
+		do {
+			if(!gameFrozen) update_brd();
+			draw_board();
+			draw_msg();
+			render();
+			Time::sleep(80000);
+		} while(world.saved==0 && switchbrd==-1);
+		Hid::callbackUnreg(hidCookie);
+		if(switchbrd==-2) return;
+	}
 	switchbrd=-1;
 
+#ifdef NET
 	if(world.online==1) {
 		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + std::string((const char *)world.title.string));
 		tasks = wordify(tmp,'\n');
@@ -397,6 +404,7 @@ void play_zzt(const char *filename) {
 			}
 		}
 	}	
+#endif
 
 	ct->color(15,1);
 	ct->clear();
@@ -476,6 +484,7 @@ void play_zzt(const char *filename) {
 	player=NULL;
 	delete playerEventCollector;
 	playerEventCollector=NULL;
+#ifdef NET
 	if(world.online && switchbrd != -2) {
 		std::string url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=SubmitScore";
 		url += "&GameID=" + std::string((const char *)world.title.string);
@@ -495,6 +504,7 @@ void play_zzt(const char *filename) {
 			t->doMenu(ct);
 		}
 	}
+#endif
 	free_world();
 }
 

@@ -27,7 +27,31 @@ struct board_data {
   ZZTObject *under;
 };
 
+struct rle_block {
+	unsigned char len, col, cod;
+};
+
+struct zzt_param {
+  unsigned char index;
+  unsigned char x;
+  unsigned char y;
+  short int xstep;
+  short int ystep;
+  unsigned short int cycle;
+  unsigned char data[3];
+  short int leader; /* TODO: Centipedes should fill this in */
+  short int follower; /* TODO: Centipedes should fill this in */
+  unsigned char ut;
+  unsigned char uc;
+	unsigned short int progpos;
+  short int proglen;
+	std::string prog;
+
+	unsigned short int bindindex;
+};
+
 struct board_info_node {
+	unsigned short int size;
   char title[50];
   int num;
   unsigned char maxshots;
@@ -44,6 +68,9 @@ struct board_info_node {
 	char message[60];
 	int msgcount;
 	struct board_data board[BOARD_X][BOARD_Y];
+	bool compressed;
+	std::list<rle_block> rle_data;
+	std::list<zzt_param> params;
   struct board_info_node *next;
 };
 
@@ -101,3 +128,6 @@ int board_down();
 int board_left();
 int board_right();
 void render();
+void connect_lines(board_info_node *board);
+void decompress(board_info_node *board);
+void compress(board_info_node *board);

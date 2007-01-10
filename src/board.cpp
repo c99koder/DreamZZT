@@ -61,25 +61,28 @@ char spin_anim[4]={'|','/','-','\\'};
 void free_world() {
 	struct board_info_node *current=board_list;
 	struct board_info_node *prev=NULL;
+	std::vector<zzt_param>::iterator param_iter;
 	int x,y;
 	
 	while(current!=NULL) {
-		for(y=0;y<BOARD_Y;y++) {
-			for(x=0;x<BOARD_X;x++) {
-				if(current->board[x][y].obj!=NULL && current->board[x][y].obj->isValid()) {
-					delete current->board[x][y].obj;
-				} else {
-					printf("Invalid object on %s at %i, %i (%s)\n",current->title,x,y,current->board[x][y].obj->getName().c_str());
-				}
-				if(current->board[x][y].under!=NULL) {
-					if(current->board[x][y].under->isValid()==true) {
-						delete current->board[x][y].under;
+		if(!current->compressed) {
+			for(y=0;y<BOARD_Y;y++) {
+				for(x=0;x<BOARD_X;x++) {
+					if(current->board[x][y].obj!=NULL && current->board[x][y].obj->isValid()) {
+						delete current->board[x][y].obj;
 					} else {
-						Debug::printf("Invalid object on %s under %i, %i\n",current->title,x,y);
+						printf("Invalid object on %s at %i, %i (%s)\n",current->title,x,y,current->board[x][y].obj->getName().c_str());
+					}
+					if(current->board[x][y].under!=NULL) {
+						if(current->board[x][y].under->isValid()==true) {
+							delete current->board[x][y].under;
+						} else {
+							Debug::printf("Invalid object on %s under %i, %i\n",current->title,x,y);
+						}
 					}
 				}
 			}
-	  }
+		}
 		prev=current;
 		current=current->next;
 		delete prev;		
@@ -131,6 +134,7 @@ void new_board(char *title) {
 	current->message[0]='\0';
 	current->msgcount=0;
 	current->next=NULL;
+	current->compressed=false;
 	
 	for(int y=0; y<BOARD_Y; y++) {
 		for(int x=0; x<BOARD_X; x++) {
@@ -500,15 +504,16 @@ void boardTransition(direction d, board_info_node *newbrd) {
 
 void switch_board(int num) {
 	direction h = (player==NULL)?IDLE:player->getHeading();
-	
+	decompress(get_board(num));
   world.start=num;
 	player=(Player *)get_obj_by_type(get_board(num),ZZT_PLAYER);
-	//player->setStep(player->getPosition());
-	
 
 	if(player!=NULL && currentbrd!=NULL && !world.editing) boardTransition(h,get_board(num));
 	
+	if(currentbrd != NULL) compress(currentbrd);
+	
   currentbrd=get_board(num);
+	connect_lines(currentbrd);
 	if(player!=NULL) {
 		currentbrd->reenter_x = player->getPosition().x;
 		currentbrd->reenter_y = player->getPosition().y;
@@ -542,81 +547,222 @@ int board_right() {
   return currentbrd->board_right;
 }
 
-void load_objects(File &fd, struct board_info_node *board) {
-  short int len,proglen;
-  unsigned char x,y,z, p1, p2, p3, ut, uc;
-  short int cnt, xstep,ystep,cycle,dumb,progpos,leader,follower;
-  char *tmp;
-	char pad[20];
-	ZZTObject *curobj=NULL;
+void compress(board_info_node *board) {
+	rle_block rle;
+	zzt_param param;
+	int code,color;
+	ZZTObject *obj,*under;
 	
-  fd.readle16(&cnt,1); //number of objects
+	if(board->compressed) return;
 #ifdef DEBUG
-  printf("Loading %i objects...\n",cnt);
+	Debug::printf("Compressing board...\n");
 #endif
-  for(z=0;z<=cnt;z++) {
-    fd.read(&x,1); x--;
-		fd.read(&y,1); y--;
-#ifdef DEBUG
-    //if((x>=0 && y>=0) && (x<BOARD_X && y<BOARD_Y)) printf("Storing params at: %i,%i (%s)\n",x,y,board->board[x][y].obj->getName().c_str());
-#endif
-    fd.readle16(&xstep,1); //xstep 
-    fd.readle16(&ystep,1); //ystep
-    fd.readle16(&cycle,1); //cycle
-    fd.read(&p1,1); //p1
-    fd.read(&p2,1); //p2
-    fd.read(&p3,1); //p3
-    fd.readle16(&leader,1); //leaderindex
-    fd.readle16(&follower,1); //followerindex
-    fd.read(&ut,1); //ut
-    fd.read(&uc,1); //uc
-		fd.read(&pad,4); //another 4-byte int. this time a pointer! ignore it.
-    fd.readle16(&progpos,1); //ZZT-OOP offset
-    fd.readle16(&proglen,1); //length of ZZT-OOP code
-		fd.read(&pad,8);
-		tmp=NULL;
-		if(x > BOARD_X || y > BOARD_Y) {
-			printf("Ignoring bad object at %i,%i\n",x,y);
-			continue;
+	board->rle_data.clear();
+	board->params.clear();
+	
+	rle.len=0;
+	rle.cod=board->board[0][0].obj->getType();
+	if(rle.cod>=ZZT_BLUE_TEXT && rle.cod <=ZZT_WHITE_TEXT) {
+		rle.col=board->board[0][0].obj->getShape();
+	} else {
+		rle.col=board->board[0][0].obj->getFg()+(16*board->board[0][0].obj->getBg());
+	}
+	
+	board->size=139;
+	
+	for(int y=0;y<BOARD_Y;y++) {
+		for(int x=0;x<BOARD_X;x++) {
+			obj=board->board[x][y].obj;
+			under=board->board[x][y].under;
+			
+			if(obj->getFlags() & F_OBJECT) {
+				param.x=obj->getPosition().x;
+				param.y=obj->getPosition().y;
+				param.xstep=obj->getStep().x;
+				param.ystep=obj->getStep().y;
+				param.cycle=obj->getCycle();
+				for(int i=0; i<3; i++) {
+					param.data[i] = obj->getParam(i+1);
+				}
+				param.leader = 0;//obj->getLeader();
+					param.follower = 0;//obj->getFollower();
+						if(under!=NULL) {
+							param.ut=under->getType();
+							param.uc=under->getFg()+(16*under->getBg());
+						} else {
+							param.ut=ZZT_EMPTY;
+							param.uc=0;
+						}
+						param.progpos=obj->getProgPos();
+						param.proglen=obj->getProgLen();
+						param.prog=obj->getProg();
+						
+						board->params.push_back(param);
+						board->size += param.proglen + 33;
+			}
+			code=obj->getType();
+			if(code>=ZZT_BLUE_TEXT && code<=ZZT_WHITE_TEXT) {
+				color=obj->getShape();
+			} else {
+				color=obj->getFg()+(16*obj->getBg());
+			}
+			if(rle.len>=255 || rle.cod!=code || rle.col!=color) {
+				board->rle_data.push_back(rle);
+				board->size+=3;
+				rle.len=0;
+				rle.cod=obj->getType();
+				if(rle.cod>=ZZT_BLUE_TEXT && rle.cod <=ZZT_WHITE_TEXT) {
+					rle.col=obj->getShape();
+				} else {
+					rle.col=obj->getFg()+(16*obj->getBg());
+				}
+			}
+			delete obj;
+			delete under;
+			rle.len++;
 		}
-    curobj=board->board[x][y].obj;
-		if(curobj==NULL) printf("Null object at %i,%i\n",x,y);
-    if(proglen>0/* && (curobj->getType()==ZZT_OBJECT || curobj->getType()==ZZT_SCROLL)*/) {
-	    tmp=(char *)malloc(proglen+1);
-			fd.read(tmp,proglen);
-      tmp[proglen]='\0';
-    }
-    if(curobj!=NULL) {
-			curobj->setStep(Vector(xstep,ystep,0));
-			curobj->setCycle(cycle);
-      curobj->setParam(1,p1);
-      curobj->setParam(2,p2);
-      curobj->setParam(3,p3);
-			curobj->setProg((tmp==NULL)?"":tmp,proglen,progpos);
-      curobj->create();
-      board->board[x][y].under=create_object(ut,x,y);
-      board->board[x][y].under->setFg(uc%16);
-      board->board[x][y].under->setBg(uc/16);
-      board->board[x][y].under->create();
-    } else {
-      printf("Invalid object at: (%i,%i)\n",x,y);
-    }
-  }
+	}
+	if(rle.len>0) {
+		board->rle_data.push_back(rle);
+		board->size+=3;
+	}		
+	board->compressed=true;
+#ifdef DEBUG
+	Debug::printf("Done!\n");
+#endif
+}
+
+void decompress(board_info_node *board) {
+	int x=0,y=0,z=0;
+  ZZTObject *curobj=NULL;
+  ZZTObject *prev=NULL; 
+	std::list<rle_block>::iterator rle_iter;
+	std::list<zzt_param>::iterator param_iter;
+	
+	if(!board->compressed) return;
+
+#ifdef DEBUG
+	Debug::printf("Decompressing board...\n");
+#endif
+	
+	for(rle_iter=board->rle_data.begin(); rle_iter != board->rle_data.end(); rle_iter++) {
+		for(z=0; z<(*rle_iter).len; z++) {
+			if(x>BOARD_X-1) { x=0; y++; }
+			board->board[x][y].obj=NULL;
+			board->board[x][y].under=NULL;
+			curobj=board->board[x][y].obj=create_object((*rle_iter).cod,x,y);
+			if(curobj!=NULL) {
+				curobj->setFg((*rle_iter).col%16);
+				curobj->setBg((*rle_iter).col/16);
+				curobj->create();
+			} else {
+				printf("Unknown type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
+				board->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
+			}
+			x++;
+		}
+	}
+	
+	for(param_iter=board->params.begin(); param_iter != board->params.end(); param_iter++) {
+		curobj = board->board[(*param_iter).x][(*param_iter).y].obj;
+		if(curobj!=NULL) {
+			curobj->setStep(Vector((*param_iter).xstep,(*param_iter).ystep,0));
+			curobj->setCycle((*param_iter).cycle);
+			curobj->setParam(1,(*param_iter).data[0]);
+			curobj->setParam(2,(*param_iter).data[1]);
+			curobj->setParam(3,(*param_iter).data[2]);
+			curobj->setProg((*param_iter).prog,(*param_iter).proglen,(*param_iter).progpos);
+			curobj->create();
+			board->board[(*param_iter).x][(*param_iter).y].under=create_object((*param_iter).ut,(*param_iter).x,(*param_iter).y);
+			board->board[(*param_iter).x][(*param_iter).y].under->setFg((*param_iter).uc%16);
+			board->board[(*param_iter).x][(*param_iter).y].under->setBg((*param_iter).uc/16);
+			board->board[(*param_iter).x][(*param_iter).y].under->create();
+		} else {
+			printf("Invalid object at: (%i,%i)\n",x,y);
+		}
+	}
+	
+	board->rle_data.clear();
+	board->params.clear();
+	
+	board->compressed=false;
+#ifdef DEBUG
+	Debug::printf("Done!\n");
+#endif	
+}	
+	
+void connect_lines(board_info_node *current) {
+	for(int x=0;x<BOARD_X;x++) {
+		for(int y=0;y<BOARD_Y;y++) {
+			if(current->board[x][y].obj->getType()==ZZT_LINE) {
+				if(x>0&&current->board[x-1][y].obj->getType()==ZZT_LINE && //left is a line
+					 x<BOARD_X-1 && current->board[x+1][y].obj->getType()==ZZT_LINE) { //right is a line
+					if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
+						 y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
+						current->board[x][y].obj->setShape(206);
+					} else if(y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
+						current->board[x][y].obj->setShape(203);
+					} else if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE) { //only up is a line
+						current->board[x][y].obj->setShape(202);
+					} else { //only left and right
+						current->board[x][y].obj->setShape(205);
+					}
+				} else if(x>0&&current->board[x-1][y].obj->getType()==ZZT_LINE) { //only left is a line
+					if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
+						 y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
+						current->board[x][y].obj->setShape(185);
+					} else if(y<BOARD_Y-1&&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
+						current->board[x][y].obj->setShape(187);
+					} else if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE) { //only up is a line
+						current->board[x][y].obj->setShape(188);
+					} else { //only left
+						current->board[x][y].obj->setShape(181);
+					}
+				} else if(x<BOARD_X-1 &&current->board[x+1][y].obj->getType()==ZZT_LINE) { //only right is a line
+					if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
+						 y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
+						current->board[x][y].obj->setShape(204);
+					} else if(y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
+						current->board[x][y].obj->setShape(201);
+					} else if(y>1&&current->board[x][y-1].obj->getType()==ZZT_LINE) { //only up is a line
+						current->board[x][y].obj->setShape(200);
+					} else { //only right
+						current->board[x][y].obj->setShape(198);
+					}
+				} else { //vertical
+					if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
+						 y<BOARD_Y-1&&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
+						current->board[x][y].obj->setShape(186);
+					} else if(y<BOARD_Y-1&&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
+						current->board[x][y].obj->setShape(210);
+					} else if(y>1&&current->board[x][y-1].obj->getType()==ZZT_LINE){ //only up
+						current->board[x][y].obj->setShape(208);
+					} else { //only 1 block
+						current->board[x][y].obj->setShape(249);
+					}
+				}
+			}
+		}
+	}
 }
 
 int load_zzt(const char *filename, int titleonly) {
-  unsigned int c,x,y,z,sum=0,q;
-	unsigned char len,col,cod;
+  unsigned short int c,x,y,z,sum=0,q;
+	char pad[16];
+	unsigned char len;
+	rle_block rle;
+	zzt_param param;
   struct board_info_node *current=NULL;
-  ZZTObject *curobj=NULL;
-  ZZTObject *prev=NULL; 
+	char *prog;
 
 	File fd(filename,"rb");
 
 	spinner("Loading");
 	fd.readle16(&world.magic,1);
-	if(world.magic!=65535) return -1;
-	
+	if(world.magic!=65535) {
+		spinner_clear();
+		return -1;
+	}
 	fd.readle16(&world.board_count,1);
 	fd.readle16(&world.ammo,1);
 	fd.readle16(&world.gems,1);
@@ -656,12 +802,11 @@ int load_zzt(const char *filename, int titleonly) {
   printf("Title: %s (%i)\n",world.title.string,world.title.len);
 #endif
   fd.seek(0x200,SEEK_SET); //seek to the first board
-  current=(struct board_info_node *)malloc(sizeof(struct board_info_node));
+  current=new board_info_node;
   board_list=current;
 	if(titleonly==1) world.board_count=1;
   for(q=0;q<=world.board_count;q++) {
-    curobj=NULL;
-		fd.readle16(&c, 1); //size (in bytes) of the board
+		fd.readle16(&current->size, 1);
 		fd.read(&len,1);
     fd.read(current->title,50);
     current->title[len]='\0';
@@ -669,88 +814,22 @@ int load_zzt(const char *filename, int titleonly) {
     printf("Board title: %s\n",current->title);
 #endif
     //here comes the RLE data!
-    x=0;y=0;z=0; prev=NULL; curobj=NULL;
+    x=0;y=0;z=0;
     while(z<1500) {
-      fd.read(&len,1);
-      fd.read(&cod,1);
-      fd.read(&col,1);
-			//printf("%i %i %i %i\n",len,cod,col, z);
-      for(c=0;c<len;c++) {
-	      z++;
-	      if(x>BOARD_X-1) { x=0; y++; }
-        current->board[x][y].obj=NULL;
-        current->board[x][y].under=NULL;
-        current->board[x][y].obj=create_object(cod,x,y);
-        curobj=current->board[x][y].obj;
-        if(curobj!=NULL) {
-          curobj->setFg(col%16);
-          curobj->setBg(col/16);
-					curobj->create();
-        } else {
-					printf("Unknown type encountered at (%i, %i): %i\n",x,y,cod);
-					current->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
-				}
-      	x++;
-      }
+      fd.read(&rle.len,1);
+      fd.read(&rle.cod,1);
+      fd.read(&rle.col,1);
+			current->rle_data.push_back(rle);
+			z += rle.len;
     }
     if(z!=1500) { 
       printf("RLE mismatch!\n"); 
+			spinner_clear();
       return -1; 
     }
-    //intelligent line drawing!
-    for(x=0;x<BOARD_X;x++) {
-      for(y=0;y<BOARD_Y;y++) {
-        if(current->board[x][y].obj->getType()==ZZT_LINE) {
-          if(x>0&&current->board[x-1][y].obj->getType()==ZZT_LINE && //left is a line
-             x<BOARD_X-1 && current->board[x+1][y].obj->getType()==ZZT_LINE) { //right is a line
-             if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
-                y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
-                current->board[x][y].obj->setShape(206);
-             } else if(y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
-                current->board[x][y].obj->setShape(203);
-             } else if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE) { //only up is a line
-                current->board[x][y].obj->setShape(202);
-             } else { //only left and right
-                current->board[x][y].obj->setShape(205);
-             }
-          } else if(x>0&&current->board[x-1][y].obj->getType()==ZZT_LINE) { //only left is a line
-             if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
-              y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
-                current->board[x][y].obj->setShape(185);
-             } else if(y<BOARD_Y-1&&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
-                  current->board[x][y].obj->setShape(187);
-             } else if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE) { //only up is a line
-                  current->board[x][y].obj->setShape(188);
-             } else { //only left
-                  current->board[x][y].obj->setShape(181);
-             }
-          } else if(x<BOARD_X-1 &&current->board[x+1][y].obj->getType()==ZZT_LINE) { //only right is a line
-               if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
-                  y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
-                    current->board[x][y].obj->setShape(204);
-               } else if(y<BOARD_Y-1 &&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
-                    current->board[x][y].obj->setShape(201);
-               } else if(y>1&&current->board[x][y-1].obj->getType()==ZZT_LINE) { //only up is a line
-                    current->board[x][y].obj->setShape(200);
-               } else { //only right
-                    current->board[x][y].obj->setShape(198);
-               }
-          } else { //vertical
-            if(y>0&&current->board[x][y-1].obj->getType()==ZZT_LINE && //up is a line
-               y<BOARD_Y-1&&current->board[x][y+1].obj->getType()==ZZT_LINE) { //down is a line
-               current->board[x][y].obj->setShape(186);
-            } else if(y<BOARD_Y-1&&current->board[x][y+1].obj->getType()==ZZT_LINE) { //only down is a line
-              current->board[x][y].obj->setShape(210);
-            } else if(y>1&&current->board[x][y-1].obj->getType()==ZZT_LINE){ //only up
-              current->board[x][y].obj->setShape(208);
-            } else { //only 1 block
-							current->board[x][y].obj->setShape(249);
-						}
-          }
-        }
-      }
-    }
+
     current->num=q;
+		current->compressed=true;
     fd.read(&current->maxshots,1);
     fd.read(&current->dark,1);
     fd.read(&current->board_up,1);
@@ -759,18 +838,51 @@ int load_zzt(const char *filename, int titleonly) {
     fd.read(&current->board_right,1);
     fd.read(&current->reenter,1);
 		current->msgcount=0;
-		fd.read(&cod,1);
+		fd.read(&len,1);
 		fd.read(&current->message,58);
+		current->message[len]='\0';
 		//printf("Message: %s\n",current->message);
-		fd.read(&current->reenter_x,1);
-		fd.read(&current->reenter_y,1);
+		fd.read(&current->reenter_x,1); current->reenter_x--;
+		fd.read(&current->reenter_y,1); current->reenter_y--;
 		fd.readle16(&current->time,1);
 		fd.read(&current->animatedWater,1);
-    for(x=0;x<15;x++) { fd.read(&cod,1); } //more padding
-    load_objects(fd,current);
-    //printf("q: %i world.board_count: %i\n",q,world.board_count);
+    for(x=0;x<15;x++) { fd.read(&c,1); } //more padding
+    
+		//Load the object params
+		fd.readle16(&c,1); //number of objects
+#ifdef DEBUG
+		printf("Loading %i objects...\n",c);
+#endif
+		for(z=0;z<=c;z++) {
+			fd.read(&param.x,1); param.x--;
+			fd.read(&param.y,1); param.y--;
+			fd.readle16(&param.xstep,1); 
+			fd.readle16(&param.ystep,1);
+			fd.readle16(&param.cycle,1);
+			fd.read(&param.data[0],1);
+			fd.read(&param.data[1],1);
+			fd.read(&param.data[2],1);
+			fd.readle16(&param.leader,1);
+			fd.readle16(&param.follower,1);
+			fd.read(&param.ut,1);
+			fd.read(&param.uc,1);
+			fd.read(&pad,4);
+			fd.readle16(&param.progpos,1);
+			fd.readle16(&param.proglen,1);
+			fd.read(&pad,8);
+			param.prog="";
+			if(param.proglen>0) {
+				prog=(char *)malloc(param.proglen+1);
+				fd.read(prog,param.proglen);
+				prog[param.proglen]='\0';
+				param.prog = prog;
+				free(prog);
+			}
+			current->params.push_back(param);
+		}
+		
     if(q<world.board_count) {
-      current->next=(struct board_info_node *)malloc(sizeof(struct board_info_node));
+      current->next=new board_info_node;
       current=current->next;
     } else {
       current->next=NULL;
@@ -782,51 +894,13 @@ int load_zzt(const char *filename, int titleonly) {
   return 1;
 }
 
-void write_object(File &fd, ZZTObject *obj, ZZTObject *under) {
-	unsigned char ut,uc,x,y,j;
-	unsigned short int cnt, xstep,ystep,cycle,dumb,progpos,proglen,leader,follower;
-	
-	if(under!=NULL) {
-		ut=under->getType();
-		uc=under->getFg()+(16*under->getBg());
-	} else {
-		ut=ZZT_EMPTY;
-		uc=0;
-	}
-	x=obj->getPosition().x+1;
-	y=obj->getPosition().y+1;
-	xstep=obj->getStep().x;
-	ystep=obj->getStep().y;
-	cycle=obj->getCycle();
-	progpos=obj->getProgPos();
-	proglen=obj->getProgLen();
-	//printf("Storing parameters at %i, %i for a %s (%i)\n",x,y,obj->getName().c_str(),obj->isValid());
-	fd.write(&x,1);
-	fd.write(&y,1);
-	fd.writele16(&xstep,1);
-	fd.writele16(&ystep,1);
-	fd.writele16(&cycle,1);
-	for(int i=0; i<3; i++) {
-		j = obj->getParam(i+1);
-		fd.write(&j,1);
-	}
-	fd.write("\0\0\0\0",4);
-	fd.write(&ut,1);
-	fd.write(&uc,1);
-	fd.write("\0\0\0\0",4);
-	fd.writele16(&progpos,1);
-	fd.writele16(&proglen,1);
-	fd.write("\0\0\0\0\0\0\0\0",8);
-	fd.write(obj->getProg().c_str(),obj->getProgLen());
-}
-
 void save_game(const char *filename) {
-	int i;
-	unsigned short int x,y,z;
-	unsigned char c,code,color,code2,color2;
 	struct board_info_node *curbrd=board_list;
-	ZZTObject *curplayer;
-		
+	std::list<rle_block>::iterator rle_iter;
+	std::list<zzt_param>::iterator params_iter;
+	unsigned char x;
+	unsigned short int i;
+	
   File fd(filename,"wb");
 	
   spinner("Saving");
@@ -845,58 +919,30 @@ void save_game(const char *filename) {
 	fd.writele16(&world.score,1);
 	fd.write(&world.title,sizeof(zzt_string));
 	fd.write(world.flag,sizeof(zzt_string) * 10);
-	fd.writele16(&world.time,1);
+	fd.writele16(&world.time,1); //FIXME: This should be total game time, not current board time remaining
 	fd.write(&world.saved,1);
 	
 	fd.seek(0x200,SEEK_SET);
 	
 	while(curbrd!=NULL) {
-		//printf("Writing %s...\n",curbrd->title);
-		fd.write("\0\0",2); //size (int bytes) of the board, unused by DreamZZT
-		c=strlen(curbrd->title);
-		fd.write(&c,1);
+		compress(curbrd);
+#ifdef DEBUG		
+		printf("Writing: %s\n",curbrd->title);
+#endif
+		fd.writele16(&curbrd->size,1);
+		x=strlen(curbrd->title);
+		fd.write(&x,1);
 		fd.write(curbrd->title,34);	
 		for(x=0;x<16;x++) {
 			fd.write("\0",1);
 		}
-		c=0;
-		code=curbrd->board[0][0].obj->getType();
-		if(code>=ZZT_BLUE_TEXT && code <=ZZT_WHITE_TEXT) {
-			color=curbrd->board[0][0].obj->getShape();
-		} else {
-			color=curbrd->board[0][0].obj->getFg()+(16*curbrd->board[0][0].obj->getBg());
+
+		for(rle_iter = curbrd->rle_data.begin(); rle_iter != curbrd->rle_data.end(); rle_iter++) {
+			fd.write(&(*rle_iter).len,1);
+			fd.write(&(*rle_iter).cod,1);
+			fd.write(&(*rle_iter).col,1);
 		}
-		z=0;
-		for(y=0;y<BOARD_Y;y++) {
-			for(x=0;x<BOARD_X;x++) {
-				code2=curbrd->board[x][y].obj->getType();
-				if(code2>=ZZT_BLUE_TEXT && code2<=ZZT_WHITE_TEXT) {
-					color2=curbrd->board[x][y].obj->getShape();
-				} else {
-					color2=curbrd->board[x][y].obj->getFg()+(16*curbrd->board[x][y].obj->getBg());
-				}
-				if(c>=255 || code!=code2 || color!= color2) {
-					fd.write(&c,1);
-					fd.write(&code,1);
-					fd.write(&color,1);
-					z+=c; c=0;
-					code=curbrd->board[x][y].obj->getType();
-					if(code>=ZZT_BLUE_TEXT && code <=ZZT_WHITE_TEXT) {
-						color=curbrd->board[x][y].obj->getShape();
-					} else {
-						color=curbrd->board[x][y].obj->getFg()+(16*curbrd->board[x][y].obj->getBg());
-					}
-				}
-				c++;
-			}
-		}
-		if(c>0) {
-			z+=c;
-			fd.write(&c,1);
-			fd.write(&code,1);
-			fd.write(&color,1);
-		}
-		//printf("z: %i\n",z);
+		
 		fd.write(&curbrd->maxshots,1);
 		fd.write(&curbrd->dark,1);
 		fd.write(&curbrd->board_up,1);
@@ -912,29 +958,35 @@ void save_game(const char *filename) {
 		fd.writele16(&curbrd->time,1);
 		fd.write(&curbrd->animatedWater,1);
 		for(x=0;x<15;x++) fd.write("\0",1);
-		z=0;
-		for(y=0;y<BOARD_Y;y++) {
-			for(x=0;x<BOARD_X;x++) {
-				if(curbrd->board[x][y].obj->getFlags()&F_OBJECT) {
-					//printf("Object: %s\n",curbrd->board[x][y].obj->name);
-					z++;
-				}
-				if(curbrd->board[x][y].obj->getType()==ZZT_PLAYER) curplayer=curbrd->board[x][y].obj;
-			}
-		}
-		z--;
-		//printf("Writing %i objects\n",z);
-		fd.writele16(&z,1);
 
-		write_object(fd,curplayer,curbrd->board[(int)curplayer->getPosition().x][(int)curplayer->getPosition().y].under);
-		for(y=0;y<BOARD_Y;y++) {
-			for(x=0;x<BOARD_X;x++) {
-				if(curbrd->board[x][y].obj != NULL && curbrd->board[x][y].obj->getType()!=ZZT_PLAYER && curbrd->board[x][y].obj->getFlags()&F_OBJECT) write_object(fd,curbrd->board[x][y].obj,curbrd->board[x][y].under);
+		i=curbrd->params.size() - 1;
+		fd.writele16(&i,1);
+
+		for(params_iter = curbrd->params.begin(); params_iter != curbrd->params.end(); params_iter++) {
+			(*params_iter).x++; fd.write(&(*params_iter).x,1); (*params_iter).x--;
+			(*params_iter).y++; fd.write(&(*params_iter).y,1); (*params_iter).y--;
+			fd.writele16((uint16 *)&(*params_iter).xstep,1);
+			fd.writele16((uint16 *)&(*params_iter).ystep,1);
+			fd.writele16(&(*params_iter).cycle,1);
+			for(int i=0; i<3; i++) {
+				fd.write(&(*params_iter).data[i],1);
 			}
-		}		
+			fd.write("\0\0\0\0",4);
+			fd.write(&(*params_iter).ut,1);
+			fd.write(&(*params_iter).uc,1);
+			fd.write("\0\0\0\0",4);
+			fd.writele16(&(*params_iter).progpos,1);
+			fd.writele16((uint16 *)&(*params_iter).proglen,1);
+			fd.write("\0\0\0\0\0\0\0\0",8);
+			fd.write((*params_iter).prog.c_str(),(*params_iter).proglen);
+		}
+		
 		curbrd=curbrd->next;
 	}
 	fd.close();
+	
+	decompress(currentbrd);
+	
   spinner_clear();
 }
 

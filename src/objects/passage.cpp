@@ -52,6 +52,7 @@ void Passage::message(ZZTObject *them, std::string message) {
   Vector pos;
 	
   if(message == "touch" && them->getType()==ZZT_PLAYER && brd!=NULL) {
+		decompress(brd);
     obj=get_obj_by_type(brd,ZZT_PLAYER);
 		
     obj2=get_obj_by_color(brd,ZZT_PASSAGE,m_fg,m_bg);
