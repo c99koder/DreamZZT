@@ -552,6 +552,7 @@ void compress(board_info_node *board) {
 	zzt_param param;
 	int code,color;
 	ZZTObject *obj,*under;
+	bool foundPlayer=false;
 	
 	if(board->compressed) return;
 #ifdef DEBUG
@@ -575,7 +576,7 @@ void compress(board_info_node *board) {
 			obj=board->board[x][y].obj;
 			under=board->board[x][y].under;
 			
-			if(obj->getFlags() & F_OBJECT) {
+			if((foundPlayer && obj->getType() != ZZT_PLAYER && obj->getFlags() & F_OBJECT) || (!foundPlayer && obj->getType() == ZZT_PLAYER)) {
 				param.x=obj->getPosition().x;
 				param.y=obj->getPosition().y;
 				param.xstep=obj->getStep().x;
@@ -585,41 +586,48 @@ void compress(board_info_node *board) {
 					param.data[i] = obj->getParam(i+1);
 				}
 				param.leader = 0;//obj->getLeader();
-					param.follower = 0;//obj->getFollower();
-						if(under!=NULL) {
-							param.ut=under->getType();
-							param.uc=under->getFg()+(16*under->getBg());
-						} else {
-							param.ut=ZZT_EMPTY;
-							param.uc=0;
-						}
-						param.progpos=obj->getProgPos();
-						param.proglen=obj->getProgLen();
-						param.prog=obj->getProg();
-						
-						board->params.push_back(param);
-						board->size += param.proglen + 33;
-			}
-			code=obj->getType();
-			if(code>=ZZT_BLUE_TEXT && code<=ZZT_WHITE_TEXT) {
-				color=obj->getShape();
-			} else {
-				color=obj->getFg()+(16*obj->getBg());
-			}
-			if(rle.len>=255 || rle.cod!=code || rle.col!=color) {
-				board->rle_data.push_back(rle);
-				board->size+=3;
-				rle.len=0;
-				rle.cod=obj->getType();
-				if(rle.cod>=ZZT_BLUE_TEXT && rle.cod <=ZZT_WHITE_TEXT) {
-					rle.col=obj->getShape();
+				param.follower = 0;//obj->getFollower();
+				if(under!=NULL) {
+					param.ut=under->getType();
+					param.uc=under->getFg()+(16*under->getBg());
 				} else {
-					rle.col=obj->getFg()+(16*obj->getBg());
+					param.ut=ZZT_EMPTY;
+					param.uc=0;
+				}
+				param.progpos=obj->getProgPos();
+				param.proglen=obj->getProgLen();
+				param.prog=obj->getProg();
+				
+				board->params.push_back(param);
+				board->size += param.proglen + 33;
+				if(!foundPlayer) {
+					foundPlayer = true;
+					x=BOARD_Y; y=-1;
+					break;
 				}
 			}
-			delete obj;
-			delete under;
-			rle.len++;
+			if(foundPlayer) {
+				code=obj->getType();
+				if(code>=ZZT_BLUE_TEXT && code<=ZZT_WHITE_TEXT) {
+					color=obj->getShape();
+				} else {
+					color=obj->getFg()+(16*obj->getBg());
+				}
+				if(rle.len>=255 || rle.cod!=code || rle.col!=color) {
+					board->rle_data.push_back(rle);
+					board->size+=3;
+					rle.len=0;
+					rle.cod=obj->getType();
+					if(rle.cod>=ZZT_BLUE_TEXT && rle.cod <=ZZT_WHITE_TEXT) {
+						rle.col=obj->getShape();
+					} else {
+						rle.col=obj->getFg()+(16*obj->getBg());
+					}
+				}
+				delete obj;
+				delete under;
+				rle.len++;
+			}
 		}
 	}
 	if(rle.len>0) {
@@ -925,6 +933,7 @@ void save_game(const char *filename) {
 	fd.seek(0x200,SEEK_SET);
 	
 	while(curbrd!=NULL) {
+		if(curbrd->size==0) decompress(curbrd); //Calculate board size for older DreamZZT files
 		compress(curbrd);
 #ifdef DEBUG		
 		printf("Writing: %s\n",curbrd->title);
