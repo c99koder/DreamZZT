@@ -53,6 +53,8 @@ public:
 		m_complete = false;
 	}
 	
+	virtual ~Task() { }
+	
 	virtual bool check() { return false; };
 	virtual void touch(ZZTObject *obj) { };
 	virtual void get(ZZTObject *obj) { };

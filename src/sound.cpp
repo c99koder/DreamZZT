@@ -74,7 +74,9 @@ ZZTMusicStream::~ZZTMusicStream() {
 
 void ZZTMusicStream::setTune(std::string tune) {
 	if(m_locked) return;
-	
+#if TIKI_PLAT == TIKI_DC
+	return;
+#endif
 	stop();
 	
 	m_tune = tune;
@@ -88,6 +90,9 @@ void ZZTMusicStream::setTune(std::string tune) {
 }
 
 void ZZTMusicStream::appendTune(std::string tune) {
+#if TIKI_PLAT == TIKI_DC
+	return;
+#endif
 	m_tune += "@"; //Magic reset code
 	m_tune += tune;
 }
