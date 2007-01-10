@@ -203,6 +203,10 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 
 #if TIKI_PLAT == TIKI_DC
 std::string os_select_file(std::string title, std::string filter) {
-	return "tutorial.zzt";
+	return "town.zzt";
+}
+
+std::string os_save_file(std::string title, std::string filename, std::string filter) {
+	return "";
 }
 #endif

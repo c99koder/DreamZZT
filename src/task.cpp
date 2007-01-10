@@ -151,6 +151,7 @@ std::string ToString(T aValue)
 
 
 void check_tasks() {
+#ifdef NET
 	std::list<Task*>::iterator task_iter;
 	
 	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
@@ -177,6 +178,7 @@ You've earned a bonus of " + ToString((*task_iter)->getValue()) + " points.\r");
 			}
 		}
 	}
+#endif
 }
 
 void task_touch(ZZTObject *obj) {
