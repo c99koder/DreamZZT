@@ -506,7 +506,7 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 					}
 					if(m_h/2-2 - m_offset - i == 3) {
 						ct->setANSI(true);
-						*ct << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC) ? "Fire " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? " B  " : "ESC ") << "\x1b[36mto close.    ";
+						*ct << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC) ? "A " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? " B  " : "ESC ") << "\x1b[36mto close.    ";
 						ct->setANSI(false);
 					}
 					if(m_h/2-2 - m_offset - i == 1) {
