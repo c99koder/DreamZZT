@@ -53,25 +53,35 @@ using namespace Tiki::Thread;
 #include "http.h"
 #include "task.h"
 #include "word.h"
+#if TIKI_PLAT == TIKI_DC
+#include "vmu.h"
+
+//extern uint8 romdisk[];
+//KOS_INIT_ROMDISK(romdisk);
+#endif
 
 Mutex zzt_screen_mutex;
 
 extern struct world_header world;
 
-#define MAIN_MENU "$Welcome to DreamZZT 3.0.6b2\r\r\
+std::string MAIN_MENU = std::string("$Welcome to DreamZZT 3.0.6b2\r\r\
 Please select an option from the\r\
 menu below:\r\
 \r\
 !new;Start a New Game\r\
 !restore;Restore a Saved Game\r\
-!tutorial;Tutorial\r\
-!net;DreamZZT Online\r\
-!edit;Editor\r\
-!credits;Credits\r\
+!tutorial;Tutorial\r") +
+#ifdef NET
+std::string("!net;DreamZZT Online\r") +
+#endif
+#if TIKI_PLAT != TIKI_DC
+std::string("!edit;Editor\r") +
+#endif
+std::string("!credits;Credits\r\
 !quit;Quit DreamZZT\r\
 \r\
 Copyright (C) 2000 - 2007 Sam Steele\r\
-All Rights Reserved.\r"
+All Rights Reserved.\r");
 
 #define CREDITS "$Programming\r\r\
 Sam Steele\r\
@@ -141,11 +151,6 @@ void menu_background() {
 	}
 }	
 
-#if TIKI_PLAT == TIKI_DC
-//extern uint8 romdisk[];
-//KOS_INIT_ROMDISK(romdisk);
-#endif
-
 ZZTMusicStream *zm = NULL;
 Tiki::Thread::Thread *render_thread;
 Texture *zzt_font;
@@ -180,6 +185,9 @@ void render() {
 	ct->draw(Drawable::Trans);
 	dt->draw(Drawable::Trans);
 	Frame::finish();
+#if TIKI_PLAT == TIKI_DC
+	update_lcds();
+#endif
 	zzt_screen_mutex.unlock();
 }
 
@@ -218,6 +226,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	
 #if TIKI_PLAT == TIKI_DC
 	fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
+	
+	zzt_vmu_init();
 #endif
 
 	zm = new ZZTMusicStream;
@@ -283,6 +293,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 		delete t;
 	}
 
+#if TIKI_PLAT == TIKI_DC
+	arch_exit(0);
+#endif
+	
 	if(zm!=NULL && zm->isPlaying()) zm->stop();
 #ifdef NET
 #if TIKI_PLAT == TIKI_WIN32
@@ -334,7 +348,7 @@ void play_zzt(const char *filename) {
 	start=world.start;
 	if(world.saved==0) {
 		switch_board(0);
-		//if(player!=NULL) remove_from_board(currentbrd,player);
+		player->setShape(ZZT_EMPTY_SHAPE);
 		playerEventCollector->stop();
 		player=NULL;
 		ct->locate(BOARD_X+2,7);
@@ -343,7 +357,7 @@ void play_zzt(const char *filename) {
 		ct->color(15,1);
 		ct->printf("%s",world.title.string);
 		ct->locate(BOARD_X+2,9);
-	#ifdef DREAMCAST
+	#if TIKI_PLAT == TIKI_DC
 		ct->printf("   Press Start");
 	#else
 		ct->printf("   Press Enter");
@@ -356,7 +370,11 @@ void play_zzt(const char *filename) {
 			draw_board();
 			draw_msg();
 			render();
+#if TIKI_PLAT == TIKI_DC
+			Time::sleep(20000);
+#else
 			Time::sleep(80000);
+#endif
 		} while(world.saved==0 && switchbrd==-1);
 		Hid::callbackUnreg(hidCookie);
 		if(switchbrd==-2) return;
@@ -426,11 +444,19 @@ void play_zzt(const char *filename) {
 		draw_board();
     draw_msg();
 		render();
+#if TIKI_PLAT == TIKI_DC
+		if(world.health>0) {
+			Time::sleep(20000);
+		} else {
+			Time::sleep(1000);
+		}
+#else
 		if(world.health>0) {
 			Time::sleep(80000);
 		} else {
 			Time::sleep(10000);
 		}
+#endif
     
 		if(switchbrd>-1) {
       switch_board(switchbrd);
