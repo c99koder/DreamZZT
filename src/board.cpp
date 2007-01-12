@@ -188,7 +188,11 @@ void *spinner_thd(void *text) {
 		x++;
 		x%=4;
 		render();
+#if TIKI_PLAT == TIKI_DC
+		Time::sleep(10000);
+#else
 		Time::sleep(80000);
+#endif
 	}
 
 	return 0; //Your *MOM* must return a value, Microsoft!
@@ -346,7 +350,9 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
+#if TIKI_PLAT != TIKI_DC
 				Time::sleep(8000);
+#endif
 			}
 			break;
 		case UP:
@@ -383,7 +389,9 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
+#if TIKI_PLAT != TIKI_DC
 				Time::sleep(6000);
+#endif
 			}
 			break;
 		case DOWN:
@@ -420,7 +428,9 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
+#if TIKI_PLAT != TIKI_DC
 				Time::sleep(6000);
+#endif
 			}
 		break;
 		case LEFT:
@@ -457,7 +467,9 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
+#if TIKI_PLAT != TIKI_DC
 				Time::sleep(6000);
+#endif
 			}
 			break;
 		case RIGHT:
@@ -494,7 +506,9 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 				render();
+#if TIKI_PLAT != TIKI_DC
 				Time::sleep(6000);
+#endif
 			}
 			break;
 	}
@@ -555,6 +569,8 @@ void compress(board_info_node *board) {
 	bool foundPlayer=false;
 	
 	if(board->compressed) return;
+	
+	spinner("Working");
 #ifdef DEBUG
 	Debug::printf("Compressing board...\n");
 #endif
@@ -635,6 +651,7 @@ void compress(board_info_node *board) {
 		board->size+=3;
 	}		
 	board->compressed=true;
+	spinner_clear();
 #ifdef DEBUG
 	Debug::printf("Done!\n");
 #endif
@@ -648,7 +665,7 @@ void decompress(board_info_node *board) {
 	std::list<zzt_param>::iterator param_iter;
 	
 	if(!board->compressed) return;
-
+	spinner("Working");
 #ifdef DEBUG
 	Debug::printf("Decompressing board...\n");
 #endif
@@ -694,6 +711,7 @@ void decompress(board_info_node *board) {
 	board->params.clear();
 	
 	board->compressed=false;
+	spinner_clear();
 #ifdef DEBUG
 	Debug::printf("Done!\n");
 #endif	
