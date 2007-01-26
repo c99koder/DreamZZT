@@ -25,7 +25,7 @@
 using namespace Tiki::Math;
 #include "window.h"
 
-enum direction { IDLE, LEFT, RIGHT, UP, DOWN };
+enum direction { IDLE, LEFT, RIGHT, UP, DOWN, SHOOTING=128 };
 
 class ZZTObject {
 public:
