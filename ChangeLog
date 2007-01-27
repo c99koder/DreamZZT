@@ -49,7 +49,11 @@ Below is a list of highlights of each DreamZZT release.  For a complete list of 
  * Finished up keyboard input for Linux and Dreamcast
  * Rewrote loading code
 
-== DreamZZT 3.0.31226 ==
+== DreamZZT 3.0.31231 ==
+=== Bug Fixes ===
+ * Correct a bug in the Dreamcast network driver
+
+== DreamZZT 3.0.31228 ==
 === New Features ===
  * Blinking walls, Energizers, Scrolls, Torches, Transporters
  * The Town of ZZT is now fully playable
