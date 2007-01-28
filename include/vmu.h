@@ -20,5 +20,8 @@
 extern "C" {
 	void zzt_vmu_init();
 	void update_lcds();
-	void vmuify(char *filename_in, char *filename_out, char *shortname, char *longname);
+	int zinflate(const char *source, const char *dest);
+	int zdeflate(const char *source, const char *dest, int level);
+	void vmuify(const char *filename_in, const char *filename_out, const char *shortname, const char *longname);
+	void unvmuify(const char *filename_in, const char *filename_out);
 }
