@@ -86,13 +86,13 @@
 //VERTICAL LASER
 #define ZZT_VERTICAL_BLINK_SHAPE 0xBA
 #define ZZT_VERTICAL_BLINK_NAME "vertical blink"
-#define ZZT_VERTICAL_BLINK_FLAGS F_NONE
+#define ZZT_VERTICAL_BLINK_FLAGS F_OBJECT
 #define ZZT_VERTICAL_BLINK_CLASS Laser
 
 //HORIZONTAL LASER
 #define ZZT_HORIZONTAL_BLINK_SHAPE 0xCD
 #define ZZT_HORIZONTAL_BLINK_NAME "horizontal blink"
-#define ZZT_HORIZONTAL_BLINK_FLAGS F_NONE
+#define ZZT_HORIZONTAL_BLINK_FLAGS F_OBJECT
 #define ZZT_HORIZONTAL_BLINK_CLASS Laser
 
 //BLUE
@@ -175,7 +175,9 @@ private:
 
 class Laser : public ZZTObject {
 public:
-	Laser(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	Laser(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+		m_time = 0;
+	}
 	void setParam(int arg, unsigned char val);
 	unsigned char getParam(int arg);
 	void update();
