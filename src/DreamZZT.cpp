@@ -18,7 +18,18 @@
  */ 
 
 #include <Tiki/tiki.h>
+#include <Tiki/hid.h>
+#include <Tiki/eventcollector.h>
+#include <Tiki/drawables/console.h>
+
+using namespace Tiki;
+using namespace Tiki::GL;
+using namespace Tiki::Hid;
+
 #include "os.h"
+#include "window.h"
+
+extern ConsoleText *ct;
 
 #if TIKI_PLAT == TIKI_WIN32
 #include <windows.h>
@@ -203,10 +214,29 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 
 #if TIKI_PLAT == TIKI_DC
 std::string os_select_file(std::string title, std::string filter) {
-	return "town.zzt";
+	dirent_t *de;
+  uint32 d;
+	TUIWindow t(title);
+	std::string tmp = "Select a game:\n\n";
+
+	if(filter == "sav") {
+		return "TOWN1";
+	}
+
+	d = fs_open("/cd",O_RDONLY|O_DIR);
+	while ( (de=fs_readdir(d)) ) {
+		Debug::printf("Filename: %s\n",de->name);
+		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] + 32)) &&
+       (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] + 32)) &&
+       (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32)))
+		tmp += std::string("!") + std::string(de->name) + std::string(";") + std::string(de->name) + std::string("\n");
+	}
+	t.buildFromString(tmp);
+	t.doMenu(ct);
+	return t.getLabel();
 }
 
 std::string os_save_file(std::string title, std::string filename, std::string filter) {
-	return "";
+	return "TOWN1";
 }
 #endif
