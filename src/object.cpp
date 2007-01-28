@@ -42,6 +42,7 @@ extern Player *player;
 extern ZZTMusicStream *zm;
 extern struct world_header world;
 extern ConsoleText *ct;
+extern ConsoleText *st;
 extern struct board_info_node *currentbrd;
 
 int dir_to_delta[5] = { 0,-1,1,-1,1 };
@@ -426,11 +427,19 @@ void ZZTObject::draw() {
 		ct->putColor(m_position.x,m_position.y,m_fg%8);
 		ct->putChar(m_position.x,m_position.y,m_shape);
   } else {
-		ct->putColor(m_position.x,m_position.y,((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8));
-		if(world.editing==1 && m_type == ZZT_INVISIBLE)
-			ct->putChar(m_position.x,m_position.y,0xB0);
-		else
-			ct->putChar(m_position.x,m_position.y,m_shape);
+		if(m_position.x > BOARD_X) {
+			st->putColor(m_position.x-BOARD_X,m_position.y,((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8));
+			if(world.editing==1 && m_type == ZZT_INVISIBLE)
+				st->putChar(m_position.x-BOARD_X,m_position.y,0xB0);
+			else
+				st->putChar(m_position.x-BOARD_X,m_position.y,m_shape);
+		} else {
+			ct->putColor(m_position.x,m_position.y,((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8));
+			if(world.editing==1 && m_type == ZZT_INVISIBLE)
+				ct->putChar(m_position.x,m_position.y,0xB0);
+			else
+				ct->putChar(m_position.x,m_position.y,m_shape);
+		}
   }
 }
 

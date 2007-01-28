@@ -35,6 +35,7 @@ using namespace Tiki::Hid;
 #include "board.h"
 #include "object.h"
 
+ConsoleText *st;
 extern ConsoleText *ct;
 
 extern struct board_info_node *currentbrd;
@@ -69,24 +70,26 @@ void draw_msg() {
 }
 
 void dzzt_logo() {
-  ct->locate(BOARD_X+5,1);
-  ct->color(GREY | HIGH_INTENSITY, BLUE);
-  ct->printf("- - - - -");
-  ct->locate(BOARD_X+2,2);
-  ct->color(BLACK, GREY);
-  ct->printf("    DreamZZT    ");
-  ct->locate(BOARD_X+5,3);
-  ct->color(GREY | HIGH_INTENSITY, BLUE);
-  ct->printf("- - - - -");
+	st->color(15,1);
+	st->clear();
+  st->locate(5,1);
+  st->color(GREY | HIGH_INTENSITY, BLUE);
+  st->printf("- - - - -");
+  st->locate(2,2);
+  st->color(BLACK, GREY);
+  st->printf("    DreamZZT    ");
+  st->locate(5,3);
+  st->color(GREY | HIGH_INTENSITY, BLUE);
+  st->printf("- - - - -");
 }
 
 void draw_time() {
-  ct->locate(BOARD_X+2,7);
-  ct->color(YELLOW | HIGH_INTENSITY , BLUE);
+  st->locate(2,7);
+  st->color(YELLOW | HIGH_INTENSITY , BLUE);
 	if(world.time>0) {
-  	ct->printf("     Time:%i  ",world.time);
+  	st->printf("     Time:%i  ",world.time);
 	} else {
-  	ct->printf("               ");
+  	st->printf("               ");
 	}
 }
 
@@ -103,12 +106,12 @@ void give_time(int count) {
 }
 
 void draw_ammo() {
-	ct->putColor(BOARD_X+2,9, HIGH_INTENSITY | CYAN | (BLUE << 8));
-	ct->putChar(BOARD_X+2,9,0x84);
+	st->putColor(2,9, HIGH_INTENSITY | CYAN | (BLUE << 8));
+	st->putChar(2,9,0x84);
 
-	ct->locate(BOARD_X+3, 9);
-  ct->color(14,1);
-  ct->printf("    Ammo:%i   ",world.ammo);
+	st->locate(3, 9);
+  st->color(14,1);
+  st->printf("    Ammo:%i   ",world.ammo);
 }
 
 void take_ammo(int count) {
@@ -124,12 +127,12 @@ void give_ammo(int count) {
 }
 
 void draw_health() {
-	ct->putColor(BOARD_X+3,8, HIGH_INTENSITY | WHITE | (BLUE << 8));
-	ct->putChar(BOARD_X+3,8,0x02);
+	st->putColor(3,8, HIGH_INTENSITY | WHITE | (BLUE << 8));
+	st->putChar(3,8,0x02);
 
-  ct->locate(BOARD_X+3,8);
-  ct->color(14,1);
-  ct->printf("  Health:%i  ",world.health);
+  st->locate(3,8);
+  st->color(14,1);
+  st->printf("  Health:%i  ",world.health);
 }
 
 void take_health(int count) {
@@ -147,25 +150,25 @@ void give_health(int count) {
 void draw_torch() {
 	int x;
 	
-	ct->putColor(BOARD_X+2,10, YELLOW | (BLUE << 8));
-	ct->putChar(BOARD_X+2,10,0x9d);
+	st->putColor(2,10, YELLOW | (BLUE << 8));
+	st->putChar(2,10,0x9d);
 
-  ct->locate(BOARD_X+3,10);
-  ct->color(14,1);
-  ct->printf(" Torches:%i  ",world.torches);
-	ct->locate(BOARD_X+15,10);
+  st->locate(3,10);
+  st->color(14,1);
+  st->printf(" Torches:%i  ",world.torches);
+	st->locate(15,10);
 
 	if(world.torch_cycle>0) {
-		ct->color(6,6);
+		st->color(6,6);
 		for(x=0;x<world.torch_cycle/50;x++) {
-			ct->printf("%c",177);
+			st->printf("%c",177);
 		}
-		ct->color(0,0);		
+		st->color(0,0);		
 		for(x=0;x<4-(world.torch_cycle/50);x++) {
-			ct->printf("%c",176);
+			st->printf("%c",176);
 		}
 	} else {
-		ct->printf("    ");
+		st->printf("    ");
 	}
 }
 
@@ -184,12 +187,12 @@ void give_torch(int count) {
 }
 
 void draw_gems() {
-	ct->putColor(BOARD_X+2,11, HIGH_INTENSITY | RED | (BLUE << 8));
-	ct->putChar(BOARD_X+2,11,0x04);
+	st->putColor(2,11, HIGH_INTENSITY | RED | (BLUE << 8));
+	st->putChar(2,11,0x04);
 
-  ct->locate(BOARD_X+3,11);
-  ct->color(14,1);
-  ct->printf("    Gems:%i  ",world.gems);
+  st->locate(3,11);
+  st->color(14,1);
+  st->printf("    Gems:%i  ",world.gems);
 }
 
 void take_gems(int count) {
@@ -207,9 +210,9 @@ void give_gems(int count) {
 }
 
 void draw_score() {
-  ct->locate(BOARD_X+3,12);
-  ct->color(14,1);
-  ct->printf("   Score:%i  ",world.score + world.task_points);
+  st->locate(3,12);
+  st->color(14,1);
+  st->printf("   Score:%i  ",world.score + world.task_points);
 }
 
 void take_score(int count) {
@@ -228,20 +231,20 @@ void give_score(int count) {
 
 void draw_keys() {
   int i;
-	ct->putColor(BOARD_X+2,13, HIGH_INTENSITY | GREY | (BLUE << 8));
-	ct->putChar(BOARD_X+2,13,0x0c);
+	st->putColor(2,13, HIGH_INTENSITY | GREY | (BLUE << 8));
+	st->putChar(2,13,0x0c);
 
-  ct->locate(BOARD_X+3,13);
-  ct->color(14,1);
-  ct->printf("    Keys:");
+  st->locate(3,13);
+  st->color(14,1);
+  st->printf("    Keys:");
 
   for(i=0;i<7;i++) {
-		ct->putColor(BOARD_X+12+i,13, HIGH_INTENSITY | (i+1) | (BLUE << 8));
+		st->putColor(12+i,13, HIGH_INTENSITY | (i+1) | (BLUE << 8));
 
     if(world.keys[i]==1) {
-			ct->putChar(BOARD_X+12+i,13,0x0c);
+			st->putChar(12+i,13,0x0c);
     } else {
-			ct->putChar(BOARD_X+12+i,13,' ');
+			st->putChar(12+i,13,' ');
     }
   }
 }
@@ -256,66 +259,66 @@ void draw_hud_ingame() {
   draw_score();
   draw_keys();
 #if TIKI_PLAT == TIKI_DC
-	ct->locate(BOARD_X+9,15);
-	ct->color(0,7);
-	ct->printf(" X ");
-	ct->color(15,1);
-	ct->printf(" Torch");
-	ct->locate(BOARD_X+9,16);
-	ct->color(0,3);
-	ct->printf(" Y ");
-	ct->color(15,1);
-	ct->printf(" Save");
-	ct->locate(BOARD_X+9,17);
-	ct->color(0,7);
-	ct->printf(" B ");
-	ct->color(15,1);
-	ct->printf(" Quit");
-	ct->locate(BOARD_X+5,18);
-	ct->color(0,3);
-	ct->printf(" Start ");
-	ct->color(15,1);
-	ct->printf(" Pause");
-	ct->locate(BOARD_X+7,20);
-	ct->color(0,7);
-	ct->printf(" %c%c%c%c",24,25,26,27);
-	ct->color(15,1);
-	ct->printf(" Move");
-	ct->locate(BOARD_X+3,21);
-	ct->color(0,3);
-	ct->printf(" A + %c%c%c%c",24,25,26,27);
-	ct->color(15,1);
-	ct->printf(" Shoot");
+	st->locate(9,15);
+	st->color(0,7);
+	st->printf(" X ");
+	st->color(15,1);
+	st->printf(" Torch");
+	st->locate(9,16);
+	st->color(0,3);
+	st->printf(" Y ");
+	st->color(15,1);
+	st->printf(" Save");
+	st->locate(9,17);
+	st->color(0,7);
+	st->printf(" B ");
+	st->color(15,1);
+	st->printf(" Quit");
+	st->locate(5,18);
+	st->color(0,3);
+	st->printf(" Start ");
+	st->color(15,1);
+	st->printf(" Pause");
+	st->locate(7,20);
+	st->color(0,7);
+	st->printf(" %c%c%c%c",24,25,26,27);
+	st->color(15,1);
+	st->printf(" Move");
+	st->locate(3,21);
+	st->color(0,3);
+	st->printf(" A + %c%c%c%c",24,25,26,27);
+	st->color(15,1);
+	st->printf(" Shoot");
 #else
-	ct->locate(BOARD_X+9,15);
-	ct->color(0,7);
-	ct->printf(" T ");
-	ct->color(15,1);
-	ct->printf(" Torch");
-	ct->locate(BOARD_X+9,16);
-	ct->color(0,3);
-	ct->printf(" S ");
-	ct->color(15,1);
-	ct->printf(" Save");
-	ct->locate(BOARD_X+9,17);
-	ct->color(0,7);
-	ct->printf(" P ");
-	ct->color(15,1);
-	ct->printf(" Pause");
-	ct->locate(BOARD_X+7,18);
-	ct->color(0,3);
-	ct->printf(" ESC ");
-	ct->color(15,1);
-	ct->printf(" Quit");
-	ct->locate(BOARD_X+7,20);
-	ct->color(0,3);
-	ct->printf(" %c%c%c%c",24,25,26,27);
-	ct->color(15,1);
-	ct->printf(" Move");
-	ct->locate(BOARD_X+1,21);
-	ct->color(0,7);
-	ct->printf(" Shift %c%c%c%c",24,25,26,27);
-	ct->color(15,1);
-	ct->printf(" Shoot");
+	st->locate(9,15);
+	st->color(0,7);
+	st->printf(" T ");
+	st->color(15,1);
+	st->printf(" Torch");
+	st->locate(9,16);
+	st->color(0,3);
+	st->printf(" S ");
+	st->color(15,1);
+	st->printf(" Save");
+	st->locate(9,17);
+	st->color(0,7);
+	st->printf(" P ");
+	st->color(15,1);
+	st->printf(" Pause");
+	st->locate(7,18);
+	st->color(0,3);
+	st->printf(" ESC ");
+	st->color(15,1);
+	st->printf(" Quit");
+	st->locate(7,20);
+	st->color(0,3);
+	st->printf(" %c%c%c%c",24,25,26,27);
+	st->color(15,1);
+	st->printf(" Move");
+	st->locate(1,21);
+	st->color(0,7);
+	st->printf(" Space %c%c%c%c",24,25,26,27);
+	st->color(15,1);
+	st->printf(" Shoot");
 #endif
 }

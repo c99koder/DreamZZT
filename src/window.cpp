@@ -42,6 +42,7 @@ extern EventCollector *playerEventCollector;
 extern Player *player;
 extern int switchbrd;
 extern struct board_info_node *board_list;
+extern float zoom;
 
 void TUIWidget::focus(bool f) {
 	m_focus = f;
@@ -348,7 +349,7 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 	if(evt.type == Event::EvtQuit) {
 		m_loop = false;
 		switchbrd = -2;
-	} else if(evt.type == Event::EvtKeypress) {
+	} else if(evt.type == Event::EvtKeypress || evt.type == Event::EvtBtnPress) {
 		switch(evt.key) {
 			case Event::KeyUp:
 				m_widgets[m_offset]->focus(false);
@@ -356,12 +357,6 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 				if(m_offset < 0) m_offset = 0;
 				m_widgets[m_offset]->focus(true);
 				break;
-			case 13:
-				if(m_widgets[m_offset]->getCloseOnEnter()) {
-					m_loop = false;
-					m_label = m_widgets[m_offset]->getReturnValue();
-					break;
-				}
 			case Event::KeyDown:
 				m_widgets[m_offset]->focus(false);
 				m_offset++;
@@ -369,6 +364,12 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 					m_widgets[m_offset]->focus(true);
 				break;
 		} 
+		if(evt.key == 13 || evt.btn == Event::BtnA) {
+			if(m_widgets[m_offset]->getCloseOnEnter()) {
+				m_loop = false;
+				m_label = m_widgets[m_offset]->getReturnValue();
+			}
+		}
 	} else if(evt.type == Event::EvtKeyUp && evt.key == Event::KeyEsc) {
 			m_loop = false;
 	}
@@ -467,8 +468,13 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 	m_dirty = 1;
 	m_loop = true;
 	m_widgets[m_offset]->focus(true);
-	if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
+	if(playerEventCollector != NULL && playerEventCollector->listening()) {
+		playerEventCollector->stop();
+		if(player != NULL) player->setHeading(player->getHeading());
+	}
 
+	zoom = 1;
+	
 	draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
 	
 	do {

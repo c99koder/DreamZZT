@@ -100,14 +100,15 @@ struct world_header {
 	unsigned char online;
 	unsigned short int task_points;
 };
-
+void spinner(char *text);
+void spinner_clear();
 int load_zzt(const char *filename, int titleonly);
 void save_game(const char *filename);
 void switch_board(int num);
 void update_brd();
 void free_world();
 void new_world();
-void new_board(char *title);
+int new_board(char *title);
 void put(ZZTObject *o);
 int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer=false);
 int block_bg(int x, int y);
@@ -129,5 +130,5 @@ int board_left();
 int board_right();
 void render();
 void connect_lines(board_info_node *board);
-void decompress(board_info_node *board);
-void compress(board_info_node *board);
+void decompress(board_info_node *board, bool silent=false);
+void compress(board_info_node *board, bool silent=false);

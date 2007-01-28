@@ -281,6 +281,11 @@ public:
 	void update();
 	void message(ZZTObject *them, std::string msg);
 	void processEvent(const Tiki::Hid::Event & evt);
+	void setHeading(direction h) { 
+		m_heading = h; 
+		m_move = IDLE;
+		m_shoot = IDLE;
+	}
 private:
 	direction m_move, m_shoot;
 };

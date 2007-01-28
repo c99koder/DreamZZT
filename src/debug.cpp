@@ -47,6 +47,7 @@ extern Texture *zzt_font;
 
 ConsoleText *dt=NULL;
 extern ConsoleText *ct;
+extern ConsoleText *st;
 
 int debug_hidCookie=-1;
 extern Player *player;
@@ -261,21 +262,21 @@ void debug_hidCallback(const Event & evt, void * data) {
 			if(evt.key == '`') {
 				if(debug_visible==0 && world.online == 0) {
 					debug_visible = 1;
-					ct->setSize(640,240);
-					dt->setTranslate(Vector(320,120,0));
-					ct->setTranslate(Vector(320,360,0));
+					ct->setSize(BOARD_X*8,240);
+					dt->setTranslate(Vector(BOARD_X*4,120,0));
+					ct->setTranslate(Vector(BOARD_X*4,360,0));
 					debug_cmdline = "";
 				} else {
 					debug_visible = 0;
-					ct->setSize(640,480);
-					ct->setTranslate(Vector(320,240,0));
+					ct->setSize(BOARD_X*8,480);
+					ct->setTranslate(Vector(BOARD_X*4,240,0));
 					dt->setTranslate(Vector(1024,360,0));
 					if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
-					ct->color(WHITE|HIGH_INTENSITY, BLUE);
-					ct->locate(65,23);
-					ct->setANSI(true);
-					*ct << "\x1b[k"; // clear EOL
-					ct->setANSI(false);
+					st->color(WHITE|HIGH_INTENSITY, BLUE);
+					st->locate(5,23);
+					st->setANSI(true);
+					*st << "\x1b[k"; // clear EOL
+					st->setANSI(false);
 				}
 			} else if (evt.key >= 32 && evt.key <= 128 && debug_visible && world.online == 0) {
 				debug_cmdline += evt.key;
@@ -293,20 +294,20 @@ void debug_hidCallback(const Event & evt, void * data) {
 	}
 	
 	if(debug_visible && player != NULL) {
-		ct->color(WHITE|HIGH_INTENSITY, BLUE);
-		ct->locate(65,23);
-		*ct << "X: " << (int)player->getPosition().x << " Y: " << (int)player->getPosition().y << "    ";
+		st->color(WHITE|HIGH_INTENSITY, BLUE);
+		st->locate(5,23);
+		*st << "X: " << (int)player->getPosition().x << " Y: " << (int)player->getPosition().y << "    ";
 	}
 }
 
 void debug_init() {
-	dt = new ConsoleText(80,25,zzt_font);
-	dt->setSize(640,240);
+	dt = new ConsoleText(BOARD_X,25,zzt_font);
+	dt->setSize(BOARD_X*8,240);
 	dt->setTranslate(Vector(1024,360,0));
 	dt->setANSI(true);
 	dt->color(GREY, BLACK);
 	dt->clear();
-	debug("\n\nDreamZZT 3.0.6b2\n(C) 2000 - 2007 Sam Steele\nAll Rights Reserved.\n\nREADY.\n");	
+	debug("\n\nDreamZZT 3.0.6\n(C) 2000 - 2007 Sam Steele\nAll Rights Reserved.\n\nREADY.\n");	
 	
 	debug_thread = new Tiki::Thread::Thread(process_debug,NULL);
 }
@@ -324,7 +325,7 @@ void debug(const char *fmt, ...) {
 	*dt << "\x1b[s"; // Save cursor position
 	dt->color(WHITE | HIGH_INTENSITY, BLUE);
 	dt->locate(0,0);
-	*dt << "                            DreamZZT Debug Console                              ";
+	*dt << "                    DreamZZT Debug Console                  ";
 	dt->locate(0,24);
 	dt->locate(0,24);
 	dt->color(GREY | HIGH_INTENSITY, BLACK);

@@ -42,6 +42,7 @@ using namespace Tiki::Thread;
 extern ZZTMusicStream *zm;
 extern ConsoleText *ct;
 extern ConsoleText *dt;
+extern ConsoleText *st;
 extern Mutex zzt_screen_mutex;
 
 extern int switchbrd;
@@ -56,10 +57,14 @@ void status(char *text);
 !quit;Quit game"
 
 EventCollector *playerEventCollector=NULL;
+extern float zoom;
 
 void Player::processEvent(const Event & evt) {
 	if (evt.type == Hid::Event::EvtQuit) {
 		switchbrd = -2;
+	}
+	if (evt.type == Hid::Event::EvtAxis && evt.axis == Event::AxisRight) {
+		zoom = 1 + ((float)evt.axisValue / 256.0f);
 	}
 	if (evt.type == Hid::Event::EvtKeyUp || evt.type == Hid::Event::EvtBtnRelease) {
 		if(evt.key == 's' || evt.btn == Event::BtnY) {
@@ -84,23 +89,39 @@ void Player::processEvent(const Event & evt) {
 							(m_move == LEFT && (evt.key == Event::KeyLeft || evt.btn == Event::BtnLeft)) ||
 							(m_move == RIGHT && (evt.key == Event::KeyRight || evt.btn == Event::BtnRight))) {
 			m_move = IDLE;
-		} else if(evt.btn == Event::BtnA) {
+		} else if(evt.btn == Event::BtnA || evt.key == 32) {
 			m_shoot = IDLE;
 		}
-	} else if ((evt.type == Hid::Event::EvtKeyDown || evt.type == Hid::Event::EvtBtnPress) && world.health > 0) {
+	} else if ((evt.type == Hid::Event::EvtKeypress || evt.type == Hid::Event::EvtBtnPress) && world.health > 0) {
 		m_flags&=~F_SLEEPING;
-		
-		if(evt.mod & Hid::Event::KeyShift || evt.btn == Event::BtnA) {
-			m_shoot = SHOOTING;
-		}
-		if(!(evt.mod & Hid::Event::KeyShift)) {
-			m_shoot = IDLE;
+
+		if(evt.key == 32 || evt.btn == Event::BtnA) {
+			if(m_move != IDLE) {
+				m_move = IDLE;
+				m_shoot = m_move;
+			} else {
+				m_shoot = SHOOTING;
+			}
 		}
 
+		if(evt.btn == Event::MouseWheelUp) {
+			if(zoom < 2) zoom += 0.1;
+		}
+
+		if(evt.btn == Event::MouseWheelDown) {
+			if(zoom > 1) zoom -= 0.1;
+		}
+		
 		switch(evt.key) {
+			case ']':
+				if(zoom < 6) zoom += 0.1;
+				break;			
+			case '[':
+				if(zoom > 1) zoom -= 0.1;
+				break;
 			case Event::KeyUp:
 				m_heading=UP;
-				if(m_shoot == SHOOTING) {
+				if(m_shoot != IDLE) {
 					m_shoot=UP;
 				} else {
 					m_move=UP;
@@ -108,7 +129,7 @@ void Player::processEvent(const Event & evt) {
 				break;
 			case Event::KeyDown:
 				m_heading=DOWN;
-				if(m_shoot == SHOOTING) {
+				if(m_shoot != IDLE) {
 					m_shoot=DOWN;
 				} else {
 					m_move=DOWN;
@@ -116,7 +137,7 @@ void Player::processEvent(const Event & evt) {
 				break;
 			case Event::KeyLeft:
 				m_heading=LEFT;
-				if(m_shoot == SHOOTING) {
+				if(m_shoot != IDLE) {
 					m_shoot=LEFT;
 				} else {
 					m_move=LEFT;
@@ -124,7 +145,7 @@ void Player::processEvent(const Event & evt) {
 				break;
 			case Event::KeyRight:
 				m_heading=RIGHT;
-				if(m_shoot == SHOOTING) {
+				if(m_shoot != IDLE) {
 					m_shoot=RIGHT;
 				} else {
 					m_move=RIGHT;
@@ -202,9 +223,9 @@ void Player::update() {
 	direction oldShoot = m_shoot;
   
 	if(m_flags&F_SLEEPING && world.health > 0) {
-    ct->locate(BOARD_X+4,6);
-    ct->color(15,1);
-    ct->printf("Pausing...");
+    st->locate(4,6);
+    st->color(15,1);
+    st->printf("Pausing...");
     do {
       if(s==0) {
         draw();
@@ -222,9 +243,9 @@ void Player::update() {
 				processEvent(evt);
 			}	
     } while(m_flags&F_SLEEPING);
-    ct->locate(BOARD_X+4,6);
-    ct->color(15,1);
-    ct->printf("          ");
+    st->locate(4,6);
+    st->color(15,1);
+    st->printf("          ");
     draw();
   }
 
@@ -242,7 +263,7 @@ void Player::update() {
 
 	while (playerEventCollector->getEvent(evt)) {
 		processEvent(evt);
-		if(m_move != IDLE && (m_move != oldMove || m_shoot != oldShoot)) break;
+		if((m_move != IDLE || m_shoot != IDLE) && (m_move != oldMove || m_shoot != oldShoot)) break;
 	}	
 	
 	switch(m_move) {
@@ -309,6 +330,5 @@ void Player::update() {
 	
 	if(m_shoot!=IDLE) {
 		shoot(m_shoot);
-		m_shoot=IDLE;
 	}
 }

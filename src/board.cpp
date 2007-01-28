@@ -46,6 +46,7 @@ extern ZZTMusicStream *zm;
 
 extern ConsoleText *ct;
 extern ConsoleText *dt;
+extern ConsoleText *st;
 
 struct world_header world;
 struct board_info_node *board_list=NULL;
@@ -55,6 +56,7 @@ extern EventCollector *playerEventCollector;
 
 struct board_info_node *get_current_board() { return currentbrd; }
 int world_sec=10;
+extern float zoom;
 
 char spin_anim[4]={'|','/','-','\\'};
 
@@ -103,7 +105,7 @@ void put(ZZTObject *o) {
 	o->create();
 }
 
-void new_board(char *title) {
+int new_board(char *title) {
 	struct board_info_node *current=board_list;
 	struct board_info_node *prev=NULL;
 	int num=0;
@@ -138,15 +140,19 @@ void new_board(char *title) {
 	
 	for(int y=0; y<BOARD_Y; y++) {
 		for(int x=0; x<BOARD_X; x++) {
-			current->board[x][y].obj = create_object(ZZT_EMPTY,x,y);
-			current->board[x][y].under = NULL;
+			if(x == BOARD_X/2 && y == BOARD_Y/2) {
+				current->board[x][y].obj = create_object(ZZT_PLAYER,x,y);
+				current->board[x][y].under = create_object(ZZT_EMPTY,x,y);
+			} else {
+				current->board[x][y].obj = create_object(ZZT_EMPTY,x,y);
+				current->board[x][y].under = NULL;
+			}
 		}
 	}
 	
-	currentbrd=current;
 	world.board_count=num;
 	
-	put(create_object(ZZT_PLAYER,BOARD_X/2,BOARD_Y/2));
+	return current->num;
 }
 
 void new_world() {
@@ -172,7 +178,7 @@ void new_world() {
 	world.editing=0;
 	world.task_points=0;
 	
-	new_board("Title Screen");
+	switch_board(new_board("Title Screen"));
 }
 
 Thread::Thread *spinner_thread;
@@ -182,9 +188,9 @@ void *spinner_thd(void *text) {
   int x=0;
 	
 	while(spinner_active == true) {
-		ct->locate(BOARD_X+3,5);
-		ct->color(15,1);
-		ct->printf("%s %c...",(char *)text,spin_anim[x]);
+		st->locate(3,4);
+		st->color(15,1);
+		st->printf("%s %c...",(char *)text,spin_anim[x]);
 		x++;
 		x%=4;
 		render();
@@ -199,16 +205,21 @@ void *spinner_thd(void *text) {
 }
 	
 void spinner(char *text) {
+	if(spinner_active) spinner_clear();
 	spinner_active = true;
 	spinner_thread = new Thread::Thread(spinner_thd,text);
 }
 
 void spinner_clear() {
 	spinner_active = false;
-	
-  ct->locate(BOARD_X+3,5);
-  ct->color(15,1);
-  ct->printf("            ");
+#if TIKI_PLAT == TIKI_DC
+		Time::sleep(20000);
+#else
+		Time::sleep(100000);
+#endif	
+  st->locate(3,4);
+  st->color(15,1);
+  st->printf("            ");
 }
 
 int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer) {
@@ -319,6 +330,8 @@ void boardTransition(direction d, board_info_node *newbrd) {
 	bool changed[BOARD_X][BOARD_Y] = {0};
 	
 	if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
+	
+	zoom = 1;
 	
 	switch(d) {
 		case IDLE:
@@ -561,7 +574,7 @@ int board_right() {
   return currentbrd->board_right;
 }
 
-void compress(board_info_node *board) {
+void compress(board_info_node *board, bool silent) {
 	rle_block rle;
 	zzt_param param;
 	int code,color;
@@ -570,7 +583,7 @@ void compress(board_info_node *board) {
 	
 	if(board->compressed) return;
 	
-	spinner("Working");
+	if(!silent) spinner("Working");
 #ifdef DEBUG
 	Debug::printf("Compressing board...\n");
 #endif
@@ -651,13 +664,13 @@ void compress(board_info_node *board) {
 		board->size+=3;
 	}		
 	board->compressed=true;
-	spinner_clear();
+	if(!silent) spinner_clear();
 #ifdef DEBUG
 	Debug::printf("Done!\n");
 #endif
 }
 
-void decompress(board_info_node *board) {
+void decompress(board_info_node *board, bool silent) {
 	int x=0,y=0,z=0;
   ZZTObject *curobj=NULL;
   ZZTObject *prev=NULL; 
@@ -665,7 +678,7 @@ void decompress(board_info_node *board) {
 	std::list<zzt_param>::iterator param_iter;
 	
 	if(!board->compressed) return;
-	spinner("Working");
+	if(!silent) spinner("Working");
 #ifdef DEBUG
 	Debug::printf("Decompressing board...\n");
 #endif
@@ -711,7 +724,7 @@ void decompress(board_info_node *board) {
 	board->params.clear();
 	
 	board->compressed=false;
-	spinner_clear();
+	if(!silent) spinner_clear();
 #ifdef DEBUG
 	Debug::printf("Done!\n");
 #endif	
@@ -924,7 +937,7 @@ void save_game(const char *filename) {
 	struct board_info_node *curbrd=board_list;
 	std::list<rle_block>::iterator rle_iter;
 	std::list<zzt_param>::iterator params_iter;
-	unsigned char x;
+	unsigned char x=0;
 	unsigned short int i;
 	
   File fd(filename,"wb");
@@ -948,11 +961,14 @@ void save_game(const char *filename) {
 	fd.writele16(&world.time,1); //FIXME: This should be total game time, not current board time remaining
 	fd.write(&world.saved,1);
 	
-	fd.seek(0x200,SEEK_SET);
+	//fd.seek(0x200,SEEK_SET);
+	for(i=0; i<249; i++) {
+		fd.write(&x,1);
+	}
 	
 	while(curbrd!=NULL) {
-		if(curbrd->size==0) decompress(curbrd); //Calculate board size for older DreamZZT files
-		compress(curbrd);
+		if(curbrd->size==0) decompress(curbrd,true); //Calculate board size for older DreamZZT files
+		compress(curbrd,true);
 #ifdef DEBUG		
 		printf("Writing: %s\n",curbrd->title);
 #endif

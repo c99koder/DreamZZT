@@ -3,7 +3,7 @@ Below is a list of highlights of each DreamZZT release.  For a complete list of 
 
 == DreamZZT 3.0.6 ==
 === New Features ===
- * DreamZZT Online leaderboard
+ * Online leaderboard
  * On-the-fly board compression (ticket #6)
  * Integrated editor
  * Online version checking

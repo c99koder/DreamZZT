@@ -64,7 +64,7 @@ Mutex zzt_screen_mutex;
 
 extern struct world_header world;
 
-std::string MAIN_MENU = std::string("$Welcome to DreamZZT 3.0.6b2\r\r\
+std::string MAIN_MENU = std::string("$Welcome to DreamZZT 3.0.6\r\r\
 Please select an option from the\r\
 menu below:\r\
 \r\
@@ -117,6 +117,7 @@ void net_menu();
 
 ConsoleText *ct;
 extern ConsoleText *dt;
+extern ConsoleText *st;
 extern struct board_info_node *board_list;
 int switchbrd=-1;
 extern Player *player;
@@ -132,7 +133,7 @@ void check_updates() {
 #endif
 	ver = http_get_string("http://dev.c99.org/DreamZZT/LATEST");
 
-	if(ver != "3.0.6b2") {
+	if(ver != "3.0.6") {
 		TUIWindow t("Update available");
 		t.buildFromString("A new version of DreamZZT is available.\rPlease visit http://dev.c99.org/DreamZZT/\rfor more information.\r\r!ok;Ok\r");
 		t.doMenu(ct);
@@ -155,19 +156,31 @@ ZZTMusicStream *zm = NULL;
 Tiki::Thread::Thread *render_thread;
 Texture *zzt_font;
 
+#define SCREEN_X 640
+#if TIKI_PLAT == TIKI_DC
+#define SCREEN_Y 424
+#else
+#define SCREEN_Y 480
+#endif
+
+float zoom = 1;
+
 void render() {
+	float x,y,w,h;
+
 #if 0
-	int x,y,w,h;
 	if(player!=NULL) {
-		w=640;
-		h=480;
-		x=player->getPosition().x*8*-1 + (256/2) - 4;
-		y=player->getPosition().y*20 - (192*2) - 8;
+		x=((BOARD_X*4)*zoom)+((BOARD_X*4)-player->getPosition().x*(8*zoom));
+		y=((SCREEN_Y/2*zoom)+(SCREEN_Y/2-player->getPosition().y*((SCREEN_Y/ 25) * zoom)));
+		if(x>(BOARD_X*4*zoom)) x = (BOARD_X*4*zoom);
+		if(y>((SCREEN_Y/2)*zoom)) y = ((SCREEN_Y/2)*zoom);
+		// TODO: test maximum values too
+		ct->setTranslate(Vector(x, y, 0));
+		ct->setSize((BOARD_X*8) * zoom, SCREEN_Y * zoom);
 	}
-#endif	
+#endif
 	zzt_screen_mutex.lock();
 	Frame::begin();
-	Frame::transEnable();
 #if 0
 	if(player!=NULL) {
 		zzt_font->select();
@@ -182,8 +195,11 @@ void render() {
 #endif
 	ct->draw(Drawable::Opaque);
 	dt->draw(Drawable::Opaque);
+	st->draw(Drawable::Opaque);
+	Frame::transEnable();
 	ct->draw(Drawable::Trans);
 	dt->draw(Drawable::Trans);
+	st->draw(Drawable::Trans);
 	Frame::finish();
 #if TIKI_PLAT == TIKI_DC
 	update_lcds();
@@ -225,8 +241,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif	
 	
 #if TIKI_PLAT == TIKI_DC
+	//fs_chdir("/cd");
 	fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
-	
+
 	zzt_vmu_init();
 #endif
 
@@ -235,17 +252,19 @@ extern "C" int tiki_main(int argc, char **argv) {
 	
 	//initialize the screen		
 	zzt_font = new Texture("zzt-ascii.png", true);
-	ct = new ConsoleText(80,25, zzt_font);
-#if TIKI_PLAT == TIKI_DC
-	ct->setSize(640,424);
-#else
-	ct->setSize(640,480);
-#endif
-	ct->translate(Vector(320,240,0));
+	ct = new ConsoleText(BOARD_X, 25, zzt_font);
+	ct->setSize(BOARD_X * 8,SCREEN_Y);
+	ct->translate(Vector(BOARD_X * 4,240,0));
+	
+	st = new ConsoleText(80 - BOARD_X, 25, zzt_font);
+	st->setSize((80 - BOARD_X) * 8, SCREEN_Y);
+	st->setTranslate(Vector(640 - ((80 - BOARD_X) * 4), 240, 0.9));
 	
 	debug_init();
 	ct->color(15,1);
 	ct->clear();
+	st->color(15,1);
+	st->clear();
 	dzzt_logo();
 	menu_background();
 	render();
@@ -276,7 +295,15 @@ extern "C" int tiki_main(int argc, char **argv) {
 			play_zzt("tutorial.zzt");
 		} else if(t->getLabel() == "restore") {
 			std::string s = os_select_file("Select a saved game","sav");
-			if(s!="")	play_zzt(s.c_str());
+			if(s!="")	{
+#if TIKI_PLAT == TIKI_DC
+				unvmuify((std::string("/vmu/a1/") + s + std::string(".sav")).c_str(),"/ram/tmp.sav");
+				play_zzt("/ram/tmp.sav");
+				fs_unlink("/ram/tmp.sav");
+#else
+				play_zzt(s.c_str());
+#endif
+			}
 		} else if(t->getLabel() == "edit") {
 			new_world();
 			edit_zzt();
@@ -349,21 +376,22 @@ void play_zzt(const char *filename) {
 	if(world.saved==0) {
 		switch_board(0);
 		player->setShape(ZZT_EMPTY_SHAPE);
+		player->setColor(0,0);
 		playerEventCollector->stop();
 		player=NULL;
-		ct->locate(BOARD_X+2,7);
-		ct->color(14,1);
-		ct->printf("   World: ");
-		ct->color(15,1);
-		ct->printf("%s",world.title.string);
-		ct->locate(BOARD_X+2,9);
+		st->locate(2,7);
+		st->color(14,1);
+		st->printf("   World: ");
+		st->color(15,1);
+		st->printf("%s",world.title.string);
+		st->locate(2,9);
 	#if TIKI_PLAT == TIKI_DC
-		ct->printf("   Press Start");
+		st->printf("   Press Start");
 	#else
-		ct->printf("   Press Enter");
+		st->printf("   Press Enter");
 	#endif
-		ct->locate(BOARD_X+2,10);
-		ct->printf("    to begin!");
+		st->locate(2,10);
+		st->printf("    to begin!");
 		draw_board();
 		do {
 			if(!gameFrozen) update_brd();
@@ -426,6 +454,8 @@ void play_zzt(const char *filename) {
 
 	ct->color(15,1);
 	ct->clear();
+	st->color(15,1);
+	st->clear();
 	dzzt_logo();
   draw_hud_ingame();
   switch_board(start);
@@ -492,7 +522,16 @@ void play_zzt(const char *filename) {
 #endif
 			} else {
 				std::string s = os_save_file("Save a game","saved.sav","sav");
-				if(s!="") save_game(s.c_str());
+				if(s!="") {
+#if TIKI_PLAT == TIKI_DC
+					save_game("/ram/tmp.sav");
+					spinner("Saving");
+					vmuify("/ram/tmp.sav",(std::string("/vmu/a1/") + s + std::string(".sav")).c_str(),s.c_str(),"DreamZZT Saved Game");
+					spinner_clear();
+#else
+					save_game(s.c_str());
+#endif
+				}
 			}
 			switchbrd=-1;
 		} else if(switchbrd==-5) {

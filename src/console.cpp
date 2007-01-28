@@ -197,7 +197,7 @@ void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned c
 	w *= sv.x;
 	h *= sv.y;
 	
-	const Vector & tv = getPosition() + Vector(x, y, 0.01);
+	const Vector & tv = getPosition() + Vector(x, y, 0.0001);
 
 	if(attr & HIGH_INTENSITY) {
 		vert.argb = Color(0.25, 0.25, 0.25);
@@ -219,26 +219,26 @@ void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned c
 	vert.u = u/m_texture->getW();
 	vert.v = (v+8)/m_texture->getH();
 	glTexCoord2f(vert.u, vert.v);
-	glVertex3f(vert.x, vert.y, vert.z / zscale);
+	glVertex3f(vert.x, vert.y, vert.z);
 	
 	vert.y = tv.y-m_h/2;
 	vert.u = u/m_texture->getH();
 	vert.v = v/m_texture->getW();
 	glTexCoord2f(vert.u, vert.v);
-	glVertex3f(vert.x, vert.y, vert.z / zscale);
+	glVertex3f(vert.x, vert.y, vert.z);
 	
 	vert.x = tv.x+w-m_w/2;
 	vert.u = (u+8)/m_texture->getW();
 	vert.v = v/m_texture->getH();
 	glTexCoord2f(vert.u, vert.v);
-	glVertex3f(vert.x, vert.y, vert.z / zscale);
+	glVertex3f(vert.x, vert.y, vert.z);
 	
 	vert.flags = PLX_VERT_EOS;
 	vert.y = tv.y+h-m_h/2;
 	vert.u = (u+8)/m_texture->getW();
 	vert.v = (v+8)/m_texture->getH();
 	glTexCoord2f(vert.u, vert.v);
-	glVertex3f(vert.x, vert.y, vert.z / zscale);
+	glVertex3f(vert.x, vert.y, vert.z);
 	
 	glEnd();
 }
@@ -249,7 +249,7 @@ void ConsoleText::renderBackground(float x, float y, float w, float h, int color
 	w *= sv.x;
 	h *= sv.y;
 	
-	const Vector & tv = getPosition() + Vector(x, y, -1);
+	const Vector & tv = getPosition() + Vector(x, y, 0);
 	
 	vert.argb = m_palette[color];
 	vert.oargb = 0;
@@ -262,17 +262,17 @@ void ConsoleText::renderBackground(float x, float y, float w, float h, int color
 	vert.x = tv.x-m_w/2;
 	vert.y = tv.y+h-m_h/2;
 	vert.z = tv.z;
-	glVertex3f(vert.x, vert.y, vert.z / zscale);
+	glVertex3f(vert.x, vert.y, vert.z);
 	
 	vert.y = tv.y-m_h/2;
-	glVertex3f(vert.x, vert.y, vert.z / zscale);
+	glVertex3f(vert.x, vert.y, vert.z);
 	
 	vert.x = tv.x+w-m_w/2;
-	glVertex3f(vert.x, vert.y, vert.z / zscale);
+	glVertex3f(vert.x, vert.y, vert.z);
 	
 	vert.flags = PLX_VERT_EOS;
 	vert.y = tv.y+h-m_h/2;
-	glVertex3f(vert.x, vert.y, vert.z / zscale);
+	glVertex3f(vert.x, vert.y, vert.z);
 	
 	glEnd();
 }
@@ -283,7 +283,7 @@ void ConsoleText::draw(ObjType list) {
 	float y_step=(m_h / m_rows);
 
 #if TIKI_PLAT != TIKI_NDS
-	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 #endif
 	
 	if(list == Trans) {

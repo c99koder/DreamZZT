@@ -75,7 +75,7 @@ void Bullet::message(ZZTObject *them, std::string message) {
 
 void ZZTObject::shoot(enum direction dir) {
 	ZZTObject *bullet=NULL;
-	int dx,dy;
+	int dx=0,dy=0;
 	char buf[100];
 
 	switch(dir) {
@@ -92,6 +92,7 @@ void ZZTObject::shoot(enum direction dir) {
      dx=1; dy=0;
      break;
 		case IDLE:
+		case SHOOTING:
 			return;
 	}
 	
