@@ -1,3 +1,30 @@
+dreamzzt (3.0.6) stable; urgency=low
+
+New Features
+ * Online leaderboard
+ * On-the-fly board compression (ticket #6)
+ * Integrated editor
+ * Online version checking
+ * Associate with ZZT and SAV files
+ * New application and document icons
+ * Use OS-provided file browser where available
+ * New popup-window API
+ * Digitized drum samples
+ * Centipedes
+
+Bug Fixes
+ * Fix memory leaks and buffer overflows
+ * Use reenter coordinates from board header (ticket #16)
+ * Enable animated water in town.zzt
+ * Fix a buffer overflow in the board title
+ * Improve handling of pushing objects
+ * Fix timing on duplicators
+ * Prevent single-line status messages from opening TUIWindows
+ * Many ZZT-OOP bug fixes
+ * Fix a missing glyph in the ZZT font
+
+ -- Sam Steele <sam.steele@gmail.com>  Mon,  29 Jan 2007 01:00:00 -0500
+
 dreamzzt (3.0.6b2) unstable; urgency=low
 
   * DreamZZT Online integration

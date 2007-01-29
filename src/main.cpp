@@ -241,8 +241,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif	
 	
 #if TIKI_PLAT == TIKI_DC
-	//fs_chdir("/cd");
-	fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
+	fs_chdir("/cd");
+	//fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
 
 	zzt_vmu_init();
 #endif
