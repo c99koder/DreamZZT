@@ -112,7 +112,7 @@ $DreamZZT is (C) 2000 - 2007 Sam Steele\r\
 $For more information, please visit\r\
 $http://dev.c99.org/DreamZZT/\r"
 
-void play_zzt(const char *filename);
+void play_zzt(const char *filename, bool tempFile=false);
 void net_menu();
 
 ConsoleText *ct;
@@ -297,9 +297,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 			std::string s = os_select_file("Select a saved game","sav");
 			if(s!="")	{
 #if TIKI_PLAT == TIKI_DC
-				unvmuify((std::string("/vmu/a1/") + s + std::string(".sav")).c_str(),"/ram/tmp.sav");
-				play_zzt("/ram/tmp.sav");
-				fs_unlink("/ram/tmp.sav");
+				unvmuify((std::string("/vmu/a1/") + s).c_str(),"/ram/tmp.sav");
+				play_zzt("/ram/tmp.sav",true);
 #else
 				play_zzt(s.c_str());
 #endif
@@ -354,7 +353,7 @@ void titleHidCallback(const Event & evt, void * data) {
 	}
 }	
 
-void play_zzt(const char *filename) {
+void play_zzt(const char *filename, bool tempFile) {
 	int start,tasktype,complete;
 	std::string tmp;
 	std::vector<std::string> tasks;
@@ -371,7 +370,9 @@ void play_zzt(const char *filename) {
 		t.doMenu(ct);
 		return;
 	}
-				
+	
+	if(tempFile) unlink(filename);
+	
 	start=world.start;
 	if(world.saved==0) {
 		switch_board(0);
@@ -526,7 +527,8 @@ void play_zzt(const char *filename) {
 #if TIKI_PLAT == TIKI_DC
 					save_game("/ram/tmp.sav");
 					spinner("Saving");
-					vmuify("/ram/tmp.sav",(std::string("/vmu/a1/") + s + std::string(".sav")).c_str(),s.c_str(),"DreamZZT Saved Game");
+					vmuify("/ram/tmp.sav",(std::string("/vmu/a1/") + s).c_str(),s.c_str(),"DreamZZT Saved Game");
+					fs_unlink("/ram/tmp.sav");
 					spinner_clear();
 #else
 					save_game(s.c_str());

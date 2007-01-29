@@ -17,11 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
+struct dzzt_vmu_hdr {
+	unsigned long datalen;
+	char world[20];
+	char board[50];
+	time_t time;
+	unsigned short int score;
+	unsigned short int health;
+	unsigned short int ammo;
+	unsigned short int gems;
+};
+
 extern "C" {
 	void zzt_vmu_init();
 	void update_lcds();
-	int zinflate(const char *source, const char *dest);
-	int zdeflate(const char *source, const char *dest, int level);
-	void vmuify(const char *filename_in, const char *filename_out, const char *shortname, const char *longname);
-	void unvmuify(const char *filename_in, const char *filename_out);
 }
+void vmuify(const char *filename_in, const char *filename_out, const char *shortname, const char *longname);
+void unvmuify(const char *filename_in, const char *filename_out);

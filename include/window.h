@@ -49,20 +49,23 @@ private:
 
 class TUILabel : public TUIWidget {
 public:
-	TUILabel(std::string text, bool bold=false) {
+	TUILabel(std::string text, bool bold=false, bool ANSI=false) {
 		m_text=text;
 		m_bold=bold;
+		m_ansi=ANSI;
 	}
 	
 	~TUILabel() {}
 	
 	void draw(ConsoleText *ct) {
 		ct->color((m_bold?WHITE:YELLOW)|HIGH_INTENSITY,BLUE);
+		if(m_ansi) ct->setANSI(true);
 		*ct << m_text;
+		if(m_ansi) ct->setANSI(false);
 	}
 private:
 	std::string m_text;
-	bool m_bold;
+	bool m_bold, m_ansi;
 };
 
 class TUITextInput : public TUIWidget {
@@ -227,7 +230,7 @@ public:
 
 	void draw_shadow(ConsoleText *console, int x, int y);
 	void draw_box(ConsoleText *console, int x, int y, int w, int h, int fg, int bg, bool shadow=true);
-	void buildFromString(std::string s);
+	void buildFromString(std::string s, bool ANSI=false);
 	void doMenu(ConsoleText *ct);
 	void addWidget(TUIWidget *w) {
 		m_widgets.push_back(w);

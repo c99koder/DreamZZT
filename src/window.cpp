@@ -370,12 +370,17 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 				m_label = m_widgets[m_offset]->getReturnValue();
 			}
 		}
+#if TIKI_PLAT == TIKI_DC
+		if(evt.btn == Event::BtnY) {
+			vid_screen_shot("sshot.ppm");
+		}
+#endif
 	} else if(evt.type == Event::EvtKeyUp && evt.key == Event::KeyEsc) {
 			m_loop = false;
 	}
 }
 
-void TUIWindow::buildFromString(std::string s) {
+void TUIWindow::buildFromString(std::string s, bool ANSI) {
 	int i=0,j=0;
 	std::string label,text;
 	
@@ -396,7 +401,7 @@ void TUIWindow::buildFromString(std::string s) {
 				for(int x=0; x< (m_w - text.length() - 4) / 2; x++) {
 					label += " ";
 				}
-				addWidget(new TUILabel(label + text,true));
+				addWidget(new TUILabel(label + text,true,ANSI));
 				break;	
 			default:
 				j--;
@@ -410,7 +415,7 @@ void TUIWindow::buildFromString(std::string s) {
 					}
 					j++;
 				}
-				addWidget(new TUILabel(text));
+				addWidget(new TUILabel(text,false,ANSI));
 				break;	
 		}
 		i+=j+1;
@@ -501,19 +506,17 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 			ct->printf("%c",175);
 			ct->locate(m_x+m_w,m_h/2+m_y+1);
 			ct->printf("%c",174);
+
+			ct->setANSI(true);
 			
 			if(m_offset < m_h/2-2) {
 				for(i=0; i < m_h/2-2-m_offset; i++) {
 					ct->locate(m_x+(m_w/2)-20,m_y+3+i);
 					if(m_h/2-2 - m_offset - i == 4) {
-						ct->setANSI(true);
 						*ct << " \x1b[1;36mUse \x1b[37m\x18 \x1b[36mand \x1b[37m\x19 \x1b[36mto scroll and press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? "Start " : "Enter ") << "\x1b[36mor";
-						ct->setANSI(false);
 					}
 					if(m_h/2-2 - m_offset - i == 3) {
-						ct->setANSI(true);
 						*ct << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC) ? "A " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? " B  " : "ESC ") << "\x1b[36mto close.    ";
-						ct->setANSI(false);
 					}
 					if(m_h/2-2 - m_offset - i == 1) {
 						ct->color(YELLOW|HIGH_INTENSITY,BLUE);
@@ -523,13 +526,15 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 					}
 				}
 			}		
+
+			ct->setANSI(false);
 			
 			for(widget_iter = m_widgets.begin() + ((m_offset <=  m_h/2-2)?0:(m_offset -  m_h/2 + 2)); widget_iter != m_widgets.end() && i < m_h-2; widget_iter++) {
 				ct->locate(m_x+3,m_y+3+i++);
 				(*widget_iter)->update();
 				(*widget_iter)->draw(ct);
 			}
-
+	
 			if(i < m_h-2) {
 				ct->locate(m_x+2,m_y+3+i++);
 				ct->color(YELLOW|HIGH_INTENSITY,BLUE);

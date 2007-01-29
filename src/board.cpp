@@ -211,12 +211,10 @@ void spinner(char *text) {
 }
 
 void spinner_clear() {
-	spinner_active = false;
-#if TIKI_PLAT == TIKI_DC
-		Time::sleep(20000);
-#else
-		Time::sleep(100000);
-#endif	
+	if(spinner_active) {
+		spinner_active = false;
+		spinner_thread->join();
+	}
   st->locate(3,4);
   st->color(15,1);
   st->printf("            ");
@@ -535,12 +533,12 @@ void switch_board(int num) {
   world.start=num;
 	player=(Player *)get_obj_by_type(get_board(num),ZZT_PLAYER);
 
+	connect_lines(get_board(num));
 	if(player!=NULL && currentbrd!=NULL && !world.editing) boardTransition(h,get_board(num));
 	
 	if(currentbrd != NULL) compress(currentbrd);
 	
   currentbrd=get_board(num);
-	connect_lines(currentbrd);
 	if(player!=NULL) {
 		currentbrd->reenter_x = player->getPosition().x;
 		currentbrd->reenter_y = player->getPosition().y;
@@ -1028,7 +1026,8 @@ void save_game(const char *filename) {
 	}
 	fd.close();
 	
-	decompress(currentbrd);
+	decompress(currentbrd, true);
+	connect_lines(currentbrd);
 	
   spinner_clear();
 }

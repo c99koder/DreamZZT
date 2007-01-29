@@ -28,8 +28,15 @@ using namespace Tiki::Hid;
 
 #include "os.h"
 #include "window.h"
+#include "board.h"
 
 extern ConsoleText *ct;
+extern world_header world;
+
+#if TIKI_PLAT == TIKI_DC
+#include <dc/vmu_pkg.h>
+#include "vmu.h"
+#endif
 
 #if TIKI_PLAT == TIKI_WIN32
 #include <windows.h>
@@ -217,26 +224,158 @@ std::string os_select_file(std::string title, std::string filter) {
 	dirent_t *de;
   uint32 d;
 	TUIWindow t(title);
-	std::string tmp = "Select a game:\n\n";
+	std::string tmp = title + std::string(":\n");
 
 	if(filter == "sav") {
-		return "TOWN1";
+		d = fs_open("/vmu/a1",O_RDONLY|O_DIR);				
+	} else {
+		return "town.zzt";
+		d = fs_open(fs_getwd(),O_RDONLY|O_DIR);		
 	}
-
-	d = fs_open("/cd",O_RDONLY|O_DIR);
+	
+	spinner("Working");
+	
 	while ( (de=fs_readdir(d)) ) {
-		Debug::printf("Filename: %s\n",de->name);
 		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] + 32)) &&
        (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] + 32)) &&
-       (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32)))
-		tmp += std::string("!") + std::string(de->name) + std::string(";") + std::string(de->name) + std::string("\n");
+       (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32))) {
+			if(filter=="sav") {
+				char name[128];
+				char info[256];
+				char ampm[3];
+				dzzt_vmu_hdr hdr;
+				vmu_hdr_t pkg;
+				struct tm *time;
+				int fd = fs_open((std::string("/vmu/a1/") + std::string(de->name)).c_str(), O_RDONLY);
+				fs_read(fd,&pkg,sizeof(vmu_hdr_t));
+				fs_seek(fd,128 + (pkg.icon_cnt * 512), SEEK_SET);
+				fs_read(fd,&hdr,sizeof(dzzt_vmu_hdr));
+				fs_close(fd);
+				if(std::string(pkg.app_id) == "DZZT3") {
+					time = localtime(&hdr.time);
+					sprintf(name,"%s: %s",hdr.world,hdr.board);
+					if(time->tm_hour < 12) {
+						strcpy(ampm,"AM");
+					} else {
+						time->tm_hour -= 12;
+						strcpy(ampm,"PM");
+					}
+					if(time->tm_hour == 0) time->tm_hour = 12;
+					if(time->tm_min < 10) {
+						sprintf(info,"Score: \x1b[1;37m%i    \x1b[1;33m%i/%i/%i    %i:0%i %s\n\x1b[1;31m\x03 \x1b[1;33mHealth: \x1b[1;37m%i  \x1b[0;44;36m\x84 \x1b[1;33mAmmo: \x1b[1;37m%i  \x1b[1;32m\x04 \x1b[1;33mGems: \x1b[1;37m%i",hdr.score,time->tm_mon+1,time->tm_mday,1900+time->tm_year,time->tm_hour,time->tm_min,ampm,hdr.health,hdr.ammo,hdr.gems);
+					} else {
+						sprintf(info,"Score: \x1b[1;37m%i    \x1b[1;33m%i/%i/%i    %i:%i %s\n\x1b[1;31m\x03 \x1b[1;33mHealth: \x1b[1;37m%i  \x1b[0;44;36m\x84 \x1b[1;33mAmmo: \x1b[1;37m%i  \x1b[1;32m\x04 \x1b[1;33mGems: \x1b[1;37m%i",hdr.score,time->tm_mon+1,time->tm_mday,1900+time->tm_year,time->tm_hour,time->tm_min,ampm,hdr.health,hdr.ammo,hdr.gems);
+					}
+					tmp += std::string("\n!") + std::string(de->name) + std::string(";") + std::string(name) + std::string("\n");
+					tmp += std::string(info) + std::string("\n");
+				}
+			} else {
+				tmp += std::string("!") + std::string(de->name) + std::string(";") + std::string(de->name) + std::string("\n");
+			}
+		}
 	}
-	t.buildFromString(tmp);
+	fs_close(d);
+	spinner_clear();
+	t.buildFromString(tmp,true);
 	t.doMenu(ct);
 	return t.getLabel();
 }
 
 std::string os_save_file(std::string title, std::string filename, std::string filter) {
-	return "TOWN1";
+	dirent_t *de;
+  uint32 d,fd;
+	TUIWindow t(title);
+	int slot = 0;
+	char strslot[12] = "0";
+	char name[128];
+	char info[256];
+	char ampm[3];
+	int blocks;
+	stat_t rv;
+	dzzt_vmu_hdr hdr;
+	vmu_hdr_t pkg;
+	struct tm *time;
+	std::string tmp = title + std::string(":\n");
+
+	save_game("/ram/tmp.sav");
+	vmuify("/ram/tmp.sav","/ram/tmp.vms","/ram/tmp.vms","DreamZZT Saved Game");
+	fs_unlink("/ram/tmp.sav");
+
+	spinner("Working");
+
+	fs_stat("/vmu/a1", &rv);
+	fd=fs_open("/ram/tmp.vms",O_RDONLY);
+	blocks = (fs_total(fd) / 512) + 1;
+	fs_close(fd);
+	fs_unlink("/ram/tmp.vms");
+	printf("%i blocks required (%i blocks free)\n",blocks,rv.size);
+
+	if(blocks < rv.size) {
+		strcpy(name,(const char *)world.title.string);
+		name[6] = '\0';
+		strcat(name,strslot);
+		strcat(name,".sav");
+
+		while(fd = fs_open((std::string("/vmu/a1/") + std::string(name)).c_str(), O_RDONLY) >= 0) {
+			printf("fd: %i\n",fd);
+			fs_close(fd);
+			slot++;
+			sprintf(strslot,"%i",slot);
+			strcpy(name,(const char *)world.title.string);
+			name[6] = '\0';
+			strcat(name,strslot);
+			strcat(name,".sav");
+		}
+		fs_close(fd);
+		printf("New name: %s\n",name);
+
+		tmp += std::string("\n!") + std::string(name) + std::string("; Create a new save\n");
+	} else {
+		tmp += std::string("\n$Not enough free blocks to create a new\n$file.  Please select an existing file\n$to overwrite.\n");
+	}
+		
+	d = fs_open("/vmu/a1",O_RDONLY|O_DIR);				
+	
+	while ( (de=fs_readdir(d)) ) {
+		printf("Filename: %s\n",de->name);
+		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] + 32)) &&
+       (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] + 32)) &&
+       (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32))) {
+			if(filter=="sav") {
+				int fd = fs_open((std::string("/vmu/a1/") + std::string(de->name)).c_str(), O_RDONLY);
+				fs_read(fd,&pkg,sizeof(vmu_hdr_t));
+				fs_seek(fd,128 + (pkg.icon_cnt * 512), SEEK_SET);
+				fs_read(fd,&hdr,sizeof(dzzt_vmu_hdr));
+				fs_close(fd);
+				if(std::string(pkg.app_id) == "DZZT3" && std::string(hdr.world) == std::string((const char *)world.title.string)) {
+					time = localtime(&hdr.time);
+					sprintf(name,"%s: %s",hdr.world,hdr.board);
+					if(time->tm_hour < 12) {
+						strcpy(ampm,"AM");
+					} else {
+						time->tm_hour -= 12;
+						strcpy(ampm,"PM");
+					}
+					if(time->tm_hour == 0) time->tm_hour = 12;
+					if(time->tm_min < 10) {
+						sprintf(info,"Score: \x1b[1;37m%i    \x1b[1;33m%i/%i/%i    %i:0%i %s\n\x1b[1;31m\x03 \x1b[1;33mHealth: \x1b[1;37m%i  \x1b[0;44;36m\x84 \x1b[1;33mAmmo: \x1b[1;37m%i  \x1b[1;32m\x04 \x1b[1;33mGems: \x1b[1;37m%i",hdr.score,time->tm_mon+1,time->tm_mday,1900+time->tm_year,time->tm_hour,time->tm_min,ampm,hdr.health,hdr.ammo,hdr.gems);
+					} else {
+						sprintf(info,"Score: \x1b[1;37m%i    \x1b[1;33m%i/%i/%i    %i:%i %s\n\x1b[1;31m\x03 \x1b[1;33mHealth: \x1b[1;37m%i  \x1b[0;44;36m\x84 \x1b[1;33mAmmo: \x1b[1;37m%i  \x1b[1;32m\x04 \x1b[1;33mGems: \x1b[1;37m%i",hdr.score,time->tm_mon+1,time->tm_mday,1900+time->tm_year,time->tm_hour,time->tm_min,ampm,hdr.health,hdr.ammo,hdr.gems);
+					}
+					tmp += std::string("\n!") + std::string(de->name) + std::string(";") + std::string(name) + std::string("\n");
+					tmp += std::string(info) + std::string("\n");
+					printf("tmp: %s\n",tmp.c_str());
+				}
+			} else {
+				tmp += std::string("!") + std::string(de->name) + std::string(";") + std::string(de->name) + std::string("\n");
+			}
+		}
+	}
+	fs_close(d);
+	spinner_clear();
+	t.buildFromString(tmp,true);
+	t.doMenu(ct);
+	printf("Returning: %s\n",t.getLabel().c_str());
+	return t.getLabel();
 }
 #endif
