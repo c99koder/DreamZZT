@@ -18,6 +18,17 @@
  */ 
 
 #include <Tiki/tiki.h>
+
+#if TIKI_PLAT == TIKI_SDL
+#include <qt3/qapplication.h>
+#include <qt3/qfiledialog.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
+
+#include "os.h"
+
+#if TIKI_PLAT == TIKI_DC
 #include <Tiki/hid.h>
 #include <Tiki/eventcollector.h>
 #include <Tiki/drawables/console.h>
@@ -26,16 +37,14 @@ using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
 
-#include "os.h"
+#include <dc/vmu_pkg.h>
+#include "vmu.h"
 #include "window.h"
 #include "board.h"
 
 extern ConsoleText *ct;
 extern world_header world;
 
-#if TIKI_PLAT == TIKI_DC
-#include <dc/vmu_pkg.h>
-#include "vmu.h"
 #endif
 
 #if TIKI_PLAT == TIKI_WIN32
@@ -45,12 +54,6 @@ extern world_header world;
 static char szAppName[] = "DreamZZT";
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 #else
-#if TIKI_PLAT == TIKI_SDL
-#include <qt3/qapplication.h>
-#include <qt3/qfiledialog.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#endif
 
 extern "C" int tiki_main(int argc, char *argv[]);
 int main(int argc, char *argv[])
@@ -350,6 +353,7 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 				if(std::string(pkg.app_id) == "DZZT3" && std::string(hdr.world) == std::string((const char *)world.title.string)) {
 					time = localtime(&hdr.time);
 					sprintf(name,"%s: %s",hdr.world,hdr.board);
+					name[38] = '\0';
 					if(time->tm_hour < 12) {
 						strcpy(ampm,"AM");
 					} else {
