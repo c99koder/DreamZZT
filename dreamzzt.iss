@@ -14,7 +14,7 @@ OutputBaseFilename=dreamzzt-3.0.6-setup
 Compression=lzma
 SolidCompression=true
 MinVersion=4.1.2222,5.0.2195
-LicenseFile=C:\Documents and Settings\Sam\Desktop\DreamZZT\COPYING
+LicenseFile=COPYING
 ChangesAssociations=true
 AppVersion=3.0.6
 UninstallDisplayIcon={app}\DreamZZT.exe
@@ -25,6 +25,7 @@ VersionInfoDescription=DreamZZT 3.0.6
 VersionInfoTextVersion=3.0.6
 VersionInfoCopyright=Copyright (C) 2000 - 2007 Sam Steele, All Rights Reserved.
 InternalCompressLevel=max
+InfoBeforeFile=ChangeLog
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
@@ -35,15 +36,15 @@ Name: registerzzt; Description: Associate DreamZZT with .ZZT files; Flags: check
 Name: registersav; Description: Associate DreamZZT with .SAV files; Flags: checkedonce; GroupDescription: Register file types:
 
 [Files]
-Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\Release\DreamZZT.exe; DestDir: {app}; Flags: ignoreversion
-Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\zzt-ascii.png; DestDir: {app}; Flags: ignoreversion
-Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\alut.dll; DestDir: {app}; Flags: ignoreversion
-Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\OpenAL32.dll; DestDir: {app}; Flags: ignoreversion
-Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\town.zzt; DestDir: {app}; Flags: ignoreversion
-Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\tutorial.zzt; DestDir: {app}; Flags: ignoreversion
-Source: C:\Documents and Settings\Sam\Desktop\DreamZZT\resources\wrap_oal.dll; DestDir: {app}; Flags: ignoreversion
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: COPYING; DestDir: {app}
+Source: ChangeLog; DestDir: {app}
+Source: Release\DreamZZT.exe; DestDir: {app}; Flags: ignoreversion
+Source: resources\town.zzt; DestDir: {app}; Flags: ignoreversion
+Source: resources\tutorial.zzt; DestDir: {app}; Flags: ignoreversion
+Source: resources\zzt-ascii.png; DestDir: {app}; Flags: ignoreversion
+Source: win32\alut.dll; DestDir: {app}; Flags: ignoreversion
+Source: win32\OpenAL32.dll; DestDir: {app}; Flags: ignoreversion
+Source: win32\wrap_oal.dll; DestDir: {app}; Flags: ignoreversion
 Source: win32\libcurl.dll; DestDir: {app}; Flags: ignoreversion; Tasks: 
 
 [INI]
