@@ -241,8 +241,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif	
 	
 #if TIKI_PLAT == TIKI_DC
-	fs_chdir("/cd");
-	//fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
+	//fs_chdir("/cd");
+	fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
 
 	zzt_vmu_init();
 #endif
@@ -271,7 +271,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	check_updates();
 	
 	world.online=0;
-
+	
 	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
 	}
@@ -359,7 +359,6 @@ void play_zzt(const char *filename, bool tempFile) {
 	std::vector<std::string> tasks;
 	std::vector<std::string> params;
 	std::vector<std::string>::iterator tasks_iter;
-	int hidCookie = Hid::callbackReg(titleHidCallback, NULL);
 
 	gameFrozen = false;
 	
@@ -374,15 +373,16 @@ void play_zzt(const char *filename, bool tempFile) {
 	if(tempFile) unlink(filename);
 	
 	start=world.start;
-	if(world.saved==0) {
+	if(filename[strlen(filename)-1]!='v' && filename[strlen(filename)-1]!='V') {
+		int hidCookie = Hid::callbackReg(titleHidCallback, NULL);
 		switch_board(0);
 		player->setShape(ZZT_EMPTY_SHAPE);
 		player->setColor(0,0);
 		playerEventCollector->stop();
 		player=NULL;
-		st->locate(2,7);
+		st->locate(1,7);
 		st->color(14,1);
-		st->printf("   World: ");
+		st->printf("World: ");
 		st->color(15,1);
 		st->printf("%s",world.title.string);
 		st->locate(2,9);
@@ -404,7 +404,7 @@ void play_zzt(const char *filename, bool tempFile) {
 #else
 			Time::sleep(80000);
 #endif
-		} while(world.saved==0 && switchbrd==-1);
+		} while(switchbrd==-1);
 		Hid::callbackUnreg(hidCookie);
 		if(switchbrd==-2) return;
 	}
