@@ -700,7 +700,12 @@ void decompress(board_info_node *board, bool silent) {
 	}
 	
 	for(param_iter=board->params.begin(); param_iter != board->params.end(); param_iter++) {
-		curobj = board->board[(*param_iter).x][(*param_iter).y].obj;
+		if((*param_iter).x >= 0 && (*param_iter).x < BOARD_X && (*param_iter).y >= 0 && (*param_iter).y < BOARD_Y) {
+			curobj = board->board[(*param_iter).x][(*param_iter).y].obj;
+		} else {
+			printf("Params out of bounds: %i, %i\n",(*param_iter).x,(*param_iter).y);
+			curobj=NULL;
+		}
 		if(curobj!=NULL) {
 			curobj->setStep(Vector((*param_iter).xstep,(*param_iter).ystep,0));
 			curobj->setCycle((*param_iter).cycle);
