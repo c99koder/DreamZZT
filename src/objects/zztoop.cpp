@@ -65,7 +65,7 @@ void ZZTOOP::create() {
 void ZZTOOP::message(ZZTObject *them, std::string message) {
   if(!(m_flags & F_SLEEPING)) {
 		if(message=="shot") task_shoot(this);
-		zzt_goto(message);
+		if(them->getType() == ZZT_PLAYER || them->getType() == ZZT_OBJECT) zzt_goto(message);
 	}
 }
 
@@ -854,7 +854,7 @@ void ZZTOOP::update() {
 		Debug::printf("%s: %s\n",get_zztobj_name().c_str(), msg.c_str());
 #endif
 		if(msg.find("\r") != msg.npos && msg.find("\r") != (msg.length() - 1)) {
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL && zm->hasTune()) zm->start();
 			TUIWindow *t= new TUIWindow(get_zztobj_name());
 			t->buildFromString(msg);
 			t->doMenu(ct);
@@ -870,5 +870,5 @@ void ZZTOOP::update() {
   if(m_walk!=IDLE && !(m_flags & F_DELETED)) {
     move(m_walk);
   }
-	if(zm!=NULL) zm->start();
+	if(zm!=NULL && zm->hasTune()) zm->start();
 }
