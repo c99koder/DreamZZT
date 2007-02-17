@@ -1,3 +1,11 @@
+dreamzzt (3.0.6.1) stable; urgency=high
+
+  * Pressing the enter key could crash the game (ticket #24)
+  * Enemies no longer trigger touch events on ZZT-OOP scripts (ticket #25)
+  * Allow capital letters and punctuation in DreamZZT Online passwords (ticket #26)
+
+ -- Sam Steele <sam.steele@gmail.com>  Sat, 17 Feb 2007 16:00:00 -0500
+
 dreamzzt (3.0.6) stable; urgency=low
 
   * Online leaderboard
