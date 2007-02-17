@@ -64,7 +64,7 @@ Mutex zzt_screen_mutex;
 
 extern struct world_header world;
 
-std::string MAIN_MENU = std::string("$Welcome to DreamZZT 3.0.6\r\r\
+std::string MAIN_MENU = std::string("$Welcome to DreamZZT 3.0.6.1\r\r\
 Please select an option from the\r\
 menu below:\r\
 \r\
@@ -133,7 +133,7 @@ void check_updates() {
 #endif
 	ver = http_get_string("http://dev.c99.org/DreamZZT/LATEST");
 
-	if(ver != "3.0.6") {
+	if(ver != "3.0.6.1") {
 		TUIWindow t("Update available");
 		t.buildFromString("A new version of DreamZZT is available.\rPlease visit http://dev.c99.org/DreamZZT/\rfor more information.\r\r!ok;Ok\r");
 		t.doMenu(ct);

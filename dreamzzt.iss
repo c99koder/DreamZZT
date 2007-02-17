@@ -3,26 +3,26 @@
 
 [Setup]
 AppName=DreamZZT
-AppVerName=DreamZZT 3.0.6
+AppVerName=DreamZZT 3.0.6.1
 AppPublisher=Sam Steele
 AppPublisherURL=http://www.c99.org/
 AppSupportURL=http://forums.c99.org/
 AppUpdatesURL=http://dev.c99.org/DreamZZT/
 DefaultDirName={pf}\DreamZZT
 DefaultGroupName=DreamZZT
-OutputBaseFilename=dreamzzt-3.0.6-setup
+OutputBaseFilename=dreamzzt-3.0.6.1-setup
 Compression=lzma
 SolidCompression=true
 MinVersion=4.1.2222,5.0.2195
 LicenseFile=COPYING
 ChangesAssociations=true
-AppVersion=3.0.6
+AppVersion=3.0.6.1
 UninstallDisplayIcon={app}\DreamZZT.exe
-UninstallDisplayName=DreamZZT 3.0.6
-VersionInfoVersion=3.0.6
+UninstallDisplayName=DreamZZT 3.0.6.1
+VersionInfoVersion=3.0.6.1
 VersionInfoCompany=Sam Steele
-VersionInfoDescription=DreamZZT 3.0.6
-VersionInfoTextVersion=3.0.6
+VersionInfoDescription=DreamZZT 3.0.6.1
+VersionInfoTextVersion=3.0.6.1
 VersionInfoCopyright=Copyright (C) 2000 - 2007 Sam Steele, All Rights Reserved.
 InternalCompressLevel=max
 InfoBeforeFile=ChangeLog

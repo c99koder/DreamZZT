@@ -43,6 +43,7 @@
 		22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22ABAB4D0A31145600B9C077 /* centipede.cpp */; };
 		22AD22CC0A13FAD8003E828E /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
 		22D2E46D0A55EAB200319F32 /* editor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22D2E46B0A55EAB100319F32 /* editor.cpp */; };
+		22DB946D0B7D2BEF00C5DCA9 /* CODERED1.ZZT in Resources */ = {isa = PBXBuildFile; fileRef = 22DB946C0B7D2BEF00C5DCA9 /* CODERED1.ZZT */; };
 		22EC1AC20A2B3FD700DEE79D /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 22EC1AC10A2B3FD600DEE79D /* icon.icns */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -118,6 +119,7 @@
 		22AD22CB0A13FAD8003E828E /* http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = http.cpp; path = src/http.cpp; sourceTree = "<group>"; };
 		22D2E46B0A55EAB100319F32 /* editor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = editor.cpp; path = src/editor.cpp; sourceTree = "<group>"; };
 		22D2E4700A55EAC000319F32 /* editor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = editor.h; path = include/editor.h; sourceTree = "<group>"; };
+		22DB946C0B7D2BEF00C5DCA9 /* CODERED1.ZZT */ = {isa = PBXFileReference; lastKnownFileType = file; name = CODERED1.ZZT; path = resources/CODERED1.ZZT; sourceTree = "<group>"; };
 		22EC1AC10A2B3FD600DEE79D /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
@@ -125,7 +127,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* DreamZZT_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DreamZZT_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8D1107320486CEB800E47090 /* DreamZZT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DreamZZT.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107320486CEB800E47090 /* DreamZZT.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DreamZZT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4F50ECB0799E1350001D0D0 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Controller.h; path = src/Controller.h; sourceTree = "<group>"; };
 		C4F50EEE0799E5B40001D0D0 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -275,6 +277,7 @@
 			isa = PBXGroup;
 			children = (
 				226F41C90B1909D800FC07AE /* sav_icon.icns */,
+				22DB946C0B7D2BEF00C5DCA9 /* CODERED1.ZZT */,
 				226F41BB0B19024300FC07AE /* doc_icon.icns */,
 				22EC1AC10A2B3FD600DEE79D /* icon.icns */,
 				2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */,
@@ -348,6 +351,7 @@
 				22EC1AC20A2B3FD700DEE79D /* icon.icns in Resources */,
 				226F41BC0B19024300FC07AE /* doc_icon.icns in Resources */,
 				226F41CA0B1909D800FC07AE /* sav_icon.icns in Resources */,
+				22DB946D0B7D2BEF00C5DCA9 /* CODERED1.ZZT in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

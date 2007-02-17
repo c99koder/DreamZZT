@@ -1,6 +1,12 @@
 = DreamZZT ChangeLog =
 Below is a list of highlights of each DreamZZT release.  For a complete list of changes, see [http://dev.c99.org/DreamZZT/timeline].
 
+== DreamZZT 3.0.6.1 ==
+=== Bug Fixes ===
+ * Pressing the enter key could crash the game (ticket #24)
+ * Enemies no longer trigger touch events on ZZT-OOP scripts (ticket #25)
+ * Allow capital letters and punctuation in DreamZZT Online passwords (ticket #26)
+
 == DreamZZT 3.0.6 ==
 === New Features ===
  * Online leaderboard
