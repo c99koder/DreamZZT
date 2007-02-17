@@ -37,7 +37,7 @@ public:
 			void lock() { m_locked = true; }
 			void unlock() { m_locked = false; }
 			bool isLocked() { return m_locked; }
-			
+			bool hasTune() { return m_tune.length() > 0; }
 protected:
 			virtual GetDataResult getData(uint16 * buffer, int * numSamples);
 
