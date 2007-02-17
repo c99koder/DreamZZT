@@ -286,11 +286,84 @@ void TUITextInput::draw(ConsoleText *ct) {
 }
 
 void TUITextInput::processHidEvent(const Hid::Event &evt) {
+	char key = evt.key;
+	
 	if(evt.type == Event::EvtKeypress) {
-		if(evt.key >= 32 && evt.key < 127 && (m_text->length() + m_label.length() <= 40)) {
-			*m_text += evt.key;
+		if(key >= 32 && key < 127 && (m_text->length() + m_label.length() <= 40)) {
+			if(evt.mod & Event::KeyShift) {
+				if(key >= 'a' && key <= 'z') {
+					key -= 32;
+				} else {
+					switch(key) {
+						case '`':
+							key='~';
+							break;
+						case '0':
+							key=')';
+							break;
+						case '1':
+							key='!';
+							break;
+						case '2':
+							key='@';
+							break;
+						case '3':
+							key='#';
+							break;
+						case '4':
+							key='$';
+							break;
+						case '5':
+							key='%';
+							break;
+						case '6':
+							key='^';
+							break;
+						case '7':
+							key='&';
+							break;
+						case '8':
+							key='*';
+							break;
+						case '9':
+							key='(';
+							break;
+						case '-':
+							key='_';
+							break;
+						case '=':
+							key='+';
+							break;
+						case '[':
+							key='{';
+							break;
+						case ']':
+							key='}';
+							break;
+						case '\\':
+							key='|';
+							break;
+						case ';':
+							key=':';
+							break;
+						case '\'':
+							key='\"';
+							break;
+						case ',':
+							key='<';
+							break;
+						case '.':
+							key='>';
+							break;
+						case '/':
+							key='?';
+							break;
+					}
+				}
+			}
+			*m_text += key;
 		}
-		if((evt.key == 8 || evt.key == 127) && m_text->length() > 0) {
+		if((key == 8 || key == 127) && m_text->length() > 0) {
 			m_text->erase(m_text->end() - 1);
 		}
 	}
