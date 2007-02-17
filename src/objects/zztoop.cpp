@@ -65,7 +65,7 @@ void ZZTOOP::create() {
 void ZZTOOP::message(ZZTObject *them, std::string message) {
   if(!(m_flags & F_SLEEPING)) {
 		if(message=="shot") task_shoot(this);
-		if(them->getType() == ZZT_PLAYER || them->getType() == ZZT_OBJECT) zzt_goto(message);
+		if((message == "touch" && (them->getType() == ZZT_PLAYER || them->getType() == ZZT_OBJECT)) || message != "touch") zzt_goto(message);
 	}
 }
 
