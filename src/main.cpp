@@ -579,6 +579,14 @@ void net_menu() {
 #ifdef NET
 	std::string url = DZZTNET_HOST + DZZTNET_HOME;
 	std::string tmp,filename;
+	
+	if(curl_auth_string != "") {
+		url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
+		tmp = http_get_string(url);
+		if(tmp!="OK") {
+			curl_auth_string = "";
+		}
+	}
 	if(curl_auth_string == "") {
 		TUIWindow *t;
 		t = new TUIWindow("DreamZZT Online");

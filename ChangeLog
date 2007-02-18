@@ -6,6 +6,7 @@ Below is a list of highlights of each DreamZZT release.  For a complete list of 
  * Pressing the enter key could crash the game (ticket #24)
  * Enemies no longer trigger touch events on ZZT-OOP scripts (ticket #25)
  * Allow capital letters and punctuation in DreamZZT Online passwords (ticket #26)
+ * Clear the cached DreamZZT Online password if unable to login (ticket #27)
 
 == DreamZZT 3.0.6 ==
 === New Features ===
