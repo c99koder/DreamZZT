@@ -56,8 +56,10 @@ using namespace Tiki::Thread;
 #if TIKI_PLAT == TIKI_DC
 #include "vmu.h"
 
-//extern uint8 romdisk[];
-//KOS_INIT_ROMDISK(romdisk);
+#ifdef DEBUG
+extern uint8 romdisk[];
+KOS_INIT_ROMDISK(romdisk);
+#endif
 #endif
 
 Mutex zzt_screen_mutex;
@@ -241,12 +243,15 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif	
 	
 #if TIKI_PLAT == TIKI_DC
-	fs_chdir("/cd");
+#ifdef DEBUG
 	//fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
-
+	fs_chdir("/rd");
+#else
+	fs_chdir("/cd");
+#endif
 	zzt_vmu_init();
 #endif
-
+	
 	zm = new ZZTMusicStream;
 	zm->setVolume(0.4);
 	
@@ -580,13 +585,13 @@ void net_menu() {
 	std::string url = DZZTNET_HOST + DZZTNET_HOME;
 	std::string tmp,filename;
 	
-	if(curl_auth_string != "") {
+	/*if(curl_auth_string != "") {
 		url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
 		tmp = http_get_string(url);
 		if(tmp!="OK") {
 			curl_auth_string = "";
 		}
-	}
+	}*/
 	if(curl_auth_string == "") {
 		TUIWindow *t;
 		t = new TUIWindow("DreamZZT Online");

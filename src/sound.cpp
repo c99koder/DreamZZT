@@ -74,9 +74,6 @@ ZZTMusicStream::~ZZTMusicStream() {
 
 void ZZTMusicStream::setTune(std::string tune) {
 	if(m_locked) return;
-#if TIKI_PLAT == TIKI_DC
-	return;
-#endif
 	stop();
 	
 	m_tune = tune;
@@ -90,9 +87,6 @@ void ZZTMusicStream::setTune(std::string tune) {
 }
 
 void ZZTMusicStream::appendTune(std::string tune) {
-#if TIKI_PLAT == TIKI_DC
-	return;
-#endif
 	m_tune += "@"; //Magic reset code
 	m_tune += tune;
 }
@@ -104,12 +98,19 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 	memset(buffer, 0, *numSamples * 2);
 	
 	if(m_tune.length() == 0) {
+		*numSamples = 0;
 		return GDEOS;
 	}
 	
-	if(m_tune_idx >= m_tune.length()) {
-		m_tune = "";
-		return GDSuccess;
+	if(m_note_len <= 0 && m_tune_idx >= m_tune.length()) {
+		if(m_tune[m_tune.length()-1] == 'x') {
+			m_tune = "";
+			*numSamples = 0;
+			return GDEOS;
+		}
+		else {
+			m_tune += "hx";
+		}
 	}
 	
 	for(int i = 0; i < *numSamples; i++) {
@@ -127,7 +128,6 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 		
 		if(m_note_len--<=0) {
 			if(m_tune_idx >= m_tune.length()) {
-				*numSamples = (i / 2);
 				return GDSuccess;
 			}
 			j=0;
@@ -149,11 +149,6 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 					m_drum_idx = 0;
 					i--;
 					continue;					
-				/*case '3':
-					m_drum = (uint16 *)drumsample3;
-					m_drum_idx = 0;
-					i--;
-					continue;*/
 				case '4':
 					m_drum = (uint16 *)drumsample4;
 					m_drum_idx = 0;
@@ -276,6 +271,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 		
 		if(m_note_freq == 0) {
 			buffer[i] = 0;
+			j = 0;
 			continue;
 		}
 		
