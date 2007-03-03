@@ -383,7 +383,7 @@ ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string n
   m_step.y=0;
   m_heading=IDLE;
   m_type = type;
-  m_cycle=1;
+  m_cycle=0;
   m_tick=0;
   m_flags=flags;
   m_shape=shape;

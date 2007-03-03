@@ -528,6 +528,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 }
 
 void switch_board(int num) {
+  int oldbrd = world.start;
 	direction h = (player==NULL)?IDLE:player->getHeading();
 	decompress(get_board(num));
   world.start=num;
@@ -536,7 +537,7 @@ void switch_board(int num) {
 	connect_lines(get_board(num));
 	if(player!=NULL && currentbrd!=NULL && !world.editing) boardTransition(h,get_board(num));
 	
-	if(currentbrd != NULL) compress(currentbrd);
+	if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
 	
   currentbrd=get_board(num);
 	if(player!=NULL) {
@@ -1097,7 +1098,7 @@ void update_brd() {
 				o=current->board[x][y].obj;
 				if(o!=NULL && o->isValid() && o->getUpdated()==0) { 
 					o->setTick(o->getTick()-1);
-					if(o->getTick()<=0 || world.health<=0/* && i%2==j*/) {
+					if((o->getTick()<=0 && o->getCycle() != 0) || world.health<=0/* && i%2==j*/) {
 						//printf("Updating: %s\n",o->name);
 						o->update();
 						if(o->getFlags()&F_DELETED) {

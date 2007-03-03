@@ -538,53 +538,64 @@ void edit_zzt() {
 					switch(evt.key) {
 						case 'z':
 							o=pattern[4]=create_object(ZZT_PLAYER,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'a':
 							o=pattern[4]=create_object(ZZT_AMMO,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 't':
 							o=pattern[4]=create_object(ZZT_TORCH,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'g':
 							o=pattern[4]=create_object(ZZT_GEM,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'k':
 							o=pattern[4]=create_object(ZZT_KEY,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'd':
 							o=pattern[4]=create_object(ZZT_DOOR,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 's':
 							o=pattern[4]=create_object(ZZT_SCROLL,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'p':
 							o=pattern[4]=create_object(ZZT_PASSAGE,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'u':
 							o=pattern[4]=create_object(ZZT_DUPLICATOR,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'b':
 							o=pattern[4]=create_object(ZZT_BOMB,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'e':
 							o=pattern[4]=create_object(ZZT_ENERGIZER,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 					}
@@ -594,52 +605,63 @@ void edit_zzt() {
 					switch(evt.key) {
 						case 'b':
 							o=pattern[4]=create_object(ZZT_BEAR,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'r':
 							o=pattern[4]=create_object(ZZT_RUFFIAN,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'o':
 							o=pattern[4]=create_object(ZZT_OBJECT,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'v':
 							//o=pattern[4]=create_object(ZZT_SLIME,edit_x,edit_y);
 							//o->setColor(edit_fg, edit_bg);
+							//o->setCycle(1);
 							//put(o);
 							break;
 						case 'y':
 							o=pattern[4]=create_object(ZZT_SHARK,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'g':
 							o=pattern[4]=create_object(ZZT_SPINNING_GUN,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'p':
 							o=pattern[4]=create_object(ZZT_PUSHER,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'l':
 							o=pattern[4]=create_object(ZZT_LION,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 't':
 							o=pattern[4]=create_object(ZZT_TIGER,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'h':
 							o=pattern[4]=create_object(ZZT_CENTIPEDE_HEAD,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 's':
 							o=pattern[4]=create_object(ZZT_CENTIPEDE_BODY,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;					
 					}
@@ -650,65 +672,78 @@ void edit_zzt() {
 						case 'w':
 							o=pattern[4]=create_object(ZZT_WATER,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'f':
 							o=pattern[4]=create_object(ZZT_FOREST,edit_x,edit_y);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 's':
 							o=pattern[4]=create_object(ZZT_SOLID,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'n':
 							o=pattern[4]=create_object(ZZT_NORMAL,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'b':
 							o=pattern[4]=create_object(ZZT_BREAKABLE,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'o':
 							o=pattern[4]=create_object(ZZT_BOULDER,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case '1':
 							o=pattern[4]=create_object(ZZT_SLIDER_NS,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case '2':
 							o=pattern[4]=create_object(ZZT_SLIDER_EW,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'a':
 							o=pattern[4]=create_object(ZZT_FAKE,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'i':
 							o=pattern[4]=create_object(ZZT_INVISIBLE,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'l':
 							o=pattern[4]=create_object(ZZT_BLINK,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 't':
 							o=pattern[4]=create_object(ZZT_TRANSPORTER,edit_x,edit_y);
 							o->setColor(edit_fg, edit_bg);
+							o->setCycle(1);
 							put(o);
 							break;
 						case 'r':
 							//o=pattern[4]=create_object(ZZT_RICOCHET,edit_x,edit_y);
-							put(o);
+							//o->setCycle(1);
+							//put(o);
 							break;
 					}
 				}
