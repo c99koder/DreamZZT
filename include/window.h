@@ -198,7 +198,13 @@ public:
 		*ct << m_text;
 	}
 	
-	const std::string getHelpText() { return "Press ENTER to select this"; }
+	const std::string getHelpText() { 
+#if TIKI_PLAT == TIKI_DC
+		return "Press A to select this"; 
+#else
+		return "Press ENTER to select this"; 
+#endif
+	}
 	const std::string getReturnValue() { return m_label; }
 	
 private:
