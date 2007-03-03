@@ -364,6 +364,7 @@ void play_zzt(const char *filename, bool tempFile) {
 	std::vector<std::string> tasks;
 	std::vector<std::string> params;
 	std::vector<std::string>::iterator tasks_iter;
+	Player *titlePlayer;
 
 	gameFrozen = false;
 	
@@ -384,6 +385,7 @@ void play_zzt(const char *filename, bool tempFile) {
 		player->setShape(ZZT_EMPTY_SHAPE);
 		player->setColor(0,0);
 		playerEventCollector->stop();
+		titlePlayer = player;
 		player=NULL;
 		st->locate(1,7);
 		st->color(14,1);
@@ -415,6 +417,9 @@ void play_zzt(const char *filename, bool tempFile) {
 	}
 	switchbrd=-1;
 
+	titlePlayer->setShape(ZZT_PLAYER_SHAPE);
+	titlePlayer->setColor(15,1);
+	
 #ifdef NET
 	if(world.online==1) {
 		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + std::string((const char *)world.title.string));
