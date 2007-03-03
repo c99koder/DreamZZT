@@ -82,5 +82,5 @@ void Duplicator::update() {
 }
 
 void Duplicator::create() {
-  m_cycle=(9-m_rate)*2;
+  if(m_cycle > 0) m_cycle=(9-m_rate)*2;
 }
