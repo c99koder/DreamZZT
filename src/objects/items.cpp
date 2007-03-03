@@ -217,21 +217,8 @@ void Inventory::message(ZZTObject *them, std::string message) {
 void Inventory::create() {
   switch(m_type) {
   case ZZT_DOOR:
-    m_fg=15;
     m_shape=8;
     m_color=&m_bg;
     break;
-	case ZZT_KEY:
-		if(m_fg<9) m_fg+=9;
-		break;
-	case ZZT_TORCH:
-		m_fg = 6;
-		break;
-	case ZZT_AMMO:
-		m_fg = 3;
-		break;
-	case ZZT_ENERGIZER:
-		m_fg = 5;
-		break;
 	}
 }
