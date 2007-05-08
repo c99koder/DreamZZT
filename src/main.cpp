@@ -168,9 +168,9 @@ Texture *zzt_font;
 float zoom = 1;
 
 void render() {
+#if 0
 	float x,y,w,h;
 
-#if 0
 	if(player!=NULL) {
 		x=((BOARD_X*4)*zoom)+((BOARD_X*4)-player->getPosition().x*(8*zoom));
 		y=((SCREEN_Y/2*zoom)+(SCREEN_Y/2-player->getPosition().y*((SCREEN_Y/ 25) * zoom)));
@@ -211,7 +211,7 @@ void render() {
 
 extern "C" int tiki_main(int argc, char **argv) {
 	TUIWindow *t, *c;
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 		
 	// Init Tiki
 	Tiki::init(argc, argv);
@@ -253,7 +253,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 	
 	zm = new ZZTMusicStream;
-	zm->setVolume(0.4);
+	zm->setVolume(0.4f);
 	
 	//initialize the screen		
 	zzt_font = new Texture("zzt-ascii.png", true);
@@ -263,7 +263,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	
 	st = new ConsoleText(80 - BOARD_X, 25, zzt_font);
 	st->setSize((80 - BOARD_X) * 8, SCREEN_Y);
-	st->setTranslate(Vector(640 - ((80 - BOARD_X) * 4), 240, 0.9));
+	st->setTranslate(Vector(640 - ((80 - BOARD_X) * 4), 240, 0.9f));
 	
 	debug_init();
 	ct->color(15,1);
@@ -295,12 +295,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 			break;
 		} else if(t->getLabel() == "new") {
 			std::string s = os_select_file("Select a game","zzt");
-			if(s!="")	play_zzt(s.c_str());
+			if(s!="")  play_zzt(s.c_str());
 		} else if(t->getLabel() == "tutorial") {
 			play_zzt("tutorial.zzt");
 		} else if(t->getLabel() == "restore") {
 			std::string s = os_select_file("Select a saved game","sav");
-			if(s!="")	{
+			if(s!="")  {
 #if TIKI_PLAT == TIKI_DC
 				unvmuify((std::string("/vmu/a1/") + s).c_str(),"/ram/tmp.sav");
 				play_zzt("/ram/tmp.sav",true);
@@ -338,12 +338,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 	f.open(filename.c_str(),"wb");
 	if(f.isValid()) {
-		f.write(curl_auth_string.c_str(),curl_auth_string.length()+1);
+		f.write(curl_auth_string.c_str(),(int)curl_auth_string.length()+1);
 		f.close();
 	}
 #endif	
 	Tiki::shutdown();
-  return 0;
+	return 0;
 }
 
 extern struct board_info_node *currentbrd;
@@ -369,14 +369,20 @@ void play_zzt(const char *filename, bool tempFile) {
 	gameFrozen = false;
 	
 	switchbrd=-1;
-  if(load_zzt(filename,0)==-1) {
+	if(load_zzt(filename,0)==-1) {
 		TUIWindow t("Error");
 		t.buildFromString("Unable to load world\r\r!ok;Ok");
 		t.doMenu(ct);
 		return;
 	}
 	
-	if(tempFile) unlink(filename);
+	if(tempFile) {
+		#if TIKI_PLAT == TIKI_WIN32
+			 _unlink(filename);
+		#else
+			 unlink(filename);
+		#endif
+	}
 	
 	start=world.start;
 	if(filename[strlen(filename)-1]!='v' && filename[strlen(filename)-1]!='V') {
@@ -419,7 +425,7 @@ void play_zzt(const char *filename, bool tempFile) {
 
 	titlePlayer->setShape(ZZT_PLAYER_SHAPE);
 	titlePlayer->setColor(15,1);
-	
+
 #ifdef NET
 	if(world.online==1) {
 		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + std::string((const char *)world.title.string));
@@ -434,28 +440,28 @@ void play_zzt(const char *filename, bool tempFile) {
 					case 0: //End of list
 						break;
 					case TASK_COLLECT:
-						add_task(new TaskCollect(params),complete);
+						add_task(new TaskCollect(params), !!complete);
 						break;
 					case TASK_TORCH:
-						add_task(new TaskUseTorch(params),complete);
+						add_task(new TaskUseTorch(params), !!complete);
 						break;
 					case TASK_KILL_ENEMY:
-						add_task(new TaskKillEnemy(params),complete);
+						add_task(new TaskKillEnemy(params), !!complete);
 						break;
 					case TASK_KILL_OBJECT:
-						add_task(new TaskKillObject(params),complete);
+						add_task(new TaskKillObject(params), !!complete);
 						break;
 					case TASK_TOUCH_OBJECT:
-						add_task(new TaskTouchObject(params),complete);
+						add_task(new TaskTouchObject(params), !!complete);
 						break;
 					case TASK_SHOOT_OBJECT:
-						add_task(new TaskShootObject(params),complete);
+						add_task(new TaskShootObject(params), !!complete);
 						break;
 					case TASK_PLAYER_POSITION:
-						add_task(new TaskPlayerPosition(params),complete);
+						add_task(new TaskPlayerPosition(params), !!complete);
 						break;
 					default:
-						Debug::printf("Warning: unknown task type: %i\n",tasktype);
+						Debug::printf("Warning: unknown task type: %i\n", tasktype);
 						break;
 				}
 			}
@@ -468,22 +474,22 @@ void play_zzt(const char *filename, bool tempFile) {
 	st->color(15,1);
 	st->clear();
 	dzzt_logo();
-  draw_hud_ingame();
-  switch_board(start);
+	draw_hud_ingame();
+	switch_board(start);
 	if(!playerEventCollector->listening()) playerEventCollector->start();
-	if(currentbrd->reenter_x == 254 && player!=NULL) currentbrd->reenter_x=player->getPosition().x;
-	if(currentbrd->reenter_y == 254 && player!=NULL) currentbrd->reenter_y=player->getPosition().y;	
-  srand(time(0));
-  draw_board();
-  if(player!=NULL) player->setFlag(F_SLEEPING);
-  if(player!=NULL) player->update();
-  while(1) {
-    if(!gameFrozen) {
+	if(currentbrd->reenter_x == 254 && player!=NULL) currentbrd->reenter_x = (unsigned char)player->getPosition().x;
+	if(currentbrd->reenter_y == 254 && player!=NULL) currentbrd->reenter_y = (unsigned char)player->getPosition().y;	
+	srand((unsigned int)time(0));
+	draw_board();
+	if(player!=NULL) player->setFlag(F_SLEEPING);
+	if(player!=NULL) player->update();
+	while(1) {
+		if(!gameFrozen) {
 			check_tasks();
 			update_brd();
 		}
 		draw_board();
-    draw_msg();
+		draw_msg();
 		render();
 #if TIKI_PLAT == TIKI_DC
 		if(world.health>0) {
@@ -498,15 +504,15 @@ void play_zzt(const char *filename, bool tempFile) {
 			Time::sleep(10000);
 		}
 #endif
-    
+		
 		if(switchbrd>-1) {
-      switch_board(switchbrd);
+			switch_board(switchbrd);
 			debug("\x1b[0;37mWarping to \x1b[1;37m%s\n",currentbrd->title);
-      draw_board();
+			draw_board();
 			redraw_status();
-      if(player->getFlags()&F_SLEEPING) player->update();
-      switchbrd=-1;
-    } else if(switchbrd==-2) {
+			if(player->getFlags()&F_SLEEPING) player->update();
+			switchbrd=-1;
+		} else if(switchbrd==-2) {
 			break;
 		} else if(switchbrd==-3) {
 			//menu
@@ -554,7 +560,7 @@ void play_zzt(const char *filename, bool tempFile) {
 			dzzt_logo();
 			draw_hud_ingame();
 		}
-  }
+	}
 	ct->color(15,1);
 	ct->clear();
 	dzzt_logo();
@@ -602,7 +608,7 @@ void net_menu() {
 		t = new TUIWindow("DreamZZT Online");
 		t->buildFromString("DreamZZT Online allows you to compete\n\
 against players around the world to\n\
-get the highest score.  Before you can\n\
+get the highest score.	Before you can\n\
 access DreamZZT Online, you'll need a\n\
 C99.ORG Forums account.\n\
 \n\
@@ -658,17 +664,17 @@ C99.ORG Forums account.\n\
 				t->addWidget(new TUITextInput    ("         First Name: ",&first));
 				t->addWidget(new TUITextInput    ("          Last Name: ",&last));
 				t->addWidget(new TUIWidget());
-				t->addWidget(new TUICheckBox     ("Display full name",&useName));
-				t->addWidget(new TUICheckBox     ("Display email address",&useEmail));
-				t->addWidget(new TUICheckBox     ("I accept the terms of service",&acceptTOS));
+				t->addWidget(new TUICheckBox		 ("Display full name",&useName));
+				t->addWidget(new TUICheckBox		 ("Display email address",&useEmail));
+				t->addWidget(new TUICheckBox		 ("I accept the terms of service",&acceptTOS));
 				t->addWidget(new TUIWidget());
 				t->addWidget(new TUIHyperLink("register","Register account"));
 				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
 				t->addWidget(new TUIWidget());
-				t->addWidget(new TUILabel("* Indicates a required field",true));			
+				t->addWidget(new TUILabel("* Indicates a required field",true));
 				t->addWidget(new TUIWidget());
-				t->addWidget(new TUILabel("The terms of service can be viewed at",true));							
-				t->addWidget(new TUILabel("http://forums.c99.org/",true));							
+				t->addWidget(new TUILabel("The terms of service can be viewed at",true));
+				t->addWidget(new TUILabel("http://forums.c99.org/",true));
 				t->doMenu(ct);
 				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "") return;
 				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=Register";
@@ -706,7 +712,7 @@ C99.ORG Forums account.\n\
 	
 	url = DZZTNET_HOST + DZZTNET_HOME;
 	
-  do {
+	do {
 		ct->color(15,1);
 		ct->clear();
 		menu_background();
@@ -727,7 +733,13 @@ C99.ORG Forums account.\n\
 			world.online=1;
 			play_zzt(filename.c_str());
 			world.online=0;
-			unlink(filename.c_str());
+
+			#if TIKI_PLAT == TIKI_WIN32
+				 _unlink(filename.c_str());
+			#else
+				 unlink(filename.c_str());
+			#endif
+
 			url = DZZTNET_HOST + DZZTNET_HOME;
 		} else {
 #ifdef DEBUG

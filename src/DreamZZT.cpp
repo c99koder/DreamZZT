@@ -66,45 +66,45 @@ chdir(DATA_PATH);
 #else
 //Locate our data files by searching PATH for our binary
 //and following the symblink to our installed location
-  char text[200];
-  char text2[200];
-  int len,cnt=0;
+	char text[200];
+	char text2[200];
+	int len,cnt=0;
 
-  if(readlink(argv[0],text,100)==-1) strcpy(text,argv[0]);
+	if(readlink(argv[0],text,100)==-1) strcpy(text,argv[0]);
 
-  if(text[0]!='/' && text[0]!='.') {
-    char *val;
-    struct stat s;
+	if(text[0]!='/' && text[0]!='.') {
+		char *val;
+		struct stat s;
 
-    val=strtok(getenv("PATH"),":");
-    do {
-      sprintf(text2,"%s/%s",val,argv[0]);
+		val=strtok(getenv("PATH"),":");
+		do {
+			sprintf(text2,"%s/%s",val,argv[0]);
 
-      if(lstat(text2,&s)!=-1) {
-        if(S_ISLNK(s.st_mode)) {
-          readlink(text2,text,100);
-        } else {
-          strcpy(text,text2);
-        }
-        break;
-      }
-      val=strtok(NULL,":");
-    } while(val!=NULL);
-  }
+			if(lstat(text2,&s)!=-1) {
+				if(S_ISLNK(s.st_mode)) {
+					readlink(text2,text,100);
+				} else {
+					strcpy(text,text2);
+				}
+				break;
+			}
+			val=strtok(NULL,":");
+		} while(val!=NULL);
+	}
 
-  for(len=strlen(text);len>=0;len--) {
-    if(text[len]=='/') {
-      text[len]='\0';
-      break;
-    }
-  }
+	for(len=strlen(text);len>=0;len--) {
+		if(text[len]=='/') {
+			text[len]='\0';
+			break;
+		}
+	}
 
-  chdir(text);
+	chdir(text);
 #endif
-  QApplication app(argc,argv); //Initialize QT
+	QApplication app(argc,argv); //Initialize QT
 #endif
 
-  return tiki_main(argc, argv);
+	return tiki_main(argc, argv);
 #else
 /*	WORD sockVersion;
 	WSADATA wsaData;
@@ -116,14 +116,14 @@ chdir(DATA_PATH);
 	// We begin by initializing Winsock
 	WSAStartup(sockVersion, &wsaData);*/
 
-  return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
+	return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
 #endif
 }
 
 #ifdef WIN32
 std::string os_select_file(std::string title, std::string filter) {
-	OPENFILENAME ofn;       // common dialog box structure
-	char szFile[260];       // buffer for file name
+	OPENFILENAME ofn;			 // common dialog box structure
+	char szFile[260];			 // buffer for file name
 	std::string output;
 	char szFilter[260];
 
@@ -158,8 +158,8 @@ std::string os_select_file(std::string title, std::string filter) {
 }
 
 std::string os_save_file(std::string title, std::string filename, std::string filter) {
-	OPENFILENAME ofn;       // common dialog box structure
-	char szFile[260];       // buffer for file name
+	OPENFILENAME ofn;			 // common dialog box structure
+	char szFile[260];			 // buffer for file name
 	std::string output;
 	char szFilter[260];
 
@@ -225,12 +225,12 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 #if TIKI_PLAT == TIKI_DC
 std::string os_select_file(std::string title, std::string filter) {
 	dirent_t *de;
-  uint32 d;
+	uint32 d;
 	TUIWindow t(title);
 	std::string tmp = title + std::string(":\n");
 
 	if(filter == "sav") {
-		d = fs_open("/vmu/a1",O_RDONLY|O_DIR);				
+		d = fs_open("/vmu/a1",O_RDONLY|O_DIR);
 	} else {
 		return "town.zzt";
 		d = fs_open(fs_getwd(),O_RDONLY|O_DIR);		
@@ -240,8 +240,8 @@ std::string os_select_file(std::string title, std::string filter) {
 	
 	while ( (de=fs_readdir(d)) ) {
 		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] + 32)) &&
-       (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] + 32)) &&
-       (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32))) {
+			 (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] + 32)) &&
+			 (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32))) {
 			if(filter=="sav") {
 				char name[128];
 				char info[256];
@@ -286,7 +286,7 @@ std::string os_select_file(std::string title, std::string filter) {
 
 std::string os_save_file(std::string title, std::string filename, std::string filter) {
 	dirent_t *de;
-  uint32 d,fd;
+	uint32 d,fd;
 	TUIWindow t(title);
 	int slot = 0;
 	char strslot[12] = "0";
@@ -337,13 +337,13 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 		tmp += std::string("\n$Not enough free blocks to create a new\n$file.  Please select an existing file\n$to overwrite.\n");
 	}
 		
-	d = fs_open("/vmu/a1",O_RDONLY|O_DIR);				
+	d = fs_open("/vmu/a1",O_RDONLY|O_DIR);
 	
 	while ( (de=fs_readdir(d)) ) {
 		printf("Filename: %s\n",de->name);
 		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] + 32)) &&
-       (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] + 32)) &&
-       (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32))) {
+			 (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] + 32)) &&
+			 (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32))) {
 			if(filter=="sav") {
 				int fd = fs_open((std::string("/vmu/a1/") + std::string(de->name)).c_str(), O_RDONLY);
 				fs_read(fd,&pkg,sizeof(vmu_hdr_t));

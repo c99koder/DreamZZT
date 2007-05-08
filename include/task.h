@@ -185,10 +185,10 @@ public:
 	}
 	
 	TaskPlayerPosition(std::vector<std::string> params) : Task(params) {
-		m_min.y = atoi(params[5].c_str());
-		m_min.x = atoi(params[6].c_str());
-		m_max.y = atoi(params[7].c_str());
-		m_max.x = atoi(params[8].c_str());
+		m_min.y = (float)atoi(params[5].c_str());
+		m_min.x = (float)atoi(params[6].c_str());
+		m_max.y = (float)atoi(params[7].c_str());
+		m_max.x = (float)atoi(params[8].c_str());
 	}
 	
 	bool check();

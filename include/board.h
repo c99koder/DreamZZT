@@ -23,8 +23,8 @@
 #define BOARD_Y 25
 
 struct board_data {
-  ZZTObject *obj;
-  ZZTObject *under;
+	ZZTObject *obj;
+	ZZTObject *under;
 };
 
 struct rle_block {
@@ -32,19 +32,19 @@ struct rle_block {
 };
 
 struct zzt_param {
-  unsigned char index;
-  unsigned char x;
-  unsigned char y;
-  short int xstep;
-  short int ystep;
-  unsigned short int cycle;
-  unsigned char data[3];
-  short int leader; /* TODO: Centipedes should fill this in */
-  short int follower; /* TODO: Centipedes should fill this in */
-  unsigned char ut;
-  unsigned char uc;
+	unsigned char index;
+	unsigned char x;
+	unsigned char y;
+	short int xstep;
+	short int ystep;
+	unsigned short int cycle;
+	unsigned char data[3];
+	short int leader; /* TODO: Centipedes should fill this in */
+	short int follower; /* TODO: Centipedes should fill this in */
+	unsigned char ut;
+	unsigned char uc;
 	unsigned short int progpos;
-  short int proglen;
+	short int proglen;
 	std::string prog;
 
 	unsigned short int bindindex;
@@ -52,18 +52,18 @@ struct zzt_param {
 
 struct board_info_node {
 	unsigned short int size;
-  char title[50];
-  int num;
-  unsigned char maxshots;
-  unsigned char dark;
-  unsigned char board_up;
-  unsigned char board_down;
-  unsigned char board_left;
-  unsigned char board_right;
-  unsigned char reenter;
+	char title[50];
+	int num;
+	unsigned char maxshots;
+	unsigned char dark;
+	unsigned char board_up;
+	unsigned char board_down;
+	unsigned char board_left;
+	unsigned char board_right;
+	unsigned char reenter;
 	unsigned char reenter_x;
 	unsigned char reenter_y;
-  unsigned short int time;
+	unsigned short int time;
 	unsigned char animatedWater;
 	char message[60];
 	int msgcount;
@@ -71,7 +71,7 @@ struct board_info_node {
 	bool compressed;
 	std::list<rle_block> rle_data;
 	std::list<zzt_param> params;
-  struct board_info_node *next;
+	struct board_info_node *next;
 };
 
 struct zzt_string {
@@ -80,21 +80,21 @@ struct zzt_string {
 };
 
 struct world_header {
-  unsigned short int magic;
-  unsigned short int board_count;
-  unsigned short int ammo;
-  unsigned short int gems;
-  char keys[7];
-  unsigned short int health;
-  unsigned short int start;
-  unsigned short int torches;
-  unsigned short int torch_cycle;
-  unsigned short int energizer_cycle;
-  unsigned short int pad1;
-  unsigned short int score;
-  struct zzt_string title;
-  struct zzt_string flag[10];
-  unsigned short int time;
+	unsigned short int magic;
+	unsigned short int board_count;
+	unsigned short int ammo;
+	unsigned short int gems;
+	char keys[7];
+	unsigned short int health;
+	unsigned short int start;
+	unsigned short int torches;
+	unsigned short int torch_cycle;
+	unsigned short int energizer_cycle;
+	unsigned short int pad1;
+	unsigned short int score;
+	struct zzt_string title;
+	struct zzt_string flag[10];
+	unsigned short int time;
 	unsigned char saved;
 	unsigned char editing;
 	unsigned char online;

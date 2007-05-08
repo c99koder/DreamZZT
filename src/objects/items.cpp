@@ -62,19 +62,19 @@ void Transporter::update() {
 }
 
 void Transporter::message(ZZTObject *them, std::string message) {
-	int x=m_position.x,y=m_position.y;
+	int x = (int)m_position.x, y = (int)m_position.y;
 	if(them->getType()==ZZT_PLAYER && them->getHeading()==m_heading && message == "touch") {
 		do {
-			x+=m_step.x;
-			y+=m_step.y;
+			x += (int)m_step.x;
+			y += (int)m_step.y;
 
 			if(x<=0 || y<=0 || x>=BOARD_X || y>=BOARD_Y) {
 				currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y].obj=currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y].under;
 				currentbrd->board[(int)(m_position.x+m_step.x)][(int)(m_position.y+m_step.y)].under=currentbrd->board[(int)(m_position.x+m_step.x)][(int)(m_position.y+m_step.y)].obj;
 				currentbrd->board[(int)(m_position.x+m_step.x)][(int)(m_position.y+m_step.y)].obj=player;
-				draw_block(player->getPosition().x,player->getPosition().y);
+				draw_block((int)player->getPosition().x, (int)player->getPosition().y);
 				player->setPosition(m_position + m_step);
-				draw_block(player->getPosition().x,player->getPosition().y);
+				draw_block((int)player->getPosition().x, (int)player->getPosition().y);
 				break;
 			} else if(currentbrd->board[x][y].obj->getType()==ZZT_TRANSPORTER &&
 				(currentbrd->board[x][y].obj->getStep().x==m_step.x*-1 ||
@@ -82,9 +82,9 @@ void Transporter::message(ZZTObject *them, std::string message) {
 				currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y].obj=currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y].under;
 				currentbrd->board[(int)(x+m_step.x)][(int)(y+m_step.y)].under=currentbrd->board[(int)(x+m_step.x)][(int)(y+m_step.y)].obj;
 				currentbrd->board[(int)(x+m_step.x)][(int)(y+m_step.y)].obj=player;
-				draw_block(player->getPosition().x,player->getPosition().y);
+				draw_block((int)player->getPosition().x, (int)player->getPosition().y);
 				player->setPosition(currentbrd->board[x][y].obj->getPosition() + m_step);
-				draw_block(player->getPosition().x,player->getPosition().y);
+				draw_block((int)player->getPosition().x, (int)player->getPosition().y);
 				break;
 			}
 		} while(x>0 && x<BOARD_X && y>0 && y<BOARD_Y);
@@ -115,110 +115,109 @@ void Scroll::update() {
 
 void Inventory::message(ZZTObject *them, std::string message) {
 	char tmp[100];
-  int ok=0;
+	int ok=0;
 	
-  if(message == "get") {
-    ok=1;
-    switch(m_type) {
-    case ZZT_ENERGIZER:
+	if(message == "get") {
+		ok=1;
+		switch(m_type) {
+		case ZZT_ENERGIZER:
 			world.energizer_cycle=80;
-      if(enermsg==0) {
-        enermsg=1;
-        set_msg("Energizer - You are invincible!");
-      }
+			if(enermsg==0) {
+				enermsg=1;
+				set_msg("Energizer - You are invincible!");
+			}
 			zm->setTune("s.-cd#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#e");
 			zm->lock();
 			zm->start();
-      break;
-    case ZZT_GEM:
-      give_gems(1);
-      give_health(1);
-      give_score(10);
-      if(gemmsg==0) {
-        gemmsg=1;
-        set_msg("Gems give you Health!");
-      }
+			break;
+		case ZZT_GEM:
+			give_gems(1);
+			give_health(1);
+			give_score(10);
+			if(gemmsg==0) {
+				gemmsg=1;
+				set_msg("Gems give you Health!");
+			}
 			zm->setTune("t+c-gec");
 			zm->start();
-      break;
-    case ZZT_AMMO:
-      give_ammo(5);
-      if(ammomsg==0) {
-        ammomsg=1;
-        set_msg("Ammunition - 5 shots per container.");
-      }
+			break;
+		case ZZT_AMMO:
+			give_ammo(5);
+			if(ammomsg==0) {
+				ammomsg=1;
+				set_msg("Ammunition - 5 shots per container.");
+			}
 			zm->setTune("tcc#d");
 			zm->start();
-      break;
-    case ZZT_TORCH:
-      give_torch(1);
-      if(torchmsg==0) {
-        torchmsg=1;
-        set_msg("Torch - used for lighting in the underground.");
-      }
+			break;
+		case ZZT_TORCH:
+			give_torch(1);
+			if(torchmsg==0) {
+				torchmsg=1;
+				set_msg("Torch - used for lighting in the underground.");
+			}
 			zm->setTune("tcase");
 			zm->start();
-      break;
-    case ZZT_KEY:
-      if(world.keys[(m_fg%8)-1]==1) {
-        sprintf(tmp,"You already have a %s key!",int_to_color(*m_color).c_str());
+			break;
+		case ZZT_KEY:
+			if(world.keys[(m_fg%8)-1]==1) {
+				sprintf(tmp,"You already have a %s key!",int_to_color(*m_color).c_str());
 				zm->setTune("sc-c");
 				zm->start();
-        ok=0;
-      } else {
-        world.keys[(m_fg%8)-1]=1;
-        sprintf(tmp,"You now have the %s key",int_to_color(*m_color).c_str());
-        draw_keys();
+				ok=0;
+			} else {
+				world.keys[(m_fg%8)-1]=1;
+				sprintf(tmp,"You now have the %s key",int_to_color(*m_color).c_str());
+				draw_keys();
 				zm->setTune("t+cegcegceg+sc");
 				zm->start();
-      }
-      set_msg(tmp);
-      break;
-    case ZZT_DOOR:
-      if(them->getType()==ZZT_PLAYER) {
-        if(world.keys[(m_bg%8)-1]==1) {
-          //ok=0;
-          sprintf(tmp,"The %s door is now open!",int_to_color(*m_color).c_str());
-          set_msg(tmp);
-          world.keys[(m_bg%8)-1]=0;
-          draw_keys();
-          //remove_from_board(currentbrd, this);
-          //them->move(toward(this));
+			}
+			set_msg(tmp);
+			break;
+		case ZZT_DOOR:
+			if(them->getType()==ZZT_PLAYER) {
+				if(world.keys[(m_bg%8)-1]==1) {
+					//ok=0;
+					sprintf(tmp,"The %s door is now open!",int_to_color(*m_color).c_str());
+					set_msg(tmp);
+					world.keys[(m_bg%8)-1]=0;
+					draw_keys();
+					//remove_from_board(currentbrd, this);
+					//them->move(toward(this));
 					zm->setTune("tcgbcgb+ic");
 					zm->start();					
-        } else {
-          sprintf(tmp,"The %s door is locked.",int_to_color(*m_color).c_str());
-          set_msg(tmp);
-          ok=0;
+				} else {
+					sprintf(tmp,"The %s door is locked.",int_to_color(*m_color).c_str());
+					set_msg(tmp);
+					ok=0;
 					zm->setTune("t--gc");
 					zm->start();
-        }
-      }
-      break;
-    }
+				}
+			}
+			break;
+		}
 		if(ok) debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was picked up.\n",m_name.c_str());
-  } else if(message == "shot") {
-    switch(m_type) {
-    case ZZT_GEM:
-      ok=1;
-      //remove_from_board(currentbrd,me);
-      break;
-    }
-  } else if(message == "touch") {
-    switch(m_type) {
-
-    }
-  }
-  if(ok) {
-    remove_from_board(currentbrd,this);
-  }
+	} else if(message == "shot") {
+		switch(m_type) {
+		case ZZT_GEM:
+			ok=1;
+			//remove_from_board(currentbrd,me);
+			break;
+		}
+	} else if(message == "touch") {
+		//switch(m_type) {
+		//}
+	}
+	if(ok) {
+		remove_from_board(currentbrd,this);
+	}
 }
 
 void Inventory::create() {
-  switch(m_type) {
-  case ZZT_DOOR:
-    m_shape=8;
-    m_color=&m_bg;
-    break;
+	switch(m_type) {
+	case ZZT_DOOR:
+		m_shape=8;
+		m_color=&m_bg;
+		break;
 	}
 }

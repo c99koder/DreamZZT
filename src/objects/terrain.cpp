@@ -71,16 +71,16 @@ void Blink::create() {
 }
 
 void Blink::update() {
-	int x=m_position.x;
-	int y=m_position.y;
+	int x = (int)m_position.x;
+	int y = (int)m_position.y;
 	ZZTObject *tmp;
 	
 	m_counter--;
 	if(m_counter<0) {
 		m_counter=(m_fire*4);
 		do {
-			x+=m_step.x;
-			y+=m_step.y;
+			x += (int)m_step.x;
+			y += (int)m_step.y;
 			if(::is_empty(currentbrd,x,y) || currentbrd->board[x][y].obj->getType()==ZZT_BULLET) {
 				if(currentbrd->board[x][y].obj->getType()==ZZT_BULLET) {
 					remove_from_board(currentbrd,currentbrd->board[x][y].obj);
@@ -108,30 +108,30 @@ void Blink::update() {
 }
 
 void Text::create() {
-  m_shape=m_bg*16+m_fg;
-  m_fg=15;
-  if(m_type==ZZT_WHITE_TEXT) {
-    m_bg=0;
-    m_color=&m_fg;
-  } else {
-    m_bg=(m_type-ZZT_BLUE_TEXT)+1;
-    m_color=&m_bg;
-  }
+	m_shape=m_bg*16+m_fg;
+	m_fg=15;
+	if(m_type==ZZT_WHITE_TEXT) {
+		m_bg=0;
+		m_color=&m_fg;
+	} else {
+		m_bg=(m_type-ZZT_BLUE_TEXT)+1;
+		m_color=&m_bg;
+	}
 }
 
 void Terrain::create() {
-  switch(m_type) {
-  case ZZT_EMPTY:
-    m_shape=32;
-    m_fg=0;
-    m_bg=0;
-    break;
-  /*case ZZT_WATER:
-    m_bg=1;
-    m_fg=15;
-    m_cycle=1;
+	switch(m_type) {
+	case ZZT_EMPTY:
+		m_shape=32;
+		m_fg=0;
+		m_bg=0;
+		break;
+	/*case ZZT_WATER:
+		m_bg=1;
+		m_fg=15;
+		m_cycle=1;
 		break;*/
-  }
+	}
 }
 
 void Water::update() {
@@ -170,36 +170,36 @@ void Water::update() {
 }
 
 void Terrain::message(ZZTObject *them, std::string message) {
-  if(message == "touch" && them->getType()==ZZT_PLAYER) {
-    switch(m_type) {
-    case ZZT_FOREST:
-      if(forestmsg==0) {
-        set_msg("A path is cleared through the forest.");
-        forestmsg=1;
-      }
+	if(message == "touch" && them->getType()==ZZT_PLAYER) {
+		switch(m_type) {
+		case ZZT_FOREST:
+			if(forestmsg==0) {
+				set_msg("A path is cleared through the forest.");
+				forestmsg=1;
+			}
 			zm->setTune("ta");
 			zm->start();
-      remove_from_board(currentbrd,this);
-      them->move(them->toward(this));      
-      break;
-    case ZZT_INVISIBLE:
-      if(invismsg==0) {
-        set_msg("You are blocked by an invisible wall.");
-        invismsg=1;
-      }
+			remove_from_board(currentbrd,this);
+			them->move(them->toward(this));			
+			break;
+		case ZZT_INVISIBLE:
+			if(invismsg==0) {
+				set_msg("You are blocked by an invisible wall.");
+				invismsg=1;
+			}
 			zm->setTune("t--dc");
 			zm->start();
 			m_type=ZZT_NORMAL;
-      m_shape=ZZT_NORMAL_SHAPE;
-      draw();
-      break;
-    case ZZT_WATER:
-      if(watermsg==0) {
-        set_msg("Your path is blocked by water.");
-        watermsg=1;
-      }
+			m_shape=ZZT_NORMAL_SHAPE;
+			draw();
+			break;
+		case ZZT_WATER:
+			if(watermsg==0) {
+				set_msg("Your path is blocked by water.");
+				watermsg=1;
+			}
 			zm->setTune("t+c+c");
 			zm->start();
-    }
-  }
+		}
+	}
 }

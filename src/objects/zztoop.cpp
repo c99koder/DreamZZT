@@ -32,8 +32,8 @@ using namespace Tiki::Audio;
 using namespace Tiki::GL;
 using namespace std;
 
-#include "sound.h"
 #include "object.h"
+#include "sound.h"
 #include "word.h"
 #include "board.h"
 #include "status.h"
@@ -59,11 +59,11 @@ unsigned char ZZTOOP::getParam(int arg) {
 }
 
 void ZZTOOP::create() {
-  m_heading=IDLE;
+	m_heading=IDLE;
 }
 
 void ZZTOOP::message(ZZTObject *them, std::string message) {
-  if(!(m_flags & F_SLEEPING)) {
+	if(!(m_flags & F_SLEEPING)) {
 		if(message=="shot") task_shoot(this);
 		if((message == "touch" && (them->getType() == ZZT_PLAYER || them->getType() == ZZT_OBJECT)) || message != "touch") zzt_goto(message);
 	}
@@ -72,109 +72,109 @@ void ZZTOOP::message(ZZTObject *them, std::string message) {
 extern struct board_info_node *currentbrd;
 
 ZZTObject *find_zztobj_by_name(int &x, int &y, std::string target) {
-  ZZTObject *myobj;
-  int i,j;
+	ZZTObject *myobj;
+	int i,j;
 	
 	transform(target.begin(), target.end(), target.begin(), ::tolower);
 	
-  for(j=y;j<BOARD_Y;j++) {
-    for(i=0;i<BOARD_X;i++) {
-      if(i==0&&j==y) i=x;
-      if(i>=BOARD_X) { i=0; j++; }
-      myobj=currentbrd->board[i][j].obj;
-      if(myobj->getType()==ZZT_OBJECT) {
+	for(j=y;j<BOARD_Y;j++) {
+		for(i=0;i<BOARD_X;i++) {
+			if(i==0&&j==y) i=x;
+			if(i>=BOARD_X) { i=0; j++; }
+			myobj=currentbrd->board[i][j].obj;
+			if(myobj->getType()==ZZT_OBJECT) {
 				//printf("Comparing '%s' and '%s'\n",((ZZTOOP *)myobj)->get_zztobj_name().c_str(), target.c_str());
-        if(((ZZTOOP *)myobj)->get_zztobj_name() == target) {
-          x=i;
-          y=j;
-	        return myobj;
-        }
-      }
-    }
-  }
+				if(((ZZTOOP *)myobj)->get_zztobj_name() == target) {
+					x=i;
+					y=j;
+					return myobj;
+				}
+			}
+		}
+	}
 	//printf("No match\n");
-  return NULL;
+	return NULL;
 }
 
 std::string ZZTOOP::get_zztobj_name() {
-  int y;
-  std::string name;
+	int y;
+	std::string name;
 
-  if((m_type==ZZT_OBJECT || m_type==ZZT_SCROLL) && m_prog[0]=='@') {
-    y=1;
-    while(m_prog[y]!='\r' && y < m_proglen) {
+	if((m_type==ZZT_OBJECT || m_type==ZZT_SCROLL) && m_prog[0]=='@') {
+		y=1;
+		while(m_prog[y]!='\r' && y < m_proglen) {
 			name += m_prog[y];
-	    y++;
-    }
+			y++;
+		}
 		
-    transform(name.begin(), name.end(), name.begin(), ::tolower);
-    
+		transform(name.begin(), name.end(), name.begin(), ::tolower);
+		
 		return name;
-  }
-  return m_name;
+	}
+	return m_name;
 }
 
 void ZZTOOP::send(std::string cmd) {
-  int x,y;
-  ZZTObject *obj=NULL;
+	int x,y;
+	ZZTObject *obj=NULL;
 	std::string target;
 	std::string label;
 	std::string name;
 	
-  for(x=0;x<cmd.length();x++) {
-    if(cmd[x]==':') {
-      break;
-    }
-    target += cmd[x];
-  }
-  
-  if(x==cmd.length()) {
-    zzt_goto(target);
-    return;
-  }
+	for(x=0; x < (int)cmd.length(); x++) {
+		if(cmd[x]==':') {
+			break;
+		}
+		target += cmd[x];
+	}
 	
-  x++;
-	for(y=0;y<cmd.length()-x;y++) {
-    label += cmd[x+y];
-  }
-  
-  x=0;
-  if(target == "all" || target == "others") {
-    for(y=0;y<BOARD_Y;y++) {
-      for(x=0;x<BOARD_X;x++) {
-        obj=currentbrd->board[x][y].obj;
-        if(obj->getType()==ZZT_OBJECT) {
-          if(!(target == "others" && obj==this)) {
-            ((ZZTOOP *)obj)->zzt_goto(label);
-          }
-        }
-      }
-    }
-  } else {
-    x=0; y=0;
-    obj=find_zztobj_by_name(x,y,target);
-    while(obj!=NULL) {
-      ((ZZTOOP *)obj)->zzt_goto(label);
-      x++;
-      obj=find_zztobj_by_name(x,y,target);
-    }
-  }
+	if(x == (int)cmd.length()) {
+		zzt_goto(target);
+		return;
+	}
+	
+	x++;
+	for(y=0; y<(int)cmd.length()-x; y++) {
+		label += cmd[x+y];
+	}
+	
+	x=0;
+	if(target == "all" || target == "others") {
+		for(y=0;y<BOARD_Y;y++) {
+			for(x=0;x<BOARD_X;x++) {
+				obj=currentbrd->board[x][y].obj;
+				if(obj->getType()==ZZT_OBJECT) {
+					if(!(target == "others" && obj==this)) {
+						((ZZTOOP *)obj)->zzt_goto(label);
+					}
+				}
+			}
+		}
+	} else {
+		x=0; y=0;
+		obj=find_zztobj_by_name(x,y,target);
+		while(obj!=NULL) {
+			((ZZTOOP *)obj)->zzt_goto(label);
+			x++;
+			obj=find_zztobj_by_name(x,y,target);
+		}
+	}
 }
 
 void ZZTOOP::zap(std::string label) {
 	std::string text;
-  int x,y,newline=1,goagain=1;
+	int x,y,newline=1,goagain=1;
 
 	if(m_watch) debug("%s zapping %s",get_zztobj_name().c_str(),label.c_str());
 	//printf("%s zapping %s",get_zztobj_name().c_str(),label.c_str());
-  	
+		
 	for(x=0;x<m_proglen;x++) {
-    switch(m_prog[x]) {
-    case '\r':
-      newline=1;
-      break;
-    case ':':
-      if(newline==1) {
+		switch(m_prog[x]) {
+		case '\r':
+			newline=1;
+			break;
+		case ':':
+			if(newline==1) {
 				y=1;
 				text = "";
 				
@@ -191,31 +191,31 @@ void ZZTOOP::zap(std::string label) {
 				}
 				x+=y-1;
 				newline=0;
-      }
-      break;
-    default:
-      newline=0;
-      break;
-    }
-  }
+			}
+			break;
+		default:
+			newline=0;
+			break;
+		}
+	}
 }
 
 void ZZTOOP::restore(std::string label) {
 	std::string text;
-  int x,y,newline=0,goagain=1;
+	int x,y,newline=0,goagain=1;
 	
 	if(m_watch) debug("%s restoring %s\n",get_zztobj_name().c_str(),label.c_str());
 	
 	//printf("%s restoring %s\n",get_zztobj_name().c_str(),label.c_str());
-  
+	
 	
 	for(x=0;x<m_proglen;x++) {
-    switch(m_prog[x]) {
-    case '\r':
-      newline=1;
-      break;
-    case '\'':
-      if(newline==1) {
+		switch(m_prog[x]) {
+		case '\r':
+			newline=1;
+			break;
+		case '\'':
+			if(newline==1) {
 				y=1;
 				text="";
 				while(m_prog[x+y]!='\r') {
@@ -230,38 +230,38 @@ void ZZTOOP::restore(std::string label) {
 				}
 				x+=y-1;
 				newline=0;
-      }
-      break;
-    default:
-      newline=0;
-      break;
-    }
-  }
+			}
+			break;
+		default:
+			newline=0;
+			break;
+		}
+	}
 }
 
 void ZZTOOP::zzt_goto(std::string label) {
 	std::string text;
-  int x,y,newline=0;
-  if(label=="") return;
+	int x,y,newline=0;
+	if(label=="") return;
 
-  if(label[0]=='#') {
+	if(label[0]=='#') {
 		label.erase(0,1);
-  }
+	}
 
 	transform(label.begin(), label.end(), label.begin(), ::tolower);
 	
 	if(m_watch) debug("\x1b[1;37m%s\x1b[0;37m recieved \x1b[1;37m%s\n",get_zztobj_name().c_str(), label.c_str());
-  
+	
 	//printf("%s: recieved %s\n",get_zztobj_name().c_str(), label.c_str());
 	
 	for(x=0;x<m_proglen;x++) {
-    switch(m_prog[x]) {
-    case '\r':
-      newline=1;
-      break;
-    case ':':
-      x++;
-      if(newline==1) {
+		switch(m_prog[x]) {
+		case '\r':
+			newline=1;
+			break;
+		case ':':
+			x++;
+			if(newline==1) {
 				y=0;
 				text = "";
 				while(m_prog[x+y]!='\r') {
@@ -279,19 +279,19 @@ void ZZTOOP::zzt_goto(std::string label) {
 				}
 				x+=(y-1);
 				newline=0;
-      }
-      break;
-    default:
-      newline=0;
-      break;
-    }
-  }
-  if(label == "restart") {
-    m_progpos=0;
+			}
+			break;
+		default:
+			newline=0;
+			break;
+		}
+	}
+	if(label == "restart") {
+		m_progpos=0;
 		goagain=0;
-  } else {
-    //printf("Label not found\n");
-  }
+	} else {
+		//printf("Label not found\n");
+	}
 }
 
 void ZZTOOP::exec(std::string text) {
@@ -300,9 +300,9 @@ void ZZTOOP::exec(std::string text) {
 	std::string lbl;
 	std::string args;
 	ZZTObject *theirobj;
-  struct board_data *b;
-  static int textfg=1,textbg=0;
-  int i,j,went=0,color,color2,neg,res;
+	struct board_data *b;
+	static int textfg=1,textbg=0;
+	int i,j,went=0,color,color2,neg,res;
 	
 	transform(text.begin(), text.end(), text.begin(), ::tolower);
 	
@@ -318,7 +318,7 @@ void ZZTOOP::exec(std::string text) {
 	if(words[0] == "go") {
 				res=str_to_direction(args);
 				if(!move((direction)res,true)) {
-					m_progpos-=(text.length()+2);
+					m_progpos-=((short)text.length()+2);
 				}
 				goagain=0;
 	}
@@ -355,13 +355,13 @@ void ZZTOOP::exec(std::string text) {
 			if(words.size() < 3) words.push_back(std::string("empty"));
 		}
 		if(words[1].find("w") == 0) {
-			i=m_position.x-1; j=m_position.y;
+			i=(int)m_position.x-1; j=(int)m_position.y;
 		} else if(words[1].find("e") == 0) {
-			i=m_position.x+1; j=m_position.y;
+			i=(int)m_position.x+1; j=(int)m_position.y;
 		} else if(words[1].find("n") == 0) {
-			i=m_position.x; j=m_position.y-1;
+			i=(int)m_position.x; j=(int)m_position.y-1;
 		} else if(words[1].find("s") == 0) {
-			i=m_position.x; j=m_position.y+1;
+			i=(int)m_position.x; j=(int)m_position.y+1;
 		}
 		if(i>=0 && i<BOARD_X && j>=0 && j<BOARD_Y) {
 			b=&currentbrd->board[i][j];
@@ -401,7 +401,7 @@ void ZZTOOP::exec(std::string text) {
 			set_msg("ERR: undefined item");
 		} else {
 			b->under=b->obj;
-			b->obj=::create_object(str_to_obj(words[1]),m_position.x,m_position.y);
+			b->obj=::create_object(str_to_obj(words[1]),(int)m_position.x,(int)m_position.y);
 			b->obj->setParam(1,b->under->getParam(1));
 			b->obj->setParam(2,b->under->getParam(2));
 			b->obj->setParam(3,b->under->getParam(3));
@@ -414,7 +414,7 @@ void ZZTOOP::exec(std::string text) {
 			}
 			b->obj->setColor(b->under->getColor());
 			if(color!=-1) b->obj->setColor(color);
-			draw_block(m_position.x,m_position.y);
+			draw_block((int)m_position.x, (int)m_position.y);
 			m_progpos = -1;
 			b->under->setFlags(F_DELETED);
 			task_kill(this);
@@ -427,13 +427,13 @@ void ZZTOOP::exec(std::string text) {
 		if(color!=-1) words.erase(words.begin() + 1);
 				color2=str_to_color(words[2]);
 				if(color2!=-1) words.erase(words.begin() + 2);
-        i=0; j=0;
-        do {
-          res=0;
-          b=get_block_by_type(str_to_obj(words[1]),i,j);
-          if(b!=NULL) {
+				i=0; j=0;
+				do {
+					res=0;
+					b=get_block_by_type(str_to_obj(words[1]),i,j);
+					if(b!=NULL) {
 						//Debug::printf("Type: %s\nColor: (%i) (%i)\n",b->obj->getName().c_str(),b->obj->getColor(),color);
-            if(color==-1 || b->obj->getColor()==color || b->obj->getColor() == (color - 8)) {
+						if(color==-1 || b->obj->getColor()==color || b->obj->getColor() == (color - 8)) {
 							if(words[1] == words[2]) {
 								b->obj->setColor(color2);
 							} else {
@@ -462,10 +462,10 @@ void ZZTOOP::exec(std::string text) {
 									draw_block(i,j);
 								}
 							}
-            }
-          }
-          i++;
-        } while(b!=NULL);
+						}
+					}
+					i++;
+				} while(b!=NULL);
 	}
 	else if(words[0] == "__dark") {
 				currentbrd->dark=atoi(words[1].c_str());
@@ -476,7 +476,7 @@ void ZZTOOP::exec(std::string text) {
 			if(world.flag[i].len==0) {
 				debug("\x1b[0;37mFlag \x1b[1;37m%s\x1b[0;37m set\n",words[1].c_str());
 				strcpy((char *)world.flag[i].string,words[1].c_str());
-				world.flag[i].len=words[1].length();
+				world.flag[i].len = (unsigned char)words[1].length();
 				break;
 			}
 		}
@@ -548,22 +548,22 @@ void ZZTOOP::exec(std::string text) {
 		} else if(words[1] == "blocked") {
 			switch(str_to_direction(text.substr((words[0] + words[1]).length() + 2))) {
 				case UP:
-					if(::is_empty(currentbrd,m_position.x,m_position.y-1)==0) {
+					if(::is_empty(currentbrd, (int)m_position.x, (int)m_position.y-1)==0) {
 						res=1;
 					}
 					break;
 				case DOWN:
-					if(::is_empty(currentbrd,m_position.x,m_position.y+1)==0) {
+					if(::is_empty(currentbrd, (int)m_position.x, (int)m_position.y+1)==0) {
 						res=1;
 					}
 					break;
 				case RIGHT:
-					if(::is_empty(currentbrd,m_position.x+1,m_position.y)==0) {
+					if(::is_empty(currentbrd, (int)m_position.x+1, (int)m_position.y)==0) {
 						res=1;
 					}
 					break;
 				case LEFT:
-					if(::is_empty(currentbrd,m_position.x-1,m_position.y)==0) {
+					if(::is_empty(currentbrd, (int)m_position.x-1, (int)m_position.y)==0) {
 						res=1;
 					}
 					break;
@@ -604,7 +604,7 @@ void ZZTOOP::exec(std::string text) {
 		i=0;
 		j=0;
 		theirobj=find_zztobj_by_name(i,j,words[1]);
-		if(theirobj!=NULL)  {
+		if(theirobj!=NULL)	{
 			m_prog=theirobj->getProg();
 			m_progpos=0;
 			m_proglen=theirobj->getProgLen();
@@ -615,12 +615,12 @@ void ZZTOOP::exec(std::string text) {
 	else if(words[0] == "zap") {
 				tmp = words[1];
 				lbl = "";
-				for(i=0;i<tmp.length();i++) {
+				for(i=0;i<(int)tmp.length();i++) {
 					lbl += tmp[i];
 					if(tmp[i]==':') break;
 				}
 				
-				if(i<tmp.length()) {
+				if(i<(int)tmp.length()) {
 					int x=0,y=0;
 					theirobj=find_zztobj_by_name(x,y,lbl);
 					while(theirobj!=NULL) {
@@ -629,26 +629,26 @@ void ZZTOOP::exec(std::string text) {
 						theirobj=find_zztobj_by_name(x,y,lbl);
 					}
 				} else {
-      		zap(lbl);
+					zap(lbl);
 				}
-        goagain=1;
+				goagain=1;
 	}
 	else if(words[0] == "restore") {
 				tmp = words[1];
 				lbl = "";
 				
-				for(i=0;i<tmp.length();i++) {
+				for(i=0;i<(int)tmp.length();i++) {
 					lbl += tmp[i];
 					if(tmp[i]==':') break;
 				}
 				
-				if(i<tmp.length()) {
+				if(i<(int)tmp.length()) {
 					int x=0,y=0;
 					((ZZTOOP *)find_zztobj_by_name(x,y,lbl))->restore(tmp.substr(i+1));
 				} else {
-      		restore(lbl);
+					restore(lbl);
 				}
-        goagain=1;
+				goagain=1;
 	}
 	else if(words[0] == "lock") {
 		m_flags|=F_SLEEPING;
@@ -753,7 +753,7 @@ void ZZTOOP::exec(std::string text) {
 
 void ZZTOOP::update() {
 	std::string text;
-  int x=0,y=0,newline=0,linecount=0,ty=0,went=0;
+	int x=0,y=0,newline=0,linecount=0,ty=0,went=0;
 	std::string lbl;
 	std::string msg;
 	
@@ -762,25 +762,25 @@ void ZZTOOP::update() {
 	playedLast = 0;
 	goagain = 1;
 	
-  while(goagain) {
-    goagain=0;
-    if(m_progpos>m_proglen || m_progpos==-1) { break; }
-    text="";
+	while(goagain) {
+		goagain=0;
+		if(m_progpos>m_proglen || m_progpos==-1) { break; }
+		text="";
 		//if(m_watch) printf("%s: next characters: '%c,%c,%c,%c\n'",get_zztobj_name().c_str(),m_prog[m_progpos],m_prog[m_progpos+1],m_prog[m_progpos+2],m_prog[m_progpos+3]);
-    switch(m_prog[m_progpos]) {
-    case ':':
-      while(m_prog[m_progpos]!='\r') {
-	      m_progpos++;
-      }
-      goagain=1;
-      break;
+		switch(m_prog[m_progpos]) {
+		case ':':
+			while(m_prog[m_progpos]!='\r') {
+				m_progpos++;
+			}
+			goagain=1;
+			break;
 		case '?':
-      x=++m_progpos;
-      y=0;
-      while(m_prog[y+x]!='\r' && m_prog[y+x]!='#' && m_prog[y+x]!='?' && m_prog[y+x]!='/') {
-	      text += m_prog[y+x];
-	      y++;
-      }
+			x=++m_progpos;
+			y=0;
+			while(m_prog[y+x]!='\r' && m_prog[y+x]!='#' && m_prog[y+x]!='?' && m_prog[y+x]!='/') {
+				text += m_prog[y+x];
+				y++;
+			}
 			m_progpos += (y-1);
 				
 			if(m_watch) debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
@@ -790,13 +790,13 @@ void ZZTOOP::update() {
 			move(str_to_direction(text), true);			
 			goagain=0;
 			break;
-    case '/':
-      x=++m_progpos;
-      y=0;
-      while(m_prog[y+x]!='\r' && m_prog[y+x]!='#' && m_prog[y+x]!='?' && m_prog[y+x]!='/') {
-	      text += m_prog[y+x];
-	      y++;
-      }
+		case '/':
+			x=++m_progpos;
+			y=0;
+			while(m_prog[y+x]!='\r' && m_prog[y+x]!='#' && m_prog[y+x]!='?' && m_prog[y+x]!='/') {
+				text += m_prog[y+x];
+				y++;
+			}
 			if(m_watch) debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
 #ifdef DEBUG
 			printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
@@ -810,44 +810,44 @@ void ZZTOOP::update() {
 				
 			goagain=0;
 			break;
-    case '\'':
-    case '@':
-      while(m_prog[m_progpos]!='\r') {
-	      m_progpos++;
-      }
-      goagain=1;
-      break;
-    case '^':
-    case '#':
-      x=++m_progpos;
-      y=0;
-      while(m_prog[y+x]!='\r') {
-	      text += m_prog[y+x];
-	      y++;
-	      m_progpos++;
-      }
+		case '\'':
+		case '@':
+			while(m_prog[m_progpos]!='\r') {
+				m_progpos++;
+			}
+			goagain=1;
+			break;
+		case '^':
+		case '#':
+			x=++m_progpos;
+			y=0;
+			while(m_prog[y+x]!='\r') {
+				text += m_prog[y+x];
+				y++;
+				m_progpos++;
+			}
 #ifdef DEBUG
-	  Debug::printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
+		Debug::printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
 #endif
-      
+			
 			exec(text);	
 			break;
-    case '\r':
+		case '\r':
 			if(msg.size() > 0) msg += "\r";
-      goagain=1;
-      break;
-    default:
+			goagain=1;
+			break;
+		default:
 		if(msg.size() > 0) msg += "\r";
-      while(m_prog[m_progpos]!='\r' && m_progpos < m_proglen) {
-	      msg += m_prog[m_progpos++];
-      }
+			while(m_prog[m_progpos]!='\r' && m_progpos < m_proglen) {
+				msg += m_prog[m_progpos++];
+			}
 			went=0;
-      goagain=1;
-      break;
-    }
-    if(m_progpos>0) m_progpos++;
-    if(went++>6) goagain=0;
-  }
+			goagain=1;
+			break;
+		}
+		if(m_progpos>0) m_progpos++;
+		if(went++>6) goagain=0;
+	}
 
 	if(msg.size() > 0 && msg!="\r") {
 #ifdef DEBUG
@@ -867,8 +867,8 @@ void ZZTOOP::update() {
 		}
 	}
 
-  if(m_walk!=IDLE && !(m_flags & F_DELETED)) {
-    move(m_walk);
-  }
+	if(m_walk!=IDLE && !(m_flags & F_DELETED)) {
+		move(m_walk);
+	}
 	if(zm!=NULL && zm->hasTune()) zm->start();
 }

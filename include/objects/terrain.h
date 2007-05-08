@@ -166,8 +166,8 @@ public:
 	void update();
 	void addEditWidgets(TUIWindow *w) {
 		w->addWidget(new TUIDirection("Direction            ",&m_step));
-		w->addWidget(new TUISlider   ("Start Time           ",&m_start));
-		w->addWidget(new TUISlider   ("Period               ",&m_fire));
+		w->addWidget(new TUISlider	 ("Start Time           ",&m_start));
+		w->addWidget(new TUISlider	 ("Period               ",&m_fire));
 	}	
 private:
 	int m_start, m_fire, m_counter;

@@ -185,7 +185,7 @@ Thread::Thread *spinner_thread;
 bool spinner_active = false;
 
 void *spinner_thd(void *text) {
-  int x=0;
+	int x=0;
 	
 	while(spinner_active == true) {
 		st->locate(3,4);
@@ -215,108 +215,107 @@ void spinner_clear() {
 		spinner_active = false;
 		spinner_thread->join();
 	}
-  st->locate(3,4);
-  st->color(15,1);
-  st->printf("            ");
+	st->locate(3,4);
+	st->color(15,1);
+	st->printf("            ");
 }
 
 int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer) {
 	if(x<0 || y<0 || x>=BOARD_X || y >= BOARD_Y) return 0;
-  if(curbrd->board[x][y].obj!=NULL && !(curbrd->board[x][y].obj->getFlags()&F_EMPTY)) {
+	if(curbrd->board[x][y].obj!=NULL && !(curbrd->board[x][y].obj->getFlags()&F_EMPTY)) {
 		if(ignorePlayer && curbrd->board[x][y].obj->getType() == ZZT_PLAYER) return 1;
-    return 0;
-  }
-  return 1;
+		return 0;
+	}
+	return 1;
 }
 
 struct board_data *get_block_by_type(int type, int &x, int &y) {
-  int i,j;
-  for(j=y;j<BOARD_Y;j++) {
-    for(i=0;i<BOARD_X;i++) {
-      if(i==0&&j==y) i=x;
-      if(i>=BOARD_X) { i=0; j++; }
+	int i,j;
+	for(j=y;j<BOARD_Y;j++) {
+		for(i=0;i<BOARD_X;i++) {
+			if(i==0&&j==y) i=x;
+			if(i>=BOARD_X) { i=0; j++; }
 			if(currentbrd->board[i][j].obj!=NULL) {
 				if(currentbrd->board[i][j].obj->getType() == type) {
 					x=i; y=j;
 					return &currentbrd->board[i][j];
 				}
 			}
-    }
-  }
-  return NULL;
+		}
+	}
+	return NULL;
 }
 
 ZZTObject *get_obj_by_type(int type, int &x, int &y) {
-  int i,j;
-  for(j=y;j<BOARD_Y;j++) {
-    for(i=0;i<BOARD_X;i++) {
-      if(i==0&&j==y) i=x;
-      if(i>=BOARD_X) { i=0; j++; }
+	int i,j;
+	for(j=y;j<BOARD_Y;j++) {
+		for(i=0;i<BOARD_X;i++) {
+			if(i==0&&j==y) i=x;
+			if(i>=BOARD_X) { i=0; j++; }
 			if(currentbrd->board[i][j].obj!=NULL) {
 				if(currentbrd->board[i][j].obj->getType() == type) {
 					x=i; y=j;
 					return currentbrd->board[i][j].obj;
 				}
 			}
-    }
-  }
-  return NULL;
+		}
+	}
+	return NULL;
 }
 
 ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color) {
-  int x,y;
+	int x,y;
 
-  for(y=0;y<BOARD_Y;y++) {
-    for(x=0;x<BOARD_X;x++) {
-      if(board->board[x][y].obj->getType()==type && board->board[x][y].obj->getColor()==color) return board->board[x][y].obj;
-    }
-  }
-  return NULL;
+	for(y=0;y<BOARD_Y;y++) {
+		for(x=0;x<BOARD_X;x++) {
+			if(board->board[x][y].obj->getType()==type && board->board[x][y].obj->getColor()==color) return board->board[x][y].obj;
+		}
+	}
+	return NULL;
 }
 
 ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int fg, int bg) {
-  int x,y;
+	int x,y;
 	
-  for(y=0;y<BOARD_Y;y++) {
-    for(x=0;x<BOARD_X;x++) {
-      if(board->board[x][y].obj->getType()==type && board->board[x][y].obj->getFg()==fg &&
+	for(y=0;y<BOARD_Y;y++) {
+		for(x=0;x<BOARD_X;x++) {
+			if(board->board[x][y].obj->getType()==type && board->board[x][y].obj->getFg()==fg &&
 				 board->board[x][y].obj->getType()==type && board->board[x][y].obj->getBg()==bg) return board->board[x][y].obj;
-    }
-  }
-  return NULL;
+		}
+	}
+	return NULL;
 }
 
 ZZTObject *get_obj_by_type(struct board_info_node *board, int type) {
-  int x,y;
+	int x,y;
 
-  for(y=0;y<BOARD_Y;y++) {
-    for(x=0;x<BOARD_X;x++) {
-      if(board->board[x][y].obj!=NULL && board->board[x][y].obj->getType()==type) return board->board[x][y].obj;
-    }
-  }
-  return NULL;
+	for(y=0;y<BOARD_Y;y++) {
+		for(x=0;x<BOARD_X;x++) {
+			if(board->board[x][y].obj!=NULL && board->board[x][y].obj->getType()==type) return board->board[x][y].obj;
+		}
+	}
+	return NULL;
 }
 
-void remove_from_board(struct board_info_node *brd, ZZTObject *me) {  
+void remove_from_board(struct board_info_node *brd, ZZTObject *me) {	
 	Vector pos = me->getPosition();
-  brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
-  if(brd->board[(int)pos.x][(int)pos.y].obj==NULL || !brd->board[(int)pos.x][(int)pos.y].obj->isValid()) {
-    brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY,pos.x,pos.y);
-  }
-  brd->board[(int)pos.x][(int)pos.y].under=NULL;
-  me->setFlag(F_DELETED);
+	brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
+	if(brd->board[(int)pos.x][(int)pos.y].obj==NULL || !brd->board[(int)pos.x][(int)pos.y].obj->isValid()) {
+		brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY, (int)pos.x, (int)pos.y);
+	}
+	brd->board[(int)pos.x][(int)pos.y].under=NULL;
+	me->setFlag(F_DELETED);
 }
 
 struct board_info_node *get_board_list() {
-  return board_list;
+	return board_list;
 }
 
 struct board_info_node *get_board(int num) {
-  int x;
-  struct board_info_node *current=board_list;
-  while(current!=NULL && current->num<num) current=current->next;
-  if(current!=NULL && current->num==num) return current;
-  return NULL;
+	struct board_info_node *current=board_list;
+	while(current!=NULL && current->num<num) current=current->next;
+	if(current!=NULL && current->num==num) return current;
+	return NULL;
 }
 
 void boardTransition(direction d, board_info_node *newbrd) {
@@ -528,10 +527,10 @@ void boardTransition(direction d, board_info_node *newbrd) {
 }
 
 void switch_board(int num) {
-  int oldbrd = world.start;
+	int oldbrd = world.start;
 	direction h = (player==NULL)?IDLE:player->getHeading();
 	decompress(get_board(num));
-  world.start=num;
+	world.start=num;
 	player=(Player *)get_obj_by_type(get_board(num),ZZT_PLAYER);
 
 	connect_lines(get_board(num));
@@ -539,38 +538,38 @@ void switch_board(int num) {
 	
 	if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
 	
-  currentbrd=get_board(num);
+	currentbrd=get_board(num);
 	if(player!=NULL) {
-		currentbrd->reenter_x = player->getPosition().x;
-		currentbrd->reenter_y = player->getPosition().y;
+		currentbrd->reenter_x = (unsigned char)player->getPosition().x;
+		currentbrd->reenter_y = (unsigned char)player->getPosition().y;
 	}
 	world.time=currentbrd->time;
 	world_sec=10;
 	draw_time();
 	
-  if(currentbrd->dark && world.torch_cycle<1) {
-    set_msg("Room is dark - you need to light a torch!");
-  }
+	if(currentbrd->dark && world.torch_cycle<1) {
+		set_msg("Room is dark - you need to light a torch!");
+	}
 }
 
 struct world_header *get_world() {
-  return &world;
+	return &world;
 }
 
 int board_up() {
-  return currentbrd->board_up;
+	return currentbrd->board_up;
 }
 
 int board_down() {
-  return currentbrd->board_down;
+	return currentbrd->board_down;
 }
 
 int board_left() {
-  return currentbrd->board_left;
+	return currentbrd->board_left;
 }
 
 int board_right() {
-  return currentbrd->board_right;
+	return currentbrd->board_right;
 }
 
 void compress(board_info_node *board, bool silent) {
@@ -605,11 +604,11 @@ void compress(board_info_node *board, bool silent) {
 			under=board->board[x][y].under;
 			
 			if((foundPlayer && obj->getType() != ZZT_PLAYER && obj->getFlags() & F_OBJECT) || (!foundPlayer && obj->getType() == ZZT_PLAYER)) {
-				param.x=obj->getPosition().x;
-				param.y=obj->getPosition().y;
-				param.xstep=obj->getStep().x;
-				param.ystep=obj->getStep().y;
-				param.cycle=obj->getCycle();
+				param.x = (unsigned char)obj->getPosition().x;
+				param.y = (unsigned char)obj->getPosition().y;
+				param.xstep = (unsigned char)obj->getStep().x;
+				param.ystep = (unsigned char)obj->getStep().y;
+				param.cycle = obj->getCycle();
 				for(int i=0; i<3; i++) {
 					param.data[i] = obj->getParam(i+1);
 				}
@@ -671,8 +670,8 @@ void compress(board_info_node *board, bool silent) {
 
 void decompress(board_info_node *board, bool silent) {
 	int x=0,y=0,z=0;
-  ZZTObject *curobj=NULL;
-  ZZTObject *prev=NULL; 
+	ZZTObject *curobj=NULL;
+	ZZTObject *prev=NULL; 
 	std::list<rle_block>::iterator rle_iter;
 	std::list<zzt_param>::iterator param_iter;
 	
@@ -790,12 +789,12 @@ void connect_lines(board_info_node *current) {
 }
 
 int load_zzt(const char *filename, int titleonly) {
-  unsigned short int c,x,y,z,sum=0,q;
+	unsigned short int c,x,y,z,sum=0,q;
 	char pad[16];
 	unsigned char len;
 	rle_block rle;
 	zzt_param param;
-  struct board_info_node *current=NULL;
+	struct board_info_node *current=NULL;
 	char *prog;
 
 	File fd(filename,"rb");
@@ -824,62 +823,62 @@ int load_zzt(const char *filename, int titleonly) {
 	world.editing = 0;
 	world.task_points = 0;
 	
-  world.title.string[world.title.len]='\0';
+	world.title.string[world.title.len]='\0';
 	for(x=0;x<10;x++) {
 		world.flag[x].string[world.flag[x].len]='\0';
 	}
 #ifdef DEBUG
-  printf("Magic: %i\n",world.magic);
-  printf("Board count: %i\n",world.board_count);
-  printf("Ammo: %i\n",world.ammo);
-  printf("Gems: %i\n",world.gems);
-  printf("Blue: %i\n",world.keys[0]);
-  printf("Green: %i\n",world.keys[1]);
-  printf("Cyan: %i\n",world.keys[2]);
-  printf("Red: %i\n",world.keys[3]);
-  printf("Purple: %i\n",world.keys[4]);
-  printf("Yellow: %i\n",world.keys[5]);
-  printf("White: %i\n",world.keys[6]);
-  printf("Health: %i\n",world.health);
-  printf("Start: %i\n",world.start);
-  printf("Title: %s (%i)\n",world.title.string,world.title.len);
+	printf("Magic: %i\n",world.magic);
+	printf("Board count: %i\n",world.board_count);
+	printf("Ammo: %i\n",world.ammo);
+	printf("Gems: %i\n",world.gems);
+	printf("Blue: %i\n",world.keys[0]);
+	printf("Green: %i\n",world.keys[1]);
+	printf("Cyan: %i\n",world.keys[2]);
+	printf("Red: %i\n",world.keys[3]);
+	printf("Purple: %i\n",world.keys[4]);
+	printf("Yellow: %i\n",world.keys[5]);
+	printf("White: %i\n",world.keys[6]);
+	printf("Health: %i\n",world.health);
+	printf("Start: %i\n",world.start);
+	printf("Title: %s (%i)\n",world.title.string,world.title.len);
 #endif
-  fd.seek(0x200,SEEK_SET); //seek to the first board
-  current=new board_info_node;
-  board_list=current;
+	fd.seek(0x200,SEEK_SET); //seek to the first board
+	current=new board_info_node;
+	board_list=current;
 	if(titleonly==1) world.board_count=1;
-  for(q=0;q<=world.board_count;q++) {
+	for(q=0;q<=world.board_count;q++) {
 		fd.readle16(&current->size, 1);
 		fd.read(&len,1);
-    fd.read(current->title,50);
-    current->title[len]='\0';
+		fd.read(current->title,50);
+		current->title[len]='\0';
 #ifdef DEBUG
-    printf("Board title: %s\n",current->title);
+		printf("Board title: %s\n",current->title);
 #endif
-    //here comes the RLE data!
-    x=0;y=0;z=0;
-    while(z<1500) {
-      fd.read(&rle.len,1);
-      fd.read(&rle.cod,1);
-      fd.read(&rle.col,1);
+		//here comes the RLE data!
+		x=0;y=0;z=0;
+		while(z<1500) {
+			fd.read(&rle.len,1);
+			fd.read(&rle.cod,1);
+			fd.read(&rle.col,1);
 			current->rle_data.push_back(rle);
 			z += rle.len;
-    }
-    if(z!=1500) { 
-      printf("RLE mismatch!\n"); 
+		}
+		if(z!=1500) { 
+			printf("RLE mismatch!\n"); 
 			spinner_clear();
-      return -1; 
-    }
+			return -1; 
+		}
 
-    current->num=q;
+		current->num=q;
 		current->compressed=true;
-    fd.read(&current->maxshots,1);
-    fd.read(&current->dark,1);
-    fd.read(&current->board_up,1);
-    fd.read(&current->board_down,1);
-    fd.read(&current->board_left,1);
-    fd.read(&current->board_right,1);
-    fd.read(&current->reenter,1);
+		fd.read(&current->maxshots,1);
+		fd.read(&current->dark,1);
+		fd.read(&current->board_up,1);
+		fd.read(&current->board_down,1);
+		fd.read(&current->board_left,1);
+		fd.read(&current->board_right,1);
+		fd.read(&current->reenter,1);
 		current->msgcount=0;
 		fd.read(&len,1);
 		fd.read(&current->message,58);
@@ -889,8 +888,8 @@ int load_zzt(const char *filename, int titleonly) {
 		fd.read(&current->reenter_y,1); current->reenter_y--;
 		fd.readle16(&current->time,1);
 		fd.read(&current->animatedWater,1);
-    for(x=0;x<15;x++) { fd.read(&c,1); } //more padding
-    
+		for(x=0;x<15;x++) { fd.read(&c,1); } //more padding
+		
 		//Load the object params
 		fd.readle16(&c,1); //number of objects
 #ifdef DEBUG
@@ -924,17 +923,17 @@ int load_zzt(const char *filename, int titleonly) {
 			current->params.push_back(param);
 		}
 		
-    if(q<world.board_count) {
-      current->next=new board_info_node;
-      current=current->next;
-    } else {
-      current->next=NULL;
-    }
-  }
-  fd.close();
-  spinner_clear();
-  current=NULL;
-  return 1;
+		if(q<world.board_count) {
+			current->next=new board_info_node;
+			current=current->next;
+		} else {
+			current->next=NULL;
+		}
+	}
+	fd.close();
+	spinner_clear();
+	current=NULL;
+	return 1;
 }
 
 void save_game(const char *filename) {
@@ -944,9 +943,9 @@ void save_game(const char *filename) {
 	unsigned char x=0;
 	unsigned short int i;
 	
-  File fd(filename,"wb");
+	File fd(filename,"wb");
 	
-  spinner("Saving");
+	spinner("Saving");
 	
 	fd.writele16(&world.magic,1);
 	fd.writele16(&world.board_count,1);
@@ -977,7 +976,7 @@ void save_game(const char *filename) {
 		printf("Writing: %s\n",curbrd->title);
 #endif
 		fd.writele16(&curbrd->size,1);
-		x=strlen(curbrd->title);
+		x = (unsigned char)strlen(curbrd->title);
 		fd.write(&x,1);
 		fd.write(curbrd->title,34);	
 		for(x=0;x<16;x++) {
@@ -997,7 +996,7 @@ void save_game(const char *filename) {
 		fd.write(&curbrd->board_left,1);
 		fd.write(&curbrd->board_right,1);
 		fd.write(&curbrd->reenter,1);
-		x=strlen(curbrd->message);
+		x = (unsigned char)strlen(curbrd->message);
 		fd.write(&x,1);
 		fd.write(curbrd->message,58);
 		fd.write(&curbrd->reenter_x,1);
@@ -1006,7 +1005,7 @@ void save_game(const char *filename) {
 		fd.write(&curbrd->animatedWater,1);
 		for(x=0;x<15;x++) fd.write("\0",1);
 
-		i=curbrd->params.size() - 1;
+		i = (unsigned char)curbrd->params.size() - 1;
 		fd.writele16(&i,1);
 
 		for(params_iter = curbrd->params.begin(); params_iter != curbrd->params.end(); params_iter++) {
@@ -1035,16 +1034,15 @@ void save_game(const char *filename) {
 	decompress(currentbrd, true);
 	connect_lines(currentbrd);
 	
-  spinner_clear();
+	spinner_clear();
 }
 
 void update_brd() {
-  ZZTObject *o=NULL;
-  ZZTObject *p=NULL;
-  ZZTObject *t=NULL;
-  struct board_info_node *current=currentbrd;
-  int rx,ry,x,y,i=0,j;
-  char buf[30];
+	ZZTObject *o=NULL;
+	ZZTObject *p=NULL;
+	ZZTObject *t=NULL;
+	struct board_info_node *current=currentbrd;
+	int x,y,i=0;
 
 	if(current->num>0) {
 		if(world.torch_cycle>0) {
@@ -1063,7 +1061,7 @@ void update_brd() {
 		world_sec--;
 		if(world.health==0 && world_sec==0) {
 			if(!zm->isLocked()) {
-				zm->setTune("s.-cd#g+c-ga#+dgfg#+cf----q.c");		
+				zm->setTune("s.-cd#g+c-ga#+dgfg#+cf----q.c");
 				zm->lock();
 				zm->start();
 			}
@@ -1122,32 +1120,32 @@ void update_brd() {
 		}
 	//}
 	
-  for(y=0;y<BOARD_Y;y++) {
-    for(x=0;x<BOARD_X;x++) {
-      o=current->board[x][y].obj;
-      if(o==NULL) {
-        ct->locate(x,y);
-        ct->color(15,4);
-        ct->printf("X");
-      } else {
-        o->setUpdated(false);
+	for(y=0;y<BOARD_Y;y++) {
+		for(x=0;x<BOARD_X;x++) {
+			o=current->board[x][y].obj;
+			if(o==NULL) {
+				ct->locate(x,y);
+				ct->color(15,4);
+				ct->printf("X");
+			} else {
+				o->setUpdated(false);
 				o->setPushed(false);
-      }
-    }
-  }
+			}
+		}
+	}
 }
 
 void draw_block(int x, int y) {
-  if(x>=BOARD_X||y>=BOARD_Y||x<0||y<0||currentbrd->board[x][y].obj==NULL) return;
+	if(x>=BOARD_X||y>=BOARD_Y||x<0||y<0||currentbrd->board[x][y].obj==NULL) return;
 	currentbrd->board[x][y].obj->draw();
 }
 
 void draw_board() {
-  int x,y;
+	int x,y;
 	
-  for(y=0;y<BOARD_Y;y++) {
-    for(x=0;x<BOARD_X;x++) {
-      draw_block(x,y);
-    }
-  }
+	for(y=0;y<BOARD_Y;y++) {
+		for(x=0;x<BOARD_X;x++) {
+			draw_block(x,y);
+		}
+	}
 }

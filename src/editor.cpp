@@ -316,7 +316,7 @@ void draw_pattern(ZZTObject *pattern[5], int pat) {
 	Vector p;
 	for(int i=0; i<5; i++) {
 		p = pattern[i]->getPosition();
-		pattern[i]->setPosition(Vector(BOARD_X+1+i, 22, 0));
+		pattern[i]->setPosition(Vector( (float)(BOARD_X+1+i), 22.0f, 0.0f));
 		if(i<4) pattern[i]->setColor(15);
 		pattern[i]->draw();
 		pattern[i]->setPosition(p);
@@ -414,7 +414,7 @@ void edit_zzt() {
 					case 32:
 						if(edit_pat<4) pattern[edit_pat]->setColor(edit_fg, edit_bg);
 						o=create_copy(pattern[edit_pat]);
-						o->setPosition(Vector(edit_x,edit_y,0));
+						o->setPosition(Vector((float)edit_x, (float)edit_y, 0.0f));
 						put(o);
 						break;
 					case 13:
@@ -484,22 +484,22 @@ void edit_zzt() {
 							TUIWindow t("Board Info");
 							std::string title = currentbrd->title;
 							
-							t.addWidget(new TUITextInput(   "", &title, true));
+							t.addWidget(new TUITextInput(	 "", &title, true));
 							TUIRadioGroup *rg;
 							
-							rg=new TUIRadioGroup            ("          Board is dark: ",&currentbrd->dark);
+							rg=new TUIRadioGroup						("          Board is dark: ",&currentbrd->dark);
 							rg->add("No");
 							rg->add("Yes");
 							t.addWidget(rg);
 
-							rg=new TUIRadioGroup            ("   Re-Enter When Zapped: ",&currentbrd->reenter);
+							rg=new TUIRadioGroup						("   Re-Enter When Zapped: ",&currentbrd->reenter);
 							rg->add("No");
 							rg->add("Yes");
 							t.addWidget(rg);
 
 							t.addWidget(new TUINumericInput("             Re-Enter X: ",&currentbrd->reenter_x,0,254));
 							t.addWidget(new TUINumericInput("             Re-Enter Y: ",&currentbrd->reenter_y,0,254));
-							t.addWidget(new TUINumericInput("             Time Limit: ",&currentbrd->time,0,32767,10));						
+							t.addWidget(new TUINumericInput("             Time Limit: ",&currentbrd->time,0,32767,10));
 							t.addWidget(new TUINumericInput("          Maximum Shots: ",&currentbrd->maxshots,0,254));
 							rg=new TUIRadioGroup           ("         Animated Water: ",&currentbrd->animatedWater);
 							rg->add("Disabled");
@@ -507,11 +507,11 @@ void edit_zzt() {
 							t.addWidget(rg);
 
 							t.addWidget(new TUIWidget());
-							t.addWidget(new TUILabel       ("              Adjacent Boards",true));
-							t.addWidget(new TUIBoardList   (" North: ", &currentbrd->board_up));
-							t.addWidget(new TUIBoardList   (" South: ", &currentbrd->board_down));
-							t.addWidget(new TUIBoardList   ("  East: ", &currentbrd->board_right));
-							t.addWidget(new TUIBoardList   ("  West: ", &currentbrd->board_left));
+							t.addWidget(new TUILabel			 ("              Adjacent Boards",true));
+							t.addWidget(new TUIBoardList	 (" North: ", &currentbrd->board_up));
+							t.addWidget(new TUIBoardList	 (" South: ", &currentbrd->board_down));
+							t.addWidget(new TUIBoardList	 ("  East: ", &currentbrd->board_right));
+							t.addWidget(new TUIBoardList	 ("  West: ", &currentbrd->board_left));
 							ec.stop();
 							t.doMenu(ct);
 							strcpy(currentbrd->title, title.c_str());

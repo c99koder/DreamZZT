@@ -47,35 +47,35 @@ unsigned char Passage::getParam(int arg) {
 
 void Passage::message(ZZTObject *them, std::string message) {
 	ZZTObject *obj;
-  ZZTObject *obj2;
-  board_info_node *brd=get_board(m_dest);
-  Vector pos;
+	ZZTObject *obj2;
+	board_info_node *brd=get_board(m_dest);
+	Vector pos;
 	
-  if(message == "touch" && them->getType()==ZZT_PLAYER && brd!=NULL) {
+	if(message == "touch" && them->getType()==ZZT_PLAYER && brd!=NULL) {
 		decompress(brd);
-    obj=get_obj_by_type(brd,ZZT_PLAYER);
+		obj=get_obj_by_type(brd,ZZT_PLAYER);
 		
-    obj2=get_obj_by_color(brd,ZZT_PASSAGE,m_fg,m_bg);
+		obj2=get_obj_by_color(brd,ZZT_PASSAGE,m_fg,m_bg);
 		pos = obj->getPosition();
 		
 		if(obj2!=NULL) {
-      brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
+			brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
 			brd->board[(int)pos.x][(int)pos.y].under=NULL;
 			pos = obj2->getPosition();
-      obj->setPosition(pos);
+			obj->setPosition(pos);
 			obj->setHeading(IDLE);
 			them->setHeading(IDLE);
-      brd->board[(int)pos.x][(int)pos.y].under=obj2;
-      brd->board[(int)pos.x][(int)pos.y].obj=obj;
-    }
+			brd->board[(int)pos.x][(int)pos.y].under=obj2;
+			brd->board[(int)pos.x][(int)pos.y].obj=obj;
+		}
 
-    if(brd!=NULL) switchbrd=m_dest;
-    obj->setFlag(F_SLEEPING);
+		if(brd!=NULL) switchbrd=m_dest;
+		obj->setFlag(F_SLEEPING);
 		zm->setTune("tceg tc#fg# tdf#a td#ga# teg#+c");
 		zm->start();
-  }
+	}
 }
 
 void Passage::create() {
-  m_color=&m_bg;
+	m_color=&m_bg;
 }

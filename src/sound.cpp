@@ -31,7 +31,7 @@ using namespace Tiki::Audio;
 #include <machine/endian.h>
 #include <algorithm>
 
-#define ByteSwap5(x) ByteSwap((unsigned char *) &x,sizeof(x))   
+#define ByteSwap5(x) ByteSwap((unsigned char *) &x,sizeof(x))	 
 
 inline void ByteSwap(void * b, int n)
 {
@@ -51,7 +51,7 @@ ZZTMusicStream::ZZTMusicStream() {
 	setChannelCount(1);
 	
 	for(int x=0; x<128; x++) {
-		m_note_table[x] = 8.1758 * pow((float)2,float((float)x/12.0f));
+		m_note_table[x] = 8.1758f * pow((float)2,float((float)x/12.0f));
 	}
 	
 	osc = 1;
@@ -102,7 +102,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 		return GDEOS;
 	}
 	
-	if(m_note_len <= 0 && m_tune_idx >= m_tune.length()) {
+	if(m_note_len <= 0 && (unsigned int)m_tune_idx >= m_tune.length()) {
 		if(m_tune[m_tune.length()-1] == 'x') {
 			m_tune = "";
 			*numSamples = 0;
@@ -127,7 +127,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 		}
 		
 		if(m_note_len--<=0) {
-			if(m_tune_idx >= m_tune.length()) {
+			if((unsigned int)m_tune_idx >= m_tune.length()) {
 				return GDSuccess;
 			}
 			j=0;
@@ -275,7 +275,7 @@ ZZTMusicStream::GetDataResult ZZTMusicStream::getData(uint16 * buffer, int * num
 			continue;
 		}
 		
-		m_hfreq = m_freq / m_note_freq / 2.0f;
+		m_hfreq = int((float)m_freq / m_note_freq / 2.0f);
 		
 		if(j++>m_hfreq) {
 			osc ^= 1;

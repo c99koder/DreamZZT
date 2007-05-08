@@ -44,34 +44,34 @@ using namespace Tiki::GL;
 #endif
 
 int hex_to_int(char c) {
-  if(c>='0' && c <='9') {
-    return c-'0';
-  }
-  if(c>='a' && c <='f') {
-    return 10+(c-'a');
-  }
-  if(c>='A' && c <='F') {
-    return 10+(c-'A');
-  }
-  return -1;
+	if(c>='0' && c <='9') {
+		return c-'0';
+	}
+	if(c>='a' && c <='f') {
+		return 10+(c-'a');
+	}
+	if(c>='A' && c <='F') {
+		return 10+(c-'A');
+	}
+	return -1;
 }
 
 char *strtolower(char *str) {
-  int x;
-  static char buf[256];
-  if(str==NULL) return NULL;
-  strcpy(buf,str);
-  for(x=0;x<strlen(buf);x++) {
-    if(buf[x]>='A' && buf[x]<='Z') {
-      buf[x]+=('a'-'A');
-    }
-  }
-  return buf;
+	size_t x;
+	static char buf[256];
+	if(str==NULL) return NULL;
+	strcpy(buf,str);
+	for(x=0;x<strlen(buf);x++) {
+		if(buf[x]>='A' && buf[x]<='Z') {
+			buf[x]+=('a'-'A');
+		}
+	}
+	return buf;
 }
 
 struct MemoryStruct {
-  char *memory;
-  size_t size;
+	char *memory;
+	size_t size;
 };
 
 std::string curl_auth_string = "";
@@ -81,15 +81,15 @@ size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data) {
 	struct MemoryStruct *mem = (struct MemoryStruct *)data;
 	mem->memory = (char *)realloc(mem->memory, mem->size + realsize + 1);
 	if (mem->memory) {
-    memcpy(&(mem->memory[mem->size]), ptr, realsize);
-    mem->size += realsize;
-    mem->memory[mem->size] = 0;
-  }
-  return realsize;
+		memcpy(&(mem->memory[mem->size]), ptr, realsize);
+		mem->size += realsize;
+		mem->memory[mem->size] = 0;
+	}
+	return realsize;
 }
 
 size_t WriteTikiFileCallback(void *ptr, size_t size, size_t nmemb, void *data) {
-	return ((File *)data)->write(ptr,size * nmemb);
+	return ((File *)data)->write(ptr, (int)(size * nmemb));
 }
 
 extern ConsoleText *ct;
@@ -141,15 +141,15 @@ CURL *http_begin(std::string URL) {
 	*ct << "Loading...";
 	render();
 	
-  /* init the curl session */
-  curl_handle = curl_easy_init();
+	/* init the curl session */
+	curl_handle = curl_easy_init();
 
-  /* specify URL to get */
+	/* specify URL to get */
 	curl_easy_setopt(curl_handle, CURLOPT_URL, url);
 
 	/* some servers don't like requests that are made without a user-agent
 		field, so we provide one */
-  curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
+	curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
 	
 	/* DreamZZT Online authentication */
 	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, auth);
@@ -162,11 +162,11 @@ CURL *http_begin(std::string URL) {
 }
 
 void http_finish(CURL *curl_handle) {
-  /* get it! */
+	/* get it! */
 	curl_easy_perform(curl_handle);
 	
-  /* cleanup curl stuff */
-  curl_easy_cleanup(curl_handle);
+	/* cleanup curl stuff */
+	curl_easy_cleanup(curl_handle);
 	
 	ct->locate(0,24);
 	ct->color(0,7);
@@ -180,18 +180,18 @@ void http_finish(CURL *curl_handle) {
 
 std::string http_get_string(std::string URL) {
 	CURL *curl_handle = http_begin(URL);
-  struct MemoryStruct chunk;
+	struct MemoryStruct chunk;
 	std::string output;
 	
-  chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
-	chunk.size = 0;    /* no data at this point */
+	chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
+	chunk.size = 0;		/* no data at this point */
 	
 	
-  /* send all data to this function  */
-  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+	/* send all data to this function	*/
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
 	
-  /* we pass our 'chunk' struct to the callback function */
-  curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+	/* we pass our 'chunk' struct to the callback function */
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
 
 	http_finish(curl_handle);
 	
@@ -206,12 +206,12 @@ bool http_get_file(std::string filename, std::string URL) {
 	CURL *curl_handle = http_begin(URL);
 	static File f(filename,"wb");
 	
-  /* send all data to this function  */
-  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteTikiFileCallback);
+	/* send all data to this function	*/
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteTikiFileCallback);
 	
-  /* we pass our 'chunk' struct to the callback function */
-  curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&f);
-  
+	/* we pass our 'chunk' struct to the callback function */
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&f);
+	
 	http_finish(curl_handle);
 	
 	f.close();
@@ -221,18 +221,18 @@ bool http_get_file(std::string filename, std::string URL) {
 std::string http_post_file(std::string filename, std::string contentType, std::string URL) {
 	CURL *curl_handle = http_begin(URL);
 	struct curl_httppost* post = NULL;
-  struct curl_httppost* last = NULL;
-  struct MemoryStruct chunk;
+	struct curl_httppost* last = NULL;
+	struct MemoryStruct chunk;
 	std::string output;
 	
-  chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
-	chunk.size = 0;    /* no data at this point */	
+	chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
+	chunk.size = 0;		/* no data at this point */	
 	
-  /* send all data to this function  */
-  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+	/* send all data to this function	*/
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
 	
-  /* we pass our 'chunk' struct to the callback function */
-  curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+	/* we pass our 'chunk' struct to the callback function */
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
 	
 	/* Add file/contenttype section */
 	curl_formadd(&post, &last, CURLFORM_COPYNAME, "File",
@@ -240,8 +240,8 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 							 CURLFORM_CONTENTTYPE, contentType.c_str(), CURLFORM_END);
 	
 	/* Set the form info */
-  curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, post);
-  
+	curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, post);
+	
 	http_finish(curl_handle);
 	
 	output.append((const char *)chunk.memory);

@@ -106,20 +106,20 @@ public:
 protected:
 	Vector m_position;
 	Vector m_step;
-  unsigned short m_cycle;
-  int m_tick;
-  int m_fg;
-  int m_bg;
-  int *m_color;
-  int m_board;
-  direction m_heading;
-  int m_type;
-  unsigned char m_shape;
+	unsigned short m_cycle;
+	int m_tick;
+	int m_fg;
+	int m_bg;
+	int *m_color;
+	int m_board;
+	direction m_heading;
+	int m_type;
+	unsigned char m_shape;
 	std::string m_name; 
-  int m_flags;
+	int m_flags;
 	std::string m_prog;
-  short m_proglen;
-  short m_progpos;
+	short m_proglen;
+	short m_progpos;
 	bool m_updated;
 	bool m_pushed;
 	
@@ -180,14 +180,14 @@ private:
 #define ZZT_PURPLE_TEXT 0x33
 #define ZZT_YELLOW_TEXT 0x34
 #define ZZT_WHITE_TEXT 0x35
-/*#define ZZT_EMPTY 0x36   | (set in colour byte) | White blinking text
-#define ZZT_EMPTY 0x37   | (set in colour byte) | Blue blinking text
-#define ZZT_EMPTY 0x38   | (set in colour byte) | Green blinking text
-#define ZZT_EMPTY 0x39   | (set in colour byte) | Cyan blinking text
-#define ZZT_EMPTY 0x3A   | (set in colour byte) | Red blinking text
-#define ZZT_EMPTY 0x3B   | (set in colour byte) | Purple blinking text
-#define ZZT_EMPTY 0x3C   | (set in colour byte) | Yellow blinking text
-#define ZZT_EMPTY 0x3D   | (set in colour byte) | Grey blinking text*/
+/*#define ZZT_EMPTY 0x36	 | (set in colour byte) | White blinking text
+#define ZZT_EMPTY 0x37	 | (set in colour byte) | Blue blinking text
+#define ZZT_EMPTY 0x38	 | (set in colour byte) | Green blinking text
+#define ZZT_EMPTY 0x39	 | (set in colour byte) | Cyan blinking text
+#define ZZT_EMPTY 0x3A	 | (set in colour byte) | Red blinking text
+#define ZZT_EMPTY 0x3B	 | (set in colour byte) | Purple blinking text
+#define ZZT_EMPTY 0x3C	 | (set in colour byte) | Yellow blinking text
+#define ZZT_EMPTY 0x3D	 | (set in colour byte) | Grey blinking text*/
 
 #define F_NONE 0
 #define F_EMPTY 1

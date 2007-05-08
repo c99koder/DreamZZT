@@ -145,34 +145,34 @@ void ConsoleText::printf(const char *fmt, ...) {
 		}
 
 		if(ansiptr) {
-      if(ansiptr > 50) {
-        ansiptr = 0;
-      }
-      ansistr[ansiptr++] = buf[i];
-      ansistr[ansiptr] = 0;
-      if(!isdigit(buf[i]) && ((buf[i] != '[') && (buf[i] != ';'))) {
-        processAnsiString(); 
-      }
-    } else if(buf[i] == '\x1b' && m_ansi) {
-      ansistr[0] = buf[i];
-      ansiptr = 1;
-      ansistr[ansiptr] = 0;
-    } else {
-      if(buf[i] == '\n') {
-        m_cursor_y++;
+			if(ansiptr > 50) {
+				ansiptr = 0;
+			}
+			ansistr[ansiptr++] = buf[i];
+			ansistr[ansiptr] = 0;
+			if(!isdigit(buf[i]) && ((buf[i] != '[') && (buf[i] != ';'))) {
+				processAnsiString(); 
+			}
+		} else if(buf[i] == '\x1b' && m_ansi) {
+			ansistr[0] = buf[i];
+			ansiptr = 1;
+			ansistr[ansiptr] = 0;
+		} else {
+			if(buf[i] == '\n') {
+				m_cursor_y++;
 				m_cursor_x=0;
-        continue;
-      } else if(buf[i] == '\r') {
-        m_cursor_x = 0;
-        continue;
-      } else if(buf[i] == '\b') {
-        m_cursor_x--;
+				continue;
+			} else if(buf[i] == '\r') {
+				m_cursor_x = 0;
+				continue;
+			} else if(buf[i] == '\b') {
+				m_cursor_x--;
 				if(m_cursor_x < 0) m_cursor_x = 0;
-        continue;
-      } /*else if(buf[i] == 12) { // funky old style clearscreen
-        clear();
-        continue;
-      }*/
+				continue;
+			} /*else if(buf[i] == 12) { // funky old style clearscreen
+				clear();
+				continue;
+			}*/
 			
 			assert(m_cursor_x >= 0 && m_cursor_y >= 0 && m_cursor_x < m_cols && m_cursor_y < m_rows);
 			
@@ -188,8 +188,8 @@ void ConsoleText::printf(const char *fmt, ...) {
 
 void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned char c, int attr) {
 	plx_vertex_t vert;
-	float u = (c % 16) * 8;
-	float v = (c / 16) * 8;
+	float u = float(c % 16) * 8.0f;
+	float v = float(c / 16) * 8.0f;
 	int color = attr & 0x07;
 	
 	
@@ -197,7 +197,7 @@ void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned c
 	w *= sv.x;
 	h *= sv.y;
 	
-	const Vector & tv = getPosition() + Vector(x, y, 0.0001);
+	const Vector & tv = getPosition() + Vector(x, y, 0.0001f);
 
 	if(attr & HIGH_INTENSITY) {
 		vert.argb = Color(0.25, 0.25, 0.25);
@@ -304,40 +304,40 @@ void ConsoleText::draw(ObjType list) {
 }
 
 void ConsoleText::processAnsiString() {
-  if(ansistr[1] == '[')
-  {
-    int args[11], argptr = 0, ptr = 2, tempptr = 0;
-    char cmd, temp[11];
-    memset(&args, 0, sizeof(int) * 11);
-    cmd = ansistr[ansiptr - 1];
-    ansistr[ansiptr - 1] = 0;
-    while((ansistr[ptr]) && ((argptr < 10) && (tempptr < 10)))
-    {
-      if(ansistr[ptr] == ';')
-      {
-        temp[tempptr] = 0; 
-        tempptr = 0; 
-        args[argptr++] = atoi(temp); 
-      }
-      else
-      {
-        temp[tempptr++] = ansistr[ptr]; 
-      }
-      ++ptr;
-    }
-    if(tempptr && (argptr < 10))
-    {
-      temp[tempptr] = 0; 
-      args[argptr++] = atoi(temp); 
-    }
-    if((cmd >= 'A') && (cmd <= 'D') && !args[0])
-    {
-      args[0] = 1;
-    }
-    switch(cmd)
-    {
-      case 'f':
-      case 'H': // goto XY
+	if(ansistr[1] == '[')
+	{
+		int args[11], argptr = 0, ptr = 2, tempptr = 0;
+		char cmd, temp[11];
+		memset(&args, 0, sizeof(int) * 11);
+		cmd = ansistr[ansiptr - 1];
+		ansistr[ansiptr - 1] = 0;
+		while((ansistr[ptr]) && ((argptr < 10) && (tempptr < 10)))
+		{
+			if(ansistr[ptr] == ';')
+			{
+				temp[tempptr] = 0; 
+				tempptr = 0; 
+				args[argptr++] = atoi(temp); 
+			}
+			else
+			{
+				temp[tempptr++] = ansistr[ptr]; 
+			}
+			++ptr;
+		}
+		if(tempptr && (argptr < 10))
+		{
+			temp[tempptr] = 0; 
+			args[argptr++] = atoi(temp); 
+		}
+		if((cmd >= 'A') && (cmd <= 'D') && !args[0])
+		{
+			args[0] = 1;
+		}
+		switch(cmd)
+		{
+			case 'f':
+			case 'H': // goto XY
 			{
 				if(argptr == 0)
 				{
@@ -355,60 +355,60 @@ void ConsoleText::processAnsiString() {
 				if(m_cursor_y > m_rows - 1) m_cursor_y = m_rows - 1;
 				//printf("**** GOTO XY(%u,%u) ****\n", m_cursor_x, m_cursor_y);
 			}
-        break;
-      case 'A': // UP * lines
-        m_cursor_y -= args[0];
+				break;
+			case 'A': // UP * lines
+				m_cursor_y -= args[0];
 				if(m_cursor_x < 0) m_cursor_x = 0;
 					if(m_cursor_y < 0) m_cursor_y = 0;
 						if(m_cursor_x > m_cols - 1) m_cursor_x = m_cols - 1;
 							if(m_cursor_y > m_rows - 1) m_cursor_y = m_rows - 1;
 								//printf("**** UP %u ****\n",m_cursor_y);
 								break;
-      case 'B': // DOWN * lines
-        m_cursor_y += args[0];
+			case 'B': // DOWN * lines
+				m_cursor_y += args[0];
 				if(m_cursor_x < 0) m_cursor_x = 0;
 					if(m_cursor_y < 0) m_cursor_y = 0;
 						if(m_cursor_x > m_cols - 1) m_cursor_x = m_cols - 1;
 							if(m_cursor_y > m_rows - 1) m_cursor_y = m_rows - 1;
 								//printf("**** DOWN %u ****\n",m_cursor_y);
 								break;
-      case 'C': // RIGHT * chars
-        m_cursor_x += args[0];
+			case 'C': // RIGHT * chars
+				m_cursor_x += args[0];
 				if(m_cursor_x < 0) m_cursor_x = 0;
 					if(m_cursor_y < 0) m_cursor_y = 0;
 						if(m_cursor_x > m_cols - 1) m_cursor_x = m_cols - 1;
 							if(m_cursor_y > m_rows - 1) m_cursor_y = m_rows - 1;
 								//printf("**** RIGHT %u ****\n",m_cursor_y);
 								break;
-      case 'D': // LEFT * chars
-        m_cursor_x -= args[0];
+			case 'D': // LEFT * chars
+				m_cursor_x -= args[0];
 				if(m_cursor_x < 0) m_cursor_x = 0;
 					if(m_cursor_y < 0) m_cursor_y = 0;
 						if(m_cursor_x > m_cols - 1) m_cursor_x = m_cols - 1;
 							if(m_cursor_y > m_rows - 1) m_cursor_y = m_rows - 1;
 								//printf("**** LEFT %u ****\n",m_cursor_y);
 								break;
-      case 'J': // clearscreen
-        clear();
+			case 'J': // clearscreen
+				clear();
 				//printf("**** CLEAR SCREEN ****\n");
-        break;
-      case 's': // save location
-        m_save_x = m_cursor_x;
-        m_save_y = m_cursor_y;
+				break;
+			case 's': // save location
+				m_save_x = m_cursor_x;
+				m_save_y = m_cursor_y;
 				//printf("**** SAVE XY (%u, %u) ****\n", save_x, save_y);
-        break;
-      case 'u': // restore location
-        m_cursor_x = m_save_x;
-        m_cursor_y = m_save_y;
-        m_save_x = m_save_y = 0;
+				break;
+			case 'u': // restore location
+				m_cursor_x = m_save_x;
+				m_cursor_y = m_save_y;
+				m_save_x = m_save_y = 0;
 				//printf("**** RESTORE XY (%u, %u) ****\n", m_cursor_x, m_cursor_y);
-        break;
-      case 'n': // ANSI detect
+				break;
+			case 'n': // ANSI detect
 				//remoteHost->write("\x1b[1;1R", 6);
 				//printf("**** ANSI DETECTION ****\n");
-        break;
-      case 'k':
-      case 'K': // clear EOL
+				break;
+			case 'k':
+			case 'K': // clear EOL
 			{
 				int x = m_cursor_x;
 				while(x < m_cols - 1) { 
@@ -417,8 +417,8 @@ void ConsoleText::processAnsiString() {
 				} 
 				//printf("**** CLEAR EOL %u ****\n", m_cursor_y);
 			}
-        break;
-      case 'm': // set color attribute, currently ignored
+				break;
+			case 'm': // set color attribute, currently ignored
 			{
 				//printf("**** SET ATTRIBUTE [%u]", argptr);
 				int i;
@@ -513,12 +513,12 @@ void ConsoleText::processAnsiString() {
 				}
 				//printf(" ****\n");
 			}
-        break;
-    }
-  }
-	//  else
-	//  {
-	//    printf("Bogus ANSI: %s\n", ansistr);
-	//  }
-  ansiptr = 0;
+				break;
+		}
+	}
+	//	else
+	//	{
+	//		printf("Bogus ANSI: %s\n", ansistr);
+	//	}
+	ansiptr = 0;
 }

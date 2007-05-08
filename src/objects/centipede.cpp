@@ -97,9 +97,9 @@ void Centipede::discover(Centipede *prev) {
 	if(prev!=NULL) m_heading=m_nextHeading=toward(prev);
 	m_prev=prev;
 					
-	for(y=m_position.y-1; y<=m_position.y+1; y++) {
-		for(x=m_position.x-1; x<=m_position.x+1; x++) {
-			if((x==m_position.x || y==m_position.y) && currentbrd->board[x][y].obj != NULL && currentbrd->board[x][y].obj != prev && currentbrd->board[x][y].obj != this && currentbrd->board[x][y].obj->getType() == ZZT_CENTIPEDE_BODY && !((Centipede *)currentbrd->board[x][y].obj)->isDiscovered()) {
+	for(y = (int)m_position.y - 1; y <= (int)m_position.y + 1; y++) {
+		for(x = (int)m_position.x - 1; x <= (int)m_position.x + 1; x++) {
+			if((x == (int)m_position.x || y == (int)m_position.y) && currentbrd->board[x][y].obj != NULL && currentbrd->board[x][y].obj != prev && currentbrd->board[x][y].obj != this && currentbrd->board[x][y].obj->getType() == ZZT_CENTIPEDE_BODY && !((Centipede *)currentbrd->board[x][y].obj)->isDiscovered()) {
 				m_next=(Centipede *)(currentbrd->board[x][y].obj);
 				((Centipede *)currentbrd->board[x][y].obj)->discover(this);
 				return;

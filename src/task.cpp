@@ -119,7 +119,7 @@ void TaskTouchObject::touch(ZZTObject *obj) {
 
 bool TaskPlayerPosition::check() {
 	Vector p = player->getPosition();
-	if((m_board==0 || m_board==currentbrd->num)  && (p.x <= m_max.x && p.y <= m_max.y && p.x >= m_min.x && p.y >= m_min.y))
+	if((m_board==0 || m_board==currentbrd->num)	&& (p.x <= m_max.x && p.y <= m_max.y && p.x >= m_min.x && p.y >= m_min.y))
 		m_complete = true;
 	
 	return m_complete;

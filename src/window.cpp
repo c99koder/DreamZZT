@@ -98,7 +98,7 @@ void TUIRadioGroup::draw(ConsoleText *ct) {
 	int i=0;
 	if(m_selectedi!=NULL) m_val = (*m_selectedi);
 	if(m_selecteds!=NULL) m_val = (*m_selecteds);
-	if(m_selectedf!=NULL) m_val = (*m_selectedf);
+	if(m_selectedf!=NULL) m_val = (int)(*m_selectedf);
 	if(m_selectedc!=NULL) m_val = (*m_selectedc);
 	
 	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
@@ -111,21 +111,21 @@ void TUIRadioGroup::draw(ConsoleText *ct) {
 void TUIRadioGroup::processHidEvent(const Hid::Event &evt) {
 	if(m_selectedi!=NULL) m_val = (*m_selectedi);
 	if(m_selecteds!=NULL) m_val = (*m_selecteds);
-	if(m_selectedf!=NULL) m_val = (*m_selectedf);
+	if(m_selectedf!=NULL) m_val = (int)(*m_selectedf);
 	if(m_selectedc!=NULL) m_val = (*m_selectedc);
 	
 	if(evt.type == Event::EvtKeypress && evt.key == Event::KeyLeft) {
-		if(m_val == 0) m_val=m_options.size();
+		if(m_val == 0) m_val = (int)m_options.size();
 		m_val--;
 	}
 	if(evt.type == Event::EvtKeypress && evt.key == Event::KeyRight) {
 		m_val++;
-		if(m_val >= m_options.size()) m_val=0;
+		if(m_val >= (int)m_options.size()) m_val=0;
 	}
 	
 	if(m_selectedi!=NULL) (*m_selectedi) = m_val;
 	if(m_selecteds!=NULL) (*m_selecteds) = m_val;
-	if(m_selectedf!=NULL) (*m_selectedf) = m_val;
+	if(m_selectedf!=NULL) (*m_selectedf) = (float)m_val;
 	if(m_selectedc!=NULL) (*m_selectedc) = m_val;		
 }
 
@@ -231,7 +231,7 @@ void TUINumericInput::draw(ConsoleText *ct) {
 	int i=0;
 	if(m_numi!=NULL) m_val=(*m_numi);
 	if(m_nums!=NULL) m_val=(*m_nums);
-	if(m_numf!=NULL) m_val=(*m_numf);
+	if(m_numf!=NULL) m_val=(int)(*m_numf);
 	if(m_numc!=NULL) m_val=(*m_numc);
 	
 	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
@@ -244,7 +244,7 @@ void TUINumericInput::draw(ConsoleText *ct) {
 void TUINumericInput::processHidEvent(const Hid::Event &evt) {
 	if(m_numi!=NULL) m_val=(*m_numi);
 	if(m_nums!=NULL) m_val=(*m_nums);
-	if(m_numf!=NULL) m_val=(*m_numf);
+	if(m_numf!=NULL) m_val=(int)(*m_numf);
 	if(m_numc!=NULL) m_val=(*m_numc);
 	
 	if(evt.type == Event::EvtKeypress && evt.key == Event::KeyLeft) {
@@ -258,13 +258,13 @@ void TUINumericInput::processHidEvent(const Hid::Event &evt) {
 	
 	if(m_numi!=NULL) (*m_numi)=m_val;
 	if(m_nums!=NULL) (*m_nums)=m_val;
-	if(m_numf!=NULL) (*m_numf)=m_val;
+	if(m_numf!=NULL) (*m_numf)=(float)m_val;
 	if(m_numc!=NULL) (*m_numc)=m_val;
 }
 
 void TUITextInput::draw(ConsoleText *ct) {
 	if(m_center && (m_text->length() + m_label.length() < 40)) {
-		for(int i=0; i< 20 - ((m_text->length() + m_label.length()) / 2); i++) {
+		for(size_t i=0; i< 20 - ((m_text->length() + m_label.length()) / 2); i++) {
 			*ct << " ";
 		}
 	}
@@ -374,7 +374,7 @@ void TUIPasswordInput::draw(ConsoleText *ct) {
 	*ct << m_label;
 	
 	ct->color(WHITE|HIGH_INTENSITY,BLUE);
-	for(int i=0; i<m_text->length(); i++) {
+	for(size_t i=0; i<m_text->length(); i++) {
 		*ct << "*";
 	}
 	if(m_blink && getFocus()) *ct << "_";
@@ -390,8 +390,8 @@ void TUIPasswordInput::draw(ConsoleText *ct) {
 }
 
 void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
-  //int fg=(console->getColor(x,y)/16)-8;
-  //if(fg<0) fg=8;
+	//int fg=(console->getColor(x,y)/16)-8;
+	//if(fg<0) fg=8;
 	console->putColor(x,y, BLACK|HIGH_INTENSITY);
 }
 
@@ -399,7 +399,7 @@ void TUISlider::draw(ConsoleText *ct) {
 	int i=0;
 	if(m_numi!=NULL) m_val=(*m_numi);
 	if(m_nums!=NULL) m_val=(*m_nums);
-	if(m_numf!=NULL) m_val=(*m_numf);
+	if(m_numf!=NULL) m_val=(int)(*m_numf);
 	if(m_numc!=NULL) m_val=(*m_numc);
 	
 	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
@@ -433,7 +433,7 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 			case Event::KeyDown:
 				m_widgets[m_offset]->focus(false);
 				m_offset++;
-				if(m_offset >= m_widgets.size()) m_offset = m_widgets.size() - 1;
+				if(m_offset >= (int)m_widgets.size()) m_offset = (int)m_widgets.size() - 1;
 					m_widgets[m_offset]->focus(true);
 				break;
 		} 
@@ -464,23 +464,23 @@ void TUIWindow::buildFromString(std::string s, bool ANSI) {
 		
 		switch(s[i+j++]) {
 			case '!':
-				while(((i+j) < s.length()) && s[i+j]!=';') label += s[i+j++];
+				while(((i+j) < (int)s.length()) && s[i+j]!=';') label += s[i+j++];
 				j++;
-				while(((i+j) < s.length()) && s[i+j]!='\r' && s[i+j]!='\n') text += s[i+j++];
+				while(((i+j) < (int)s.length()) && s[i+j]!='\r' && s[i+j]!='\n') text += s[i+j++];
 				addWidget(new TUIHyperLink(label,text));
 				break;
 			case '$':
-				while(((i+j) < s.length()) && s[i+j]!='\r' && s[i+j]!='\n') text += s[i+j++];
-				for(int x=0; x< (m_w - text.length() - 4) / 2; x++) {
+				while(((i+j) < (int)s.length()) && s[i+j]!='\r' && s[i+j]!='\n') text += s[i+j++];
+				for(int x=0; x< (m_w - (int)text.length() - 4) / 2; x++) {
 					label += " ";
 				}
 				addWidget(new TUILabel(label + text,true,ANSI));
 				break;	
 			default:
 				j--;
-				while(((i+j) < s.length()) && s[i+j]!='\r' && s[i+j]!='\n') {
+				while(((i+j) < (int)s.length()) && s[i+j]!='\r' && s[i+j]!='\n') {
 					if(s[i+j] == '\t') {
-						for(int t=(10 - (text.length() % 10)); t>0; t--) {
+						for(int t=(10 - (int)(text.length() % 10)); t>0; t--) {
 							text += " ";
 						}
 					} else {
@@ -492,50 +492,50 @@ void TUIWindow::buildFromString(std::string s, bool ANSI) {
 				break;	
 		}
 		i+=j+1;
-	} while (i < s.length());
+	} while (i < (int)s.length());
 }
 
 void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,int bg, bool shadow) {
-  int i,j,f;
-  //draw a box using IBM extended ASCII
-  console->putColor(x,y,fg | (bg << 8));
+	int i,j;
+	//draw a box using IBM extended ASCII
+	console->putColor(x,y,fg | (bg << 8));
 	console->putChar(x,y,218);
 	
-  for(i=0;i<w;i++) {
+	for(i=0;i<w;i++) {
 		console->putColor(x+i+1,y,fg | (bg << 8));
 		console->putChar(x+i+1,y,196);
-  }
+	}
 	
 	console->putColor(x+w+1,y,fg | (bg << 8));
 	console->putChar(x+w+1,y,191);
-  
+	
 	for(i=0;i<h;i++) {
 		console->putColor(x,y+i+1,fg | (bg << 8));
 		console->putChar(x,y+i+1,179);
 		
-    for(j=0;j<w;j++) {
+		for(j=0;j<w;j++) {
 			console->putColor(x+j+1,y+i+1,fg | (bg << 8));
 			console->putChar(x+j+1,y+i+1,' ');
-    }
-    
+		}
+		
 		console->putColor(x+j+1,y+i+1,fg | (bg << 8));
 		console->putChar(x+j+1,y+i+1,179);
 		
-    if(shadow) draw_shadow(console,x+w+2,y+i+1);
-    if(shadow) draw_shadow(console,x+w+3,y+i+1);
-    console->color(fg,bg);
-  }
-  
-	console->locate(x,y+h+1);
-  console->printf("%c",192);
-  for(i=0;i<w;i++)
-    console->printf("%c",196);
-  console->printf("%c",217);
-  draw_shadow(console,x+w+2,y+h+1);
-  draw_shadow(console,x+w+3,y+h+1);
+		if(shadow) draw_shadow(console,x+w+2,y+i+1);
+		if(shadow) draw_shadow(console,x+w+3,y+i+1);
+		console->color(fg,bg);
+	}
 	
-  for(i=0;i<w+2;i++)
-    if (shadow) draw_shadow(console,x+2+i,y+h+2);
+	console->locate(x,y+h+1);
+	console->printf("%c",192);
+	for(i=0;i<w;i++)
+		console->printf("%c",196);
+	console->printf("%c",217);
+	draw_shadow(console,x+w+2,y+h+1);
+	draw_shadow(console,x+w+3,y+h+1);
+	
+	for(i=0;i<w+2;i++)
+		if (shadow) draw_shadow(console,x+2+i,y+h+2);
 }
 
 void TUIWindow::doMenu(ConsoleText *ct) {
@@ -562,10 +562,10 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 			draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE, false);
 			ct->color(YELLOW | HIGH_INTENSITY, BLUE);
 			if(m_widgets[m_offset]->getHelpText() != "\0") {
-				ct->locate(m_x+(m_w-m_widgets[m_offset]->getHelpText().length()-1)/2,m_y+1);
+				ct->locate(m_x+((int)(m_w-m_widgets[m_offset]->getHelpText().length())-1)/2,m_y+1);
 				*ct << "\xae " << m_widgets[m_offset]->getHelpText() << " \xaf";
 			} else {
-				ct->locate(m_x+(m_w-m_title.length()+2)/2,m_y+1);
+				ct->locate(m_x+(m_w-(int)m_title.length()+2)/2,m_y+1);
 				*ct << m_title;
 			}
 			ct->locate(m_x,m_y+2);
@@ -602,7 +602,7 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 
 			ct->setANSI(false);
 			
-			for(widget_iter = m_widgets.begin() + ((m_offset <=  m_h/2-2)?0:(m_offset -  m_h/2 + 2)); widget_iter != m_widgets.end() && i < m_h-2; widget_iter++) {
+			for(widget_iter = m_widgets.begin() + ((m_offset <=	m_h/2-2)?0:(m_offset -	m_h/2 + 2)); widget_iter != m_widgets.end() && i < m_h-2; widget_iter++) {
 				ct->locate(m_x+3,m_y+3+i++);
 				(*widget_iter)->update();
 				(*widget_iter)->draw(ct);

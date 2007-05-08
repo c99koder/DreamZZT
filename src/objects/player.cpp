@@ -105,19 +105,19 @@ void Player::processEvent(const Event & evt) {
 		}
 
 		if(evt.btn == Event::MouseWheelUp) {
-			if(zoom < 2) zoom += 0.1;
+			if(zoom < 2) zoom += 0.1f;
 		}
 
 		if(evt.btn == Event::MouseWheelDown) {
-			if(zoom > 1) zoom -= 0.1;
+			if(zoom > 1) zoom -= 0.1f;
 		}
 		
 		switch(evt.key) {
 			case ']':
-				if(zoom < 6) zoom += 0.1;
+				if(zoom < 6) zoom += 0.1f;
 				break;			
 			case '[':
-				if(zoom > 1) zoom -= 0.1;
+				if(zoom > 1) zoom -= 0.1f;
 				break;
 			case Event::KeyUp:
 				m_heading=UP;
@@ -163,10 +163,10 @@ void Player::processEvent(const Event & evt) {
 }
 
 void Player::create() {
-  m_shape=2;
-  m_fg=15;
-  m_bg=1;
-  m_shoot = m_move = IDLE;
+	m_shape=2;
+	m_fg=15;
+	m_bg=1;
+	m_shoot = m_move = IDLE;
 	
 	if(playerEventCollector==NULL) {
 		playerEventCollector = new EventCollector();
@@ -174,7 +174,7 @@ void Player::create() {
 }
 
 void Player::message(ZZTObject *them, std::string message) {
-  if(message == "shot" || message == "bombed" || message == "time") {
+	if(message == "shot" || message == "bombed" || message == "time") {
 		if(world.energizer_cycle==0 || message == "time") {
 			take_health(10);
 			if(message != "time" && world.health > 0) {
@@ -187,31 +187,31 @@ void Player::message(ZZTObject *them, std::string message) {
 				draw_time();
 				currentbrd->board[(int)m_position.x][(int)m_position.y].obj=currentbrd->board[(int)m_position.x][(int)m_position.y].under;
 				currentbrd->board[(int)m_position.x][(int)m_position.y].under=NULL;
-				draw_block(m_position.x,m_position.y);
-				m_position.x=currentbrd->reenter_x;
-				m_position.y=currentbrd->reenter_y;				
+				draw_block((int)m_position.x, (int)m_position.y);
+				m_position.x = currentbrd->reenter_x;
+				m_position.y = currentbrd->reenter_y;				
 				currentbrd->board[(int)m_position.x][(int)m_position.y].under=currentbrd->board[(int)m_position.x][(int)m_position.y].obj;
 				currentbrd->board[(int)m_position.x][(int)m_position.y].obj=this;
-				draw_block(m_position.x,m_position.y);
+				draw_block((int)m_position.x, (int)m_position.y);
 				m_flags|=F_SLEEPING;
 			}
 		}
-  }
+	}
 }
 
 void whip(struct object *me, int x, int y, char shape) {
-/*  struct object *them=currentbrd->board[x][y].obj;
-  ct->locate(x,y);
-  ct->color(7,0); ct->printf("%c",shape);
-  if(them!=NULL && them->message!=NULL) {
-    them->message(them,me,"whipped");
-  } else if(currentbrd->board[x][y].code==I_BREAKABLE) {
-    currentbrd->board[x][y].code=I_EMPTY;
-    currentbrd->board[x][y].color=0;
-    currentbrd->board[x][y].solid=0;
-  }
-  video_refresh();
-  draw_block(x,y);*/
+/*	struct object *them=currentbrd->board[x][y].obj;
+	ct->locate(x,y);
+	ct->color(7,0); ct->printf("%c",shape);
+	if(them!=NULL && them->message!=NULL) {
+		them->message(them,me,"whipped");
+	} else if(currentbrd->board[x][y].code==I_BREAKABLE) {
+		currentbrd->board[x][y].code=I_EMPTY;
+		currentbrd->board[x][y].color=0;
+		currentbrd->board[x][y].solid=0;
+	}
+	video_refresh();
+	draw_block(x,y);*/
 }
 
 void Player::update() {
@@ -221,33 +221,33 @@ void Player::update() {
 	ZZTObject *obj;
 	direction oldMove = m_move;
 	direction oldShoot = m_shoot;
-  
+	
 	if(m_flags&F_SLEEPING && world.health > 0) {
-    st->locate(4,6);
-    st->color(15,1);
-    st->printf("Pausing...");
-    do {
-      if(s==0) {
-        draw();
-        s++;
-      } else {
-        s=0;
-        ct->locate(m_position.x,m_position.y);
-        ct->color(currentbrd->board[(int)m_position.x][(int)m_position.y].under->getFg(),currentbrd->board[(int)m_position.x][(int)m_position.y].under->getBg());
-        ct->printf("%c",currentbrd->board[(int)m_position.x][(int)m_position.y].under->getShape());
-      }
+		st->locate(4,6);
+		st->color(15,1);
+		st->printf("Pausing...");
+		do {
+			if(s==0) {
+				draw();
+				s++;
+			} else {
+				s=0;
+				ct->locate((int)m_position.x, (int)m_position.y);
+				ct->color(currentbrd->board[(int)m_position.x][(int)m_position.y].under->getFg(),currentbrd->board[(int)m_position.x][(int)m_position.y].under->getBg());
+				ct->printf("%c",currentbrd->board[(int)m_position.x][(int)m_position.y].under->getShape());
+			}
 			draw_msg();
 			render();
 			Time::sleep(100000);
 			while (playerEventCollector->getEvent(evt)) {
 				processEvent(evt);
 			}	
-    } while(m_flags&F_SLEEPING);
-    st->locate(4,6);
-    st->color(15,1);
-    st->printf("          ");
-    draw();
-  }
+		} while(m_flags&F_SLEEPING);
+		st->locate(4,6);
+		st->color(15,1);
+		st->printf("          ");
+		draw();
+	}
 
 	if(world.energizer_cycle > 0) {
 		if(world.energizer_cycle%2==1) {

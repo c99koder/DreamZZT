@@ -23,7 +23,7 @@
 
 std::vector<std::string> wordify(std::string s, char seperator) {
 	std::vector<std::string> list;
-	int pos=0,oldpos=0;
+	size_t pos=0,oldpos=0;
 	
 	while((pos = s.find(seperator, oldpos)) != std::string::npos) {
 		list.push_back(s.substr(oldpos,(pos-oldpos)));

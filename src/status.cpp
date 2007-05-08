@@ -46,63 +46,63 @@ int msgcount=0;
 void redraw_status();
 
 void set_msg(char *text) {
-  redraw_status();
-  strcpy(currentbrd->message,text);
-  currentbrd->msgcount=24;
+	redraw_status();
+	strcpy(currentbrd->message,text);
+	currentbrd->msgcount=24;
 }
 
 void redraw_status() {
-  int x;
+	int x;
 
-  for(x=0;x<BOARD_X;x++) {
-    draw_block(x,BOARD_Y-1);
-  }
+	for(x=0;x<BOARD_X;x++) {
+		draw_block(x,BOARD_Y-1);
+	}
 }
 
 void draw_msg() {
-  if(currentbrd->msgcount>0) {
-    ct->color((currentbrd->msgcount%6)+9,0);
-    ct->locate((BOARD_X/2)-((strlen(currentbrd->message)+2)/2),BOARD_Y-1);
-    ct->printf(" %s ",currentbrd->message);
-    currentbrd->msgcount--;
-    if(currentbrd->msgcount==0) redraw_status();
-  }
+	if(currentbrd->msgcount>0) {
+		ct->color((currentbrd->msgcount%6)+9,0);
+		ct->locate((BOARD_X/2)-((int)(strlen(currentbrd->message)+2)/2),BOARD_Y-1);
+		ct->printf(" %s ",currentbrd->message);
+		currentbrd->msgcount--;
+		if(currentbrd->msgcount==0) redraw_status();
+	}
 }
 
 void dzzt_logo() {
 	st->color(15,1);
 	st->clear();
-  st->locate(5,1);
-  st->color(GREY | HIGH_INTENSITY, BLUE);
-  st->printf("- - - - -");
-  st->locate(2,2);
-  st->color(BLACK, GREY);
-  st->printf("    DreamZZT    ");
-  st->locate(5,3);
-  st->color(GREY | HIGH_INTENSITY, BLUE);
-  st->printf("- - - - -");
+	st->locate(5,1);
+	st->color(GREY | HIGH_INTENSITY, BLUE);
+	st->printf("- - - - -");
+	st->locate(2,2);
+	st->color(BLACK, GREY);
+	st->printf("    DreamZZT    ");
+	st->locate(5,3);
+	st->color(GREY | HIGH_INTENSITY, BLUE);
+	st->printf("- - - - -");
 }
 
 void draw_time() {
-  st->locate(2,7);
-  st->color(YELLOW | HIGH_INTENSITY , BLUE);
+	st->locate(2,7);
+	st->color(YELLOW | HIGH_INTENSITY , BLUE);
 	if(world.time>0) {
-  	st->printf("     Time:%i  ",world.time);
+		st->printf("     Time:%i  ",world.time);
 	} else {
-  	st->printf("               ");
+		st->printf("               ");
 	}
 }
 
 void take_time(int count) {
-  if(count > world.time) 
+	if(count > world.time) 
 		world.time=0;
-  else world.time-=count;
-  draw_time();
+	else world.time-=count;
+	draw_time();
 }
 
 void give_time(int count) {
-  world.time+=count;
-  draw_time();
+	world.time+=count;
+	draw_time();
 }
 
 void draw_ammo() {
@@ -110,41 +110,41 @@ void draw_ammo() {
 	st->putChar(2,9,0x84);
 
 	st->locate(3, 9);
-  st->color(14,1);
-  st->printf("    Ammo:%i   ",world.ammo);
+	st->color(14,1);
+	st->printf("    Ammo:%i   ",world.ammo);
 }
 
 void take_ammo(int count) {
-  if(count > world.ammo)
+	if(count > world.ammo)
 		world.ammo=0;
 	else world.ammo-=count;
-  draw_ammo();
+	draw_ammo();
 }
 
 void give_ammo(int count) {
-  world.ammo+=count;
-  draw_ammo();
+	world.ammo+=count;
+	draw_ammo();
 }
 
 void draw_health() {
 	st->putColor(3,8, HIGH_INTENSITY | WHITE | (BLUE << 8));
 	st->putChar(3,8,0x02);
 
-  st->locate(3,8);
-  st->color(14,1);
-  st->printf("  Health:%i  ",world.health);
+	st->locate(3,8);
+	st->color(14,1);
+	st->printf("  Health:%i  ",world.health);
 }
 
 void take_health(int count) {
-  if(world.health<count) 
+	if(world.health<count) 
 		world.health=0;
 	else world.health-=count;
-  draw_health();
+	draw_health();
 }
 
 void give_health(int count) {
-  world.health+=count;
-  draw_health();
+	world.health+=count;
+	draw_health();
 }
 
 void draw_torch() {
@@ -153,9 +153,9 @@ void draw_torch() {
 	st->putColor(2,10, YELLOW | (BLUE << 8));
 	st->putChar(2,10,0x9d);
 
-  st->locate(3,10);
-  st->color(14,1);
-  st->printf(" Torches:%i  ",world.torches);
+	st->locate(3,10);
+	st->color(14,1);
+	st->printf(" Torches:%i  ",world.torches);
 	st->locate(15,10);
 
 	if(world.torch_cycle>0) {
@@ -174,45 +174,45 @@ void draw_torch() {
 
 void take_torch(int count) {
 	if(world.health<=0) return;
-  if(world.torches < count) 
+	if(world.torches < count) 
 		world.torches=0;
 	else world.torches-=count;
-  draw_torch();
+	draw_torch();
 }
 
 void give_torch(int count) {
 	if(world.health<=0) return;
-  world.torches+=count;
-  draw_torch();
+	world.torches+=count;
+	draw_torch();
 }
 
 void draw_gems() {
 	st->putColor(2,11, HIGH_INTENSITY | RED | (BLUE << 8));
 	st->putChar(2,11,0x04);
 
-  st->locate(3,11);
-  st->color(14,1);
-  st->printf("    Gems:%i  ",world.gems);
+	st->locate(3,11);
+	st->color(14,1);
+	st->printf("    Gems:%i  ",world.gems);
 }
 
 void take_gems(int count) {
 	if(world.health<=0) return;
-  if(world.gems < count) 
+	if(world.gems < count) 
 		world.gems = 0;
 	else world.gems-=count;
-  draw_gems();
+	draw_gems();
 }
 
 void give_gems(int count) {
 	if(world.health<=0) return;
-  world.gems+=count;
-  draw_gems();
+	world.gems+=count;
+	draw_gems();
 }
 
 void draw_score() {
-  st->locate(3,12);
-  st->color(14,1);
-  st->printf("   Score:%i  ",world.score + world.task_points);
+	st->locate(3,12);
+	st->color(14,1);
+	st->printf("   Score:%i  ",world.score + world.task_points);
 }
 
 void take_score(int count) {
@@ -220,44 +220,44 @@ void take_score(int count) {
 	if(world.score < count)
 		world.score = 0;
 	else world.score-=count;
-  draw_score();
+	draw_score();
 }
 
 void give_score(int count) {
 	if(world.health<=0) return;
-  world.score+=count;
-  draw_score();
+	world.score+=count;
+	draw_score();
 }
 
 void draw_keys() {
-  int i;
+	int i;
 	st->putColor(2,13, HIGH_INTENSITY | GREY | (BLUE << 8));
 	st->putChar(2,13,0x0c);
 
-  st->locate(3,13);
-  st->color(14,1);
-  st->printf("    Keys:");
+	st->locate(3,13);
+	st->color(14,1);
+	st->printf("    Keys:");
 
-  for(i=0;i<7;i++) {
+	for(i=0;i<7;i++) {
 		st->putColor(12+i,13, HIGH_INTENSITY | (i+1) | (BLUE << 8));
 
-    if(world.keys[i]==1) {
+		if(world.keys[i]==1) {
 			st->putChar(12+i,13,0x0c);
-    } else {
+		} else {
 			st->putChar(12+i,13,' ');
-    }
-  }
+		}
+	}
 }
 
 void draw_hud_ingame() {
-  dzzt_logo();
+	dzzt_logo();
 	draw_time();
-  draw_health();
-  draw_ammo();
-  draw_torch();
-  draw_gems();
-  draw_score();
-  draw_keys();
+	draw_health();
+	draw_ammo();
+	draw_torch();
+	draw_gems();
+	draw_score();
+	draw_keys();
 #if TIKI_PLAT == TIKI_DC
 	st->locate(9,15);
 	st->color(0,7);
