@@ -81,6 +81,7 @@ void Blink::update() {
 		do {
 			x += (int)m_step.x;
 			y += (int)m_step.y;
+			if(y >= BOARD_Y || x >= BOARD_X) break;
 			if(::is_empty(currentbrd,x,y) || currentbrd->board[x][y].obj->getType()==ZZT_BULLET) {
 				if(currentbrd->board[x][y].obj->getType()==ZZT_BULLET) {
 					remove_from_board(currentbrd,currentbrd->board[x][y].obj);
