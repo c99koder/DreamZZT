@@ -166,6 +166,14 @@ Texture *zzt_font;
 #define SCREEN_Y 480
 #endif
 
+#if TIKI_PLAT == TIKI_DC
+#define GAMESPEED_ALIVE 20000
+#define GAMESPEED_DEAD 1000
+#else
+#define GAMESPEED_ALIVE 80000
+#define GAMESPEED_DEAD 10000
+#endif
+
 float zoom = 1;
 
 void render() {
@@ -374,7 +382,7 @@ void play_zzt(const char *filename, bool tempFile) {
 	std::vector<std::string> params;
 	std::vector<std::string>::iterator tasks_iter;
 	Player *titlePlayer;
-
+	uint64 ticker=Time::gettime();
 	gameFrozen = false;
 	
 	switchbrd=-1;
@@ -417,15 +425,13 @@ void play_zzt(const char *filename, bool tempFile) {
 		st->printf("    to begin!");
 		draw_board();
 		do {
-			if(!gameFrozen) update_brd();
-			draw_board();
-			draw_msg();
+			if(!gameFrozen && (Time::gettime() - ticker) > GAMESPEED_ALIVE) {
+				update_brd();
+				draw_board();
+				draw_msg();
+				ticker = Time::gettime();
+			}
 			render();
-#if TIKI_PLAT == TIKI_DC
-			Time::sleep(20000);
-#else
-			Time::sleep(80000);
-#endif
 		} while(switchbrd==-1);
 		Hid::callbackUnreg(hidCookie);
 		if(switchbrd==-2) return;
@@ -493,26 +499,14 @@ void play_zzt(const char *filename, bool tempFile) {
 	if(player!=NULL) player->setFlag(F_SLEEPING);
 	if(player!=NULL) player->update();
 	while(1) {
-		if(!gameFrozen) {
+		if(!gameFrozen && (Time::gettime() - ticker) > ((world.health>0)?GAMESPEED_ALIVE:GAMESPEED_DEAD)) {
 			check_tasks();
 			update_brd();
+			draw_board();
+			draw_msg();
+			ticker = Time::gettime();
 		}
-		draw_board();
-		draw_msg();
 		render();
-#if TIKI_PLAT == TIKI_DC
-		if(world.health>0) {
-			Time::sleep(20000);
-		} else {
-			Time::sleep(1000);
-		}
-#else
-		if(world.health>0) {
-			Time::sleep(80000);
-		} else {
-			Time::sleep(10000);
-		}
-#endif
 		
 		if(switchbrd>-1) {
 			switch_board(switchbrd);
