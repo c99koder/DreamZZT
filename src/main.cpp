@@ -350,6 +350,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	}
 #endif	
 	Tiki::shutdown();
+	
+	exit(0); //Win32 wont quit when this thread ends
 	return 0;
 }
 
