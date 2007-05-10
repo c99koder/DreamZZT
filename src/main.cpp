@@ -30,6 +30,7 @@
 #include <curl/curl.h>
 #endif
 #include <Tiki/drawables/console.h>
+#include <Tiki/drawables/banner.h>
 #include <Tiki/oggvorbis.h>
 
 using namespace Tiki;
@@ -188,20 +189,20 @@ void render() {
 		zzt_font->select();
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 		glViewport(x,y,w,h);
-		ct->draw(Drawable::Opaque);
-		ct->draw(Drawable::Trans);
+		ct->drawAll(Drawable::Opaque);
+		ct->drawAll(Drawable::Trans);
 	}		
 	zzt_font->select();
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glViewport(0,192,256/*+74*/,192);
 #endif
-	ct->draw(Drawable::Opaque);
-	dt->draw(Drawable::Opaque);
-	st->draw(Drawable::Opaque);
+	ct->drawAll(Drawable::Opaque);
+	dt->drawAll(Drawable::Opaque);
+	st->drawAll(Drawable::Opaque);
 	Frame::transEnable();
-	ct->draw(Drawable::Trans);
-	dt->draw(Drawable::Trans);
-	st->draw(Drawable::Trans);
+	ct->drawAll(Drawable::Trans);
+	dt->drawAll(Drawable::Trans);
+	st->drawAll(Drawable::Trans);
 	Frame::finish();
 #if TIKI_PLAT == TIKI_DC
 	update_lcds();
@@ -264,6 +265,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 	st = new ConsoleText(80 - BOARD_X, 25, zzt_font);
 	st->setSize((80 - BOARD_X) * 8, SCREEN_Y);
 	st->setTranslate(Vector(640 - ((80 - BOARD_X) * 4), 240, 0.9f));
+	
+	//Attach a pretty banner
+	Banner *b = new Banner(Drawable::Trans, new Texture("dreamzzt.png",true));
+	b->setTranslate(Vector(-60,-(SCREEN_Y / 2) + 48,999));
+	b->setSize(32,32);
+	st->subAdd(b);
 	
 	debug_init();
 	ct->color(15,1);

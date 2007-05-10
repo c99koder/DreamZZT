@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		222084870A4CD20800D75C24 /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222084860A4CD20800D75C24 /* window.cpp */; };
+		22243F810BF3D480000D3055 /* dreamzzt.png in Resources */ = {isa = PBXBuildFile; fileRef = 22243F800BF3D480000D3055 /* dreamzzt.png */; };
 		223229BE0A16C63C0035025E /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223229BC0A16C63C0035025E /* sound.cpp */; };
 		224200C30A0C569300F4BDF2 /* passage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B80A0C569300F4BDF2 /* passage.cpp */; };
 		224200C40A0C569300F4BDF2 /* terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B90A0C569300F4BDF2 /* terrain.cpp */; };
@@ -70,6 +71,7 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		222084860A4CD20800D75C24 /* window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = window.cpp; path = src/window.cpp; sourceTree = "<group>"; };
 		222084890A4CD23700D75C24 /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = window.h; path = include/window.h; sourceTree = "<group>"; };
+		22243F800BF3D480000D3055 /* dreamzzt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = dreamzzt.png; path = resources/dreamzzt.png; sourceTree = "<group>"; };
 		223229BB0A16C63C0035025E /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sound.h; path = include/sound.h; sourceTree = "<group>"; };
 		223229BC0A16C63C0035025E /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sound.cpp; path = src/sound.cpp; sourceTree = "<group>"; };
 		224200B80A0C569300F4BDF2 /* passage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = passage.cpp; path = src/objects/passage.cpp; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				22243F800BF3D480000D3055 /* dreamzzt.png */,
 				226F41C90B1909D800FC07AE /* sav_icon.icns */,
 				226F41BB0B19024300FC07AE /* doc_icon.icns */,
 				22EC1AC10A2B3FD600DEE79D /* icon.icns */,
@@ -348,6 +351,7 @@
 				22EC1AC20A2B3FD700DEE79D /* icon.icns in Resources */,
 				226F41BC0B19024300FC07AE /* doc_icon.icns in Resources */,
 				226F41CA0B1909D800FC07AE /* sav_icon.icns in Resources */,
+				22243F810BF3D480000D3055 /* dreamzzt.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
