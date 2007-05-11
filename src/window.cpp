@@ -48,6 +48,7 @@ void TUIWidget::focus(bool f) {
 	m_focus = f;
 	if(f) {
 		if(!m_ec->listening()) m_ec->start();
+		update();
 	} else {
 		if(m_ec->listening()) m_ec->stop();
 	}
@@ -101,10 +102,10 @@ void TUIRadioGroup::draw(ConsoleText *ct) {
 	if(m_selectedf!=NULL) m_val = (int)(*m_selectedf);
 	if(m_selectedc!=NULL) m_val = (*m_selectedc);
 	
-	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	ct->color(YELLOW|HIGH_INTENSITY,m_bg);
 	*ct << m_text;
 	
-	ct->color(WHITE|HIGH_INTENSITY,BLUE);
+	ct->color(WHITE|HIGH_INTENSITY,m_bg);
 	*ct << m_options[m_val];
 }
 
@@ -234,10 +235,10 @@ void TUINumericInput::draw(ConsoleText *ct) {
 	if(m_numf!=NULL) m_val=(int)(*m_numf);
 	if(m_numc!=NULL) m_val=(*m_numc);
 	
-	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	ct->color(YELLOW|HIGH_INTENSITY,m_bg);
 	*ct << m_text;
 	
-	ct->color(WHITE|HIGH_INTENSITY,BLUE);
+	ct->color(WHITE|HIGH_INTENSITY,m_bg);
 	*ct << m_val;
 }
 
@@ -268,20 +269,19 @@ void TUITextInput::draw(ConsoleText *ct) {
 			*ct << " ";
 		}
 	}
-	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	ct->color(YELLOW|HIGH_INTENSITY,m_bg);
 	*ct << m_label;
 	
-	ct->color(WHITE|HIGH_INTENSITY,BLUE);
+	ct->color(WHITE|HIGH_INTENSITY,m_bg);
 	*ct << *m_text;
 	if(m_blink && getFocus()) *ct << "_";
-	m_blinkTimer--;
-	if(m_blinkTimer == 0) {
+	if(Time::gettime() - m_blinkTimer > 800000) {
 		m_blink = !m_blink;
-		m_blinkTimer = 10;
+		m_blinkTimer = Time::gettime();
 	}
 	if(!getFocus()) {
 		m_blink=false;
-		m_blinkTimer = 1;
+		m_blinkTimer = Time::gettime();
 	}
 }
 
@@ -370,10 +370,10 @@ void TUITextInput::processHidEvent(const Hid::Event &evt) {
 }
 
 void TUIPasswordInput::draw(ConsoleText *ct) {
-	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	ct->color(YELLOW|HIGH_INTENSITY,m_bg);
 	*ct << m_label;
 	
-	ct->color(WHITE|HIGH_INTENSITY,BLUE);
+	ct->color(WHITE|HIGH_INTENSITY,m_bg);
 	for(size_t i=0; i<m_text->length(); i++) {
 		*ct << "*";
 	}
@@ -402,10 +402,10 @@ void TUISlider::draw(ConsoleText *ct) {
 	if(m_numf!=NULL) m_val=(int)(*m_numf);
 	if(m_numc!=NULL) m_val=(*m_numc);
 	
-	ct->color(YELLOW|HIGH_INTENSITY,BLUE);
+	ct->color(YELLOW|HIGH_INTENSITY,m_bg);
 	*ct << m_text;
 	
-	ct->color(WHITE|HIGH_INTENSITY,BLUE);
+	ct->color(WHITE|HIGH_INTENSITY,m_bg);
 	
 	*ct << "1 ";
 	for(i=0; i<m_val; i++) {

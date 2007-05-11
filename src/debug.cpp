@@ -58,6 +58,7 @@ std::string debug_cmdline;
 enum debugSelectMode_t { NONE, WATCH, INSPECT} debugSelectMode = NONE;
 int debugselect_x=0, debugselect_y=0;
 bool debug_show_objects=false;
+TUITextInput *debug_input;
 
 Tiki::Thread::Thread *debug_thread;
 
@@ -77,6 +78,15 @@ void *process_debug(void *) {
 				ct->color(WHITE | HIGH_INTENSITY, BLACK);
 				ct->printf("X");
 			}
+			if(debug_cmdline == "`") debug_cmdline = "";
+			*dt << "\x1b[s"; // Save cursor position
+			dt->locate(0,24);
+			debug_input->draw(dt);
+			//dt->color(GREY | HIGH_INTENSITY, BLACK);
+			//*dt << "> \x1b[1;32m" << debug_cmdline.c_str() 
+			*dt << "\x1b[k"; //clear EOL
+			*dt << "\x1b[u"; // Restore cursor position			
+			debug_input->update();
 		}; //Wait for enter
 
 		Hid::callbackUnreg(debug_hidCookie);
@@ -265,6 +275,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 					ct->setSize(BOARD_X*8,240);
 					dt->setTranslate(Vector(BOARD_X*4,120,0));
 					ct->setTranslate(Vector(BOARD_X*4,360,0));
+					debug_input->focus(true);
 					debug_cmdline = "";
 				} else {
 					debug_visible = 0;
@@ -277,15 +288,10 @@ void debug_hidCallback(const Event & evt, void * data) {
 					st->setANSI(true);
 					*st << "\x1b[k"; // clear EOL
 					st->setANSI(false);
+					debug_input->focus(false);
 				}
 			} else if (evt.key >= 32 && evt.key <= 128 && debug_visible && world.online == 0) {
-				debug_cmdline += evt.key;
 				if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
-				*dt << "\x1b[s"; // Save cursor position
-				dt->locate(0,24);
-				dt->color(GREY | HIGH_INTENSITY, BLACK);
-				*dt << "> \x1b[1;32m" << debug_cmdline.c_str() << "\x1b[k"; //clear EOL
-				*dt << "\x1b[u"; // Restore cursor position
 			} else if (evt.key == 13 && debug_visible && world.online == 0) {
 				if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 				debug_cmdline += '\r';
@@ -308,7 +314,8 @@ void debug_init() {
 	dt->color(GREY, BLACK);
 	dt->clear();
 	debug("\n\nDreamZZT 3.0.6.1\n(C) 2000 - 2007 Sam Steele\nAll Rights Reserved.\n\nREADY.\n");
-	
+	debug_input = new TUITextInput("> ", &debug_cmdline);
+	debug_input->setBg(BLACK);
 	debug_thread = new Tiki::Thread::Thread(process_debug,NULL);
 }
 

@@ -28,6 +28,7 @@ public:
 	TUIWidget() {
 		m_ec = new Hid::EventCollector(false);
 		m_focus = false;
+		m_bg = BLUE;
 	}
 	
 	virtual ~TUIWidget() {
@@ -37,6 +38,7 @@ public:
 	void focus(bool f);	
 	void update();	
 	bool getFocus() { return m_focus; }
+	void setBg(unsigned char bg) { m_bg = bg; }
 	virtual void processHidEvent(const Hid::Event &evt) {};
 	virtual const std::string getHelpText() { return "\0"; }
 	virtual const std::string getReturnValue() { return "\0"; }
@@ -45,6 +47,8 @@ public:
 private:
 	bool m_focus;
 	RefPtr<Hid::EventCollector> m_ec;
+protected:
+	unsigned char m_bg;
 };
 
 class TUILabel : public TUIWidget {
@@ -58,7 +62,7 @@ public:
 	~TUILabel() {}
 	
 	void draw(ConsoleText *ct) {
-		ct->color((m_bold?WHITE:YELLOW)|HIGH_INTENSITY,BLUE);
+		ct->color((m_bold?WHITE:YELLOW)|HIGH_INTENSITY,m_bg);
 		if(m_ansi) ct->setANSI(true);
 		*ct << m_text;
 		if(m_ansi) ct->setANSI(false);
@@ -87,7 +91,7 @@ protected:
 	std::string m_label;
 	std::string *m_text;
 	bool m_blink,m_center;
-	int m_blinkTimer;
+	uint64 m_blinkTimer;
 };
 
 class TUIPasswordInput : public TUITextInput {
@@ -104,7 +108,7 @@ public:
 	}
 	
 	void draw(ConsoleText *ct) {
-		ct->color(WHITE|HIGH_INTENSITY,BLUE);
+		ct->color(WHITE|HIGH_INTENSITY,m_bg);
 		*ct << "  [" << ((*m_checked)?"\xfb":" ") << "] " << m_text;
 	}
 	
@@ -197,9 +201,9 @@ public:
 	}
 	
 	void draw(ConsoleText *ct) {
-		ct->color(MAGENTA|HIGH_INTENSITY,BLUE);
+		ct->color(MAGENTA|HIGH_INTENSITY,m_bg);
 		*ct << " \x10   ";
-		ct->color(WHITE|HIGH_INTENSITY,BLUE);
+		ct->color(WHITE|HIGH_INTENSITY,m_bg);
 		*ct << m_text;
 	}
 	
