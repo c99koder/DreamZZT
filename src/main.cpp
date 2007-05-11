@@ -166,13 +166,8 @@ Texture *zzt_font;
 #define SCREEN_Y 480
 #endif
 
-#if TIKI_PLAT == TIKI_DC
-#define GAMESPEED_ALIVE 40000
-#define GAMESPEED_DEAD 1000
-#else
 #define GAMESPEED_ALIVE 160000
 #define GAMESPEED_DEAD 10000
-#endif
 
 float zoom = 1;
 
