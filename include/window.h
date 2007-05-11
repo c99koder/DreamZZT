@@ -179,9 +179,14 @@ protected:
 class TUISlider : public TUINumericInput {
 public:
 	TUISlider(std::string text, int *slide) : TUINumericInput(text, slide, 0, 8) {
+		m_blinkTimer = 4;
+		m_blink = false;
 	}
 	
 	void draw(ConsoleText *ct);
+private:
+	bool m_blink;
+	int m_blinkTimer;
 };
 
 class TUIHyperLink : public TUIWidget {

@@ -167,10 +167,10 @@ Texture *zzt_font;
 #endif
 
 #if TIKI_PLAT == TIKI_DC
-#define GAMESPEED_ALIVE 20000
+#define GAMESPEED_ALIVE 40000
 #define GAMESPEED_DEAD 1000
 #else
-#define GAMESPEED_ALIVE 80000
+#define GAMESPEED_ALIVE 160000
 #define GAMESPEED_DEAD 10000
 #endif
 
@@ -366,15 +366,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 extern struct board_info_node *currentbrd;
 bool gameFrozen;
 
-void titleHidCallback(const Event & evt, void * data) {
-	if (evt.type == Hid::Event::EvtQuit) {
-		switchbrd = -2;
-	}
-	if (evt.type == Hid::Event::EvtKeypress && evt.key == 13) {
-		switchbrd = world.start;
-	}
-}	
-
 void play_zzt(const char *filename, bool tempFile) {
 	int start,tasktype,complete;
 	std::string tmp;
@@ -382,8 +373,14 @@ void play_zzt(const char *filename, bool tempFile) {
 	std::vector<std::string> params;
 	std::vector<std::string>::iterator tasks_iter;
 	Player *titlePlayer;
-	uint64 ticker=Time::gettime();
+	uint64 ticker=Time::gettime(), gamespeed = GAMESPEED_ALIVE;
 	gameFrozen = false;
+	int speedmod = 4;
+	int volmod = 4;
+	Event evt;
+	EventCollector ec;
+	TUISlider sm("", &speedmod);
+	TUISlider vm("", &volmod);
 	
 	switchbrd=-1;
 	if(load_zzt(filename,0)==-1) {
@@ -403,7 +400,6 @@ void play_zzt(const char *filename, bool tempFile) {
 	
 	start=world.start;
 	if(filename[strlen(filename)-1]!='v' && filename[strlen(filename)-1]!='V') {
-		int hidCookie = Hid::callbackReg(titleHidCallback, NULL);
 		switch_board(0);
 		player->setShape(ZZT_EMPTY_SHAPE);
 		player->setColor(0,0);
@@ -425,15 +421,49 @@ void play_zzt(const char *filename, bool tempFile) {
 		st->printf("    to begin!");
 		draw_board();
 		do {
-			if(!gameFrozen && (Time::gettime() - ticker) > GAMESPEED_ALIVE) {
+			if(!gameFrozen && (Time::gettime() - ticker) > gamespeed) {
 				update_brd();
+				sm.update();				
+				gamespeed = GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f);
+				vm.update();
+				zm->setVolume((float)volmod / 8.0f);
 				draw_board();
 				draw_msg();
+				st->locate(2,19);
+				st->color(0,3);
+				st->printf(" S ");
+				st->color(15,1);
+				st->printf(" Speed:");
+				st->locate(4,20);
+				sm.draw(st);
+				st->locate(2,22);
+				st->color(0,7);
+				st->printf(" V ");
+				st->color(15,1);
+				st->printf(" Volume:");
+				st->locate(4,23);
+				vm.draw(st);
 				ticker = Time::gettime();
 			}
 			render();
+			while(ec.getEvent(evt)) {
+				if (evt.type == Hid::Event::EvtQuit) {
+					switchbrd = -2;
+				}
+				if (evt.type == Hid::Event::EvtKeypress && evt.key == 13) {
+					if(sm.getFocus() || vm.getFocus()) {
+						sm.focus(false);
+						vm.focus(false);
+					} else {
+						switchbrd = world.start;
+					}
+				} else if(evt.type == Hid::Event::EvtKeypress && evt.key == 's') {
+					sm.focus(true);
+				} else if(evt.type == Hid::Event::EvtKeypress && evt.key == 'v') {
+					vm.focus(true);
+				}
+			}
 		} while(switchbrd==-1);
-		Hid::callbackUnreg(hidCookie);
 		if(switchbrd==-2) return;
 	}
 	switchbrd=-1;
@@ -499,7 +529,7 @@ void play_zzt(const char *filename, bool tempFile) {
 	if(player!=NULL) player->setFlag(F_SLEEPING);
 	if(player!=NULL) player->update();
 	while(1) {
-		if(!gameFrozen && (Time::gettime() - ticker) > ((world.health>0)?GAMESPEED_ALIVE:GAMESPEED_DEAD)) {
+		if(!gameFrozen && (Time::gettime() - ticker) > ((world.health>0)?gamespeed:GAMESPEED_DEAD)) {
 			check_tasks();
 			update_brd();
 			draw_board();

@@ -47,9 +47,9 @@ extern float zoom;
 void TUIWidget::focus(bool f) {
 	m_focus = f;
 	if(f) {
-		m_ec->start();
+		if(!m_ec->listening()) m_ec->start();
 	} else {
-		m_ec->stop();
+		if(m_ec->listening()) m_ec->stop();
 	}
 }
 
@@ -411,11 +411,24 @@ void TUISlider::draw(ConsoleText *ct) {
 	for(i=0; i<m_val; i++) {
 		*ct << "\xf9";
 	}
-	*ct << "\xfe";
+	if(m_blink) {
+		*ct << " ";
+	} else {
+		*ct << "\xfe";
+	}
 	for(i=0; i<8-m_val; i++) {
 		*ct << "\xf9";
 	}
 	*ct << " 9";
+	m_blinkTimer--;
+	if(m_blinkTimer == 0) {
+		m_blink = !m_blink;
+		m_blinkTimer = 4;
+	}
+	if(!getFocus()) {
+		m_blink=false;
+		m_blinkTimer = 1;
+	}
 }
 
 void TUIWindow::processHidEvent(const Hid::Event &evt) {
