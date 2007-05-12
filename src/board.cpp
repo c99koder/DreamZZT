@@ -606,8 +606,8 @@ void compress(board_info_node *board, bool silent) {
 			if((foundPlayer && obj->getType() != ZZT_PLAYER && obj->getFlags() & F_OBJECT) || (!foundPlayer && obj->getType() == ZZT_PLAYER)) {
 				param.x = (unsigned char)obj->getPosition().x;
 				param.y = (unsigned char)obj->getPosition().y;
-				param.xstep = (unsigned char)obj->getStep().x;
-				param.ystep = (unsigned char)obj->getStep().y;
+				param.xstep = (short)obj->getStep().x;
+				param.ystep = (short)obj->getStep().y;
 				param.cycle = obj->getCycle();
 				for(int i=0; i<3; i++) {
 					param.data[i] = obj->getParam(i+1);
