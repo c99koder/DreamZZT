@@ -419,7 +419,7 @@ void play_zzt(const char *filename, bool tempFile) {
 			if(!gameFrozen && (Time::gettime() - ticker) > gamespeed) {
 				update_brd();
 				sm.update();				
-				gamespeed = GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f);
+				gamespeed = (uint64)(GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f));
 				vm.update();
 				zm->setVolume((float)volmod / 8.0f);
 				draw_board();
