@@ -102,7 +102,7 @@ void ZZTObject::shoot(enum direction dir) {
 			return;
 		}
 	}
-	if(is_empty(dir)) {
+	if(is_empty(dir) || currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->getType() == ZZT_WATER) {
 		if(m_type==ZZT_PLAYER) world.ammo--;
 		draw_ammo();
 		bullet=create_object(ZZT_BULLET,dir);
