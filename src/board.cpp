@@ -235,6 +235,7 @@ struct board_data *get_block_by_type(int type, int &x, int &y) {
 		for(i=BOARD_X-1;i>=0;i--) {
 			if(i==BOARD_X-1&&j==y) i=x;
 			if(i<0) { i=BOARD_X-1; j--; }
+			if(j<0) break;
 			if(currentbrd->board[i][j].obj!=NULL) {
 				if(currentbrd->board[i][j].obj->getType() == type) {
 					x=i; y=j;
@@ -252,6 +253,7 @@ ZZTObject *get_obj_by_type(int type, int &x, int &y) {
 		for(i=BOARD_X-1;i>=0;i--) {
 			if(i==BOARD_X-1&&j==y) i=x;
 			if(i<0) { i=BOARD_X-1; j--; }
+			if(j<0) break;
 			if(currentbrd->board[i][j].obj!=NULL) {
 				if(currentbrd->board[i][j].obj->getType() == type) {
 					x=i; y=j;
