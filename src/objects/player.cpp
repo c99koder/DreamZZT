@@ -167,7 +167,7 @@ void Player::create() {
 	m_fg=15;
 	m_bg=1;
 	m_shoot = m_move = IDLE;
-	
+	if(m_cycle == 0) m_cycle = 1;
 	if(playerEventCollector==NULL) {
 		playerEventCollector = new EventCollector();
 	}

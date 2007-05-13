@@ -278,6 +278,7 @@ public:
 	Player(int type, int x, int y, int shape, int flags, std::string name) : ZZTOOP(type, x, y, shape, flags, name) {
 		m_move = IDLE;
 		m_shoot = IDLE;
+		m_cycle = 1;
 	}
 	void create();
 	void update();
