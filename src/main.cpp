@@ -30,7 +30,6 @@
 #include <curl/curl.h>
 #endif
 #include <Tiki/drawables/console.h>
-#include <Tiki/drawables/banner.h>
 #include <Tiki/oggvorbis.h>
 
 using namespace Tiki;
@@ -54,6 +53,7 @@ using namespace Tiki::Thread;
 #include "http.h"
 #include "task.h"
 #include "word.h"
+#include "bugreport.h"
 #if TIKI_PLAT == TIKI_DC
 #include "vmu.h"
 
@@ -66,8 +66,35 @@ KOS_INIT_ROMDISK(romdisk);
 Mutex zzt_screen_mutex;
 
 extern struct world_header world;
+extern struct board_info_node *currentbrd;
+bool gameFrozen;
+ConsoleText *ct;
+extern ConsoleText *dt;
+extern ConsoleText *st;
+extern struct board_info_node *board_list;
+int switchbrd=-1;
+extern Player *player;
+extern EventCollector *playerEventCollector;
+extern std::string curl_auth_string;
+ZZTMusicStream *zm = NULL;
+Tiki::Thread::Thread *render_thread;
+Texture *zzt_font;
 
-std::string MAIN_MENU = std::string("$Welcome to DreamZZT 3.0.6.1\r\r\
+#define SCREEN_X 640
+#if TIKI_PLAT == TIKI_DC
+#define SCREEN_Y 424
+#else
+#define SCREEN_Y 480
+#endif
+
+#define GAMESPEED_ALIVE 160000
+#define GAMESPEED_DEAD 10000
+
+float zoom = 1;
+
+#define VERSION "3.0.6.1"
+
+std::string MAIN_MENU = std::string(std::string("$Welcome to DreamZZT ") + std::string(VERSION) + "\r\r\
 Please select an option from the\r\
 menu below:\r\
 \r\
@@ -118,15 +145,6 @@ $http://dev.c99.org/DreamZZT/\r"
 void play_zzt(const char *filename, bool tempFile=false);
 void net_menu();
 
-ConsoleText *ct;
-extern ConsoleText *dt;
-extern ConsoleText *st;
-extern struct board_info_node *board_list;
-int switchbrd=-1;
-extern Player *player;
-extern EventCollector *playerEventCollector;
-extern std::string curl_auth_string;
-
 void check_updates() {
 #if (TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER))
 	std::string ver;
@@ -136,12 +154,64 @@ void check_updates() {
 #endif
 	ver = http_get_string("http://dev.c99.org/DreamZZT/LATEST");
 
-	if(ver != "3.0.6.1") {
+	if(ver != VERSION) {
 		TUIWindow t("Update available");
 		t.buildFromString("A new version of DreamZZT is available.\rPlease visit http://dev.c99.org/DreamZZT/\rfor more information.\r\r!ok;Ok\r");
 		t.doMenu(ct);
 	}
 #endif
+}
+
+bool submit_bug(std::string email, std::string summary, std::string description) {
+#ifdef NET
+	std::string ver = VERSION;
+#if TIKI_PLAT == TIKI_WIN32
+	std::string plat = "Windows";
+#elif TIKI_PLAT == TIKI_OSX
+	std::string plat = "Macintosh";
+#elif TIKI_PLAT == TIKI_SDL
+	std::string plat = "Linux";
+#elif TIKI_PLAT == TIKI_DC
+	std::string plat = "Dreamcast"; //How did you get here, anyway?
+#else
+	std::string plat = "Other";
+#endif	
+	TracBug bug;
+	
+	bug.setProperty("reporter", email, "string");
+	bug.setProperty("summary", summary, "string");
+	bug.setProperty("description", description, "string");
+	bug.setProperty("version", ver, "string");
+	bug.setProperty("platform", plat, "string");
+
+	if(currentbrd!=NULL) {
+		bug.setProperty("game", std::string((const char*)world.title.string), "string");
+		bug.setProperty("board", ToString(currentbrd->num) + ": " + currentbrd->title, "string");
+	}
+	
+	
+	if(bug.create()) {
+		if(currentbrd != NULL) {
+			std::string filename;
+#if TIKI_PLAT == TIKI_WIN32
+			char path[128];
+			GetTempPath(128,path);
+			filename = path + std::string("bugreport.sav");
+#else 
+			filename = "/tmp/bugreport.sav";
+#endif
+			save_game(filename.c_str());
+			bug.attach(filename, "Current game state");
+#if TIKI_PLAT == TIKI_WIN32
+			 _unlink(filename.c_str());
+#else
+			 unlink(filename.c_str());
+#endif
+		}
+		return true;
+	}
+#endif
+	return false;
 }
 
 void menu_background() {
@@ -154,22 +224,6 @@ void menu_background() {
 		}
 	}
 }	
-
-ZZTMusicStream *zm = NULL;
-Tiki::Thread::Thread *render_thread;
-Texture *zzt_font;
-
-#define SCREEN_X 640
-#if TIKI_PLAT == TIKI_DC
-#define SCREEN_Y 424
-#else
-#define SCREEN_Y 480
-#endif
-
-#define GAMESPEED_ALIVE 160000
-#define GAMESPEED_DEAD 10000
-
-float zoom = 1;
 
 void render() {
 #if 0
@@ -269,12 +323,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 	st->setSize((80 - BOARD_X) * 8, SCREEN_Y);
 	st->setTranslate(Vector(640 - ((80 - BOARD_X) * 4), 240, 0.9f));
 	
-	//Attach a pretty banner
-	Banner *b = new Banner(Drawable::Trans, new Texture("dreamzzt.png",true));
-	b->setTranslate(Vector(-60,-(SCREEN_Y / 2) + 48,999));
-	b->setSize(32,32);
-	st->subAdd(b);
-	
 	debug_init();
 	ct->color(15,1);
 	ct->clear();
@@ -284,7 +332,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	menu_background();
 	render();
 	check_updates();
-	
+
 	world.online=0;
 	
 	if(argc > 1 && argv[argc-1][0] != '-') {
@@ -358,9 +406,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 	return 0;
 }
 
-extern struct board_info_node *currentbrd;
-bool gameFrozen;
-
 void play_zzt(const char *filename, bool tempFile) {
 	int start,tasktype,complete;
 	std::string tmp;
@@ -373,7 +418,6 @@ void play_zzt(const char *filename, bool tempFile) {
 	int speedmod = 4;
 	int volmod = 4;
 	Event evt;
-	EventCollector ec;
 	TUISlider sm("", &speedmod);
 	TUISlider vm("", &volmod);
 	
@@ -393,7 +437,54 @@ void play_zzt(const char *filename, bool tempFile) {
 		#endif
 	}
 	
+#ifdef NET
+	std::list<TracBug> bugs = search_tickets("status!=closed&amp;game=" + std::string((const char *)world.title.string));
+	if(bugs.size() > 0) {
+		std::string bugWarning = "The following bugs have been reported for\rthis game:\r\r";
+		
+		for(std::list<TracBug>::iterator bi = bugs.begin(); bi != bugs.end(); bi++) {
+			bugWarning += std::string("!") + ToString((*bi).getNum()) + std::string(";") + (*bi).getProperty("summary") + "\r";
+		}
+		
+		bugWarning += "\r\
+These bugs may affect your ability to\r\
+complete this game.\r\
+\r\
+!continue;Continue to game\r\
+!quit;Return to menu\r";
+		TUIWindow t("Warning");
+		t.buildFromString(bugWarning);
+		do {
+			t.doMenu(ct);
+			
+			if(t.getLabel() != "" && atoi(t.getLabel().c_str()) > 0) {
+				for(std::list<TracBug>::iterator bi = bugs.begin(); bi != bugs.end(); bi++) {
+					if((*bi).getNum() == atoi(t.getLabel().c_str())) {
+						std::string bug = std::string("Reporter: ") + (*bi).getProperty("reporter") + "\r";
+						bug += std::string("Platform: ") + (*bi).getProperty("platform") + "\r";
+						bug += std::string("Version: ") + (*bi).getProperty("version") + "\r";
+						bug += std::string("Game: ") + (*bi).getProperty("game") + "\r";
+						bug += std::string("Board: ") + (*bi).getProperty("board") + "\r";					
+						bug += "\r";
+						bug += (*bi).getProperty("description") + "\r";
+						bug += "\r";
+						bug += "!return;Return to bug list\r";
+						
+						TUIWindow bw((*bi).getProperty("summary"));
+						bw.buildFromString(bug);
+						bw.doMenu(ct);
+					}
+				}
+			} else if(t.getLabel() == "quit") {
+				free_world();
+				return;
+			}
+		} while(t.getLabel() != "" && t.getLabel() != "continue");
+	}
+#endif
+	
 	start=world.start;
+	EventCollector ec;
 	if(filename[strlen(filename)-1]!='v' && filename[strlen(filename)-1]!='V') {
 		switch_board(0);
 		player->setShape(ZZT_EMPTY_SHAPE);
@@ -543,8 +634,39 @@ void play_zzt(const char *filename, bool tempFile) {
 		} else if(switchbrd==-2) {
 			break;
 		} else if(switchbrd==-3) {
-			//menu
-			break;
+			TUIWindow t("Game Menu");
+			t.buildFromString(
+#ifdef NET
+std::string("!bugreport;Report a bug\r") +
+#endif
+"!save;Save Game\r\
+!game;Return to Game\r\
+!quit;Return to Main Menu\r");
+			t.doMenu(ct);
+			if(t.getLabel() == "bugreport") {
+				TUIWindow bugReport("Bug Report");
+				std::string email;
+				std::string summary;
+				std::string description1;
+				std::string description2;
+				std::string description3;
+				bugReport.addWidget(new TUITextInput("Email: ", &email));
+				bugReport.addWidget(new TUITextInput("Summary: ", &summary));
+				bugReport.addWidget(new TUILabel("Description:"));
+				bugReport.addWidget(new TUITextInput("",&description1));
+				bugReport.addWidget(new TUITextInput("",&description2));
+				bugReport.addWidget(new TUITextInput("",&description3));
+				bugReport.addWidget(new TUILabel(""));
+				bugReport.addWidget(new TUIHyperLink("submit","Submit bug report"));
+				bugReport.doMenu(ct);
+				
+				if(bugReport.getLabel() == "submit") {
+					submit_bug(email, summary, description1 + std::string("\n") + description2 + std::string("\n") + description3);
+				}
+			} else if(t.getLabel() == "quit") {
+				break;
+			}
+			switchbrd=-1;
 		} else if(switchbrd==-4) {
 			world.saved=1;	
 			if(world.online) {
@@ -616,6 +738,7 @@ void play_zzt(const char *filename, bool tempFile) {
 		}
 	}
 #endif
+
 	free_world();
 }
 

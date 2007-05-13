@@ -81,10 +81,10 @@ void Player::processEvent(const Event & evt) {
 				set_msg("You don't have any torches!");
 			}
 		} else if(evt.key == 'p') {
-				setFlag(F_SLEEPING);
+			setFlag(F_SLEEPING);
 		} else if(evt.key == Event::KeyEsc) {
-				switchbrd=-3;
-		}	else if((m_move == UP && (evt.key == Event::KeyUp || evt.btn == Event::BtnUp)) ||
+			switchbrd=-3;
+		} else if((m_move == UP && (evt.key == Event::KeyUp || evt.btn == Event::BtnUp)) ||
 							(m_move == DOWN && (evt.key == Event::KeyDown || evt.btn == Event::BtnDown)) ||
 							(m_move == LEFT && (evt.key == Event::KeyLeft || evt.btn == Event::BtnLeft)) ||
 							(m_move == RIGHT && (evt.key == Event::KeyRight || evt.btn == Event::BtnRight))) {

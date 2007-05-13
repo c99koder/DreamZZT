@@ -309,7 +309,7 @@ void draw_hud_ingame() {
 	st->color(0,3);
 	st->printf(" ESC ");
 	st->color(15,1);
-	st->printf(" Quit");
+	st->printf(" Menu");
 	st->locate(7,20);
 	st->color(0,3);
 	st->printf(" %c%c%c%c",24,25,26,27);

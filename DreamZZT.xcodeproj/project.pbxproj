@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		222084870A4CD20800D75C24 /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222084860A4CD20800D75C24 /* window.cpp */; };
 		22243F810BF3D480000D3055 /* dreamzzt.png in Resources */ = {isa = PBXBuildFile; fileRef = 22243F800BF3D480000D3055 /* dreamzzt.png */; };
+		2224417A0BF65406000D3055 /* bugreport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222441790BF65406000D3055 /* bugreport.cpp */; };
+		2224417E0BF65458000D3055 /* bugreport.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2224417D0BF65458000D3055 /* bugreport.h */; };
 		223229BE0A16C63C0035025E /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223229BC0A16C63C0035025E /* sound.cpp */; };
 		224200C30A0C569300F4BDF2 /* passage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B80A0C569300F4BDF2 /* passage.cpp */; };
 		224200C40A0C569300F4BDF2 /* terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B90A0C569300F4BDF2 /* terrain.cpp */; };
@@ -61,6 +63,7 @@
 			files = (
 				2255DFDA0B52C983006EA3FE /* Tiki.framework in CopyFiles */,
 				229DC19D0B2332C1004C0FF9 /* Sparkle.framework in CopyFiles */,
+				2224417E0BF65458000D3055 /* bugreport.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +75,8 @@
 		222084860A4CD20800D75C24 /* window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = window.cpp; path = src/window.cpp; sourceTree = "<group>"; };
 		222084890A4CD23700D75C24 /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = window.h; path = include/window.h; sourceTree = "<group>"; };
 		22243F800BF3D480000D3055 /* dreamzzt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = dreamzzt.png; path = resources/dreamzzt.png; sourceTree = "<group>"; };
+		222441790BF65406000D3055 /* bugreport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bugreport.cpp; path = src/bugreport.cpp; sourceTree = "<group>"; };
+		2224417D0BF65458000D3055 /* bugreport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bugreport.h; path = include/bugreport.h; sourceTree = "<group>"; };
 		223229BB0A16C63C0035025E /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sound.h; path = include/sound.h; sourceTree = "<group>"; };
 		223229BC0A16C63C0035025E /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sound.cpp; path = src/sound.cpp; sourceTree = "<group>"; };
 		224200B80A0C569300F4BDF2 /* passage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = passage.cpp; path = src/objects/passage.cpp; sourceTree = "<group>"; };
@@ -150,10 +155,11 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				2260B7170B3EABB1003AE79A /* console.cpp */,
 				226F410C0B18BF9C00FC07AE /* Controller.m */,
 				2242FE330A0C349300F4BDF2 /* Objects */,
 				2242FDA40A0C26F500F4BDF2 /* board.cpp */,
+				222441790BF65406000D3055 /* bugreport.cpp */,
+				2260B7170B3EABB1003AE79A /* console.cpp */,
 				22907D660A1A947800B9BB6D /* debug.cpp */,
 				22D2E46B0A55EAB100319F32 /* editor.cpp */,
 				22AD22CB0A13FAD8003E828E /* http.cpp */,
@@ -202,6 +208,7 @@
 			children = (
 				2242FBC90A0C109000F4BDF2 /* objects */,
 				2242FBD00A0C109000F4BDF2 /* board.h */,
+				2224417D0BF65458000D3055 /* bugreport.h */,
 				C4F50ECB0799E1350001D0D0 /* Controller.h */,
 				22907D650A1A947800B9BB6D /* debug.h */,
 				2255DF120A39196600C3272B /* drums.h */,
@@ -405,6 +412,7 @@
 				226F41110B18BFFB00FC07AE /* os.mm in Sources */,
 				229DC8160B2E2F86004C0FF9 /* task.cpp in Sources */,
 				2260B7180B3EABB1003AE79A /* console.cpp in Sources */,
+				2224417A0BF65406000D3055 /* bugreport.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

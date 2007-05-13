@@ -6,26 +6,16 @@
  *  Copyright 2007 __MyCompanyName__. All rights reserved.
  *
  */
-
 #include <Tiki/tiki.h>
-#include <Tiki/plxcompat.h>
-#include <Tiki/gl.h>
-#include <Tiki/hid.h>
-#include <Tiki/eventcollector.h>
+#include <Tiki/file.h>
 
 using namespace Tiki;
-using namespace Tiki::GL;
-using namespace Tiki::Hid;
 
-#include <Tiki/drawables/console.h>
 #include <string>
+#include <list>
+#include <sstream>
 #include "http.h"
 #include "bugreport.h"
-#include "board.h"
-#include "task.h"
-
-extern struct world_header world;
-extern struct board_info_node *currentbrd;
 
 extern "C" {
 int Curl_base64_encode(const void *inp, int insize, char **outptr);
@@ -81,13 +71,14 @@ bool TracBug::create() {
 }
 
 bool TracBug::get(int num) {
-	std::string q = "<?xml version=\"1.0\"?><methodCall><methodName>ticket.get</methodName><params>";
-	q += "<param><value><int>" + ToString(num) + "</int></value></param>";
-	q += "</params></methodCall>";
+	std::stringstream q;
+	q << "<?xml version=\"1.0\"?><methodCall><methodName>ticket.get</methodName><params>";
+	q << "<param><value><int>" << num << "</int></value></param>";
+	q << "</params></methodCall>";
 	
 	m_props.clear();
 	
-	std::string result = http_post_data(q, "text/xml", TRAC_XMLRPC_HOME);
+	std::string result = http_post_data(q.str(), "text/xml", TRAC_XMLRPC_HOME);
 	std::string::size_type pos = result.find("<value><struct>", 0), pos2 = 0;
 
 	while(pos < result.length() && ((pos = result.find("<member>", pos)) != std::string::npos)) {
@@ -104,7 +95,6 @@ bool TracBug::get(int num) {
 	}
 	
 	m_num = num;
-	Debug::printf("Retrieved ticket %i\n", m_num);
 	return true;
 }
 
@@ -116,13 +106,14 @@ void TracBug::attach(std::string filename, std::string description) {
 	Curl_base64_encode(buf,f.total(),&fileData);
 	f.close();
 
-	std::string attach = "<?xml version=\"1.0\"?><methodCall><methodName>ticket.putAttachment</methodName><params>";
-	attach += "<param><value><int>" + ToString(m_num) + "</int></value></param>";
-	attach += "<param><value><string>" + filename + "</string></value></param>";
-	attach += "<param><value><string>" + description + "</string></value></param>";
-	attach += "<param><value><base64>" + std::string(fileData) + "</base64></value></param>";
-	attach += "</params></methodCall>";
-	http_post_data(attach, "text/xml", TRAC_XMLRPC_HOME);
+	std::stringstream attach;
+	attach << "<?xml version=\"1.0\"?><methodCall><methodName>ticket.putAttachment</methodName><params>";
+	attach << "<param><value><int>" << m_num << "</int></value></param>";
+	attach << "<param><value><string>" << filename << "</string></value></param>";
+	attach << "<param><value><string>" << description << "</string></value></param>";
+	attach << "<param><value><base64>" << fileData << "</base64></value></param>";
+	attach << "</params></methodCall>";
+	http_post_data(attach.str(), "text/xml", TRAC_XMLRPC_HOME);
 	free(fileData);
 }
 
