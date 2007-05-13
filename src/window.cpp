@@ -501,7 +501,7 @@ void TUIWindow::buildFromString(std::string s, bool ANSI) {
 						text += s[i+j];
 					}
 					j++;
-					if(j>=m_w - 4 && s[i+j] != '\r' && s[i+j] != '\n') {
+					if(j>=m_w - 3 && s[i+j] != '\r' && s[i+j] != '\n') {
 						addWidget(new TUILabel(text,false,ANSI));
 						text = "";
 						i+=j;
