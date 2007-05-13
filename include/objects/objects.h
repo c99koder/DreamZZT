@@ -276,6 +276,8 @@ private:
 class Player : public ZZTOOP {
 public:
 	Player(int type, int x, int y, int shape, int flags, std::string name) : ZZTOOP(type, x, y, shape, flags, name) {
+		m_move = IDLE;
+		m_shoot = IDLE;
 	}
 	void create();
 	void update();
