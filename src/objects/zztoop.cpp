@@ -376,7 +376,8 @@ void ZZTOOP::exec(std::string text) {
 				b->obj->setParam(3,b->under->getParam(3));
 				b->obj->setParam(4,b->under->getParam(4));
 				b->obj->setFg(b->under->getFg());
-				b->obj->setBg(b->under->getBg());									
+				b->obj->setBg(b->under->getBg());
+				b->obj->setCycle(b->under->getCycle());								
 				if(b->obj->getType()==ZZT_OBJECT) {
 					b->obj->setShape(b->under->getShape());
 					b->obj->setProg(b->under->getProg(),b->under->getProgLen(),b->under->getProgPos());
