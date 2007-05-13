@@ -81,6 +81,7 @@ ZZTObject *find_zztobj_by_name(int &x, int &y, std::string target) {
 		for(i=BOARD_X-1;i>=0;i--) {
 			if(i==BOARD_X-1&&j==y) i=x;
 			if(i<0) { i=BOARD_X-1; j--; }
+			if(j<0) break;
 			myobj=currentbrd->board[i][j].obj;
 			if(myobj->getType()==ZZT_OBJECT) {
 				//printf("Comparing '%s' and '%s'\n",((ZZTOOP *)myobj)->get_zztobj_name().c_str(), target.c_str());
@@ -701,23 +702,23 @@ void ZZTOOP::exec(std::string text) {
 	}
 	else if(words[0] == "take") {
 		if(words[1] == "gems") {
-			if(world.gems<atoi(words[2].c_str())) { zzt_goto(words[3]); }
+			if(words.size() > 3 && world.gems<atoi(words[2].c_str())) { zzt_goto(words[3]); }
 			else take_gems(atoi(words[2].c_str()));
 		}
 		if(words[1] == "torch" || words[1] == "torches") {
-			if(world.torches<atoi(words[2].c_str())) { zzt_goto(words[3]); }
+			if(words.size() > 3 && world.torches<atoi(words[2].c_str())) { zzt_goto(words[3]); }
 			else take_torch(atoi(words[2].c_str()));
 		}
 		if(words[1] == "ammo") {
-			if(world.ammo<atoi(words[2].c_str())) { zzt_goto(words[3]); }
+			if(words.size() > 3 && world.ammo<atoi(words[2].c_str())) { zzt_goto(words[3]); }
 			else take_ammo(atoi(words[2].c_str()));
 		}
 		if(words[1] == "score") {
-			if(world.score<atoi(words[2].c_str())) { zzt_goto(words[3]); }
+			if(words.size() > 3 && world.score<atoi(words[2].c_str())) { zzt_goto(words[3]); }
 			else take_score(atoi(words[2].c_str()));
 		}
 		if(words[1] == "health") {
-			if(world.health<atoi(words[2].c_str())) { zzt_goto(words[3]); }
+			if(words.size() > 3 && world.health<atoi(words[2].c_str())) { zzt_goto(words[3]); }
 			else take_health(atoi(words[2].c_str()));
 		}
 		if(words[1] == "time") {
