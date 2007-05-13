@@ -983,10 +983,13 @@ void save_game(const char *filename) {
 			fd.write("\0",1);
 		}
 
+		int rlecnt = 0;
+
 		for(rle_iter = curbrd->rle_data.begin(); rle_iter != curbrd->rle_data.end(); rle_iter++) {
 			fd.write(&(*rle_iter).len,1);
 			fd.write(&(*rle_iter).cod,1);
 			fd.write(&(*rle_iter).col,1);
+			rlecnt += (*rle_iter).len;
 		}
 		
 		fd.write(&curbrd->maxshots,1);
@@ -1007,6 +1010,9 @@ void save_game(const char *filename) {
 
 		i = (unsigned char)curbrd->params.size() - 1;
 		fd.writele16(&i,1);
+		printf("Writing %i objects...\n", i);
+
+		i = 0;
 
 		for(params_iter = curbrd->params.begin(); params_iter != curbrd->params.end(); params_iter++) {
 			(*params_iter).x++; fd.write(&(*params_iter).x,1); (*params_iter).x--;
@@ -1014,8 +1020,8 @@ void save_game(const char *filename) {
 			fd.writele16((uint16 *)&(*params_iter).xstep,1);
 			fd.writele16((uint16 *)&(*params_iter).ystep,1);
 			fd.writele16(&(*params_iter).cycle,1);
-			for(int i=0; i<3; i++) {
-				fd.write(&(*params_iter).data[i],1);
+			for(int g=0; g<3; g++) {
+				fd.write(&(*params_iter).data[g],1);
 			}
 			fd.write("\0\0\0\0",4);
 			fd.write(&(*params_iter).ut,1);
@@ -1024,7 +1030,8 @@ void save_game(const char *filename) {
 			fd.writele16(&(*params_iter).progpos,1);
 			fd.writele16((uint16 *)&(*params_iter).proglen,1);
 			fd.write("\0\0\0\0\0\0\0\0",8);
-			fd.write((*params_iter).prog.c_str(),(*params_iter).proglen);
+			if((*params_iter).proglen>0) fd.write((*params_iter).prog.c_str(),(*params_iter).proglen);
+			i++;
 		}
 		
 		curbrd=curbrd->next;
