@@ -127,11 +127,11 @@ void Terrain::create() {
 		m_fg=0;
 		m_bg=0;
 		break;
-	/*case ZZT_WATER:
-		m_bg=1;
-		m_fg=15;
+	case ZZT_WATER:
+		//m_bg=1;
+		//m_fg=15;
 		m_cycle=1;
-		break;*/
+		break;
 	}
 }
 
@@ -166,7 +166,7 @@ void Water::update() {
 			break;
 		}
 		m_counter+=m_cstep;
-		draw_block((int)m_position.x,(int)m_position.y);
+		draw();
 	}
 }
 

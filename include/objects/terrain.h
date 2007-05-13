@@ -146,7 +146,10 @@ public:
 
 class Water : public Terrain {
 public:
-	Water(int type, int x, int y, int shape, int flags, std::string name) : Terrain(type, x, y, shape, flags, name) { }
+	Water(int type, int x, int y, int shape, int flags, std::string name) : Terrain(type, x, y, shape, flags, name) { 
+		m_counter = 0;
+		m_cstep = 0;
+	}
 	void update();
 private:
 	int m_counter, m_cstep;
