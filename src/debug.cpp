@@ -112,7 +112,7 @@ void *process_debug(void *) {
 					dt->clear();
 					debug("");
 				} else {
-					debug("Not an object.");
+					debug("Not an object. (%s)", currentbrd->board[debugselect_x][debugselect_y].obj->getName().c_str());
 				}
 			}
 				
