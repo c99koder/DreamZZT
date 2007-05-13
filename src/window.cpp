@@ -463,13 +463,14 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 #endif
 	} else if(evt.type == Event::EvtKeyUp && evt.key == Event::KeyEsc) {
 			m_loop = false;
+			m_label = "";
 	}
 }
 
 void TUIWindow::buildFromString(std::string s, bool ANSI) {
 	int i=0,j=0;
 	std::string label,text;
-	
+
 	do {
 		j=0;
 		label="";
@@ -500,6 +501,12 @@ void TUIWindow::buildFromString(std::string s, bool ANSI) {
 						text += s[i+j];
 					}
 					j++;
+					if(j>=m_w - 4 && s[i+j] != '\r' && s[i+j] != '\n') {
+						addWidget(new TUILabel(text,false,ANSI));
+						text = "";
+						i+=j;
+						j=0;
+					}
 				}
 				addWidget(new TUILabel(text,false,ANSI));
 				break;	
