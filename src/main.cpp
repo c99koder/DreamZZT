@@ -438,48 +438,50 @@ void play_zzt(const char *filename, bool tempFile) {
 	}
 	
 #ifdef NET
-	std::list<TracBug> bugs = search_tickets("status!=closed&amp;game=" + std::string((const char *)world.title.string));
-	if(bugs.size() > 0) {
-		std::string bugWarning = "The following bugs have been reported for\rthis game:\r\r";
-		
-		for(std::list<TracBug>::iterator bi = bugs.begin(); bi != bugs.end(); bi++) {
-			bugWarning += std::string("!") + ToString((*bi).getNum()) + std::string(";") + (*bi).getProperty("summary") + "\r";
-		}
-		
-		bugWarning += "\r\
+	if(std::string((const char *)world.title.string) != "") {
+		std::list<TracBug> bugs = search_tickets("status!=closed&amp;game=" + std::string((const char *)world.title.string));
+		if(bugs.size() > 0) {
+			std::string bugWarning = "The following bugs have been reported for\rthis game:\r\r";
+			
+			for(std::list<TracBug>::iterator bi = bugs.begin(); bi != bugs.end(); bi++) {
+				bugWarning += std::string("!") + ToString((*bi).getNum()) + std::string(";") + (*bi).getProperty("summary") + "\r";
+			}
+			
+			bugWarning += "\r\
 These bugs may affect your ability to\r\
 complete this game.\r\
 \r\
 !continue;Continue to game\r\
 !quit;Return to menu\r";
-		TUIWindow t("Warning");
-		t.buildFromString(bugWarning);
-		do {
-			t.doMenu(ct);
-			
-			if(t.getLabel() != "" && atoi(t.getLabel().c_str()) > 0) {
-				for(std::list<TracBug>::iterator bi = bugs.begin(); bi != bugs.end(); bi++) {
-					if((*bi).getNum() == atoi(t.getLabel().c_str())) {
-						std::string bug = std::string("Reporter: ") + (*bi).getProperty("reporter") + "\r";
-						bug += std::string("Platform: ") + (*bi).getProperty("platform") + "\r";
-						bug += std::string("Version: ") + (*bi).getProperty("version") + "\r";
-						bug += std::string("Game: ") + (*bi).getProperty("game") + "\r";
-						bug += std::string("Board: ") + (*bi).getProperty("board") + "\r";					
-						bug += "\r";
-						bug += (*bi).getProperty("description") + "\r";
-						bug += "\r";
-						bug += "!return;Return to bug list\r";
-						
-						TUIWindow bw((*bi).getProperty("summary"));
-						bw.buildFromString(bug);
-						bw.doMenu(ct);
+			TUIWindow t("Warning");
+			t.buildFromString(bugWarning);
+			do {
+				t.doMenu(ct);
+				
+				if(t.getLabel() != "" && atoi(t.getLabel().c_str()) > 0) {
+					for(std::list<TracBug>::iterator bi = bugs.begin(); bi != bugs.end(); bi++) {
+						if((*bi).getNum() == atoi(t.getLabel().c_str())) {
+							std::string bug = std::string("Reporter: ") + (*bi).getProperty("reporter") + "\r";
+							bug += std::string("Platform: ") + (*bi).getProperty("platform") + "\r";
+							bug += std::string("Version: ") + (*bi).getProperty("version") + "\r";
+							bug += std::string("Game: ") + (*bi).getProperty("game") + "\r";
+							bug += std::string("Board: ") + (*bi).getProperty("board") + "\r";					
+							bug += "\r";
+							bug += (*bi).getProperty("description") + "\r";
+							bug += "\r";
+							bug += "!return;Return to bug list\r";
+							
+							TUIWindow bw((*bi).getProperty("summary"));
+							bw.buildFromString(bug);
+							bw.doMenu(ct);
+						}
 					}
+				} else if(t.getLabel() == "quit") {
+					free_world();
+					return;
 				}
-			} else if(t.getLabel() == "quit") {
-				free_world();
-				return;
-			}
-		} while(t.getLabel() != "" && t.getLabel() != "continue");
+			} while(t.getLabel() != "" && t.getLabel() != "continue");
+		}
 	}
 #endif
 	

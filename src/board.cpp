@@ -170,8 +170,8 @@ void new_world() {
 	world.energizer_cycle=0;
 	world.pad1=0;
 	world.score=0;
-	world.title.string[0]='\0';
-	world.title.len=0;
+	strcpy((char *)world.title.string,"UNTITLED");
+	world.title.len=7;
 	for(int i=0; i<10; i++) world.flag[i].len = 0;
 	world.time=0;
 	world.saved=0;
@@ -231,10 +231,10 @@ int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer) {
 
 struct board_data *get_block_by_type(int type, int &x, int &y) {
 	int i,j;
-	for(j=y;j<BOARD_Y;j++) {
-		for(i=0;i<BOARD_X;i++) {
-			if(i==0&&j==y) i=x;
-			if(i>=BOARD_X) { i=0; j++; }
+	for(j=y;j>=0;j--) {
+		for(i=BOARD_X-1;i>=0;i--) {
+			if(i==BOARD_X-1&&j==y) i=x;
+			if(i<0) { i=BOARD_X-1; j--; }
 			if(currentbrd->board[i][j].obj!=NULL) {
 				if(currentbrd->board[i][j].obj->getType() == type) {
 					x=i; y=j;
@@ -248,10 +248,10 @@ struct board_data *get_block_by_type(int type, int &x, int &y) {
 
 ZZTObject *get_obj_by_type(int type, int &x, int &y) {
 	int i,j;
-	for(j=y;j<BOARD_Y;j++) {
-		for(i=0;i<BOARD_X;i++) {
-			if(i==0&&j==y) i=x;
-			if(i>=BOARD_X) { i=0; j++; }
+	for(j=y;j>=0;j--) {
+		for(i=BOARD_X-1;i>=0;i--) {
+			if(i==BOARD_X-1&&j==y) i=x;
+			if(i<0) { i=BOARD_X-1; j--; }
 			if(currentbrd->board[i][j].obj!=NULL) {
 				if(currentbrd->board[i][j].obj->getType() == type) {
 					x=i; y=j;
@@ -266,8 +266,8 @@ ZZTObject *get_obj_by_type(int type, int &x, int &y) {
 ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color) {
 	int x,y;
 
-	for(y=0;y<BOARD_Y;y++) {
-		for(x=0;x<BOARD_X;x++) {
+	for(y=BOARD_Y-1;y>=0;y--) {
+		for(x=BOARD_X-1;x>=0;x--) {
 			if(board->board[x][y].obj->getType()==type && board->board[x][y].obj->getColor()==color) return board->board[x][y].obj;
 		}
 	}
@@ -277,8 +277,8 @@ ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color) 
 ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int fg, int bg) {
 	int x,y;
 	
-	for(y=0;y<BOARD_Y;y++) {
-		for(x=0;x<BOARD_X;x++) {
+	for(y=BOARD_Y-1;y>=0;y--) {
+		for(x=BOARD_X-1;x>=0;x--) {
 			if(board->board[x][y].obj->getType()==type && board->board[x][y].obj->getFg()==fg &&
 				 board->board[x][y].obj->getType()==type && board->board[x][y].obj->getBg()==bg) return board->board[x][y].obj;
 		}
@@ -289,8 +289,8 @@ ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int fg, int
 ZZTObject *get_obj_by_type(struct board_info_node *board, int type) {
 	int x,y;
 
-	for(y=0;y<BOARD_Y;y++) {
-		for(x=0;x<BOARD_X;x++) {
+	for(y=BOARD_Y-1;y>=0;y--) {
+		for(x=BOARD_X-1;x>=0;x--) {
 			if(board->board[x][y].obj!=NULL && board->board[x][y].obj->getType()==type) return board->board[x][y].obj;
 		}
 	}
@@ -1094,10 +1094,11 @@ void update_brd() {
 		for(y=0;y<BOARD_Y;y++) {
 			for(x=BOARD_X-1;x>=0;x--) {
 				o=current->board[x][y].obj;
+				if(o!=NULL && o->isValid() && o->getName() != "empty") printf("Checking %s at (%i, %i)\n", o->getName().c_str(), x, y);
 				if(o!=NULL && o->isValid() && o->getUpdated()==0) { 
 					o->setTick(o->getTick()-1);
 					if((o->getTick()<=0 && o->getCycle() != 0) || world.health<=0/* && i%2==j*/) {
-						//printf("Updating: %s\n",o->name);
+						printf("Updating: %s (%i, %i)\n",o->getName().c_str(), x, y);
 						o->update();
 						if(o->getFlags()&F_DELETED) {
 							if(current->board[x][y].obj == o) remove_from_board(current,o);
