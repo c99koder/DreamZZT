@@ -1033,7 +1033,7 @@ void save_game(const char *filename) {
 	
 	decompress(currentbrd, true);
 	connect_lines(currentbrd);
-	
+	player=(Player *)get_obj_by_type(currentbrd,ZZT_PLAYER);
 	spinner_clear();
 }
 
