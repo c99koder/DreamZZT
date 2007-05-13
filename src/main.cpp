@@ -439,7 +439,7 @@ void play_zzt(const char *filename, bool tempFile) {
 	
 #ifdef NET
 	if(std::string((const char *)world.title.string) != "") {
-		std::list<TracBug> bugs = search_tickets("status!=closed&amp;game=" + std::string((const char *)world.title.string));
+		std::list<TracBug> bugs = search_tickets("status!=closed&amp;game~=" + std::string((const char *)world.title.string));
 		if(bugs.size() > 0) {
 			std::string bugWarning = "The following bugs have been reported for\rthis game:\r\r";
 			
