@@ -26,7 +26,7 @@ std::vector<std::string> wordify(std::string s, char seperator) {
 	size_t pos=0,oldpos=0;
 	
 	while((pos = s.find(seperator, oldpos)) != std::string::npos) {
-		list.push_back(s.substr(oldpos,(pos-oldpos)));
+		if(pos != oldpos) list.push_back(s.substr(oldpos,(pos-oldpos)));
 		oldpos = pos+1;
 	}
 	
