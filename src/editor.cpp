@@ -1,4 +1,4 @@
-/* window.cpp - ZZT-formatted text popup window
+/* editor.cpp - DreamZZT Editor
  * Copyright (C) 2000 - 2007 Sam Steele
  *
  * This file is part of DreamZZT.
@@ -544,10 +544,12 @@ void edit_zzt() {
 						case 'a':
 							o=pattern[4]=create_object(ZZT_AMMO,edit_x,edit_y);
 							o->setCycle(1);
+							o->setColor(CYAN,BLACK);
 							put(o);
 							break;
 						case 't':
 							o=pattern[4]=create_object(ZZT_TORCH,edit_x,edit_y);
+							o->setColor(YELLOW,BLACK);
 							o->setCycle(1);
 							put(o);
 							break;
@@ -595,6 +597,7 @@ void edit_zzt() {
 							break;
 						case 'e':
 							o=pattern[4]=create_object(ZZT_ENERGIZER,edit_x,edit_y);
+							o->setColor(MAGENTA,BLACK);
 							o->setCycle(1);
 							put(o);
 							break;
