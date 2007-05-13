@@ -1094,11 +1094,9 @@ void update_brd() {
 		for(y=0;y<BOARD_Y;y++) {
 			for(x=BOARD_X-1;x>=0;x--) {
 				o=current->board[x][y].obj;
-				if(o!=NULL && o->isValid() && o->getName() != "empty") printf("Checking %s at (%i, %i)\n", o->getName().c_str(), x, y);
 				if(o!=NULL && o->isValid() && o->getUpdated()==0) { 
 					o->setTick(o->getTick()-1);
 					if((o->getTick()<=0 && o->getCycle() != 0) || world.health<=0/* && i%2==j*/) {
-						printf("Updating: %s (%i, %i)\n",o->getName().c_str(), x, y);
 						o->update();
 						if(o->getFlags()&F_DELETED) {
 							if(current->board[x][y].obj == o) remove_from_board(current,o);
