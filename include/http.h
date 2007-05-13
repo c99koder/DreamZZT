@@ -19,6 +19,7 @@
 
 bool http_get_file(std::string filename, std::string URL);
 std::string http_post_file(std::string filename, std::string contentType, std::string URL);
+std::string http_post_data(std::string data, std::string contentType, std::string URL);
 std::string http_get_string(std::string URL);
 char *strtolower(char *str);
 

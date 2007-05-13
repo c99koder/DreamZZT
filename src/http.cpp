@@ -249,3 +249,31 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 	return output;
 }
 
+std::string http_post_data(std::string data, std::string contentType, std::string URL) {
+	CURL *curl_handle = http_begin(URL);
+	struct MemoryStruct chunk;
+	struct curl_slist *slist=NULL;
+	std::string output;
+	
+	chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
+	chunk.size = 0;		/* no data at this point */	
+	
+	/* send all data to this function	*/
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+	
+	/* we pass our 'chunk' struct to the callback function */
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+	
+	/* Set the form info */
+	curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, data.c_str());
+
+
+	slist = curl_slist_append(slist, (std::string("Content-Type: ") + contentType).c_str());
+	curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, slist);
+	
+	http_finish(curl_handle);
+	
+	output.append((const char *)chunk.memory);
+	free(chunk.memory);
+	return output;
+}
