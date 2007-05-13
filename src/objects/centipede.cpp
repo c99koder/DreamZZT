@@ -144,7 +144,7 @@ void Centipede::message(ZZTObject *them, std::string msg) {
 			m_type = ZZT_CENTIPEDE_BODY;
 			m_shape = ZZT_CENTIPEDE_BODY_SHAPE;
 		}
-	} else if(msg == "thud" || msg == "shot" || msg == "bombed" || (msg == "touch" && them->getType() == ZZT_PLAYER)) {
+	} else if(msg == "thud" || (msg == "shot" && them->getParam(1) == 0) || msg == "bombed" || (msg == "touch" && them->getType() == ZZT_PLAYER)) {
 		if(m_prev != NULL) m_prev->unlinkNext();
 		if(m_next != NULL) m_next->unlinkPrev();
 		Enemy::message(them,msg);
