@@ -692,7 +692,6 @@ void decompress(board_info_node *board, bool silent) {
 			if(curobj!=NULL) {
 				curobj->setFg((*rle_iter).col%16);
 				curobj->setBg((*rle_iter).col/16);
-				curobj->create();
 			} else {
 				printf("Unknown type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
 				board->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
@@ -705,7 +704,7 @@ void decompress(board_info_node *board, bool silent) {
 		if((*param_iter).x >= 0 && (*param_iter).x < BOARD_X && (*param_iter).y >= 0 && (*param_iter).y < BOARD_Y) {
 			curobj = board->board[(*param_iter).x][(*param_iter).y].obj;
 		} else {
-			printf("Params out of bounds: %i, %i\n",(*param_iter).x,(*param_iter).y);
+			Debug::printf("Params out of bounds: %i, %i\n",(*param_iter).x,(*param_iter).y);
 			curobj=NULL;
 		}
 		if(curobj!=NULL) {
@@ -715,13 +714,18 @@ void decompress(board_info_node *board, bool silent) {
 			curobj->setParam(2,(*param_iter).data[1]);
 			curobj->setParam(3,(*param_iter).data[2]);
 			curobj->setProg((*param_iter).prog,(*param_iter).proglen,(*param_iter).progpos);
-			curobj->create();
 			board->board[(*param_iter).x][(*param_iter).y].under=create_object((*param_iter).ut,(*param_iter).x,(*param_iter).y);
 			board->board[(*param_iter).x][(*param_iter).y].under->setFg((*param_iter).uc%16);
 			board->board[(*param_iter).x][(*param_iter).y].under->setBg((*param_iter).uc/16);
-			board->board[(*param_iter).x][(*param_iter).y].under->create();
 		} else {
-			printf("Invalid object at: (%i,%i)\n",x,y);
+			Debug::printf("Invalid object at: (%i,%i)\n",x,y);
+		}
+	}
+	
+	for(y = 0; y < BOARD_Y; y++) {
+		for(x = 0; x < BOARD_X; x++) {
+			if(board->board[x][y].obj!=NULL) board->board[x][y].obj->create();
+			if(board->board[x][y].under!=NULL) board->board[x][y].under->create();
 		}
 	}
 	
