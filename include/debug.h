@@ -18,5 +18,5 @@
  */ 
 
 void debug_init();
-
+void debug_shutdown();
 void debug(const char *fmt, ...);

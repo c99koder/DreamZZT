@@ -382,11 +382,13 @@ extern "C" int tiki_main(int argc, char **argv) {
 		delete t;
 	}
 
+	debug_shutdown();
+	if(zm!=NULL && zm->isPlaying()) zm->stop();
+
 #if TIKI_PLAT == TIKI_DC
 	arch_exit(0);
 #endif
 	
-	if(zm!=NULL && zm->isPlaying()) zm->stop();
 #ifdef NET
 #if TIKI_PLAT == TIKI_WIN32
 	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 

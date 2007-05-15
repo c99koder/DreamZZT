@@ -59,19 +59,19 @@ enum debugSelectMode_t { NONE, WATCH, INSPECT} debugSelectMode = NONE;
 int debugselect_x=0, debugselect_y=0;
 bool debug_show_objects=false;
 TUITextInput *debug_input;
-
 Tiki::Thread::Thread *debug_thread;
+bool debug_quitting;
 
 void debug_hidCallback(const Event & evt, void * data);
 
 void *process_debug(void *) {
-	while(1) {
+	while(!debug_quitting) {
 		debug_cmdline = "";
 		debug("");
 		
 		debug_hidCookie = Hid::callbackReg(debug_hidCallback, NULL);
 		
-		while(debug_cmdline.length() == 0 || (debug_cmdline[debug_cmdline.length() - 1] != '\r')) {
+		while(!debug_quitting && (debug_cmdline.length() == 0 || (debug_cmdline[debug_cmdline.length() - 1] != '\r'))) {
 			Time::sleep(1000);
 			if(debugSelectMode != NONE) {
 				ct->locate(debugselect_x, debugselect_y);
@@ -79,17 +79,21 @@ void *process_debug(void *) {
 				ct->printf("X");
 			}
 			if(debug_cmdline == "`") debug_cmdline = "";
-			*dt << "\x1b[s"; // Save cursor position
-			dt->locate(0,24);
-			debug_input->draw(dt);
-			//dt->color(GREY | HIGH_INTENSITY, BLACK);
-			//*dt << "> \x1b[1;32m" << debug_cmdline.c_str() 
-			*dt << "\x1b[k"; //clear EOL
-			*dt << "\x1b[u"; // Restore cursor position			
-			debug_input->update();
+			if(debug_visible) {
+				*dt << "\x1b[s"; // Save cursor position
+				dt->locate(0,24);
+				debug_input->draw(dt);
+				//dt->color(GREY | HIGH_INTENSITY, BLACK);
+				//*dt << "> \x1b[1;32m" << debug_cmdline.c_str() 
+				*dt << "\x1b[k"; //clear EOL
+				*dt << "\x1b[u"; // Restore cursor position			
+				debug_input->update();
+			}
 		}; //Wait for enter
 
 		Hid::callbackUnreg(debug_hidCookie);
+		
+		if(debug_quitting) return 0;
 		
 		debug_cmdline.resize(debug_cmdline.length() - 1);
 
@@ -316,7 +320,14 @@ void debug_init() {
 	debug("\n\nDreamZZT 3.0.6.1\n(C) 2000 - 2007 Sam Steele\nAll Rights Reserved.\n\nREADY.\n");
 	debug_input = new TUITextInput("> ", &debug_cmdline);
 	debug_input->setBg(BLACK);
+	debug_quitting=false;
 	debug_thread = new Tiki::Thread::Thread(process_debug,NULL);
+}
+
+void debug_shutdown() {
+	Hid::callbackUnreg(debug_hidCookie);
+	debug_quitting=true;
+	debug_thread->join();
 }
 
 void debug(const char *fmt, ...) {
