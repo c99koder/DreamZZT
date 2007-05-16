@@ -53,7 +53,7 @@ int base64_encode(const void *inp, int insize, char **outptr)
   char *indata = (char *)inp;
 
   if(0 == insize)
-    insize = strlen(indata);
+    insize = (int)strlen(indata);
 
   base64data = output = (char*)malloc(insize*4/3+4);
   if(NULL == output)
@@ -101,7 +101,7 @@ int base64_encode(const void *inp, int insize, char **outptr)
   *output=0;
   *outptr = base64data; /* make it return the actual data memory */
 
-  return strlen(base64data); /* return the length of the new data */
+  return (int)strlen(base64data); /* return the length of the new data */
 }
 /* ---- End of Base64 Encoding ---- */
 
