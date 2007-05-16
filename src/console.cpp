@@ -192,7 +192,7 @@ void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned c
 	float v = float(c / 16) * 8.0f;
 	int color = attr & 0x07;
 	
-	
+	 
 	const Vector & sv = getScale();
 	w *= sv.x;
 	h *= sv.y;
@@ -209,8 +209,6 @@ void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned c
 	vert.oargb = 0;
 	
 	glColoru32(vert.argb);
-	
-	glBegin(GL_QUADS);
 	
 	vert.flags = PLX_VERT;
 	vert.x = tv.x-m_w/2;
@@ -239,8 +237,6 @@ void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned c
 	vert.v = (v+8)/m_texture->getH();
 	glTexCoord2f(vert.u, vert.v);
 	glVertex3f(vert.x, vert.y, vert.z);
-	
-	glEnd();
 }
 
 void ConsoleText::renderBackground(float x, float y, float w, float h, int color) {
@@ -255,8 +251,6 @@ void ConsoleText::renderBackground(float x, float y, float w, float h, int color
 	vert.oargb = 0;
 	
 	glColoru32(vert.argb);
-	
-	glBegin(GL_QUADS);
 	
 	vert.flags = PLX_VERT;
 	vert.x = tv.x-m_w/2;
@@ -273,8 +267,6 @@ void ConsoleText::renderBackground(float x, float y, float w, float h, int color
 	vert.flags = PLX_VERT_EOS;
 	vert.y = tv.y+h-m_h/2;
 	glVertex3f(vert.x, vert.y, vert.z);
-	
-	glEnd();
 }
 
 void ConsoleText::draw(ObjType list) {
@@ -292,6 +284,8 @@ void ConsoleText::draw(ObjType list) {
 		m_texture->deselect();
 	}
 	
+	glBegin(GL_QUADS);
+
 	for(y=0; y<m_rows; y++) {
 		for(x=0; x<m_cols; x++) {
 			if(list == Trans) { //Characters!
@@ -301,6 +295,8 @@ void ConsoleText::draw(ObjType list) {
 			}
 		}
 	}
+
+	glEnd();
 }
 
 void ConsoleText::processAnsiString() {
