@@ -252,6 +252,8 @@ void *process_debug(void *) {
 			zm->start();
 		}
 	}
+
+	return 0;
 }
 
 void debug_hidCallback(const Event & evt, void * data) {
