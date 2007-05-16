@@ -116,6 +116,8 @@ All Rights Reserved.\r");
 #define CREDITS "$Programming\r\r\
 Sam Steele\r\
 http://www.c99.org/\r\r\
+Aaron Apgar\r\
+http://www.aaronapgar.com\r\r\
 $Original ZZT\r\r\
 Tim Sweeny - Epic Games\r\
 http://www.epicgames.com/\r\r\
