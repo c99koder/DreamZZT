@@ -8,7 +8,7 @@ DOC = $(DESTDIR)/usr/share/doc/dreamzzt
 APPLICATIONS = $(DESTDIR)/usr/share/applications
 
 CFLAGS = -I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -Iinclude -DDATA_PATH="\"$(DATA)\""
-OBJS = src/DreamZZT.o src/debug.o src/sound.o src/http.o src/word.o src/main.o src/window.o src/board.o src/console.o src/task.o src/status.o src/object.o src/editor.o \
+OBJS = src/DreamZZT.o src/debug.o src/sound.o src/http.o src/word.o src/main.o src/window.o src/board.o src/console.o src/task.o src/status.o src/object.o src/editor.o src/bugreport.o \
 src/objects/passage.o src/objects/terrain.o src/objects/bullet.o src/objects/enemy.o \
 src/objects/dup.o src/objects/zztoop.o src/objects/pusher.o src/objects/bomb.o src/objects/items.o \
 src/objects/conveyer.o src/objects/player.o src/objects/centipede.o
