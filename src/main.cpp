@@ -92,7 +92,8 @@ Texture *zzt_font;
 
 float zoom = 1;
 
-#define VERSION "3.0.6.1"
+#define VERSION "3.0.8b1"
+#define BETA_VERSION
 
 std::string MAIN_MENU = std::string(std::string("$Welcome to DreamZZT ") + std::string(VERSION) + "\r\r\
 Please select an option from the\r\
@@ -148,7 +149,7 @@ void play_zzt(const char *filename, bool tempFile=false);
 void net_menu();
 
 void check_updates() {
-#if (TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER))
+#if (TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER) && !defined(BETA_VERSION))
 	std::string ver;
 #if TIKI_PLAT == TIKI_WIN32
 	DWORD flags;
