@@ -1,3 +1,21 @@
+dreamzzt (3.0.8b1) unstable; urgency=low
+
+  * Sound support for Dreamcast
+  * Support STK-colored torches, ammo, energizers
+  * Uses system clock for improved game timing
+  * Game speed and volume can be adjusted from title screen
+  * Integration with the Trac ticket system for in-game bug reports
+  * Mission:Enigma is now completable 
+
+  * Centipede segments harm player (#23)
+  * Centipedes could become disconnected if shot by an enemy (#27)
+  * Board transitions may not work properly after saving (#39)
+  * Change object search order to match ZZT (#13)
+  * Support stat-less objects (#29)
+  * Handle backspace key in debug console 
+
+ -- Sam Steele <sam.steele@gmail.com>  Fri, 18 May 2007 16:00:00 -0500
+
 dreamzzt (3.0.6.1) stable; urgency=high
 
   * Pressing the enter key could crash the game (ticket #24)
