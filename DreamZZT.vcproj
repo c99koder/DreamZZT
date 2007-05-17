@@ -121,7 +121,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\win32\include&quot;;&quot;C:\Documents and Settings\Sam\Desktop\tiki\include&quot;;include;C:\libcurl\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;include;C:\libcurl\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NET;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="0"
 				DefaultCharIsUnsigned="true"
@@ -187,6 +187,10 @@
 			>
 			<File
 				RelativePath=".\src\board.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\bugreport.cpp"
 				>
 			</File>
 			<File
