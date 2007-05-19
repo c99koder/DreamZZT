@@ -228,7 +228,16 @@ void menu_background() {
 	}
 }	
 
+//How often to display average frame rate (in seconds)
+#define FPS_SAMPLE_RATE 10
+
 void render() {
+	static long int fpsTimer = 1000000;
+	static long int avgFpsTimer = 1000000 * FPS_SAMPLE_RATE;
+	static int frames = 0;
+	uint64 frameTime = 0;
+	static float fps = 0.0f;
+
 #if 0
 	float x,y,w,h;
 
@@ -243,6 +252,7 @@ void render() {
 	}
 #endif
 	zzt_screen_mutex.lock();
+	frameTime = Time::gettime();
 	Frame::begin();
 #if 0
 	if(player!=NULL) {
@@ -264,6 +274,19 @@ void render() {
 	dt->drawAll(Drawable::Trans);
 	st->drawAll(Drawable::Trans);
 	Frame::finish();
+	frameTime = Time::gettime() - frameTime;
+	frames++;
+	fpsTimer -= frameTime;
+	avgFpsTimer -= frameTime;
+	if(fpsTimer <= 0) {
+		fps = (fps + frames) / 2.0f;
+		fpsTimer = 1000000;
+		frames = 0;
+	}
+	if(avgFpsTimer <= 0) {
+		Debug::printf("Average FPS: %f\n",fps);
+		avgFpsTimer = 1000000 * FPS_SAMPLE_RATE;
+	}
 #if TIKI_PLAT == TIKI_DC
 	update_lcds();
 #endif
@@ -305,7 +328,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 	
 #if TIKI_PLAT == TIKI_DC
 #ifdef DEBUG
-	//fs_chdir("/pc/users/sam/projects/dreamzzt/resources");
 	fs_chdir("/rd");
 #else
 	fs_chdir("/cd");
@@ -514,6 +536,7 @@ complete this game.\r\
 		st->printf("    to begin!");
 		draw_board();
 		do {
+		
 			if(!gameFrozen && (Time::gettime() - ticker) > gamespeed) {
 				update_brd();
 				sm.update();				
