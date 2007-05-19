@@ -214,6 +214,7 @@ void spinner_clear() {
 	if(spinner_active) {
 		spinner_active = false;
 		spinner_thread->join();
+		delete spinner_thread;
 	}
 	st->locate(3,4);
 	st->color(15,1);
