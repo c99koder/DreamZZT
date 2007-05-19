@@ -319,7 +319,7 @@ void debug_init() {
 	dt->setANSI(true);
 	dt->color(GREY, BLACK);
 	dt->clear();
-	debug("\n\nDreamZZT 3.0.6.1\n(C) 2000 - 2007 Sam Steele\nAll Rights Reserved.\n\nREADY.\n");
+	debug("\n\nDreamZZT 3.0.8b1\n(C) 2000 - 2007 Sam Steele\nAll Rights Reserved.\n\nREADY.\n");
 	debug_input = new TUITextInput("> ", &debug_cmdline);
 	debug_input->setBg(BLACK);
 	debug_quitting=false;
