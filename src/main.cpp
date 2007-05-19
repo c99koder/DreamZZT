@@ -282,9 +282,16 @@ void render() {
 		fps = (fps + frames) / 2.0f;
 		fpsTimer = 1000000;
 		frames = 0;
+		*dt << "\x1b[s"; // Save cursor position
+		dt->locate(0,0);
+		dt->color(WHITE|HIGH_INTENSITY, BLUE);
+		*dt << "FPS: " << (int)fps;
+		*dt << "\x1b[u"; // Restore cursor position				
 	}
 	if(avgFpsTimer <= 0) {
+#ifdef DEBUG
 		Debug::printf("Average FPS: %f\n",fps);
+#endif
 		avgFpsTimer = 1000000 * FPS_SAMPLE_RATE;
 	}
 #if TIKI_PLAT == TIKI_DC
