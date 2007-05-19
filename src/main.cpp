@@ -276,8 +276,8 @@ void render() {
 	Frame::finish();
 	frameTime = Time::gettime() - frameTime;
 	frames++;
-	fpsTimer -= frameTime;
-	avgFpsTimer -= frameTime;
+	fpsTimer -= (long)frameTime;
+	avgFpsTimer -= (long)frameTime;
 	if(fpsTimer <= 0) {
 		fps = (fps + frames) / 2.0f;
 		fpsTimer = 1000000;
@@ -366,7 +366,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	check_updates();
 
 	world.online=0;
-	
+
 	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
 	}
