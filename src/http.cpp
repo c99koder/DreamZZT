@@ -275,5 +275,7 @@ std::string http_post_data(std::string data, std::string contentType, std::strin
 	
 	output.append((const char *)chunk.memory);
 	free(chunk.memory);
+	curl_slist_free_all(slist);
+	
 	return output;
 }
