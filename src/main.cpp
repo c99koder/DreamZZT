@@ -154,8 +154,31 @@ void check_updates() {
 
 	if(ver != VERSION) {
 		TUIWindow t("Update available");
-		t.buildFromString("A new version of DreamZZT is available.\rPlease visit http://dev.c99.org/DreamZZT/\rfor more information.\r\r!ok;Ok\r");
+		t.buildFromString(
+			std::string("A new version of DreamZZT is available.\rPlease visit http://dev.c99.org/DreamZZT/\rfor more information.\r\r") +
+#if TIKI_PLAT == TIKI_WIN32
+			std::string("!install;Install update\r") +
+#endif
+			std::string("!ok;Ok\r"));
 		t.doMenu(ct);
+#if TIKI_PLAT == TIKI_WIN32
+		if(t.getLabel() == "install") {
+			STARTUPINFO si;
+			PROCESS_INFORMATION pi;
+
+			ZeroMemory( &si, sizeof(si) );
+			si.cb = sizeof(si);
+			ZeroMemory( &pi, sizeof(pi) );
+
+			std::string updateFile = std::string("dreamzzt-") + ver + std::string("-setup.exe");
+			char path[256];
+			GetTempPath(128,path);
+			strcat(path, updateFile.c_str());
+			http_get_file(path, std::string("http://dev.c99.org/DreamZZT/binary/") + updateFile);
+			CreateProcess(path, NULL, NULL, NULL, false, 0, NULL, NULL, &si, &pi);
+			exit(0);
+		}
+#endif
 	}
 #endif
 }
