@@ -68,6 +68,7 @@ Mutex zzt_screen_mutex;
 extern struct world_header world;
 extern struct board_info_node *currentbrd;
 bool gameFrozen;
+extern int debug_visible;
 ConsoleText *ct;
 extern ConsoleText *dt;
 extern ConsoleText *st;
@@ -267,11 +268,11 @@ void render() {
 	glViewport(0,192,256/*+74*/,192);
 #endif
 	ct->drawAll(Drawable::Opaque);
-	dt->drawAll(Drawable::Opaque);
+	if(debug_visible) dt->drawAll(Drawable::Opaque);
 	st->drawAll(Drawable::Opaque);
 	Frame::transEnable();
 	ct->drawAll(Drawable::Trans);
-	dt->drawAll(Drawable::Trans);
+	if(debug_visible) dt->drawAll(Drawable::Trans);
 	st->drawAll(Drawable::Trans);
 	Frame::finish();
 	frameTime = Time::gettime() - frameTime;
