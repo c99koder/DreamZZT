@@ -145,7 +145,7 @@ void ZZTOOP::send(std::string cmd) {
 				obj=currentbrd->board[x][y].obj;
 				if(obj->getType()==ZZT_OBJECT) {
 					if(!(target == "others" && obj==this)) {
-						((ZZTOOP *)obj)->zzt_goto(label);
+						((ZZTOOP *)obj)->message(this,label);
 					}
 				}
 			}
@@ -154,7 +154,7 @@ void ZZTOOP::send(std::string cmd) {
 		x=BOARD_X-1; y=BOARD_Y-1;
 		obj=find_zztobj_by_name(x,y,target);
 		while(obj!=NULL) {
-			((ZZTOOP *)obj)->zzt_goto(label);
+			((ZZTOOP *)obj)->message(this,label);
 			x--;
 			obj=find_zztobj_by_name(x,y,target);
 		}
@@ -728,7 +728,6 @@ void ZZTOOP::exec(std::string text) {
 		goagain=1;
 	}
 	else if(words[0] == "die") {
-		//remove_from_board(currentbrd,this);
 		task_kill(this);
 		m_flags = F_DELETED;
 		m_progpos=-1;
