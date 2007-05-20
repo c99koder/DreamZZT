@@ -192,6 +192,7 @@ void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned c
 	float v = float(c / 16) * 8.0f;
 	int color = attr & 0x07;
 	
+	if(c == 32 || c == 0 || c == 255) return;
 	 
 	const Vector & sv = getScale();
 	w *= sv.x;
