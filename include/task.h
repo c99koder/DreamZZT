@@ -29,6 +29,7 @@
 #define TASK_TOUCH_OBJECT 5
 #define TASK_SHOOT_OBJECT 6
 #define TASK_PLAYER_POSITION 7
+#define TASK_OBJECT_COUNT 8
 
 template <typename T>
 std::string ToString(T aValue);
@@ -201,6 +202,25 @@ public:
 	TaskUseTorch(int id, int board, std::string title, std::string description, int value) : Task(id,board,title,description,value) { };
 	TaskUseTorch(std::vector<std::string> params) : Task(params) { };
 	bool check();
+};
+
+class TaskObjectCount : public Task {
+public:
+	TaskObjectCount(int id, int board, std::string title, std::string description, int value, int type, int color, int count) : Task(id,board,title,description,value) {
+		m_type = type;
+		m_color = color;
+		m_count = count;
+	}
+	
+	TaskObjectCount(std::vector<std::string> params) : Task(params) {
+		m_type = atoi(params[5].c_str());
+		m_color = atoi(params[6].c_str());
+		m_count = atoi(params[7].c_str());
+	}
+	
+	bool check();
+private:
+	int m_type, m_color, m_count;
 };
 
 void add_task(Task *task, bool complete);

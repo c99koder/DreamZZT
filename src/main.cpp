@@ -646,6 +646,9 @@ complete this game.\r\
 					case TASK_PLAYER_POSITION:
 						add_task(new TaskPlayerPosition(params), !!complete);
 						break;
+					case TASK_OBJECT_COUNT:
+						add_task(new TaskObjectCount(params), !!complete);
+						break;
 					default:
 						Debug::printf("Warning: unknown task type: %i\n", tasktype);
 						break;

@@ -119,7 +119,7 @@ void TaskTouchObject::touch(ZZTObject *obj) {
 
 bool TaskPlayerPosition::check() {
 	Vector p = player->getPosition();
-	if((m_board==0 || m_board==currentbrd->num)	&& (p.x <= m_max.x && p.y <= m_max.y && p.x >= m_min.x && p.y >= m_min.y))
+	if(p.x <= m_max.x && p.y <= m_max.y && p.x >= m_min.x && p.y >= m_min.y)
 		m_complete = true;
 	
 	return m_complete;
@@ -129,6 +129,26 @@ bool TaskUseTorch::check() {
 	if(currentbrd->dark == 1 && world.torch_cycle > 0) {
 		m_complete = true; 
 	}
+	
+	return m_complete;
+}
+
+bool TaskObjectCount::check() {
+	int x = BOARD_X-1, y = BOARD_Y-1;
+	ZZTObject *obj;
+	int count=0;
+	
+	do {
+		obj=get_obj_by_type(m_type, x, y);
+		if(obj!=NULL) {
+			if(m_color == 0 || obj->getColor() == m_color || obj->getColor() == m_color + 8) {
+				count++;
+				x--;
+			}
+		} 
+	} while(obj != NULL);
+	
+	if(count == m_count) m_complete = true;
 	
 	return m_complete;
 }
@@ -156,7 +176,7 @@ void check_tasks() {
 	
 	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
 		if(!((*task_iter)->getComplete())) {
-			if((*task_iter)->check()) {
+			if(((*task_iter)->getBoard()==0 || (*task_iter)->getBoard()==currentbrd->num) && (*task_iter)->check()) {
 				Debug::printf("Task complete: %s\n",(*task_iter)->getTitle().c_str());
 				std::string s = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=CompleteTask&TaskID=") + ToString((*task_iter)->getID()));
 				if(s=="OK") {
