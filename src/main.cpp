@@ -17,6 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */ 
 
+#include <iostream>
+#include <string>
+#include <sstream>
+
 #include <Tiki/tiki.h>
 #include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
@@ -75,6 +79,10 @@ extern std::string curl_auth_string;
 ZZTMusicStream *zm = NULL;
 Tiki::Thread::Thread *render_thread;
 Texture *zzt_font;
+extern std::list<Task*> taskList;
+
+#define VERSION "3.0.8b1"
+#define BETA_VERSION
 
 #define SCREEN_X 640
 #if TIKI_PLAT == TIKI_DC
@@ -86,10 +94,15 @@ Texture *zzt_font;
 #define GAMESPEED_ALIVE 160000
 #define GAMESPEED_DEAD 10000
 
-float zoom = 1;
+#ifdef BETA_VERSION
+#define DZZTNET_HOST std::string("http://internal.forums.c99.org")
+#define DZZTNET_HOME std::string("/extensions/DreamZZTOnline/dzztnet.php")
+#else
+#define DZZTNET_HOST std::string("http://forums.c99.org")
+#define DZZTNET_HOME std::string("/extensions/DreamZZT/dzztnet.php")
+#endif
 
-#define VERSION "3.0.8b1"
-#define BETA_VERSION
+float zoom = 1;
 
 std::string MAIN_MENU = std::string(std::string("$Welcome to DreamZZT ") + std::string(VERSION) + "\r\r\
 Please select an option from the\r\
@@ -142,6 +155,14 @@ $http://dev.c99.org/DreamZZT/\r"
 
 void play_zzt(const char *filename, bool tempFile=false);
 void net_menu();
+
+template <typename T>
+std::string ToString(T aValue)
+{
+	std::stringstream ss;
+	ss << aValue;
+	return ss.str();
+}
 
 void check_updates() {
 #if (TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER) && !defined(BETA_VERSION))
@@ -997,5 +1018,36 @@ C99.ORG Forums account.\n\
 		}
 	} while(url != "" && switchbrd != -2);
 
+#endif
+}
+
+void check_tasks() {
+#ifdef NET
+	std::list<Task*>::iterator task_iter;
+	
+	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
+		if(!((*task_iter)->getComplete())) {
+			if(((*task_iter)->getBoard()==0 || (*task_iter)->getBoard()==currentbrd->num) && (*task_iter)->check()) {
+				Debug::printf("Task complete: %s\n",(*task_iter)->getTitle().c_str());
+				std::string s = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=CompleteTask&TaskID=") + ToString((*task_iter)->getID()));
+				if(s=="OK") {
+					world.task_points += (*task_iter)->getValue();
+					draw_score();
+					TUIWindow t("Task Complete");
+					t.buildFromString("Congratulations!  You have completed\r\
+the following task:\r\
+\r\
+$" + ((*task_iter)->getTitle()) + "\r\r" + ((*task_iter)->getDescription()) + "\r\
+\r\
+You've earned a bonus of " + ToString((*task_iter)->getValue()) + " points.\r");
+					t.doMenu(ct);
+				} else {
+					TUIWindow t("Task Submission Error");
+					t.buildFromString("The task may already be complete or\nhas been removed from the server.\n\nThis may also indicate an invalid\nusername or password.\n\nTaskID: " + ToString((*task_iter)->getID()) + "\n");
+					t.doMenu(ct);
+				}
+			}
+		}
+	}
 #endif
 }

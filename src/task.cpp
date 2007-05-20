@@ -161,46 +161,6 @@ void add_task(Task *task, bool complete) {
 	taskList.push_back(task);
 }
 
-template <typename T>
-std::string ToString(T aValue)
-{
-	std::stringstream ss;
-	ss << aValue;
-	return ss.str();
-}
-
-
-void check_tasks() {
-#ifdef NET
-	std::list<Task*>::iterator task_iter;
-	
-	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
-		if(!((*task_iter)->getComplete())) {
-			if(((*task_iter)->getBoard()==0 || (*task_iter)->getBoard()==currentbrd->num) && (*task_iter)->check()) {
-				Debug::printf("Task complete: %s\n",(*task_iter)->getTitle().c_str());
-				std::string s = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=CompleteTask&TaskID=") + ToString((*task_iter)->getID()));
-				if(s=="OK") {
-					world.task_points += (*task_iter)->getValue();
-					draw_score();
-					TUIWindow t("Task Complete");
-					t.buildFromString("Congratulations!  You have completed\r\
-the following task:\r\
-\r\
-$" + ((*task_iter)->getTitle()) + "\r\r" + ((*task_iter)->getDescription()) + "\r\
-\r\
-You've earned a bonus of " + ToString((*task_iter)->getValue()) + " points.\r");
-					t.doMenu(ct);
-				} else {
-					TUIWindow t("Task Submission Error");
-					t.buildFromString("The task may already be complete or\nhas been removed from the server.\n\nThis may also indicate an invalid\nusername or password.\n\nTaskID: " + ToString((*task_iter)->getID()) + "\n");
-					t.doMenu(ct);
-				}
-			}
-		}
-	}
-#endif
-}
-
 void task_touch(ZZTObject *obj) {
 	std::list<Task*>::iterator task_iter;
 	
