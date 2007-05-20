@@ -56,11 +56,6 @@ using namespace Tiki::Thread;
 #include "bugreport.h"
 #if TIKI_PLAT == TIKI_DC
 #include "vmu.h"
-
-#ifdef DEBUG
-extern uint8 romdisk[];
-KOS_INIT_ROMDISK(romdisk);
-#endif
 #endif
 
 Mutex zzt_screen_mutex;
@@ -119,22 +114,21 @@ All Rights Reserved.\r");
 Sam Steele\r\
 http://www.c99.org/\r\r\
 Aaron Apgar\r\
-http://www.aaronapgar.com\r\r\
+http://www.aaronapgar.com/\r\r\
 $Original ZZT\r\r\
 Tim Sweeny - Epic Games\r\
 http://www.epicgames.com/\r\r\
 $ZZT file format specs\r\r\
 Kev Vance\r\
-http://www.kvance.com\r\r\
+http://www.kvance.com/\r\r\
 $Tiki\r\r\
 Cryptic Allusion, LLC\r\
 http://www.cadcdev.com/\r\r\
 $Testing, Special Thanks and Shoutouts\r\r\
 Jason Costa - Necrocosm Software\r\
-http://www.necrocosm.com\r\r\
+http://www.necrocosm.com/\r\r\
 Chris 'Kilokahn' Haslage\r\
-http://www.kkwow.net\r\r\
-Brian Pinney\r\r\
+http://www.kkwow.net/\r\r\
 $cURL File Transfer Library\r\
 Copyright (c) 1996 - 2006, Daniel Stenberg\r\
 <daniel@haxx.se>. All Rights Reserved.\r\r\
@@ -336,7 +330,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	
 #if TIKI_PLAT == TIKI_DC
 #ifdef DEBUG
-	fs_chdir("/rd");
+	fs_chdir("/pc/Users/sam/Projects/DreamZZT/resources");
 #else
 	fs_chdir("/cd");
 #endif
@@ -677,7 +671,8 @@ complete this game.\r\
 #ifdef NET
 std::string("!bugreport;Report a bug\r") +
 #endif
-"!save;Save Game\r\
+"!restore;Restore Game\r\
+!save;Save Game\r\
 !game;Return to Game\r\
 !quit;Return to Main Menu\r");
 			t.doMenu(ct);
@@ -701,10 +696,25 @@ std::string("!bugreport;Report a bug\r") +
 				if(bugReport.getLabel() == "submit") {
 					submit_bug(email, summary, description1 + std::string("\n") + description2 + std::string("\n") + description3);
 				}
+			} else if(t.getLabel() == "restore") {
+				std::string s = os_select_file("Select a saved game","sav");
+				if(s!="")  {
+					free_world();
+					player=NULL;
+#if TIKI_PLAT == TIKI_DC
+					unvmuify((std::string("/vmu/a1/") + s).c_str(),"/ram/tmp.sav");
+					load_zzt("/ram/tmp.sav",0);
+#else
+					load_zzt(s.c_str(),0);
+#endif
+					switch_board(world.start);
+				}
+			} else if(t.getLabel() == "save") {
+				switchbrd = -4;
 			} else if(t.getLabel() == "quit") {
 				break;
 			}
-			switchbrd=-1;
+			if(switchbrd == -3) switchbrd=-1;
 		} else if(switchbrd==-4) {
 			world.saved=1;	
 			if(world.online) {
