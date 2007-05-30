@@ -244,8 +244,10 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 	
 	http_finish(curl_handle);
 	
-	output.append((const char *)chunk.memory);
-	free(chunk.memory);
+	if(chunk.memory != NULL) {
+		output.append((const char *)chunk.memory);
+		free(chunk.memory);
+	}
 	return output;
 }
 
@@ -273,8 +275,10 @@ std::string http_post_data(std::string data, std::string contentType, std::strin
 	
 	http_finish(curl_handle);
 	
-	output.append((const char *)chunk.memory);
-	free(chunk.memory);
+	if(chunk.memory != NULL) {
+		output.append((const char *)chunk.memory);
+		free(chunk.memory);
+	}
 	curl_slist_free_all(slist);
 	
 	return output;
