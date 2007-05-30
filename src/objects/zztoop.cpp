@@ -372,18 +372,20 @@ void ZZTOOP::exec(std::string text) {
 				if(b->obj->getFlags() & F_PUSHABLE) b->obj->move(str_to_direction(words[1]),true);				
 				b->under=b->obj;
 				b->obj=::create_object(str_to_obj(words[2]),i,j);
-				b->obj->setParam(1,b->under->getParam(1));
-				b->obj->setParam(2,b->under->getParam(2));
-				b->obj->setParam(3,b->under->getParam(3));
-				b->obj->setParam(4,b->under->getParam(4));
-				b->obj->setFg(b->under->getFg());
-				b->obj->setBg(b->under->getBg());
-				b->obj->setCycle(b->under->getCycle());								
+				if(b->under->getType() != ZZT_EMPTY) {
+					b->obj->setParam(1,b->under->getParam(1));
+					b->obj->setParam(2,b->under->getParam(2));
+					b->obj->setParam(3,b->under->getParam(3));
+					b->obj->setParam(4,b->under->getParam(4));
+					b->obj->setFg(b->under->getFg());
+					b->obj->setBg(b->under->getBg());
+					b->obj->setCycle(b->under->getCycle());								
+					b->obj->setColor(b->under->getColor());
+				}
 				if(b->obj->getType()==ZZT_OBJECT) {
 					b->obj->setShape(b->under->getShape());
 					b->obj->setProg(b->under->getProg(),b->under->getProgLen(),b->under->getProgPos());
 				}
-				b->obj->setColor(b->under->getColor());						
 				b->obj->create();
 				if(color!=-1) b->obj->setColor(color);
 				if(b->obj->getBg()>7) b->obj->setBg(b->obj->getBg() - 8);
