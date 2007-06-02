@@ -592,14 +592,22 @@ complete this game.\r\
 				draw_msg();
 				st->locate(2,19);
 				st->color(0,3);
+#if TIKI_PLAT == TIKI_DC
+				st->printf(" X ");
+#else
 				st->printf(" S ");
+#endif
 				st->color(15,1);
 				st->printf(" Speed:");
 				st->locate(4,20);
 				sm.draw(st);
 				st->locate(2,22);
 				st->color(0,7);
+#if TIKI_PLAT == TIKI_DC
+				st->printf(" Y ");
+#else
 				st->printf(" V ");
+#endif
 				st->color(15,1);
 				st->printf(" Volume:");
 				st->locate(4,23);
@@ -611,16 +619,16 @@ complete this game.\r\
 				if (evt.type == Hid::Event::EvtQuit) {
 					switchbrd = -2;
 				}
-				if (evt.type == Hid::Event::EvtKeypress && evt.key == 13) {
+				if ((evt.type == Hid::Event::EvtKeypress && evt.key == 13) || (evt.type == Hid::Event::EvtBtnPress && (evt.btn == Event::BtnStart || evt.btn == Event::BtnA))) {
 					if(sm.getFocus() || vm.getFocus()) {
 						sm.focus(false);
 						vm.focus(false);
 					} else {
 						switchbrd = world.start;
 					}
-				} else if(evt.type == Hid::Event::EvtKeypress && evt.key == 's') {
+				} else if((evt.type == Hid::Event::EvtKeypress && evt.key == 's') || (evt.type == Hid::Event::EvtBtnPress && evt.btn == Event::BtnX)) {
 					sm.focus(true);
-				} else if(evt.type == Hid::Event::EvtKeypress && evt.key == 'v') {
+				} else if((evt.type == Hid::Event::EvtKeypress && evt.key == 'v') || (evt.type == Hid::Event::EvtBtnPress && evt.btn == Event::BtnY)) {
 					vm.focus(true);
 				}
 			}
