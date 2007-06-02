@@ -1,6 +1,26 @@
 = DreamZZT ChangeLog =
 Below is a list of highlights of each DreamZZT release.  For a complete list of changes, see [http://dev.c99.org/DreamZZT/timeline].
 
+== DreamZZT 3.0.8 ==
+=== New Features ===
+ * Sound support for Dreamcast
+ * Support STK-colored torches, ammo, energizers
+ * Uses system clock for improved game timing
+ * Game speed and volume can be adjusted from title screen
+ * Integration with the Trac ticket system for in-game bug reports
+ * Optimized rendering to improve performance
+ * Mission:Enigma is now completable
+ * Auto-update support for Windows 
+
+=== Bug Fixes ===
+ * Centipede segments harm player (ticket #23)
+ * Centipedes could become disconnected if shot by an enemy (ticket #27)
+ * Board transitions may not work properly after saving (ticket #39)
+ * Change object search order to match ZZT (ticket #13)
+ * Support stat-less objects (ticket #29)
+ * Handle backspace key in debug console
+ * ZZT-OOP objects could still receive messages when locked (ticket #48) 
+
 == DreamZZT 3.0.6.1 ==
 === Bug Fixes ===
  * Pressing the enter key could crash the game (ticket #24)
