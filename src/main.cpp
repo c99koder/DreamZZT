@@ -587,7 +587,7 @@ complete this game.\r\
 				sm.update();				
 				gamespeed = (uint64)(GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f));
 				vm.update();
-				zm->setVolume((float)volmod / 8.0f);
+				zm->setVolume((float)volmod / 16.0f);
 				draw_board();
 				draw_msg();
 				st->locate(2,19);
