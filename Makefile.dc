@@ -1,7 +1,7 @@
 TIKI_DIR = ../tiki
 TIKI_PLAT = dc
 
-CFLAGS=-I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -Iinclude #-DDEBUG
+CFLAGS=-I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -Iinclude -DDEBUG
 
 OBJS = src/DreamZZT.o src/vmu.o src/lcd.o src/debug.o src/sound.o src/task.o src/console.o src/word.o src/main.o src/window.o src/board.o src/status.o src/object.o src/editor.o \
 src/objects/passage.o src/objects/terrain.o src/objects/bullet.o src/objects/enemy.o \
@@ -18,7 +18,7 @@ clean:
 include $(TIKI_DIR)/$(TIKI_PLAT)/Makefile.rules
 
 romdisk.img:
-	$(KOS_GENROMFS) -f romdisk.img -d romdisk -v -x .svn
+	$(KOS_GENROMFS) -f romdisk.img -d resources -v -x .svn
 
 romdisk.o: romdisk.img
 	$(KOS_BASE)/utils/bin2o/bin2o romdisk.img romdisk romdisk.o

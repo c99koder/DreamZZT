@@ -81,8 +81,7 @@ Tiki::Thread::Thread *render_thread;
 Texture *zzt_font;
 extern std::list<Task*> taskList;
 
-#define VERSION "3.0.8b1"
-#define BETA_VERSION
+#define VERSION "3.0.8"
 
 #define SCREEN_X 640
 #if TIKI_PLAT == TIKI_DC
