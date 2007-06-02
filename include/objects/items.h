@@ -49,7 +49,9 @@
 
 class Inventory : public ZZTObject {
 public:
-	Inventory(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	Inventory(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
+		if(type == ZZT_DOOR) m_fg = WHITE | HIGH_INTENSITY;
+	}
 	void create();
 	void message(ZZTObject *them, std::string msg);
 };
