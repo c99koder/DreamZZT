@@ -51,8 +51,8 @@ bool TaskCollect::check() {
 }
 
 void TaskCollect::get(ZZTObject *obj) {
-	if(obj->getType() == m_type) {
-		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
+	if(obj->type() == m_type) {
+		if(m_color > 0 && obj->color() != m_color && (obj->color() - 8) != m_color) return;
 		m_count--;
 	}
 }
@@ -66,8 +66,8 @@ bool TaskKillEnemy::check() {
 }
 
 void TaskKillEnemy::kill(ZZTObject *obj) {
-	if(obj->getType() == m_type) {
-		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
+	if(obj->type() == m_type) {
+		if(m_color > 0 && obj->color() != m_color && (obj->color() - 8) != m_color) return;
 		m_count--;
 	}
 }
@@ -81,8 +81,8 @@ bool TaskKillObject::check() {
 }
 
 void TaskKillObject::kill(ZZTObject *obj) {
-	if(obj->getType() == ZZT_OBJECT && ((ZZTOOP*)obj)->get_zztobj_name() == m_name) {
-		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
+	if(obj->type() == ZZT_OBJECT && ((ZZTOOP*)obj)->get_zztobj_name() == m_name) {
+		if(m_color > 0 && obj->color() != m_color && (obj->color() - 8) != m_color) return;
 		m_count--;
 	}
 }
@@ -96,8 +96,8 @@ bool TaskShootObject::check() {
 }
 
 void TaskShootObject::shoot(ZZTObject *obj) {
-	if(obj->getType() == ZZT_OBJECT && ((ZZTOOP*)obj)->get_zztobj_name() == m_name) {
-		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
+	if(obj->type() == ZZT_OBJECT && ((ZZTOOP*)obj)->get_zztobj_name() == m_name) {
+		if(m_color > 0 && obj->color() != m_color && (obj->color() - 8) != m_color) return;
 		m_count--;
 	}
 }
@@ -111,14 +111,14 @@ bool TaskTouchObject::check() {
 }
 
 void TaskTouchObject::touch(ZZTObject *obj) {
-	if(obj->getType() == ZZT_OBJECT && ((ZZTOOP*)obj)->get_zztobj_name() == m_name) {
-		if(m_color > 0 && obj->getColor() != m_color && (obj->getColor() - 8) != m_color) return;
+	if(obj->type() == ZZT_OBJECT && ((ZZTOOP*)obj)->get_zztobj_name() == m_name) {
+		if(m_color > 0 && obj->color() != m_color && (obj->color() - 8) != m_color) return;
 		m_count--;
 	}
 }
 
 bool TaskPlayerPosition::check() {
-	Vector p = player->getPosition();
+	Vector p = player->position();
 	if(p.x <= m_max.x && p.y <= m_max.y && p.x >= m_min.x && p.y >= m_min.y)
 		m_complete = true;
 	
@@ -141,7 +141,7 @@ bool TaskObjectCount::check() {
 	do {
 		obj=get_obj_by_type(m_type, x, y);
 		if(obj!=NULL) {
-			if(m_color == 0 || obj->getColor() == m_color || obj->getColor() == m_color + 8) {
+			if(m_color == 0 || obj->color() == m_color || obj->color() == m_color + 8) {
 				count++;
 				x--;
 			}

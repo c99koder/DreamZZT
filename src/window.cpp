@@ -390,7 +390,7 @@ void TUIPasswordInput::draw(ConsoleText *ct) {
 }
 
 void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
-	//int fg=(console->getColor(x,y)/16)-8;
+	//int fg=(console->color(x,y)/16)-8;
 	//if(fg<0) fg=8;
 	console->putColor(x,y, BLACK|HIGH_INTENSITY);
 }
@@ -568,7 +568,7 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 	m_widgets[m_offset]->focus(true);
 	if(playerEventCollector != NULL && playerEventCollector->listening()) {
 		playerEventCollector->stop();
-		if(player != NULL) player->setHeading(player->getHeading());
+		if(player != NULL) player->setHeading(player->heading());
 	}
 
 	zoom = 1;

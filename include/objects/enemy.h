@@ -87,7 +87,7 @@ public:
 	}
 		
 	void setParam(int arg, unsigned char val) { if(arg==1) m_intel = val; }
-	unsigned char getParam(int arg) { if(arg==1) return m_intel; else return 0; }
+	unsigned char param(int arg) { if(arg==1) return m_intel; else return 0; }
 	void message(ZZTObject *them, std::string msg);
 	
 	void addEditWidgets(TUIWindow *w) {
@@ -124,7 +124,7 @@ public:
 		m_moveCounter=0;
 	}
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 	void update();
 	void addEditWidgets(TUIWindow *w) {
 		Enemy::addEditWidgets(w);
@@ -140,7 +140,7 @@ public:
 		m_rate = 4;
 	}
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 	void update();
 	void addEditWidgets(TUIWindow *w) {
 		Enemy::addEditWidgets(w);
@@ -157,7 +157,7 @@ public:
 		m_animIndex = 0;
 	}
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 	void update();
 	void addEditWidgets(TUIWindow *w) {
 		Enemy::addEditWidgets(w);
@@ -188,7 +188,7 @@ public:
 	void update();
 	void message(ZZTObject *them, std::string msg);
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 		
 	void reverse() {
 		Centipede *tmp = m_next;

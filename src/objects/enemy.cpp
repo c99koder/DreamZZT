@@ -60,10 +60,10 @@ void Ruffian::setParam(int arg, unsigned char val) {
 	Enemy::setParam(arg,val);
 }
 
-unsigned char Ruffian::getParam(int arg) {
+unsigned char Ruffian::param(int arg) {
 	if(arg == 2) return m_rest;
 	
-	return Enemy::getParam(arg);
+	return Enemy::param(arg);
 }
 
 void Ruffian::update() {
@@ -89,10 +89,10 @@ void SpinningGun::setParam(int arg, unsigned char val) {
 	Enemy::setParam(arg,val);	
 }
 
-unsigned char SpinningGun::getParam(int arg) {
+unsigned char SpinningGun::param(int arg) {
 	if(arg == 2) return m_rate;
 	
-	return Enemy::getParam(arg);
+	return Enemy::param(arg);
 }
 
 void SpinningGun::update() {
@@ -103,8 +103,8 @@ void SpinningGun::update() {
 	
 	if(player != NULL && rand()%10<m_rate) {
 		if(rand()%10<m_intel) {
-			if(((m_position - player->getPosition()).x >= -2 && (m_position - player->getPosition()).x <= 2) ||
-				((m_position - player->getPosition()).y >= -2 && (m_position - player->getPosition()).y <= 2)) {
+			if(((m_position - player->position()).x >= -2 && (m_position - player->position()).x <= 2) ||
+				((m_position - player->position()).y >= -2 && (m_position - player->position()).y <= 2)) {
 				shoot(toward(player));
 			}
 		} else {
@@ -121,18 +121,18 @@ void Tiger::setParam(int arg, unsigned char val) {
 	Enemy::setParam(arg,val);
 }
 
-unsigned char Tiger::getParam(int arg) {
+unsigned char Tiger::param(int arg) {
 	if(arg == 2) return m_rate;
 	
-	return Enemy::getParam(arg);
+	return Enemy::param(arg);
 }
 
 void Tiger::update() {
 	Lion::update();
 
 	if(rand()%10<m_rate) {
-		if(player != NULL && (((m_position - player->getPosition()).x >= -1 && (m_position - player->getPosition()).x <= 1) ||
-			 ((m_position - player->getPosition()).y >= -1 && (m_position - player->getPosition()).y <= 1))) {
+		if(player != NULL && (((m_position - player->position()).x >= -1 && (m_position - player->position()).x <= 1) ||
+			 ((m_position - player->position()).y >= -1 && (m_position - player->position()).y <= 1))) {
 			shoot(toward(player));
 		}
 	}
@@ -140,8 +140,8 @@ void Tiger::update() {
 
 void Enemy::message(ZZTObject *them, std::string message) {
 	if((
-			(message == "shot" && them->getType() == ZZT_BULLET && them->getParam(1) == 0)
-			 || them->getType()==ZZT_PLAYER || message == "bombed") && m_type != ZZT_SPINNING_GUN) {
+			(message == "shot" && them->type() == ZZT_BULLET && them->param(1) == 0)
+			 || them->type()==ZZT_PLAYER || message == "bombed") && m_type != ZZT_SPINNING_GUN) {
 		give_score(2);
 		draw_score();
 		if(message == "touch" || message == "thud") {
@@ -153,7 +153,7 @@ void Enemy::message(ZZTObject *them, std::string message) {
 		task_kill(this);
 		remove_from_board(currentbrd,this);
 	}
-	if(m_type == ZZT_BEAR && them->getType() == ZZT_BREAKABLE) {
+	if(m_type == ZZT_BEAR && them->type() == ZZT_BREAKABLE) {
 		remove_from_board(currentbrd,them);
 		remove_from_board(currentbrd,this);
 		zm->setTune("t+c-c-c");

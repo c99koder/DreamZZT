@@ -40,7 +40,7 @@ void Passage::setParam(int arg, unsigned char val) {
 	if(arg==3) m_dest = val;
 }
 
-unsigned char Passage::getParam(int arg) {
+unsigned char Passage::param(int arg) {
 	if(arg == 3) return m_dest;
 	return 0;
 }
@@ -51,17 +51,17 @@ void Passage::message(ZZTObject *them, std::string message) {
 	board_info_node *brd=get_board(m_dest);
 	Vector pos;
 	
-	if(message == "touch" && them->getType()==ZZT_PLAYER && brd!=NULL) {
+	if(message == "touch" && them->type()==ZZT_PLAYER && brd!=NULL) {
 		decompress(brd);
 		obj=get_obj_by_type(brd,ZZT_PLAYER);
 		
 		obj2=get_obj_by_color(brd,ZZT_PASSAGE,m_fg,m_bg);
-		pos = obj->getPosition();
+		pos = obj->position();
 		
 		if(obj2!=NULL) {
 			brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
 			brd->board[(int)pos.x][(int)pos.y].under=NULL;
-			pos = obj2->getPosition();
+			pos = obj2->position();
 			obj->setPosition(pos);
 			obj->setHeading(IDLE);
 			them->setHeading(IDLE);

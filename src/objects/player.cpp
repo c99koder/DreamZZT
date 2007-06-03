@@ -233,8 +233,8 @@ void Player::update() {
 			} else {
 				s=0;
 				ct->locate((int)m_position.x, (int)m_position.y);
-				ct->color(currentbrd->board[(int)m_position.x][(int)m_position.y].under->getFg(),currentbrd->board[(int)m_position.x][(int)m_position.y].under->getBg());
-				ct->printf("%c",currentbrd->board[(int)m_position.x][(int)m_position.y].under->getShape());
+				ct->color(currentbrd->board[(int)m_position.x][(int)m_position.y].under->fg(),currentbrd->board[(int)m_position.x][(int)m_position.y].under->bg());
+				ct->printf("%c",currentbrd->board[(int)m_position.x][(int)m_position.y].under->shape());
 			}
 			draw_msg();
 			render();
@@ -272,11 +272,11 @@ void Player::update() {
 				brd=get_board(board_up());
 				decompress(brd);
 				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under = NULL;
+				brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+				brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
 				obj->setPosition(Vector(m_position.x, BOARD_Y-1,0));
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj;
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
+				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
 				switchbrd=board_up();
 				m_move=IDLE;
 			}
@@ -286,11 +286,11 @@ void Player::update() {
 				brd=get_board(board_down());
 				decompress(brd);
 				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under = NULL;
+				brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+				brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
 				obj->setPosition(Vector(m_position.x,0,0));
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj;
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
+				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
 				switchbrd=board_down();
 				m_move=IDLE;
 			}
@@ -300,11 +300,11 @@ void Player::update() {
 				brd=get_board(board_left());
 				decompress(brd);
 				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under = NULL;
+				brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+				brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
 				obj->setPosition(Vector(BOARD_X-1, m_position.y,0));
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj;
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
+				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
 				switchbrd=board_left();
 				m_move=IDLE;
 			}
@@ -314,11 +314,11 @@ void Player::update() {
 				brd=get_board(board_right());
 				decompress(brd);
 				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under;
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under = NULL;
+				brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+				brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
 				obj->setPosition(Vector(0,m_position.y,0));
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].under=brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj;
-				brd->board[(int)obj->getPosition().x][(int)obj->getPosition().y].obj=obj;
+				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
 				switchbrd=board_right();
 				m_move=IDLE;
 			}

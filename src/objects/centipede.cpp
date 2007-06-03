@@ -49,10 +49,10 @@ void Centipede::setParam(int arg, unsigned char val) {
 	Enemy::setParam(arg,val);
 }
 
-unsigned char Centipede::getParam(int arg) {
+unsigned char Centipede::param(int arg) {
 	if(arg == 2) return m_deviance;
 	
-	return Enemy::getParam(arg);
+	return Enemy::param(arg);
 }
 
 void Centipede::update() {
@@ -99,7 +99,7 @@ void Centipede::discover(Centipede *prev) {
 					
 	for(y = (int)m_position.y - 1; y <= (int)m_position.y + 1; y++) {
 		for(x = (int)m_position.x - 1; x <= (int)m_position.x + 1; x++) {
-			if((x == (int)m_position.x || y == (int)m_position.y) && currentbrd->board[x][y].obj != NULL && currentbrd->board[x][y].obj != prev && currentbrd->board[x][y].obj != this && currentbrd->board[x][y].obj->getType() == ZZT_CENTIPEDE_BODY && !((Centipede *)currentbrd->board[x][y].obj)->isDiscovered()) {
+			if((x == (int)m_position.x || y == (int)m_position.y) && currentbrd->board[x][y].obj != NULL && currentbrd->board[x][y].obj != prev && currentbrd->board[x][y].obj != this && currentbrd->board[x][y].obj->type() == ZZT_CENTIPEDE_BODY && !((Centipede *)currentbrd->board[x][y].obj)->isDiscovered()) {
 				m_next=(Centipede *)(currentbrd->board[x][y].obj);
 				((Centipede *)currentbrd->board[x][y].obj)->discover(this);
 				return;
@@ -125,7 +125,7 @@ void Centipede::doMove(direction d) {
 }
 
 void Centipede::message(ZZTObject *them, std::string msg) {
-	if(m_type == ZZT_CENTIPEDE_HEAD && msg=="thud" && them->getType() != ZZT_PLAYER) {
+	if(m_type == ZZT_CENTIPEDE_HEAD && msg=="thud" && them->type() != ZZT_PLAYER) {
 		if(player!=NULL && rand()%10 < m_intel && is_empty(toward(player))) { 
 			m_heading = m_nextHeading = toward(player);
 		} else {
@@ -144,7 +144,7 @@ void Centipede::message(ZZTObject *them, std::string msg) {
 			m_type = ZZT_CENTIPEDE_BODY;
 			m_shape = ZZT_CENTIPEDE_BODY_SHAPE;
 		}
-	} else if(msg == "thud" || (msg == "shot" && them->getParam(1) == 0) || msg == "bombed" || (msg == "touch" && them->getType() == ZZT_PLAYER)) {
+	} else if(msg == "thud" || (msg == "shot" && them->param(1) == 0) || msg == "bombed" || (msg == "touch" && them->type() == ZZT_PLAYER)) {
 		if(m_prev != NULL) m_prev->unlinkNext();
 		if(m_next != NULL) m_next->unlinkPrev();
 		Enemy::message(them,msg);

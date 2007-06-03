@@ -164,7 +164,7 @@ public:
 		m_fire = 4;
 	}
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 	void create();
 	void update();
 	void addEditWidgets(TUIWindow *w) {
@@ -182,7 +182,7 @@ public:
 		m_time = 0;
 	}
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 	void update();
 private:
 	int m_time;

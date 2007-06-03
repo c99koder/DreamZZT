@@ -99,24 +99,24 @@ void *process_debug(void *) {
 
 		if(debugSelectMode != NONE) {
 			if(debugSelectMode == WATCH) {
-				if(currentbrd->board[debugselect_x][debugselect_y].obj->getProg() != "") {
+				if(currentbrd->board[debugselect_x][debugselect_y].obj->prog() != "") {
 					((ZZTOOP *)(currentbrd->board[debugselect_x][debugselect_y].obj))->watch();
 					debug("Now watching %s\n",((ZZTOOP *)(currentbrd->board[debugselect_x][debugselect_y].obj))->get_zztobj_name().c_str());
 				} else {
 					debug("Not an object.");
 				}
 			} else if(debugSelectMode == INSPECT) {
-				if(currentbrd->board[debugselect_x][debugselect_y].obj->getProg() != "") {
+				if(currentbrd->board[debugselect_x][debugselect_y].obj->prog() != "") {
 					dt->setANSI(false);
 					TUIWindow t(((ZZTOOP *)(currentbrd->board[debugselect_x][debugselect_y].obj))->get_zztobj_name());
-					t.buildFromString(currentbrd->board[debugselect_x][debugselect_y].obj->getProg());
+					t.buildFromString(currentbrd->board[debugselect_x][debugselect_y].obj->prog());
 					t.doMenu(dt);
 					dt->setANSI(true);
 					dt->color(GREY, BLACK);
 					dt->clear();
 					debug("");
 				} else {
-					debug("Not an object. (%s)", currentbrd->board[debugselect_x][debugselect_y].obj->getName().c_str());
+					debug("Not an object. (%s)", currentbrd->board[debugselect_x][debugselect_y].obj->name().c_str());
 				}
 			}
 				
@@ -165,10 +165,10 @@ void *process_debug(void *) {
 			debug("Decreased torches\n");
 		} else if(debug_cmdline == "zap") {
 			if(player==NULL) continue;
-			if(player->getPosition().x - 1 >= 0) remove_from_board(currentbrd,currentbrd->board[(int)player->getPosition().x-1][(int)player->getPosition().y].obj);
-			if(player->getPosition().y - 1 >= 0) remove_from_board(currentbrd,currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y-1].obj);
-			if(player->getPosition().x + 1 < BOARD_X) remove_from_board(currentbrd,currentbrd->board[(int)player->getPosition().x+1][(int)player->getPosition().y].obj);
-			if(player->getPosition().y + 1 < BOARD_Y) remove_from_board(currentbrd,currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y+1].obj);
+			if(player->position().x - 1 >= 0) remove_from_board(currentbrd,currentbrd->board[(int)player->position().x-1][(int)player->position().y].obj);
+			if(player->position().y - 1 >= 0) remove_from_board(currentbrd,currentbrd->board[(int)player->position().x][(int)player->position().y-1].obj);
+			if(player->position().x + 1 < BOARD_X) remove_from_board(currentbrd,currentbrd->board[(int)player->position().x+1][(int)player->position().y].obj);
+			if(player->position().y + 1 < BOARD_Y) remove_from_board(currentbrd,currentbrd->board[(int)player->position().x][(int)player->position().y+1].obj);
 			debug("Cleared area around player.\n");
 		} else if(debug_cmdline.find("keys") == 0) {
 			for(int i=0; i<7; i++) {
@@ -308,7 +308,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 	if(debug_visible && player != NULL) {
 		st->color(WHITE|HIGH_INTENSITY, BLUE);
 		st->locate(5,23);
-		*st << "X: " << (int)player->getPosition().x << " Y: " << (int)player->getPosition().y << "    ";
+		*st << "X: " << (int)player->position().x << " Y: " << (int)player->position().y << "    ";
 	}
 }
 

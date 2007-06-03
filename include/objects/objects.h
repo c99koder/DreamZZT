@@ -17,6 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */ 
 
+extern "C" {
+#if TIKI_PLAT == TIKI_OSX
+	#include "Lua/lua.h"
+#else
+	#include <lua.h>
+#endif
+}
+
 //TRANSPORTER
 #define ZZT_TRANSPORTER_SHAPE '<'
 #define ZZT_TRANSPORTER_NAME "transporter"
@@ -55,7 +63,7 @@ public:
 	void update();
 	void message(ZZTObject *them, std::string msg);
 	void setParam(int arg, unsigned char val) { if(arg==1) m_start = val; }
-	unsigned char getParam(int arg) { if(arg==1) return (m_shape==ZZT_BOMB_SHAPE)?0:(m_shape) - '0'; else return 0; }
+	unsigned char param(int arg) { if(arg==1) return (m_shape==ZZT_BOMB_SHAPE)?0:(m_shape) - '0'; else return 0; }
 	void addEditWidgets(TUIWindow *w) {
 		TUIRadioGroup *rg = new TUIRadioGroup("Direction            ",&m_start);
 		rg->add("Inactive");
@@ -104,7 +112,7 @@ public:
 		m_owner = 0;
 	}
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 	void update();
 	void message(ZZTObject *them, std::string msg);
 	void addEditWidgets(TUIWindow *w) {
@@ -186,7 +194,7 @@ public:
 		m_watch = false;
 	}
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);
@@ -237,7 +245,7 @@ public:
 		m_dest = 0;
 	}
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 	void create();
 	void message(ZZTObject *them, std::string msg);
 	void addEditWidgets(TUIWindow *w) {
@@ -260,7 +268,7 @@ public:
 		m_rate = 0;
 	}
 	void setParam(int arg, unsigned char val);
-	unsigned char getParam(int arg);
+	unsigned char param(int arg);
 	void create();
 	void update();
 private:
@@ -291,4 +299,45 @@ public:
 	}
 private:
 	direction m_move, m_shoot;
+};
+
+//LUA Script
+#define ZZT_LUA_SHAPE 0x01
+#define ZZT_LUA_NAME "lua"
+#define ZZT_LUA_FLAGS F_OBJECT | F_PUSHER
+#define ZZT_LUA_CLASS ZZTLUA
+
+class ZZTLUA : public ZZTObject {
+public:
+	ZZTLUA(int type, int x, int y, int shape, int flags, std::string name);	
+	~ZZTLUA();
+	
+	void create();
+	void update();
+	void message(ZZTObject *from, std::string msg) { push_message(from, msg); };
+
+	struct message_queue_item {
+		ZZTObject *them;
+		std::string message;
+	};
+	
+	int message_count() {
+		return message_queue.size();
+	}
+	
+	message_queue_item pop_message() {
+		message_queue_item i = *(message_queue.begin());
+		message_queue.pop_front();
+		return i;
+	}	
+private:
+	std::list<message_queue_item> message_queue;
+	
+	void push_message(ZZTObject *them, std::string message) {
+		message_queue_item i;
+		i.them = them;
+		i.message = message;
+		message_queue.push_back(i);
+	}
+	lua_State* m_luaVM;
 };

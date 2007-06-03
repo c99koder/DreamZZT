@@ -315,7 +315,7 @@ void draw_color(int fg, int bg) {
 void draw_pattern(ZZTObject *pattern[5], int pat) {
 	Vector p;
 	for(int i=0; i<5; i++) {
-		p = pattern[i]->getPosition();
+		p = pattern[i]->position();
 		pattern[i]->setPosition(Vector( (float)(BOARD_X+1+i), 22.0f, 0.0f));
 		if(i<4) pattern[i]->setColor(15);
 		pattern[i]->draw();
@@ -418,7 +418,7 @@ void edit_zzt() {
 						put(o);
 						break;
 					case 13:
-						if(currentbrd->board[edit_x][edit_y].obj->getFlags() & F_OBJECT) {
+						if(currentbrd->board[edit_x][edit_y].obj->flags() & F_OBJECT) {
 							ec.stop();
 							currentbrd->board[edit_x][edit_y].obj->edit();
 							ec.start();

@@ -1,5 +1,5 @@
 
-//Generated on Sat Jun  3 00:09:22 EDT 2006 by sam 
+//Generated on Fri Jun  1 23:11:38 EDT 2007 by sam 
 
 int str_to_obj(std::string str) { 
   if(str == "") {
@@ -100,6 +100,8 @@ int str_to_obj(std::string str) {
     return ZZT_CENTIPEDE_HEAD;
   } else if(str.find(ZZT_CENTIPEDE_BODY_NAME) == 0) {
     return ZZT_CENTIPEDE_BODY;
+  } else if(str.find(ZZT_LUA_NAME) == 0) {
+    return ZZT_LUA;
   } else {
     return -1;
   }
@@ -205,6 +207,8 @@ ZZTObject *create_object(int type, int x, int y) {
     return new ZZT_CENTIPEDE_HEAD_CLASS(type, x, y, ZZT_CENTIPEDE_HEAD_SHAPE, ZZT_CENTIPEDE_HEAD_FLAGS, ZZT_CENTIPEDE_HEAD_NAME);
   } else if(type == ZZT_CENTIPEDE_BODY) {
     return new ZZT_CENTIPEDE_BODY_CLASS(type, x, y, ZZT_CENTIPEDE_BODY_SHAPE, ZZT_CENTIPEDE_BODY_FLAGS, ZZT_CENTIPEDE_BODY_NAME);
+  } else if(type == ZZT_LUA) {
+    return new ZZT_LUA_CLASS(type, x, y, ZZT_LUA_SHAPE, ZZT_LUA_FLAGS, ZZT_LUA_NAME);
   } else {
     return NULL;
   }
@@ -214,102 +218,104 @@ ZZTObject *create_copy(ZZTObject *source) {
   if(source == NULL) {
     return NULL;
 
-  } else if(source->getType() == ZZT_PLAYER) {
+  } else if(source->type() == ZZT_PLAYER) {
     return new ZZT_PLAYER_CLASS(*(ZZT_PLAYER_CLASS *)source);
-  } else if(source->getType() == ZZT_OBJECT) {
+  } else if(source->type() == ZZT_OBJECT) {
     return new ZZT_OBJECT_CLASS(*(ZZT_OBJECT_CLASS *)source);
-  } else if(source->getType() == ZZT_PASSAGE) {
+  } else if(source->type() == ZZT_PASSAGE) {
     return new ZZT_PASSAGE_CLASS(*(ZZT_PASSAGE_CLASS *)source);
-  } else if(source->getType() == ZZT_SLIDER_NS) {
+  } else if(source->type() == ZZT_SLIDER_NS) {
     return new ZZT_SLIDER_NS_CLASS(*(ZZT_SLIDER_NS_CLASS *)source);
-  } else if(source->getType() == ZZT_SLIDER_EW) {
+  } else if(source->type() == ZZT_SLIDER_EW) {
     return new ZZT_SLIDER_EW_CLASS(*(ZZT_SLIDER_EW_CLASS *)source);
-  } else if(source->getType() == ZZT_PUSHER) {
+  } else if(source->type() == ZZT_PUSHER) {
     return new ZZT_PUSHER_CLASS(*(ZZT_PUSHER_CLASS *)source);
-  } else if(source->getType() == ZZT_KEY) {
+  } else if(source->type() == ZZT_KEY) {
     return new ZZT_KEY_CLASS(*(ZZT_KEY_CLASS *)source);
-  } else if(source->getType() == ZZT_GEM) {
+  } else if(source->type() == ZZT_GEM) {
     return new ZZT_GEM_CLASS(*(ZZT_GEM_CLASS *)source);
-  } else if(source->getType() == ZZT_TORCH) {
+  } else if(source->type() == ZZT_TORCH) {
     return new ZZT_TORCH_CLASS(*(ZZT_TORCH_CLASS *)source);
-  } else if(source->getType() == ZZT_AMMO) {
+  } else if(source->type() == ZZT_AMMO) {
     return new ZZT_AMMO_CLASS(*(ZZT_AMMO_CLASS *)source);
-  } else if(source->getType() == ZZT_SCROLL) {
+  } else if(source->type() == ZZT_SCROLL) {
     return new ZZT_SCROLL_CLASS(*(ZZT_SCROLL_CLASS *)source);
-  } else if(source->getType() == ZZT_ENERGIZER) {
+  } else if(source->type() == ZZT_ENERGIZER) {
     return new ZZT_ENERGIZER_CLASS(*(ZZT_ENERGIZER_CLASS *)source);
-  } else if(source->getType() == ZZT_DOOR) {
+  } else if(source->type() == ZZT_DOOR) {
     return new ZZT_DOOR_CLASS(*(ZZT_DOOR_CLASS *)source);
-  } else if(source->getType() == ZZT_CONVEYER_CW) {
+  } else if(source->type() == ZZT_CONVEYER_CW) {
     return new ZZT_CONVEYER_CW_CLASS(*(ZZT_CONVEYER_CW_CLASS *)source);
-  } else if(source->getType() == ZZT_CONVEYER_CCW) {
+  } else if(source->type() == ZZT_CONVEYER_CCW) {
     return new ZZT_CONVEYER_CCW_CLASS(*(ZZT_CONVEYER_CCW_CLASS *)source);
-  } else if(source->getType() == ZZT_BOMB) {
+  } else if(source->type() == ZZT_BOMB) {
     return new ZZT_BOMB_CLASS(*(ZZT_BOMB_CLASS *)source);
-  } else if(source->getType() == ZZT_EXPLOSION) {
+  } else if(source->type() == ZZT_EXPLOSION) {
     return new ZZT_EXPLOSION_CLASS(*(ZZT_EXPLOSION_CLASS *)source);
-  } else if(source->getType() == ZZT_BULLET) {
+  } else if(source->type() == ZZT_BULLET) {
     return new ZZT_BULLET_CLASS(*(ZZT_BULLET_CLASS *)source);
-  } else if(source->getType() == ZZT_DUPLICATOR) {
+  } else if(source->type() == ZZT_DUPLICATOR) {
     return new ZZT_DUPLICATOR_CLASS(*(ZZT_DUPLICATOR_CLASS *)source);
-  } else if(source->getType() == ZZT_TRANSPORTER) {
+  } else if(source->type() == ZZT_TRANSPORTER) {
     return new ZZT_TRANSPORTER_CLASS(*(ZZT_TRANSPORTER_CLASS *)source);
-  } else if(source->getType() == ZZT_BOULDER) {
+  } else if(source->type() == ZZT_BOULDER) {
     return new ZZT_BOULDER_CLASS(*(ZZT_BOULDER_CLASS *)source);
-  } else if(source->getType() == ZZT_EMPTY) {
+  } else if(source->type() == ZZT_EMPTY) {
     return new ZZT_EMPTY_CLASS(*(ZZT_EMPTY_CLASS *)source);
-  } else if(source->getType() == ZZT_BREAKABLE) {
+  } else if(source->type() == ZZT_BREAKABLE) {
     return new ZZT_BREAKABLE_CLASS(*(ZZT_BREAKABLE_CLASS *)source);
-  } else if(source->getType() == ZZT_LINE) {
+  } else if(source->type() == ZZT_LINE) {
     return new ZZT_LINE_CLASS(*(ZZT_LINE_CLASS *)source);
-  } else if(source->getType() == ZZT_SOLID) {
+  } else if(source->type() == ZZT_SOLID) {
     return new ZZT_SOLID_CLASS(*(ZZT_SOLID_CLASS *)source);
-  } else if(source->getType() == ZZT_NORMAL) {
+  } else if(source->type() == ZZT_NORMAL) {
     return new ZZT_NORMAL_CLASS(*(ZZT_NORMAL_CLASS *)source);
-  } else if(source->getType() == ZZT_FAKE) {
+  } else if(source->type() == ZZT_FAKE) {
     return new ZZT_FAKE_CLASS(*(ZZT_FAKE_CLASS *)source);
-  } else if(source->getType() == ZZT_FOREST) {
+  } else if(source->type() == ZZT_FOREST) {
     return new ZZT_FOREST_CLASS(*(ZZT_FOREST_CLASS *)source);
-  } else if(source->getType() == ZZT_INVISIBLE) {
+  } else if(source->type() == ZZT_INVISIBLE) {
     return new ZZT_INVISIBLE_CLASS(*(ZZT_INVISIBLE_CLASS *)source);
-  } else if(source->getType() == ZZT_WATER) {
+  } else if(source->type() == ZZT_WATER) {
     return new ZZT_WATER_CLASS(*(ZZT_WATER_CLASS *)source);
-  } else if(source->getType() == ZZT_BLINK) {
+  } else if(source->type() == ZZT_BLINK) {
     return new ZZT_BLINK_CLASS(*(ZZT_BLINK_CLASS *)source);
-  } else if(source->getType() == ZZT_HORIZONTAL_BLINK) {
+  } else if(source->type() == ZZT_HORIZONTAL_BLINK) {
     return new ZZT_HORIZONTAL_BLINK_CLASS(*(ZZT_HORIZONTAL_BLINK_CLASS *)source);
-  } else if(source->getType() == ZZT_VERTICAL_BLINK) {
+  } else if(source->type() == ZZT_VERTICAL_BLINK) {
     return new ZZT_VERTICAL_BLINK_CLASS(*(ZZT_VERTICAL_BLINK_CLASS *)source);
-  } else if(source->getType() == ZZT_BLUE_TEXT) {
+  } else if(source->type() == ZZT_BLUE_TEXT) {
     return new ZZT_BLUE_TEXT_CLASS(*(ZZT_BLUE_TEXT_CLASS *)source);
-  } else if(source->getType() == ZZT_GREEN_TEXT) {
+  } else if(source->type() == ZZT_GREEN_TEXT) {
     return new ZZT_GREEN_TEXT_CLASS(*(ZZT_GREEN_TEXT_CLASS *)source);
-  } else if(source->getType() == ZZT_CYAN_TEXT) {
+  } else if(source->type() == ZZT_CYAN_TEXT) {
     return new ZZT_CYAN_TEXT_CLASS(*(ZZT_CYAN_TEXT_CLASS *)source);
-  } else if(source->getType() == ZZT_RED_TEXT) {
+  } else if(source->type() == ZZT_RED_TEXT) {
     return new ZZT_RED_TEXT_CLASS(*(ZZT_RED_TEXT_CLASS *)source);
-  } else if(source->getType() == ZZT_PURPLE_TEXT) {
+  } else if(source->type() == ZZT_PURPLE_TEXT) {
     return new ZZT_PURPLE_TEXT_CLASS(*(ZZT_PURPLE_TEXT_CLASS *)source);
-  } else if(source->getType() == ZZT_YELLOW_TEXT) {
+  } else if(source->type() == ZZT_YELLOW_TEXT) {
     return new ZZT_YELLOW_TEXT_CLASS(*(ZZT_YELLOW_TEXT_CLASS *)source);
-  } else if(source->getType() == ZZT_WHITE_TEXT) {
+  } else if(source->type() == ZZT_WHITE_TEXT) {
     return new ZZT_WHITE_TEXT_CLASS(*(ZZT_WHITE_TEXT_CLASS *)source);
-  } else if(source->getType() == ZZT_LION) {
+  } else if(source->type() == ZZT_LION) {
     return new ZZT_LION_CLASS(*(ZZT_LION_CLASS *)source);
-  } else if(source->getType() == ZZT_SHARK) {
+  } else if(source->type() == ZZT_SHARK) {
     return new ZZT_SHARK_CLASS(*(ZZT_SHARK_CLASS *)source);
-  } else if(source->getType() == ZZT_BEAR) {
+  } else if(source->type() == ZZT_BEAR) {
     return new ZZT_BEAR_CLASS(*(ZZT_BEAR_CLASS *)source);
-  } else if(source->getType() == ZZT_RUFFIAN) {
+  } else if(source->type() == ZZT_RUFFIAN) {
     return new ZZT_RUFFIAN_CLASS(*(ZZT_RUFFIAN_CLASS *)source);
-  } else if(source->getType() == ZZT_TIGER) {
+  } else if(source->type() == ZZT_TIGER) {
     return new ZZT_TIGER_CLASS(*(ZZT_TIGER_CLASS *)source);
-  } else if(source->getType() == ZZT_SPINNING_GUN) {
+  } else if(source->type() == ZZT_SPINNING_GUN) {
     return new ZZT_SPINNING_GUN_CLASS(*(ZZT_SPINNING_GUN_CLASS *)source);
-  } else if(source->getType() == ZZT_CENTIPEDE_HEAD) {
+  } else if(source->type() == ZZT_CENTIPEDE_HEAD) {
     return new ZZT_CENTIPEDE_HEAD_CLASS(*(ZZT_CENTIPEDE_HEAD_CLASS *)source);
-  } else if(source->getType() == ZZT_CENTIPEDE_BODY) {
+  } else if(source->type() == ZZT_CENTIPEDE_BODY) {
     return new ZZT_CENTIPEDE_BODY_CLASS(*(ZZT_CENTIPEDE_BODY_CLASS *)source);
+  } else if(source->type() == ZZT_LUA) {
+    return new ZZT_LUA_CLASS(*(ZZT_LUA_CLASS *)source);
   } else {
     return NULL;
   }

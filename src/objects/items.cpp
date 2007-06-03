@@ -63,28 +63,28 @@ void Transporter::update() {
 
 void Transporter::message(ZZTObject *them, std::string message) {
 	int x = (int)m_position.x, y = (int)m_position.y;
-	if(them->getType()==ZZT_PLAYER && them->getHeading()==m_heading && message == "touch") {
+	if(them->type()==ZZT_PLAYER && them->heading()==m_heading && message == "touch") {
 		do {
 			x += (int)m_step.x;
 			y += (int)m_step.y;
 
 			if(x<=0 || y<=0 || x>=BOARD_X || y>=BOARD_Y) {
-				currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y].obj=currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y].under;
+				currentbrd->board[(int)player->position().x][(int)player->position().y].obj=currentbrd->board[(int)player->position().x][(int)player->position().y].under;
 				currentbrd->board[(int)(m_position.x+m_step.x)][(int)(m_position.y+m_step.y)].under=currentbrd->board[(int)(m_position.x+m_step.x)][(int)(m_position.y+m_step.y)].obj;
 				currentbrd->board[(int)(m_position.x+m_step.x)][(int)(m_position.y+m_step.y)].obj=player;
-				draw_block((int)player->getPosition().x, (int)player->getPosition().y);
+				draw_block((int)player->position().x, (int)player->position().y);
 				player->setPosition(m_position + m_step);
-				draw_block((int)player->getPosition().x, (int)player->getPosition().y);
+				draw_block((int)player->position().x, (int)player->position().y);
 				break;
-			} else if(currentbrd->board[x][y].obj->getType()==ZZT_TRANSPORTER &&
-				(currentbrd->board[x][y].obj->getStep().x==m_step.x*-1 ||
-				currentbrd->board[x][y].obj->getStep().y==m_step.y*-1)) {
-				currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y].obj=currentbrd->board[(int)player->getPosition().x][(int)player->getPosition().y].under;
+			} else if(currentbrd->board[x][y].obj->type()==ZZT_TRANSPORTER &&
+				(currentbrd->board[x][y].obj->step().x==m_step.x*-1 ||
+				currentbrd->board[x][y].obj->step().y==m_step.y*-1)) {
+				currentbrd->board[(int)player->position().x][(int)player->position().y].obj=currentbrd->board[(int)player->position().x][(int)player->position().y].under;
 				currentbrd->board[(int)(x+m_step.x)][(int)(y+m_step.y)].under=currentbrd->board[(int)(x+m_step.x)][(int)(y+m_step.y)].obj;
 				currentbrd->board[(int)(x+m_step.x)][(int)(y+m_step.y)].obj=player;
-				draw_block((int)player->getPosition().x, (int)player->getPosition().y);
-				player->setPosition(currentbrd->board[x][y].obj->getPosition() + m_step);
-				draw_block((int)player->getPosition().x, (int)player->getPosition().y);
+				draw_block((int)player->position().x, (int)player->position().y);
+				player->setPosition(currentbrd->board[x][y].obj->position() + m_step);
+				draw_block((int)player->position().x, (int)player->position().y);
 				break;
 			}
 		} while(x>0 && x<BOARD_X && y>0 && y<BOARD_Y);
@@ -175,7 +175,7 @@ void Inventory::message(ZZTObject *them, std::string message) {
 			set_msg(tmp);
 			break;
 		case ZZT_DOOR:
-			if(them->getType()==ZZT_PLAYER) {
+			if(them->type()==ZZT_PLAYER) {
 				if(world.keys[(m_bg%8)-1]==1) {
 					//ok=0;
 					sprintf(tmp,"The %s door is now open!",int_to_color(*m_color).c_str());
@@ -214,10 +214,5 @@ void Inventory::message(ZZTObject *them, std::string message) {
 }
 
 void Inventory::create() {
-	switch(m_type) {
-	case ZZT_DOOR:
-		m_shape=8;
-		m_color=&m_bg;
-		break;
-	}
+
 }

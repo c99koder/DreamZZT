@@ -51,7 +51,7 @@ void Bullet::setParam(int arg, unsigned char val) {
 	if(arg == 2) m_heading = (direction)val;
 }
 
-unsigned char Bullet::getParam(int arg) {
+unsigned char Bullet::param(int arg) {
 	if(arg == 1) return (unsigned char)m_owner;
 	if(arg == 2) return (unsigned char)m_heading;
 	return 0;
@@ -64,7 +64,7 @@ void Bullet::update() {
 void Bullet::message(ZZTObject *them, std::string message) {
 	if(message == "thud") {
 		 them->message(this,"shot");
-		if(them->getType()==ZZT_BREAKABLE) {
+		if(them->type()==ZZT_BREAKABLE) {
 			remove_from_board(currentbrd,them);
 			zm->setTune("t-c");
 			zm->start();
@@ -102,7 +102,7 @@ void ZZTObject::shoot(enum direction dir) {
 			return;
 		}
 	}
-	if(is_empty(dir) || currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->getType() == ZZT_WATER) {
+	if(is_empty(dir) || currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->type() == ZZT_WATER) {
 		if(m_type==ZZT_PLAYER) world.ammo--;
 		draw_ammo();
 		bullet=create_object(ZZT_BULLET,dir);
@@ -121,7 +121,7 @@ void ZZTObject::shoot(enum direction dir) {
 		}
 	} else {
 		if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj!=NULL) {
-			if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->getType()==ZZT_BREAKABLE) {
+			if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->type()==ZZT_BREAKABLE) {
 				remove_from_board(currentbrd,currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj);
 			} else {
 				currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->message(this,"shot");

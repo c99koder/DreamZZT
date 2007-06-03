@@ -134,7 +134,7 @@ direction ZZTObject::str_to_direction(string s) {
 direction ZZTObject::toward(ZZTObject *them) {
 	//relative direction between me and them
 	direction dirx=IDLE,diry=IDLE;
-	Vector dist = m_position - them->getPosition();
+	Vector dist = m_position - them->position();
 
 	if(dist.x < 0) { dirx=RIGHT; }
 	if(dist.x > 0) { dirx=LEFT; }
@@ -159,7 +159,7 @@ direction ZZTObject::toward(ZZTObject *them) {
 
 int ZZTObject::distance(ZZTObject *them) {
 	//distance between me and them
-	Vector dist = m_position - them->getPosition();
+	Vector dist = m_position - them->position();
 
 	if(dist.x<0) { dist.x*=-1; }
 	if(dist.y<0) { dist.y*=-1; }
@@ -168,7 +168,7 @@ int ZZTObject::distance(ZZTObject *them) {
 
 int ZZTObject::dist_x(ZZTObject *them) {
 	//distance between me and them (x axis only)
-	Vector dist = m_position - them->getPosition();
+	Vector dist = m_position - them->position();
 	
 	if(dist.x<0) { dist.x*=-1; }
 	if(dist.y<0) { dist.y*=-1; }
@@ -177,7 +177,7 @@ int ZZTObject::dist_x(ZZTObject *them) {
 
 int ZZTObject::dist_y(ZZTObject *them) {
 	//distance between me and them (x axis only)
-	Vector dist = m_position - them->getPosition();
+	Vector dist = m_position - them->position();
 	
 	if(dist.x<0) { dist.x*=-1; }
 	if(dist.y<0) { dist.y*=-1; }
@@ -258,14 +258,14 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	if(y<0) { y=0; }
 	if(x>=BOARD_X) { x=BOARD_X-1; }
 	if(y>=BOARD_Y) { y=BOARD_Y-1; }
-	if((m_type != ZZT_SHARK && is_empty(dir)) || ((m_type==ZZT_BULLET || m_type==ZZT_SHARK) && board->board[x][y].obj->getType()==ZZT_WATER)) {
+	if((m_type != ZZT_SHARK && is_empty(dir)) || ((m_type==ZZT_BULLET || m_type==ZZT_SHARK) && board->board[x][y].obj->type()==ZZT_WATER)) {
 		m_position.x = (float)x;
 		m_position.y = (float)y;
 		m_heading = dir;
 		if(!board->board[x][y].obj->isValid()) printf("Warning: putting invalid object under %i,%i\n",x,y);
 		board->board[x][y].under=board->board[x][y].obj;
 		board->board[x][y].obj=this;
-		m_bg=board->board[x][y].under->getBg();
+		m_bg=board->board[x][y].under->bg();
 		board->board[oldx][oldy].obj=board->board[oldx][oldy].under;
 		if(board->board[oldx][oldy].obj != NULL && !board->board[oldx][oldy].obj->isValid()) {
 			printf("Warning: putting invalid object at %i,%i\n",oldx,oldy);
@@ -279,14 +279,14 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	} else {
 		them=board->board[x][y].obj;
 		if(them!=NULL && them!=this) {
-			if(them->getFlags()&F_ITEM && m_type==ZZT_PLAYER){
+			if(them->flags()&F_ITEM && m_type==ZZT_PLAYER){
 				them->message(this,"get");
 				if(is_empty(dir)) {
 					suc=1;
 					task_get(them);
 				}
 			}
-			else if(suc==0 && them->getFlags()&F_PUSHABLE && m_type!=ZZT_BULLET && (m_flags&F_PUSHER || !origin) ) {
+			else if(suc==0 && them->flags()&F_PUSHABLE && m_type!=ZZT_BULLET && (m_flags&F_PUSHER || !origin) ) {
 				if(them->move(dir,trying,false)) {
 					suc=1;
 				} else {
@@ -299,7 +299,7 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 			}
 			if(suc==0) {
 				if(!trying && !(m_flags & F_SLEEPING)) message(them,"thud");
-				if(!trying && !(them->getFlags() & F_SLEEPING) && m_type != ZZT_BULLET) {
+				if(!trying && !(them->flags() & F_SLEEPING) && m_type != ZZT_BULLET) {
 					them->message(this,"touch");
 					task_touch(them);
 				}
@@ -410,7 +410,7 @@ void ZZTObject::draw() {
 		return;
 	}
 	
-	if(player!=NULL) dist = getPosition() - player->getPosition();
+	if(player!=NULL) dist = position() - player->position();
 	
 	a=(dist.x)*(dist.x)/2.0f;
 	b=(dist.y)*(dist.y);

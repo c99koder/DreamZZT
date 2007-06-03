@@ -280,8 +280,8 @@ void render() {
 	float x,y,w,h;
 
 	if(player!=NULL) {
-		x=((BOARD_X*4)*zoom)+((BOARD_X*4)-player->getPosition().x*(8*zoom));
-		y=((SCREEN_Y/2*zoom)+(SCREEN_Y/2-player->getPosition().y*((SCREEN_Y/ 25) * zoom)));
+		x=((BOARD_X*4)*zoom)+((BOARD_X*4)-player->position().x*(8*zoom));
+		y=((SCREEN_Y/2*zoom)+(SCREEN_Y/2-player->position().y*((SCREEN_Y/ 25) * zoom)));
 		if(x>(BOARD_X*4*zoom)) x = (BOARD_X*4*zoom);
 		if(y>((SCREEN_Y/2)*zoom)) y = ((SCREEN_Y/2)*zoom);
 		// TODO: test maximum values too
@@ -373,7 +373,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	
 #if TIKI_PLAT == TIKI_DC
 #ifdef DEBUG
-	fs_chdir("/pc/Users/sam/Projects/DreamZZT/resources");
+	fs_chdir("/pc/Users/sam/Projects/DreamZZT-lua/resources");
 #else
 	fs_chdir("/cd");
 #endif
@@ -404,6 +404,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	check_updates();
 
 	world.online=0;
+
+	play_zzt("tutorial.zzt");
 
 	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
@@ -694,8 +696,8 @@ complete this game.\r\
 	draw_hud_ingame();
 	switch_board(start);
 	if(!playerEventCollector->listening()) playerEventCollector->start();
-	if(currentbrd->reenter_x == 254 && player!=NULL) currentbrd->reenter_x = (unsigned char)player->getPosition().x;
-	if(currentbrd->reenter_y == 254 && player!=NULL) currentbrd->reenter_y = (unsigned char)player->getPosition().y;	
+	if(currentbrd->reenter_x == 254 && player!=NULL) currentbrd->reenter_x = (unsigned char)player->position().x;
+	if(currentbrd->reenter_y == 254 && player!=NULL) currentbrd->reenter_y = (unsigned char)player->position().y;	
 	srand((unsigned int)time(0));
 	draw_board();
 	if(player!=NULL) player->setFlag(F_SLEEPING);
@@ -715,7 +717,7 @@ complete this game.\r\
 			debug("\x1b[0;37mWarping to \x1b[1;37m%s\n",currentbrd->title);
 			draw_board();
 			redraw_status();
-			if(player->getFlags()&F_SLEEPING) player->update();
+			if(player->flags()&F_SLEEPING) player->update();
 			switchbrd=-1;
 		} else if(switchbrd==-2) {
 			break;

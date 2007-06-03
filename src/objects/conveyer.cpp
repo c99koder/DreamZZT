@@ -36,52 +36,52 @@ extern char spin_anim[4];
 char moved[3][3];
 
 int Conveyer::cw(ZZTObject *them) {
-	if(!(them->getFlags()&F_PUSHABLE) || them->getPushed()) return 0;
+	if(!(them->flags()&F_PUSHABLE) || them->pushed()) return 0;
 
-	if((int)them->getPosition().y==(int)m_position.y-1 && ((int)them->getPosition().x==(int)m_position.x-1||(int)them->getPosition().x==(int)m_position.x)) {
-		if(::is_empty(currentbrd,(int)them->getPosition().x+1,(int)them->getPosition().y)) {
+	if((int)them->position().y==(int)m_position.y-1 && ((int)them->position().x==(int)m_position.x-1||(int)them->position().x==(int)m_position.x)) {
+		if(::is_empty(currentbrd,(int)them->position().x+1,(int)them->position().y)) {
 			them->move(RIGHT);
-			moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
+			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
 		} else {
-			if(currentbrd->board[(int)them->getPosition().x+1][(int)them->getPosition().y].obj!=NULL) {
-				return cw(currentbrd->board[(int)them->getPosition().x+1][(int)them->getPosition().y].obj);
+			if(currentbrd->board[(int)them->position().x+1][(int)them->position().y].obj!=NULL) {
+				return cw(currentbrd->board[(int)them->position().x+1][(int)them->position().y].obj);
 			} else {
 				return 0;
 			}
 		}
-	} else if((int)them->getPosition().x==(int)m_position.x+1 && ((int)them->getPosition().y==(int)m_position.y-1 || (int)them->getPosition().y==(int)m_position.y)) {
-		if(::is_empty(currentbrd,(int)them->getPosition().x,(int)them->getPosition().y+1)) {
+	} else if((int)them->position().x==(int)m_position.x+1 && ((int)them->position().y==(int)m_position.y-1 || (int)them->position().y==(int)m_position.y)) {
+		if(::is_empty(currentbrd,(int)them->position().x,(int)them->position().y+1)) {
 			them->move(DOWN);
-			moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
+			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
 		} else {
-			if(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y+1].obj!=NULL) {
-				return cw(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y+1].obj);
+			if(currentbrd->board[(int)them->position().x][(int)them->position().y+1].obj!=NULL) {
+				return cw(currentbrd->board[(int)them->position().x][(int)them->position().y+1].obj);
 			} else {
 				return 0;
 			}
 		}
-	} else if((int)them->getPosition().y==(int)m_position.y+1 && ((int)them->getPosition().x==(int)m_position.x+1 || (int)them->getPosition().x==(int)m_position.x)) {
-		if(::is_empty(currentbrd,(int)them->getPosition().x-1,(int)them->getPosition().y)) {
+	} else if((int)them->position().y==(int)m_position.y+1 && ((int)them->position().x==(int)m_position.x+1 || (int)them->position().x==(int)m_position.x)) {
+		if(::is_empty(currentbrd,(int)them->position().x-1,(int)them->position().y)) {
 			them->move(LEFT);
-			moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
+			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
 		} else {
-			if(currentbrd->board[(int)them->getPosition().x-1][(int)them->getPosition().y].obj!=NULL) {
-				return cw(currentbrd->board[(int)them->getPosition().x-1][(int)them->getPosition().y].obj);
+			if(currentbrd->board[(int)them->position().x-1][(int)them->position().y].obj!=NULL) {
+				return cw(currentbrd->board[(int)them->position().x-1][(int)them->position().y].obj);
 			} else {
 				return 0;
 			}
 		}
-	} else if((int)them->getPosition().x==(int)m_position.x-1 && ((int)them->getPosition().y==(int)m_position.y+1 || (int)them->getPosition().y==(int)m_position.y)) {
-		if(::is_empty(currentbrd,(int)them->getPosition().x,(int)them->getPosition().y-1)) {
+	} else if((int)them->position().x==(int)m_position.x-1 && ((int)them->position().y==(int)m_position.y+1 || (int)them->position().y==(int)m_position.y)) {
+		if(::is_empty(currentbrd,(int)them->position().x,(int)them->position().y-1)) {
 			them->move(UP);
-			moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
+			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
 		} else {
-			if(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y-1].obj!=NULL) {
-				return cw(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y-1].obj);
+			if(currentbrd->board[(int)them->position().x][(int)them->position().y-1].obj!=NULL) {
+				return cw(currentbrd->board[(int)them->position().x][(int)them->position().y-1].obj);
 			} else {
 				return 0;
 			}
@@ -91,52 +91,52 @@ int Conveyer::cw(ZZTObject *them) {
 }
 
 int Conveyer::ccw(ZZTObject *them) {
-	if(!(them->getFlags()&F_PUSHABLE) || them->getPushed()) return 0;
+	if(!(them->flags()&F_PUSHABLE) || them->pushed()) return 0;
 
-	if((int)them->getPosition().y==(int)m_position.y-1 && ((int)them->getPosition().x==(int)m_position.x+1||(int)them->getPosition().x==(int)m_position.x)) {
-		if(::is_empty(currentbrd,(int)them->getPosition().x-1,(int)them->getPosition().y)) {
+	if((int)them->position().y==(int)m_position.y-1 && ((int)them->position().x==(int)m_position.x+1||(int)them->position().x==(int)m_position.x)) {
+		if(::is_empty(currentbrd,(int)them->position().x-1,(int)them->position().y)) {
 			them->move(LEFT);
-			moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
+			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
 		} else {
-			if(currentbrd->board[(int)them->getPosition().x-1][(int)them->getPosition().y].obj!=NULL) {
-				return ccw(currentbrd->board[(int)them->getPosition().x-1][(int)them->getPosition().y].obj);
+			if(currentbrd->board[(int)them->position().x-1][(int)them->position().y].obj!=NULL) {
+				return ccw(currentbrd->board[(int)them->position().x-1][(int)them->position().y].obj);
 			} else {
 				return 0;
 			}
 		}
-	} else if((int)them->getPosition().x==(int)m_position.x+1 && ((int)them->getPosition().y==(int)m_position.y+1 || (int)them->getPosition().y==(int)m_position.y)) {
-		if(::is_empty(currentbrd,(int)them->getPosition().x,(int)them->getPosition().y-1)) {
+	} else if((int)them->position().x==(int)m_position.x+1 && ((int)them->position().y==(int)m_position.y+1 || (int)them->position().y==(int)m_position.y)) {
+		if(::is_empty(currentbrd,(int)them->position().x,(int)them->position().y-1)) {
 			them->move(UP);
-			moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
+			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
 		} else {
-			if(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y-1].obj!=NULL) {
-				return ccw(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y-1].obj);
+			if(currentbrd->board[(int)them->position().x][(int)them->position().y-1].obj!=NULL) {
+				return ccw(currentbrd->board[(int)them->position().x][(int)them->position().y-1].obj);
 			} else {
 				return 0;
 			}
 		}
-	} else if((int)them->getPosition().y==(int)m_position.y+1 && ((int)them->getPosition().x==(int)m_position.x-1 || (int)them->getPosition().x==(int)m_position.x)) {
-		if(::is_empty(currentbrd,(int)them->getPosition().x+1,(int)them->getPosition().y)) {
+	} else if((int)them->position().y==(int)m_position.y+1 && ((int)them->position().x==(int)m_position.x-1 || (int)them->position().x==(int)m_position.x)) {
+		if(::is_empty(currentbrd,(int)them->position().x+1,(int)them->position().y)) {
 			them->move(RIGHT);
-			moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
+			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
 		} else {
-			if(currentbrd->board[(int)them->getPosition().x+1][(int)them->getPosition().y].obj!=NULL) {
-				return ccw(currentbrd->board[(int)them->getPosition().x+1][(int)them->getPosition().y].obj);
+			if(currentbrd->board[(int)them->position().x+1][(int)them->position().y].obj!=NULL) {
+				return ccw(currentbrd->board[(int)them->position().x+1][(int)them->position().y].obj);
 			} else {
 				return 0;
 			}
 		}
-	} else if((int)them->getPosition().x==(int)m_position.x-1 && ((int)them->getPosition().y==(int)m_position.y-1 || (int)them->getPosition().y==(int)m_position.y)) {
-		if(::is_empty(currentbrd,(int)them->getPosition().x,(int)them->getPosition().y+1)) {
+	} else if((int)them->position().x==(int)m_position.x-1 && ((int)them->position().y==(int)m_position.y-1 || (int)them->position().y==(int)m_position.y)) {
+		if(::is_empty(currentbrd,(int)them->position().x,(int)them->position().y+1)) {
 			them->move(DOWN);
-			moved[((int)them->getPosition().x-(int)m_position.x)+1][((int)them->getPosition().y-(int)m_position.y)+1]=1;
+			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
 		} else {
-			if(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y+1].obj!=NULL) {
-				return ccw(currentbrd->board[(int)them->getPosition().x][(int)them->getPosition().y+1].obj);
+			if(currentbrd->board[(int)them->position().x][(int)them->position().y+1].obj!=NULL) {
+				return ccw(currentbrd->board[(int)them->position().x][(int)them->position().y+1].obj);
 			} else {
 				return 0;
 			}

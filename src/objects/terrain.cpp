@@ -42,7 +42,7 @@ void Laser::setParam(int arg, unsigned char val) {
 	if(arg==1) m_time = val;
 }
 
-unsigned char Laser::getParam(int arg) {
+unsigned char Laser::param(int arg) {
 	if(arg == 1) return m_time;
 	return 0;
 }
@@ -59,7 +59,7 @@ void Blink::setParam(int arg, unsigned char val) {
 	if(arg==2) m_fire = val;
 }
 
-unsigned char Blink::getParam(int arg) {
+unsigned char Blink::param(int arg) {
 	if(arg == 1) return m_start;
 	if(arg == 2) return m_fire;
 	return 0;
@@ -82,8 +82,8 @@ void Blink::update() {
 			x += (int)m_step.x;
 			y += (int)m_step.y;
 			if(y >= BOARD_Y || x >= BOARD_X) break;
-			if(::is_empty(currentbrd,x,y) || currentbrd->board[x][y].obj->getType()==ZZT_BULLET) {
-				if(currentbrd->board[x][y].obj->getType()==ZZT_BULLET) {
+			if(::is_empty(currentbrd,x,y) || currentbrd->board[x][y].obj->type()==ZZT_BULLET) {
+				if(currentbrd->board[x][y].obj->type()==ZZT_BULLET) {
 					remove_from_board(currentbrd,currentbrd->board[x][y].obj);
 				}
 				if(m_step.y!=0) {
@@ -171,7 +171,7 @@ void Water::update() {
 }
 
 void Terrain::message(ZZTObject *them, std::string message) {
-	if(message == "touch" && them->getType()==ZZT_PLAYER) {
+	if(message == "touch" && them->type()==ZZT_PLAYER) {
 		switch(m_type) {
 		case ZZT_FOREST:
 			if(forestmsg==0) {

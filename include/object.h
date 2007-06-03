@@ -50,13 +50,13 @@ public:
 	bool is_empty(direction d, bool ignorePlayer=false);
 	ZZTObject *create_object(int type, direction d);
 	
-	Vector getPosition() { return m_position; }
+	Vector position() { return m_position; }
 	void setPosition(Vector p) { m_position = p; }
-	Vector getStep() { return m_step; }
+	Vector step() { return m_step; }
 	void setStep(Vector s) { m_step = s; }
-	char getShape() { return m_shape; }
+	char shape() { return m_shape; }
 	void setShape(int s) { m_shape = s; }
-	int getColor() { return *m_color; }
+	int color() { return *m_color; }
 	void setColor(int c) { 
 		if(m_color == &m_bg && c > 7) { //Force background to low-intensity
 			c -= 8;
@@ -67,36 +67,38 @@ public:
 		m_fg = fg;
 		m_bg = bg;
 	}
-	int getType() { return m_type; }
-	int getFg() { return m_fg; }
+	int type() { return m_type; }
+	int fg() { return m_fg; }
 	void setFg(int f) { m_fg = f; }
-	int getBg() { return m_bg; }
+	int bg() { return m_bg; }
 	void setBg(int b) { m_bg = b; }
-	std::string getName() { return m_name; }
-	bool getUpdated() { return m_updated; }
+	std::string name() { return m_name; }
+	void setName(std::string name) { m_name = name; }
+	bool updated() { return m_updated; }
 	void setUpdated(bool u) { m_updated = u; }
-	bool getPushed() { return m_pushed; }
+	bool pushed() { return m_pushed; }
 	void setPushed(bool p) { m_pushed = p; }
-	short getCycle() { return m_cycle; }
+	short cycle() { return m_cycle; }
 	void setCycle(short c) { m_cycle = c; }
-	int getTick() { return m_tick; }
+	int tick() { return m_tick; }
 	void setTick(int t) { m_tick = t; }
-	int getFlags() { return m_flags; }
+	int flags() { return m_flags; }
+	int flag(int f) { return m_flags & f; }
 	void setFlag(int flag) { m_flags |= flag; }
 	void setFlags(int flags) { m_flags = flags; }
 	void setProg(std::string prog, int len, int pos) { m_prog=prog; m_proglen = len; m_progpos = pos; }
 	void setHeading(direction h) { m_heading = h; }
-	direction getHeading() { return m_heading; }
-	std::string getProg() { return m_prog; }
-	int getProgLen() { return m_proglen; }
-	int getProgPos() { return m_progpos; }
+	direction heading() { return m_heading; }
+	std::string prog() { return m_prog; }
+	int progLen() { return m_proglen; }
+	int progPos() { return m_progpos; }
 	
 	void draw();
 	void edit();
 	virtual void addEditWidgets(TUIWindow *w) { };
 	
 	virtual void setParam(int arg, unsigned char val) { };
-	virtual unsigned char getParam(int arg) { return 0; }
+	virtual unsigned char param(int arg) { return 0; }
 	virtual void update() { };
 	virtual void message(ZZTObject *from, std::string msg) { };
 	virtual void create() { };
@@ -188,6 +190,7 @@ private:
 #define ZZT_EMPTY 0x3B	 | (set in colour byte) | Purple blinking text
 #define ZZT_EMPTY 0x3C	 | (set in colour byte) | Yellow blinking text
 #define ZZT_EMPTY 0x3D	 | (set in colour byte) | Grey blinking text*/
+#define ZZT_LUA 0x40
 
 #define F_NONE 0
 #define F_EMPTY 1

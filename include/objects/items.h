@@ -50,7 +50,11 @@
 class Inventory : public ZZTObject {
 public:
 	Inventory(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
-		if(type == ZZT_DOOR) m_fg = WHITE | HIGH_INTENSITY;
+		if(type == ZZT_DOOR) {
+			m_fg = WHITE | HIGH_INTENSITY;
+			m_shape=8;
+			m_color=&m_bg;
+		}
 	}
 	void create();
 	void message(ZZTObject *them, std::string msg);

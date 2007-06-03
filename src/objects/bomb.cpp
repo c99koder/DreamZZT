@@ -38,7 +38,7 @@ extern ZZTMusicStream *zm;
 extern struct board_info_node *currentbrd;
 
 void Bomb::message(ZZTObject *them, std::string message) {
-	if(them->getType()==ZZT_PLAYER && message == "touch" && m_shape==ZZT_BOMB_SHAPE) {
+	if(them->type()==ZZT_PLAYER && message == "touch" && m_shape==ZZT_BOMB_SHAPE) {
 		m_shape='9';
 		m_cycle=10;
 		m_flags|=F_PUSHABLE;
@@ -81,7 +81,7 @@ void Bomb::update() {
 				if((int)sqrt(a+b) == 4-m_counter) {
 					if(x>=0 && y >= 0 && x<BOARD_X && y<BOARD_Y) {
 						them=currentbrd->board[x][y].obj;
-						if(them->getType()==ZZT_BREAKABLE || ::is_empty(currentbrd,x,y)) {
+						if(them->type()==ZZT_BREAKABLE || ::is_empty(currentbrd,x,y)) {
 							currentbrd->board[x][y].obj=::create_object(ZZT_EXPLOSION,x,y);
 							currentbrd->board[x][y].obj->create();
 							draw_block(x,y);

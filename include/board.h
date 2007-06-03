@@ -124,6 +124,7 @@ ZZTObject *get_obj_by_type(int type, int &x, int &y);
 ZZTObject *get_obj_by_type(struct board_info_node *board, int type);
 ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color);
 ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int fg, int bg);
+ZZTObject *get_obj_by_name(struct board_info_node *board, std::string name);
 struct board_info_node *get_current_board();
 int board_up();
 int board_down();

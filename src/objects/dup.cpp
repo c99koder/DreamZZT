@@ -43,7 +43,7 @@ void Duplicator::setParam(int arg, unsigned char val) {
 	if(arg==2) m_rate = val;
 }
 
-unsigned char Duplicator::getParam(int arg) {
+unsigned char Duplicator::param(int arg) {
 	if(arg==2) return m_rate;
 	return 0;
 }
@@ -58,7 +58,7 @@ void Duplicator::update() {
 	
 	if(m_animIndex==6) {
 		obj=currentbrd->board[(int)(m_position.x + m_step.x)][(int)(m_position.y + m_step.y)].obj;
-		if(currentbrd->board[x][y].obj->getFlags()&F_PUSHABLE || currentbrd->board[x][y].obj->getType() == obj->getType()) {
+		if(currentbrd->board[x][y].obj->flags()&F_PUSHABLE || currentbrd->board[x][y].obj->type() == obj->type()) {
 			if(m_step.x==-1) currentbrd->board[x][y].obj->move(RIGHT);
 			if(m_step.x==1) currentbrd->board[x][y].obj->move(LEFT);
 			if(m_step.y==-1) currentbrd->board[x][y].obj->move(DOWN);

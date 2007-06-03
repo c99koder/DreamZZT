@@ -23,6 +23,8 @@
 #include <Tiki/eventcollector.h>
 #include <Tiki/drawables/console.h>
 
+extern ConsoleText *ct;
+
 class TUIWidget {
 public:
 	TUIWidget() {
@@ -246,7 +248,7 @@ public:
 	void draw_shadow(ConsoleText *console, int x, int y);
 	void draw_box(ConsoleText *console, int x, int y, int w, int h, int fg, int bg, bool shadow=true);
 	void buildFromString(std::string s, bool ANSI=false);
-	void doMenu(ConsoleText *ct);
+	void doMenu(ConsoleText *c=ct);
 	void addWidget(TUIWidget *w) {
 		m_widgets.push_back(w);
 	}

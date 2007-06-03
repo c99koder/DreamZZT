@@ -24,7 +24,7 @@ KEY GEM TORCH AMMO SCROLL ENERGIZER \
 DOOR CONVEYER_CW CONVEYER_CCW BOMB EXPLOSION BULLET DUPLICATOR TRANSPORTER \
 BOULDER EMPTY BREAKABLE LINE SOLID NORMAL FAKE FOREST INVISIBLE WATER BLINK HORIZONTAL_BLINK VERTICAL_BLINK \
 BLUE_TEXT GREEN_TEXT CYAN_TEXT RED_TEXT PURPLE_TEXT YELLOW_TEXT WHITE_TEXT \
-LION SHARK BEAR RUFFIAN TIGER SPINNING_GUN CENTIPEDE_HEAD CENTIPEDE_BODY"
+LION SHARK BEAR RUFFIAN TIGER SPINNING_GUN CENTIPEDE_HEAD CENTIPEDE_BODY LUA"
 
 echo "
 //Generated on `date` by `whoami` 
@@ -59,7 +59,7 @@ ZZTObject *create_copy(ZZTObject *source) {
     return NULL;
 " >> objdb
 for i in $objlist; do 
-echo "  } else if(source->getType() == ZZT_${i}) {" >> objdb 
+echo "  } else if(source->type() == ZZT_${i}) {" >> objdb 
 echo "    return new ZZT_${i}_CLASS(*(ZZT_${i}_CLASS *)source);" >> objdb 
 done 
 echo "  } else {

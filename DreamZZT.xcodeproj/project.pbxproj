@@ -10,7 +10,6 @@
 		222084870A4CD20800D75C24 /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222084860A4CD20800D75C24 /* window.cpp */; };
 		22243F810BF3D480000D3055 /* dreamzzt.png in Resources */ = {isa = PBXBuildFile; fileRef = 22243F800BF3D480000D3055 /* dreamzzt.png */; };
 		2224417A0BF65406000D3055 /* bugreport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222441790BF65406000D3055 /* bugreport.cpp */; };
-		2224417E0BF65458000D3055 /* bugreport.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2224417D0BF65458000D3055 /* bugreport.h */; };
 		223229BE0A16C63C0035025E /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223229BC0A16C63C0035025E /* sound.cpp */; };
 		224200C30A0C569300F4BDF2 /* passage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B80A0C569300F4BDF2 /* passage.cpp */; };
 		224200C40A0C569300F4BDF2 /* terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B90A0C569300F4BDF2 /* terrain.cpp */; };
@@ -47,6 +46,17 @@
 		22AD22CC0A13FAD8003E828E /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
 		22D2E46D0A55EAB200319F32 /* editor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22D2E46B0A55EAB100319F32 /* editor.cpp */; };
 		22EC1AC20A2B3FD700DEE79D /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 22EC1AC10A2B3FD600DEE79D /* icon.icns */; };
+		22F3FABC0C11062700B3F65F /* lua.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22F3FABB0C11062700B3F65F /* lua.cpp */; };
+		22F3FB220C1109CF00B3F65F /* Lua.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22F3FB190C1109CF00B3F65F /* Lua.framework */; };
+		22F3FB4A0C110B2100B3F65F /* Lua.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22F3FB190C1109CF00B3F65F /* Lua.framework */; };
+		22F3FC3E0C11308600B3F65F /* tolua_event.c in Sources */ = {isa = PBXBuildFile; fileRef = 22F3FC380C11308600B3F65F /* tolua_event.c */; };
+		22F3FC3F0C11308600B3F65F /* tolua_event.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22F3FC390C11308600B3F65F /* tolua_event.h */; };
+		22F3FC400C11308600B3F65F /* tolua_is.c in Sources */ = {isa = PBXBuildFile; fileRef = 22F3FC3A0C11308600B3F65F /* tolua_is.c */; };
+		22F3FC410C11308600B3F65F /* tolua_map.c in Sources */ = {isa = PBXBuildFile; fileRef = 22F3FC3B0C11308600B3F65F /* tolua_map.c */; };
+		22F3FC420C11308600B3F65F /* tolua_push.c in Sources */ = {isa = PBXBuildFile; fileRef = 22F3FC3C0C11308600B3F65F /* tolua_push.c */; };
+		22F3FC430C11308600B3F65F /* tolua_to.c in Sources */ = {isa = PBXBuildFile; fileRef = 22F3FC3D0C11308600B3F65F /* tolua_to.c */; };
+		22F3FC4B0C11314F00B3F65F /* tolua++.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22F3FC4A0C11314F00B3F65F /* tolua++.h */; };
+		22F3FEC30C1207F600B3F65F /* tutor.lua in Resources */ = {isa = PBXBuildFile; fileRef = 22F3FEC20C1207F600B3F65F /* tutor.lua */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -63,7 +73,9 @@
 			files = (
 				2255DFDA0B52C983006EA3FE /* Tiki.framework in CopyFiles */,
 				229DC19D0B2332C1004C0FF9 /* Sparkle.framework in CopyFiles */,
-				2224417E0BF65458000D3055 /* bugreport.h in CopyFiles */,
+				22F3FB4A0C110B2100B3F65F /* Lua.framework in CopyFiles */,
+				22F3FC3F0C11308600B3F65F /* tolua_event.h in CopyFiles */,
+				22F3FC4B0C11314F00B3F65F /* tolua++.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,6 +138,16 @@
 		22D2E46B0A55EAB100319F32 /* editor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = editor.cpp; path = src/editor.cpp; sourceTree = "<group>"; };
 		22D2E4700A55EAC000319F32 /* editor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = editor.h; path = include/editor.h; sourceTree = "<group>"; };
 		22EC1AC10A2B3FD600DEE79D /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
+		22F3FABB0C11062700B3F65F /* lua.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lua.cpp; path = src/objects/lua.cpp; sourceTree = "<group>"; };
+		22F3FB190C1109CF00B3F65F /* Lua.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Lua.framework; path = "../lua-5.1.2/build/Release/Lua.framework"; sourceTree = SOURCE_ROOT; };
+		22F3FC380C11308600B3F65F /* tolua_event.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = tolua_event.c; path = "src/libtolua++/tolua_event.c"; sourceTree = "<group>"; };
+		22F3FC390C11308600B3F65F /* tolua_event.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tolua_event.h; path = "src/libtolua++/tolua_event.h"; sourceTree = "<group>"; };
+		22F3FC3A0C11308600B3F65F /* tolua_is.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = tolua_is.c; path = "src/libtolua++/tolua_is.c"; sourceTree = "<group>"; };
+		22F3FC3B0C11308600B3F65F /* tolua_map.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = tolua_map.c; path = "src/libtolua++/tolua_map.c"; sourceTree = "<group>"; };
+		22F3FC3C0C11308600B3F65F /* tolua_push.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = tolua_push.c; path = "src/libtolua++/tolua_push.c"; sourceTree = "<group>"; };
+		22F3FC3D0C11308600B3F65F /* tolua_to.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = tolua_to.c; path = "src/libtolua++/tolua_to.c"; sourceTree = "<group>"; };
+		22F3FC4A0C11314F00B3F65F /* tolua++.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "tolua++.h"; path = "include/tolua++.h"; sourceTree = "<group>"; };
+		22F3FEC20C1207F600B3F65F /* tutor.lua */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = tutor.lua; path = resources/tutor.lua; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -146,6 +168,7 @@
 				C4F50EEF0799E5B40001D0D0 /* OpenGL.framework in Frameworks */,
 				229DC1870B2332B8004C0FF9 /* Sparkle.framework in Frameworks */,
 				2255DFD70B52C97B006EA3FE /* Tiki.framework in Frameworks */,
+				22F3FB220C1109CF00B3F65F /* Lua.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -178,6 +201,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				22F3FB190C1109CF00B3F65F /* Lua.framework */,
 				2255DFD60B52C97B006EA3FE /* Tiki.framework */,
 				229DC1860B2332B8004C0FF9 /* Sparkle.framework */,
 				C4F50EEE0799E5B40001D0D0 /* OpenGL.framework */,
@@ -241,6 +265,7 @@
 		2242FE330A0C349300F4BDF2 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				22F3FABB0C11062700B3F65F /* lua.cpp */,
 				224200BF0A0C569300F4BDF2 /* bomb.cpp */,
 				224200BA0A0C569300F4BDF2 /* bullet.cpp */,
 				229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */,
@@ -255,6 +280,20 @@
 				22ABAB4D0A31145600B9C077 /* centipede.cpp */,
 			);
 			name = Objects;
+			sourceTree = "<group>";
+		};
+		22F3FC370C11306000B3F65F /* libtolua++ */ = {
+			isa = PBXGroup;
+			children = (
+				22F3FC4A0C11314F00B3F65F /* tolua++.h */,
+				22F3FC380C11308600B3F65F /* tolua_event.c */,
+				22F3FC390C11308600B3F65F /* tolua_event.h */,
+				22F3FC3A0C11308600B3F65F /* tolua_is.c */,
+				22F3FC3B0C11308600B3F65F /* tolua_map.c */,
+				22F3FC3C0C11308600B3F65F /* tolua_push.c */,
+				22F3FC3D0C11308600B3F65F /* tolua_to.c */,
+			);
+			name = "libtolua++";
 			sourceTree = "<group>";
 		};
 		29B97314FDCFA39411CA2CEA /* DreamZZT */ = {
@@ -273,6 +312,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				22F3FC370C11306000B3F65F /* libtolua++ */,
 				229B98290A1F6F4400E85BB8 /* genobjects.sh */,
 				32CA4F630368D1EE00C91783 /* DreamZZT_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
@@ -289,6 +329,7 @@
 				22EC1AC10A2B3FD600DEE79D /* icon.icns */,
 				2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */,
 				2242FF290A0C442100F4BDF2 /* tutorial.zzt */,
+				22F3FEC20C1207F600B3F65F /* tutor.lua */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
@@ -359,6 +400,7 @@
 				226F41BC0B19024300FC07AE /* doc_icon.icns in Resources */,
 				226F41CA0B1909D800FC07AE /* sav_icon.icns in Resources */,
 				22243F810BF3D480000D3055 /* dreamzzt.png in Resources */,
+				22F3FEC30C1207F600B3F65F /* tutor.lua in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,6 +455,12 @@
 				229DC8160B2E2F86004C0FF9 /* task.cpp in Sources */,
 				2260B7180B3EABB1003AE79A /* console.cpp in Sources */,
 				2224417A0BF65406000D3055 /* bugreport.cpp in Sources */,
+				22F3FABC0C11062700B3F65F /* lua.cpp in Sources */,
+				22F3FC3E0C11308600B3F65F /* tolua_event.c in Sources */,
+				22F3FC400C11308600B3F65F /* tolua_is.c in Sources */,
+				22F3FC410C11308600B3F65F /* tolua_map.c in Sources */,
+				22F3FC420C11308600B3F65F /* tolua_push.c in Sources */,
+				22F3FC430C11308600B3F65F /* tolua_to.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -450,10 +498,12 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_4)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../tiki/osx/build/Deployment\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/../tiki/osx/build/Deployment\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/../lua-5.1.2/build/Release\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -476,6 +526,7 @@
 		2255DF7A0B52C285006EA3FE /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = MACOSX;
 				HEADER_SEARCH_PATHS = include;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
@@ -494,12 +545,14 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_4)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_5)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_6)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../tiki/osx/build/Development\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../tiki/osx/build/Deployment\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/../tiki/osx/build/Deployment\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_5 = "\"$(SRCROOT)/../tiki/osx/build/Deployment\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_6 = "\"$(SRCROOT)/../lua-5.1.2/build/Release\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -509,6 +562,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					DEBUG,
 					NET,
+					MACOSX,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -537,15 +591,20 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_4)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../tiki/osx/build/Deployment\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/../tiki/osx/build/Deployment\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/../lua-5.1.2/build/Release\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = DreamZZT_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = NET;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NET,
+					MACOSX,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -563,6 +622,7 @@
 		64FBB92C092EA33F00427AD0 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = MACOSX;
 				HEADER_SEARCH_PATHS = include;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
@@ -572,6 +632,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = MACOSX;
 				HEADER_SEARCH_PATHS = include;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};

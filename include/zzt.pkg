@@ -1,0 +1,389 @@
+class Vector {
+public:
+	Vector(float ix, float iy, float iz, float iw = 1.0f)
+		: x(ix), y(iy), z(iz), w(iw) { }
+	Vector() { }
+
+	/// Return one of the vector elements array-style
+	float operator[](int i);
+
+	/// Copy a Vector3 into a Vector
+	Vector & operator=(const Vector3 & other);
+
+	/// Compare two vectors for equality
+	bool operator==(const Vector & other);
+
+	/// Compare two vectors for inequality
+	bool operator!=(const Vector & other);
+
+	/// Add two vectors
+	Vector operator+(const Vector & other);
+
+	/// Subtract two vectors
+	Vector operator-(const Vector & other);
+
+	/// Unary minus
+	Vector operator-();
+
+	/// Multiply by a scalar
+	Vector operator*(float s);
+
+	/// Inline add two vectors
+	Vector & operator+=(const Vector & other);
+
+	/// Inline subtract two vectors
+	Vector & operator-=(const Vector & other);
+
+	// Inline multiply by a scalar
+	Vector & operator*=(float s);
+
+	/// Zero this vector out.
+	void zero();
+
+	/// Dot product with another vector.
+	/// NOTE: Only takes x,y,z into account.
+	float dot(const Vector & other);
+
+	/// Cross product with another vector
+	/// NOTE: Only takes x,y,z into account.
+	Vector cross(const Vector & other);
+
+	/// Get the length/magnitude of the vector
+	float length();
+
+	/// Returns 1.0/length()
+	/// WARNING: Could cause a div-zero error.
+	float rlength();
+
+	/// Normalize this vector in place.
+	Vector & normalizeSelf();
+
+	/// Normalize this vector and return a new one.
+	Vector normalize();
+	float	x, y, z, w;
+};
+
+enum direction { IDLE, LEFT, RIGHT, UP, DOWN, SHOOTING=128 };
+
+enum ConsoleColor {
+	BLACK = 0x00,
+	BLUE = 0x01,
+	GREEN = 0x02,
+	CYAN = 0x03,
+	RED = 0x04,
+	MAGENTA = 0x05,
+	YELLOW = 0x06,
+	GREY = 0x07,
+	GRAY = 0x07,
+	WHITE = 0x07,
+	HIGH_INTENSITY = 0x1000,
+	UNDERLINE = 0x2000,
+	UNDERSCORE = 0x2000,
+	BLINK = 0x4000,
+	REVERSE = 0x8000,
+	INVISIBLE = 0xA000
+};
+
+#define ZZT_TYPE_COUNT 0x3e
+#define ZZT_EMPTY 0x00
+#define ZZT_EDGE 0x01
+#define ZZT_EXPLOSION 0x02
+#define ZZT_PLAYER 0x04
+#define ZZT_AMMO 0x05
+#define ZZT_TORCH 0x06
+#define ZZT_GEM 0x07
+#define ZZT_KEY 0x08
+#define ZZT_DOOR 0x09
+#define ZZT_SCROLL 0x0A
+#define ZZT_PASSAGE 0x0B
+#define ZZT_DUPLICATOR 0x0C
+#define ZZT_BOMB 0x0D
+#define ZZT_ENERGIZER 0x0E
+#define ZZT_STAR 0x0F
+#define ZZT_CONVEYER_CW 0x10
+#define ZZT_CONVEYER_CCW 0x11
+#define ZZT_BULLET 0x12
+#define ZZT_WATER 0x13
+#define ZZT_FOREST 0x14
+#define ZZT_SOLID 0x15
+#define ZZT_NORMAL 0x16
+#define ZZT_BREAKABLE 0x17
+#define ZZT_BOULDER 0x18
+#define ZZT_SLIDER_NS 0x19
+#define ZZT_SLIDER_EW 0x1A
+#define ZZT_FAKE 0x1B
+#define ZZT_INVISIBLE 0x1C
+#define ZZT_BLINK 0x1D
+#define ZZT_TRANSPORTER 0x1E
+#define ZZT_LINE 0x1F
+#define ZZT_RICOCHET 0x20
+#define ZZT_HORIZONTAL_BLINK 0x21
+#define ZZT_BEAR 0x22
+#define ZZT_RUFFIAN 0x23
+#define ZZT_OBJECT 0x24
+#define ZZT_SLIME 0x25
+#define ZZT_SHARK 0x26
+#define ZZT_SPINNING_GUN 0x27
+#define ZZT_PUSHER 0x28
+#define ZZT_LION 0x29
+#define ZZT_TIGER 0x2A
+#define ZZT_VERTICAL_BLINK 0x2B
+#define ZZT_CENTIPEDE_HEAD 0x2C
+#define ZZT_CENTIPEDE_BODY 0x2D
+#define ZZT_BLUE_TEXT 0x2F
+#define ZZT_GREEN_TEXT 0x30
+#define ZZT_CYAN_TEXT 0x31
+#define ZZT_RED_TEXT 0x32
+#define ZZT_PURPLE_TEXT 0x33
+#define ZZT_YELLOW_TEXT 0x34
+#define ZZT_WHITE_TEXT 0x35
+
+module zzt {
+	TOLUA_PROPERTY_TYPE(qt);
+
+	class ZZTObject {
+		ZZTObject(int type, int x, int y, int shape, int flags, std::string name);
+
+		direction opposite(enum direction dir);
+		direction toward(ZZTObject *them);
+		direction clockwise(direction dir);
+		direction str_to_direction(std::string s);
+
+		bool isValid() { return m_isValid; }
+
+		int str_to_color(std::string color);
+		std::string int_to_color(int color);
+
+		int distance(ZZTObject *them);
+		int dist_x(ZZTObject *them);
+		int dist_y(ZZTObject *them);
+		bool move(direction d, bool trying=false, bool origin=true);
+		bool is_empty(direction d, bool ignorePlayer=false);
+		ZZTObject *create_object(int type, direction d);
+
+		tolua_readonly tolua_property int type;
+		tolua_property std::string name;
+		tolua_property Vector position;
+		tolua_property Vector step;
+		tolua_property direction heading;
+		tolua_property char shape;
+		tolua_property int color;
+		tolua_property int fg;
+		tolua_property int bg;
+		tolua_property short cycle;
+		tolua_property int tick;
+
+		tolua_property bool updated;
+		tolua_property bool pushed;
+
+		void setFlag(int flag);
+		bool flag(int f);
+		tolua_property int flags;
+
+
+		void setParam(int arg, unsigned char val);
+		unsigned char param(int arg);
+		
+		message(ZZTObject *from, std::string msg);
+		void shoot(direction d);
+	};
+	
+	ZZTObject *create_object(int type, int x, int y);
+	ZZTObject *create_copy(ZZTObject *source);
+
+	module board {
+		#define BOARD_X 60;
+		#define BOARD_Y 25;
+
+		struct board_info_node {
+			unsigned short int size;
+			char title[50];
+			int num;
+			unsigned char maxshots;
+			unsigned char dark;
+			unsigned char board_up;
+			unsigned char board_down;
+			unsigned char board_left;
+			unsigned char board_right;
+			unsigned char reenter;
+			unsigned char reenter_x;
+			unsigned char reenter_y;
+			unsigned short int time;
+			unsigned char animatedWater;
+			char message[60];
+			int msgcount;
+			bool compressed;
+		};
+
+		extern board_info_node *currentbrd @ current;
+		void put(ZZTObject *o);
+		void remove_from_board @ remove(struct board_info_node *brd, ZZTObject *object);
+		
+		ZZTObject *get_obj_by_type(int type, int &x, int &y);
+		ZZTObject *get_obj_by_type(struct board_info_node *board, int type);
+		ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color);
+		ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int fg, int bg);
+		ZZTObject *get_obj_by_name(struct board_info_node *board, std::string name);
+	}
+	
+	//Status
+	module status {
+		void set_msg(char *text);
+		void take_ammo(int count);
+		void give_ammo(int count);
+		void take_health(int count);
+		void give_health(int count);
+		void take_torch(int count);
+		void give_torch(int count);
+		void take_gems(int count);
+		void give_gems(int count);
+		void take_score(int count);
+		void give_score(int count);
+		void take_time(int count);
+		void give_time(int count);
+	}
+
+	//Debug
+	void debug(char *text);
+
+	//Window
+	class TUIWidget {
+		void setBg(unsigned char bg);
+	};
+
+	class TUILabel : public TUIWidget {
+		TUILabel(std::string text, bool bold=false, bool ANSI=false);
+	};
+
+	class TUITextInput : public TUIWidget {
+		TUITextInput(std::string label, std::string *text, bool centered=false);
+	};
+
+	class TUIPasswordInput : public TUITextInput {
+		TUIPasswordInput(std::string label, std::string *text);
+	};
+
+	class TUICheckBox : public TUIWidget {
+		TUICheckBox(std::string text, bool *checked);
+	};
+
+	class TUIRadioGroup : public TUIWidget {
+		TUIRadioGroup(std::string text, int *selected);	
+		TUIRadioGroup(std::string text, unsigned short *selected);	
+		TUIRadioGroup(std::string text, float *selected);	
+		TUIRadioGroup(std::string text, unsigned char *selected);	
+	
+		void add(std::string text) {
+			m_options.push_back(text);
+		}
+	};
+
+	class TUIBoardList : public TUIRadioGroup {
+		TUIBoardList(std::string text, unsigned char *board);
+	};
+
+	class TUIDirection : public TUIRadioGroup {
+		TUIDirection(std::string text, Vector *d);	
+	};
+	
+	class TUINumericInput : public TUIWidget {
+		TUINumericInput(std::string text, int *num, int min, int max, int step=1);
+		TUINumericInput(std::string text, unsigned short int *num, int min, int max, int step=1);	
+		TUINumericInput(std::string text, float *num, int min, int max, int step=1);	
+		TUINumericInput(std::string text, unsigned char *num, int min, int max, int step=1);	
+	};
+
+	class TUISlider : public TUINumericInput {
+		TUISlider(std::string text, int *slide);
+	};
+
+	class TUIHyperLink : public TUIWidget {
+		TUIHyperLink(std::string label, std::string text);
+	};
+
+	class TUIWindow {
+		TUIWindow(std::string title,int x=6, int y=3, int w=45, int h=17);
+
+		void buildFromString(std::string s, bool ANSI=false);
+		void doMenu();
+		void addWidget(TUIWidget *w);
+		std::string getLabel();
+	};
+}
+
+$[
+
+function wake()
+	code,msg = coroutine.resume(mainThread)
+	if(code == false) then
+		print(msg)
+		me.cycle = 0
+	end
+end
+
+function sleep(cycles)
+	coroutine.yield()
+end
+
+function set_msg(message)
+	zzt.status.set_msg(message)
+	coroutine.yield()
+end
+
+function set_color(fg, bg)
+	me.fg = fg
+	me.bg = bg
+	coroutine.yield()
+end
+
+function move(d)
+	me:move(d)
+	coroutine.yield()
+end
+
+function try(d)
+	local t = me:move(d, true)
+	coroutine.yield()
+	return t
+end
+
+function wait_for_message(message)
+	local msg = nil
+	local them = nil
+	while not (msg == message) do
+		msg = nil
+		while (msg == nil) do
+			them,msg = pop_message(me)
+			coroutine.yield()
+		end
+	end
+	return them
+end
+
+function change(type, color, obj_template)
+	local obj
+	if(color == nil) then
+		obj = zzt.board.get_obj_by_type(zzt.board.current, type)	
+	else
+		obj = zzt.board.get_obj_by_color(zzt.board.current, type, color)
+	end
+	while not (obj == nil) do
+		newobj = zzt.create_copy(obj_template)
+		newobj.position = obj.position
+		zzt.board.put(newobj)
+		if(color == nil) then
+			obj = zzt.board.get_obj_by_type(zzt.board.current, type)	
+		else
+			obj = zzt.board.get_obj_by_color(zzt.board.current, type, color)
+		end
+	end
+end
+
+
+mainThread = coroutine.create(function ()
+coroutine.yield() 
+main()
+end
+)
+
+$]
