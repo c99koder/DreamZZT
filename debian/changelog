@@ -1,4 +1,4 @@
-dreamzzt (3.0.8b1) unstable; urgency=low
+dreamzzt (3.0.8) stable; urgency=low
 
   * Sound support for Dreamcast
   * Support STK-colored torches, ammo, energizers
@@ -14,7 +14,7 @@ dreamzzt (3.0.8b1) unstable; urgency=low
   * Support stat-less objects (#29)
   * Handle backspace key in debug console 
 
- -- Sam Steele <sam.steele@gmail.com>  Fri, 18 May 2007 16:00:00 -0500
+ -- Sam Steele <sam.steele@gmail.com>  Sat, 2 Jun 2007 16:00:00 -0500
 
 dreamzzt (3.0.6.1) stable; urgency=high
 
