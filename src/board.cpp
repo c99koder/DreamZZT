@@ -1017,8 +1017,9 @@ void save_game(const char *filename) {
 
 		i = (unsigned char)curbrd->params.size() - 1;
 		fd.writele16(&i,1);
+#ifdef DEBUG
 		printf("Writing %i objects...\n", i);
-
+#endif
 		i = 0;
 
 		for(params_iter = curbrd->params.begin(); params_iter != curbrd->params.end(); params_iter++) {
