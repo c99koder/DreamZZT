@@ -358,9 +358,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
 	filename = std::string(szPath) + std::string("\\dzztauth.dat");
 #else
-	filename = std::string(getenv("HOME")) + std::string("/.dzztauth");
+	char *path = getenv("HOME");
+	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
 #endif
-	f.open(filename.c_str(),"rb");
+	/*f.open(filename.c_str(),"rb");
 	if(f.isValid()) {
 		int len = f.read(authtmp,256);
 		if(len > 0) {
@@ -368,12 +369,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 			curl_auth_string = authtmp;
 		}
 		f.close();
-	}
+	}*/
 #endif	
 	
 #if TIKI_PLAT == TIKI_DC
 #ifdef DEBUG
-	fs_chdir("/pc/Users/sam/Projects/DreamZZT-lua/resources");
+	fs_chdir("/pc/Users/sam/Projects/DreamZZT/resources");
 #else
 	fs_chdir("/cd");
 #endif
@@ -404,8 +405,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 	check_updates();
 
 	world.online=0;
-
-	play_zzt("tutorial.zzt");
 
 	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
@@ -466,7 +465,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
 	filename = std::string(szPath) + std::string("\\dzztauth.dat");
 #else
-	filename = std::string(getenv("HOME")) + std::string("/.dzztauth");
+	path = getenv("HOME");
+	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
 #endif
 	f.open(filename.c_str(),"wb");
 	if(f.isValid()) {

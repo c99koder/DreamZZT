@@ -405,10 +405,10 @@ void ZZTOOP::exec(std::string text) {
 		} else {
 			b->under=b->obj;
 			b->obj=::create_object(str_to_obj(words[1]),(int)m_position.x,(int)m_position.y);
-			b->obj->setParam(1,b->under->param(1));
+			/*b->obj->setParam(1,b->under->param(1));
 			b->obj->setParam(2,b->under->param(2));
 			b->obj->setParam(3,b->under->param(3));
-			b->obj->setParam(4,b->under->param(4));
+			b->obj->setParam(4,b->under->param(4));*/
 			b->obj->setFg(b->under->fg());
 			b->obj->setBg(b->under->bg());
 			b->obj->setCycle(b->under->cycle());								

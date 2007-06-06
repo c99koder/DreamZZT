@@ -312,12 +312,44 @@ module zzt {
 }
 
 $[
+-- ----------------------------------------------------------
+-- tprint - table printer 
+--
+--  For debugging what tables have in them, prints recursively
+--    eg. tprint (GetStyleInfo (20))
+-- See forum thread:
+--  http://www.gammon.com.au/forum/bbshowpost.php?bbsubject_id=4903
+-- ----------------------------------------------------------
+
+function tprint (t, indent, done)
+  done = done or {}
+  indent = indent or 0
+  for key, value in pairs (t) do
+    io.write (string.rep (" ", indent)) -- indent it
+    if type (value) == "table" and not done [value] then
+      done [value] = true
+      io.write (tostring (key), ":");
+      tprint (value, indent + 2, done)
+    else
+      io.write(tostring (key), "=")
+      print (value)
+    end
+  end
+end
+
+savestate = { thd = nil }
+
+function setup_perms()
+	perms = { [coroutine.yield] = 1, [me] = 2, [player] = 3 }
+end
 
 function wake()
-	code,msg = coroutine.resume(mainThread)
-	if(code == false) then
-		print(msg)
-		me.cycle = 0
+	if not(savestate.thd == nil) then
+		code,msg = coroutine.resume(savestate.thd)
+		if(code == false) then
+			print(msg)
+			me.cycle = 0
+		end	
 	end
 end
 
@@ -379,11 +411,11 @@ function change(type, color, obj_template)
 	end
 end
 
-
-mainThread = coroutine.create(function ()
-coroutine.yield() 
-main()
+if(savestate.thd == nil) then
+	savestate.thd = coroutine.create(function ()
+	coroutine.yield() 
+	main()
+	end
+	)
 end
-)
-
 $]

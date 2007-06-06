@@ -14,11 +14,7 @@
 
 #include "tolua++.h"
 #include "tolua_event.h"
-#ifdef MACOSX
-#include "Lua/lauxlib.h"
-#else
 #include "lauxlib.h"
-#endif
 
 #include <string.h>
 #include <stdio.h>

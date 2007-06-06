@@ -18,11 +18,7 @@
  */ 
 
 extern "C" {
-#if TIKI_PLAT == TIKI_OSX
-	#include "Lua/lua.h"
-#else
-	#include <lua.h>
-#endif
+#include "lua.h"
 }
 
 //TRANSPORTER
@@ -315,7 +311,9 @@ public:
 	void create();
 	void update();
 	void message(ZZTObject *from, std::string msg) { push_message(from, msg); };
-
+	void setParam(int arg, unsigned char val);
+	unsigned char param(int arg);
+	
 	struct message_queue_item {
 		ZZTObject *them;
 		std::string message;
@@ -340,4 +338,5 @@ private:
 		message_queue.push_back(i);
 	}
 	lua_State* m_luaVM;
+	bool m_serialized;
 };

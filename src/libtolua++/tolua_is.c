@@ -13,11 +13,7 @@
 */
 
 #include "tolua++.h"
-#ifdef MACOSX
-#include "Lua/lauxlib.h"
-#else
 #include "lauxlib.h"
-#endif
 
 #include <stdlib.h>
 #include <string.h>

@@ -20,7 +20,6 @@ with a list of choices, like this:\
 	set_msg("Tutor: Sometimes messages are displayed")
 	set_msg("at the bottom of your screen.")
 	coroutine.yield();
-	
 	w = zzt.TUIWindow:new("DreamZZT Tutorial")
 	w:buildFromString("$Basic Controls\
 \
@@ -98,7 +97,7 @@ start our demonstration off with these!")
 	move(LEFT) move(LEFT) move(LEFT) move(LEFT) move(UP) move(UP)
 	set_msg("Now, pick up this key and open the door.")
 	o = me:create_object(ZZT_KEY, DOWN)
-	o.color = CYAN
+	o.co = CYAN
 	zzt.board.put(o)
 	while (zzt.board.get_obj_by_color(zzt.board.current, ZZT_DOOR, CYAN)) do
 		coroutine.yield()
