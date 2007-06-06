@@ -14,7 +14,7 @@ Below is a list of highlights of each DreamZZT release.  For a complete list of 
 
 === Bug Fixes ===
  * Centipede segments harm player (ticket #23)
- * Centipedes could become disconnected if shot by an enemy (ticket #27)
+ * Centipedes could become disconnected if shot by an enemy (ticket #37)
  * Board transitions may not work properly after saving (ticket #39)
  * Change object search order to match ZZT (ticket #13)
  * Support stat-less objects (ticket #29)
