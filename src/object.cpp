@@ -37,12 +37,15 @@ using namespace std;
 #include "sound.h"
 #include "task.h"
 
+#include "GraphicsLayer.h"
+
 extern int zztascii[];
 extern Player *player;
 extern ZZTMusicStream *zm;
 extern struct world_header world;
 extern ConsoleText *ct;
 extern ConsoleText *st;
+extern GraphicsLayer *gl;
 extern struct board_info_node *currentbrd;
 
 int dir_to_delta[5] = { 0,-1,1,-1,1 };
@@ -394,7 +397,10 @@ ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string n
 	m_progpos=0;
 	m_prog="";
 	m_proglen=0;
-	
+	m_highlighted = false;
+	m_modelName="";
+	m_height=0;
+
 	m_isValid = true;
 }
 
@@ -416,29 +422,49 @@ void ZZTObject::draw() {
 	b=(dist.y)*(dist.y);
 	
 	if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
-		ct->putColor((int)m_position.x, (int)m_position.y, (HIGH_INTENSITY | BLACK));
+		int color = (HIGH_INTENSITY | BLACK);
+		ct->putColor((int)m_position.x, (int)m_position.y, color);
 		ct->putChar((int)m_position.x, (int)m_position.y, 177);
+		gl->clear((int)m_position.x, (int)m_position.y);
 	} else if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
-		ct->putColor((int)m_position.x, (int)m_position.y, (HIGH_INTENSITY | BLACK));
-		ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
+		int color = (HIGH_INTENSITY | BLACK);
+		if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+			ct->putColor((int)m_position.x, (int)m_position.y, color);
+			ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
+		}
 	} else if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
-		ct->putColor((int)m_position.x, (int)m_position.y, m_fg%8);
-		ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
+		int color = m_fg%8;
+		if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+			ct->putColor((int)m_position.x, (int)m_position.y, color);
+			ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
+		}
 	} else {
 		if(m_position.x > BOARD_X) {
-			st->putColor((int)m_position.x - BOARD_X, (int)m_position.y, ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8));
-			if(world.editing==1 && m_type == ZZT_INVISIBLE)
-				st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, 0xB0);
-			else
-				st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, m_shape);
+			int color = ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8);
+			st->putColor((int)m_position.x - BOARD_X, (int)m_position.y, color);
+			if(world.editing==1 && m_type == ZZT_INVISIBLE) {
+				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+					st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, 0xB0);
+				}
+			} else {
+				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+					st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, m_shape);
+				}
+			}
 		} else {
+			int color = ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8);
 			ct->putColor((int)m_position.x, (int)m_position.y, ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8));
-			if(world.editing==1 && m_type == ZZT_INVISIBLE)
+			if(world.editing==1 && m_type == ZZT_INVISIBLE) {
 				ct->putChar((int)m_position.x, (int)m_position.y, 0xB0);
-			else
-				ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
+			} else {
+				if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+					ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
+				}
+			}
 		}
 	}
+	
+	m_highlighted = false;
 }
 
 void ZZTObject::edit() {

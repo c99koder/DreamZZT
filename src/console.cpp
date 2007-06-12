@@ -73,6 +73,17 @@ void ConsoleText::setSize(float w, float h) {
 	m_w = w;
 	m_h = h;
 }
+Tiki::Math::Vector ConsoleText::getSize() const {
+	return Tiki::Math::Vector(m_w, m_h, 0.0f);
+}
+
+Color ConsoleText::getConsoleColor(const int colorNumber) const {
+	Color color = m_palette[colorNumber%8];
+	if(colorNumber > 7) {
+		color += Color(0.25f, 0.25f, 0.25f);
+	}
+	return color;
+}
 
 void ConsoleText::clear() {
 	int x;
@@ -241,6 +252,8 @@ void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned c
 }
 
 void ConsoleText::renderBackground(float x, float y, float w, float h, int color) {
+	if(color == 0) return;
+
 	plx_vertex_t vert;
 	const Vector & sv = getScale();
 	w *= sv.x;

@@ -34,6 +34,7 @@ using namespace Tiki::Audio;
 #include "sound.h"
 
 extern ZZTMusicStream *zm;
+extern ConsoleText *ct;
 
 extern struct board_info_node *currentbrd;
 int forestmsg=0,invismsg=0,watermsg=0;
@@ -121,6 +122,11 @@ void Text::create() {
 }
 
 void Terrain::create() {
+	/*if(!m_model) {
+		m_model = new AMFModelInstance("block.amf", m_position, Vector(1.0f, 0.0f, 0.0f));
+		gl->insert(m_model);
+	}*/
+
 	switch(m_type) {
 	case ZZT_EMPTY:
 		m_shape=32;

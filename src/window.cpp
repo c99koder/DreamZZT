@@ -32,6 +32,7 @@ using namespace Tiki::Hid;
 using namespace Tiki::Thread;
 
 #include <Tiki/drawables/console.h>
+#include "GraphicsLayer.h"
 
 #include "window.h"
 #include "object.h"
@@ -43,6 +44,8 @@ extern Player *player;
 extern int switchbrd;
 extern struct board_info_node *board_list;
 extern float zoom;
+
+extern GraphicsLayer *gl;
 
 void TUIWidget::focus(bool f) {
 	m_focus = f;
@@ -520,26 +523,32 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 	//draw a box using IBM extended ASCII
 	console->putColor(x,y,fg | (bg << 8));
 	console->putChar(x,y,218);
+	gl->clear(x,y);
 	
 	for(i=0;i<w;i++) {
 		console->putColor(x+i+1,y,fg | (bg << 8));
 		console->putChar(x+i+1,y,196);
+		gl->clear(x+i+1,y);
 	}
 	
 	console->putColor(x+w+1,y,fg | (bg << 8));
 	console->putChar(x+w+1,y,191);
+	gl->clear(x+w+1,y);
 	
 	for(i=0;i<h;i++) {
 		console->putColor(x,y+i+1,fg | (bg << 8));
 		console->putChar(x,y+i+1,179);
+		gl->clear(x,y+i+1);
 		
 		for(j=0;j<w;j++) {
 			console->putColor(x+j+1,y+i+1,fg | (bg << 8));
 			console->putChar(x+j+1,y+i+1,' ');
+			gl->clear(x+j+1, y+i+1);
 		}
 		
 		console->putColor(x+j+1,y+i+1,fg | (bg << 8));
 		console->putChar(x+j+1,y+i+1,179);
+		gl->clear(x+j+1,y+i+1);
 		
 		if(shadow) draw_shadow(console,x+w+2,y+i+1);
 		if(shadow) draw_shadow(console,x+w+3,y+i+1);
@@ -548,8 +557,11 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 	
 	console->locate(x,y+h+1);
 	console->printf("%c",192);
-	for(i=0;i<w;i++)
+	for(i=0;i<w;i++) {
 		console->printf("%c",196);
+		gl->clear(x+i,y+h+1);
+	}
+
 	console->printf("%c",217);
 	draw_shadow(console,x+w+2,y+h+1);
 	draw_shadow(console,x+w+3,y+h+1);
@@ -641,6 +653,8 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 			processHidEvent(evt);
 		}
 	} while(m_loop);
+
+	ct->clear();
 
 	if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 }

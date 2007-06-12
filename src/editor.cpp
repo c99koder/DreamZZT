@@ -356,9 +356,16 @@ void edit_zzt() {
 	do {
 		draw_board();
 		if(flash++ < 4) {
-			ct->locate(edit_x,edit_y);
-			ct->color(BLACK,WHITE);
-			*ct << " ";
+			if(!(o = currentbrd->board[edit_x][edit_y].under)) {
+				o = currentbrd->board[edit_x][edit_y].obj;
+			}
+			if(o) {
+				o->highlight();
+			} else {
+				ct->locate(edit_x,edit_y);
+				ct->color(BLACK,WHITE);
+				*ct << " ";
+			}
 		} else if(flash>8) {
 			flash=0;
 		}
@@ -387,6 +394,22 @@ void edit_zzt() {
 						edit_x++;
 						if(edit_x>=BOARD_X) edit_x=BOARD_X-1;
 							break;
+					case 'u':
+						if(world.use_3d) {
+							if(!(o = currentbrd->board[edit_x][edit_y].under)) {
+								o = currentbrd->board[edit_x][edit_y].obj;
+							}
+							o->setHeight((unsigned char)(((int)(o->height()) + 1) % 256));
+						}
+						break;
+					case 'y':
+						if(world.use_3d) {
+							if(!(o = currentbrd->board[edit_x][edit_y].under)) {
+								o = currentbrd->board[edit_x][edit_y].obj;
+							}
+							o->setHeight((unsigned char)(((int)o->height() - 1) % 256));
+						}
+						break;
 				}
 			} else if(evt.type == Event::EvtKeyUp) {
 				switch(evt.key) {
@@ -501,7 +524,13 @@ void edit_zzt() {
 							t.addWidget(new TUINumericInput("             Re-Enter Y: ",&currentbrd->reenter_y,0,254));
 							t.addWidget(new TUINumericInput("             Time Limit: ",&currentbrd->time,0,32767,10));
 							t.addWidget(new TUINumericInput("          Maximum Shots: ",&currentbrd->maxshots,0,254));
+
 							rg=new TUIRadioGroup           ("         Animated Water: ",&currentbrd->animatedWater);
+							rg->add("Disabled");
+							rg->add("Enabled");
+							t.addWidget(rg);
+
+							rg=new TUIRadioGroup           ("  (World) Use 3D Models: ",&world.use_3d);
 							rg->add("Disabled");
 							rg->add("Enabled");
 							t.addWidget(rg);

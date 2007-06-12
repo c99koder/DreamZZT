@@ -58,6 +58,9 @@ using namespace Tiki::Thread;
 #include "task.h"
 #include "word.h"
 #include "bugreport.h"
+
+#include "GraphicsLayer.h"
+
 #if TIKI_PLAT == TIKI_DC
 #include "vmu.h"
 #endif
@@ -69,6 +72,8 @@ extern struct board_info_node *currentbrd;
 bool gameFrozen;
 extern int debug_visible;
 ConsoleText *ct;
+GraphicsLayer *gl;
+
 extern ConsoleText *dt;
 extern ConsoleText *st;
 extern struct board_info_node *board_list;
@@ -361,7 +366,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	char *path = getenv("HOME");
 	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
 #endif
-	/*f.open(filename.c_str(),"rb");
+	f.open(filename.c_str(),"rb");
 	if(f.isValid()) {
 		int len = f.read(authtmp,256);
 		if(len > 0) {
@@ -369,7 +374,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 			curl_auth_string = authtmp;
 		}
 		f.close();
-	}*/
+	}
 #endif	
 	
 #if TIKI_PLAT == TIKI_DC
@@ -389,6 +394,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 	ct = new ConsoleText(BOARD_X, 25, zzt_font);
 	ct->setSize(BOARD_X * 8,SCREEN_Y);
 	ct->translate(Vector(BOARD_X * 4,240,0));
+
+	gl = new GraphicsLayer();
+	ct->subAdd(gl);
 	
 	st = new ConsoleText(80 - BOARD_X, 25, zzt_font);
 	st->setSize((80 - BOARD_X) * 8, SCREEN_Y);

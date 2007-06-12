@@ -167,6 +167,12 @@ void Player::create() {
 	m_fg=15;
 	m_bg=1;
 	m_shoot = m_move = IDLE;
+
+	//if(!m_model) {
+	//	m_model = new AMFModelInstance("block.amf", m_position, Vector(0.0f, 1.0f, 0.0f));
+	//	gl->insert(m_model);
+	//}
+
 	if(m_cycle == 0) m_cycle = 1;
 	if(playerEventCollector==NULL) {
 		playerEventCollector = new EventCollector();
@@ -325,10 +331,21 @@ void Player::update() {
 			break;
 	}
 	if(m_move!=IDLE) {
+		//gl->remove(m_model);
 		move(m_move);
+		//m_model = new AMFModelInstance("block.amf", m_position, Vector(0,1,0));
+		//gl->insert(m_model);
+		//m_model->position = m_position;
 	}
 	
 	if(m_shoot!=IDLE) {
 		shoot(m_shoot);
 	}
+}
+
+Player::~Player()
+{
+	//if(m_model) {
+	//	gl->remove(m_model);
+	//}
 }

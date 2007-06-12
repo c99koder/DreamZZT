@@ -137,6 +137,7 @@ int new_board(char *title) {
 	current->msgcount=0;
 	current->next=NULL;
 	current->compressed=false;
+	current->animatedWater=0;
 	
 	for(int y=0; y<BOARD_Y; y++) {
 		for(int x=0; x<BOARD_X; x++) {
@@ -177,6 +178,8 @@ void new_world() {
 	world.saved=0;
 	world.editing=0;
 	world.task_points=0;
+	world.torches=0;
+	world.use_3d=0;
 	
 	switch_board(new_board("Title Screen"));
 }
@@ -552,7 +555,7 @@ void switch_board(int num) {
 	connect_lines(get_board(num));
 	if(player!=NULL && currentbrd!=NULL && !world.editing) boardTransition(h,get_board(num));
 	
-	if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
+	//if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
 	
 	currentbrd=get_board(num);
 	if(player!=NULL) {
@@ -591,7 +594,7 @@ int board_right() {
 void compress(board_info_node *board, bool silent) {
 	rle_block rle;
 	zzt_param param;
-	int code,color;
+	int code,color,height;
 	ZZTObject *obj,*under;
 	bool foundPlayer=false;
 	
@@ -656,10 +659,12 @@ void compress(board_info_node *board, bool silent) {
 				} else {
 					color=obj->fg()+(16*obj->bg());
 				}
-				if(rle.len>=255 || rle.cod!=code || rle.col!=color) {
+				height = obj->height();
+				if(rle.len>=255 || rle.cod!=code || rle.col!=color || rle.height!=height) {
 					board->rle_data.push_back(rle);
 					board->size+=3;
 					rle.len=0;
+					rle.height=height;
 					rle.cod=obj->type();
 					if(rle.cod>=ZZT_BLUE_TEXT && rle.cod <=ZZT_WHITE_TEXT) {
 						rle.col=obj->shape();
@@ -706,6 +711,7 @@ void decompress(board_info_node *board, bool silent) {
 			if(curobj!=NULL) {
 				curobj->setFg((*rle_iter).col%16);
 				curobj->setBg((*rle_iter).col/16);
+				curobj->setHeight((*rle_iter).height);
 			} else {
 				printf("Unknown type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
 				board->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
@@ -863,6 +869,10 @@ int load_zzt(const char *filename, int titleonly) {
 	printf("Start: %i\n",world.start);
 	printf("Title: %s (%i)\n",world.title.string,world.title.len);
 #endif
+
+	//does the map contain 3d model data?
+	fd.read(&world.use_3d, 1);
+
 	fd.seek(0x200,SEEK_SET); //seek to the first board
 	current=new board_info_node;
 	board_list=current;
@@ -881,6 +891,12 @@ int load_zzt(const char *filename, int titleonly) {
 			fd.read(&rle.len,1);
 			fd.read(&rle.cod,1);
 			fd.read(&rle.col,1);
+			if(world.use_3d) {
+				fd.read(&rle.height,1);
+			} else {
+				rle.height = 0;
+			}
+
 			current->rle_data.push_back(rle);
 			z += rle.len;
 		}
@@ -908,6 +924,7 @@ int load_zzt(const char *filename, int titleonly) {
 		fd.read(&current->reenter_y,1); current->reenter_y--;
 		fd.readle16(&current->time,1);
 		fd.read(&current->animatedWater,1);
+
 		for(x=0;x<15;x++) { fd.read(&c,1); } //more padding
 		
 		//Load the object params
@@ -983,9 +1000,12 @@ void save_game(const char *filename) {
 	fd.write(world.flag,sizeof(zzt_string) * 10);
 	fd.writele16(&world.time,1); //FIXME: This should be total game time, not current board time remaining
 	fd.write(&world.saved,1);
+
+	//3d flag
+	fd.write(&world.use_3d, 1);
 	
-	//fd.seek(0x200,SEEK_SET);
-	for(i=0; i<249; i++) {
+	//seek to start pos
+	for(i=0; i<248; i++) {
 		fd.write(&x,1);
 	}
 	
@@ -1009,6 +1029,11 @@ void save_game(const char *filename) {
 			fd.write(&(*rle_iter).len,1);
 			fd.write(&(*rle_iter).cod,1);
 			fd.write(&(*rle_iter).col,1);
+	
+			if(world.use_3d) {
+				fd.write(&(*rle_iter).height,1);
+			}
+
 			rlecnt += (*rle_iter).len;
 		}
 		
