@@ -78,30 +78,14 @@ bool GraphicsLayer::put(const int x, const int y, const int color, const unsigne
 void GraphicsLayer::draw(ObjType t) {
 	if(!world.use_3d) return;
 
-	//for(std::list<const AMFModelInstance *>::iterator iter = modelList.begin(); iter != modelList.end(); iter++) {
-	//	(*iter)->draw();
-	//}
-
-	//	glPushMatrix();
-
-	/*glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 300.0f, -100.0f);
-	glMatrixMode(GL_MODELVIEW);*/
-
 	glEnable(GL_LIGHTING);
 	glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat *)&Vector(-.5,0.5,1,0));
 	glEnable(GL_LIGHT0);
-
-	Vector &windowSize = ct->getSize();
-	int sizex = (int)windowSize.x, sizey = (int)windowSize.y;
-
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, 640, 480, 0, 10.0f, -10.0f);
 	glMatrixMode(GL_MODELVIEW);
-
 
 	for(int y=0; y<25; y++) {
 		for(int x=0; x<60; x++) {
@@ -114,11 +98,8 @@ void GraphicsLayer::draw(ObjType t) {
 	}
 
 	glDisable(GL_LIGHT0);
-	//	glPopMatrix();
 	glDisable(GL_LIGHTING);
 
-
-//set2d();
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, 640, 480, 0, 1.0f, -1.0f);

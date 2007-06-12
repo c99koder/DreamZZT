@@ -108,79 +108,16 @@ void AMFModel::draw(const Vector& position, const int animation, const Vector& c
 	float xs = windowSize.x / 60.0f;
 	float ys = windowSize.y / 25.0f;
 
-
-
-
-	//static double st = 0.0;
-
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, (GLfloat *)&color);
-
-	//v.x = 1.0f;
-	//v.y = 0.0f;
-
-	//glColor3fv((GLfloat *)&v);
-
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, (GLfloat *)&Vector(sin(st),cos(st),0));
-	//st += 0.00001;
-	
 
 	Vector pos = ct->getPosition() - (windowSize * 0.5f);
  
-	//glColor3f
 	glTranslatef(position.x * xs + pos.x, (position.y + 1.0f) * ys + pos.y - (float)height, 0.1f * (float)height);
-	//glRotatef(st, 1.0f, 1.0f, 1.0f);
 
 	glBegin(GL_TRIANGLES);
-
-
 	glCallList(displayLists[0]);
 	glEnd();
 	
-
-	/*glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 1.0f, -1.0f);
-	glMatrixMode(GL_MODELVIEW);*/
-
-	
-	//glDisable(GL_LIGHTING);
-
-	//glBegin(GL_TRIANGLES);
-	/*glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(300.0f, 0.0f, 50.0f);
-	glVertex3f(300.0f, 300.0f, 50.0f);*/
-	//glEnd();
-
-	/*int anim0Frame = animationTime0 / 1000;
-	int anim1Frame = animationTime1 / 1000;
-
-	float weight = float(animationTime0 % 1000) / 1000.0f;
-
-	anim0Frame %= animations[animationIndex0].totalFrames;
-	anim1Frame %= animations[animationIndex1].totalFrames;
-
-	if(anim0Frame == anim1Frame) {
-		weight = 0.0f;
-	}
-
-	int index = 0;
-
-	if(weight == 0.0f) {
-		memcpy(vb, animations[animationIndex0].frames[anim0Frame].frameVertexData, totalFaces * sizeof(CUSTOMVERTEX) * 3);
-	} else {
-		memcpy(vb, animations[animationIndex0].frames[anim0Frame].frameVertexData, totalFaces * sizeof(CUSTOMVERTEX) * 3);
-
-		CUSTOMVERTEX *vb1 = animations[animationIndex0].frames[anim0Frame].frameVertexData;
-		CUSTOMVERTEX *vb2 = animations[animationIndex1].frames[anim1Frame].frameVertexData;
-		
-		for(int ii=0; ii<totalFaces * 3; ii++) {
-			vb[ii].position += weight * (vb2[ii].position - vb[ii].position);
-
-			vb[ii].normal += weight * (vb2[ii].normal - vb[ii].normal);
-			vb[ii].tangent += weight * (vb2[ii].tangent - vb[ii].tangent);
-			vb[ii].binormal += weight * (vb2[ii].binormal - vb[ii].binormal);
-		}
-	}*/
 }
 
 Texture *AMFModel::getSkin() const {
