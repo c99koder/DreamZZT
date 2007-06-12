@@ -25,12 +25,16 @@
 using namespace Tiki::Math;
 #include "window.h"
 
+
 enum direction { IDLE, LEFT, RIGHT, UP, DOWN, SHOOTING=128 };
 
 class ZZTObject {
 public:
 	ZZTObject(int type, int x, int y, int shape, int flags, std::string name);
-	virtual ~ZZTObject() { m_isValid = false; }
+	virtual ~ZZTObject() { 
+		m_isValid = false; 
+		//if(m_model) { delete m_model; m_model = NULL }
+	}
 	
 	
 	direction opposite(enum direction dir);
@@ -92,6 +96,9 @@ public:
 	std::string prog() { return m_prog; }
 	int progLen() { return m_proglen; }
 	int progPos() { return m_progpos; }
+	unsigned char height() { return m_height; }
+	void setHeight(unsigned char height) { m_height = height; }
+	void highlight() { m_highlighted = true; }
 	
 	void draw();
 	void edit();
@@ -124,7 +131,11 @@ protected:
 	short m_progpos;
 	bool m_updated;
 	bool m_pushed;
+	bool m_highlighted;
 	
+	string m_modelName;
+	unsigned char m_height;
+
 private:
 	bool m_isValid;
 };

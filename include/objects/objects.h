@@ -283,7 +283,10 @@ public:
 		m_move = IDLE;
 		m_shoot = IDLE;
 		m_cycle = 1;
+		m_height = 1;
+		m_modelName = "player.amf";
 	}
+	~Player();
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);
@@ -320,7 +323,7 @@ public:
 	};
 	
 	int message_count() {
-		return message_queue.size();
+		return (int)message_queue.size();
 	}
 	
 	message_queue_item pop_message() {

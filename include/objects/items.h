@@ -50,10 +50,18 @@
 class Inventory : public ZZTObject {
 public:
 	Inventory(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
-		if(type == ZZT_DOOR) {
-			m_fg = WHITE | HIGH_INTENSITY;
-			m_shape=8;
-			m_color=&m_bg;
+		switch(type) {
+			case ZZT_TORCH:
+				m_modelName = "torch.amf";
+				break;
+			case ZZT_GEM:
+				m_modelName = "gem.amf";
+				break;
+			case ZZT_DOOR:
+				m_fg = WHITE | HIGH_INTENSITY;
+				m_shape=8;
+				m_color=&m_bg;
+				break;
 		}
 	}
 	void create();

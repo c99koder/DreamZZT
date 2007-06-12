@@ -28,7 +28,7 @@ struct board_data {
 };
 
 struct rle_block {
-	unsigned char len, col, cod;
+	unsigned char len, col, cod, height;
 };
 
 struct zzt_param {
@@ -99,6 +99,7 @@ struct world_header {
 	unsigned char editing;
 	unsigned char online;
 	unsigned short int task_points;
+	unsigned char use_3d;
 };
 void spinner(char *text);
 void spinner_clear();

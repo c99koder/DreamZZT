@@ -139,7 +139,9 @@
 
 class Terrain : public ZZTObject {
 public:
-	Terrain(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
+	Terrain(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
+		m_modelName = "block.amf";
+	}
 	void create();
 	void message(ZZTObject *them, std::string msg);
 };
