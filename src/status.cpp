@@ -34,9 +34,11 @@ using namespace Tiki::Hid;
 #include "console.h"
 #include "board.h"
 #include "object.h"
+#include "GraphicsLayer.h"
 
 ConsoleText *st;
 extern ConsoleText *ct;
+extern GraphicsLayer *gl;
 
 extern struct board_info_node *currentbrd;
 extern unsigned char zztascii[55];
@@ -61,9 +63,15 @@ void redraw_status() {
 
 void draw_msg() {
 	if(currentbrd->msgcount>0) {
+		int length = (int)strlen(currentbrd->message);
+		int left = (BOARD_X/2)-((length+2)/2);
 		ct->color((currentbrd->msgcount%6)+9,0);
-		ct->locate((BOARD_X/2)-((int)(strlen(currentbrd->message)+2)/2),BOARD_Y-1);
+		ct->locate(left,BOARD_Y-1);
 		ct->printf(" %s ",currentbrd->message);
+		for(int x=left; x<=left+length; x++) {
+			gl->clear(x,BOARD_Y-1);
+		}
+		
 		currentbrd->msgcount--;
 		if(currentbrd->msgcount==0) redraw_status();
 	}

@@ -60,7 +60,7 @@ void AMFModel::load() {
 			}
 
 		} else {
-			debug("Failed loading AMF model '%s'. Invalid model file.", filename.c_str());
+			debug("Failed loading AMF model '%s'. Invalid model file.\n", filename.c_str());
 		}
 
 		infile.close();
@@ -88,7 +88,7 @@ void AMFModel::load() {
 
 		isValid = true;
 	} else {
-		debug("Failed loading AMF model '%s'. File could not be opened for reading.", filename.c_str());
+		debug("Failed loading AMF model '%s'. File could not be opened for reading.\n", filename.c_str());
 	}
 }
 
