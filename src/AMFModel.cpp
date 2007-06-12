@@ -104,7 +104,7 @@ int AMFModel::getAnimationIndex(const string& animationName) const {
 void AMFModel::draw(const Vector& position, const int animation, const Vector& color, const unsigned char height) const {
 	if(!isValid) return;
 
-	Vector &windowSize = ct->getSize();
+	Vector windowSize = ct->getSize();
 	float xs = windowSize.x / 60.0f;
 	float ys = windowSize.y / 25.0f;
 
