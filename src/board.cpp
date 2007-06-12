@@ -555,7 +555,7 @@ void switch_board(int num) {
 	connect_lines(get_board(num));
 	if(player!=NULL && currentbrd!=NULL && !world.editing) boardTransition(h,get_board(num));
 	
-	//if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
+	if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
 	
 	currentbrd=get_board(num);
 	if(player!=NULL) {
@@ -597,6 +597,9 @@ void compress(board_info_node *board, bool silent) {
 	int code,color,height;
 	ZZTObject *obj,*under;
 	bool foundPlayer=false;
+
+	//initialize RLE block
+	memset(&rle, 0, sizeof(rle_block));
 	
 	if(board->compressed) return;
 	
