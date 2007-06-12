@@ -416,6 +416,12 @@ void ZZTObject::draw() {
 		return;
 	}
 	
+	if(m_highlighted && m_flash++ < 30) {
+		ct->putColor((int)m_position.x, (int)m_position.y, WHITE);
+		ct->putChar((int)m_position.x, (int)m_position.y, 0xDB);
+		return;
+	}
+	
 	if(player!=NULL) dist = position() - player->position();
 	
 	a=(dist.x)*(dist.x)/2.0f;
@@ -428,13 +434,13 @@ void ZZTObject::draw() {
 		gl->clear((int)m_position.x, (int)m_position.y);
 	} else if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
 		int color = (HIGH_INTENSITY | BLACK);
-		if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+		if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted && m_flash < 30)) {
 			ct->putColor((int)m_position.x, (int)m_position.y, color);
 			ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
 		}
 	} else if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
 		int color = m_fg%8;
-		if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+		if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted && m_flash < 30)) {
 			ct->putColor((int)m_position.x, (int)m_position.y, color);
 			ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
 		}
@@ -443,11 +449,11 @@ void ZZTObject::draw() {
 			int color = ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8);
 			st->putColor((int)m_position.x - BOARD_X, (int)m_position.y, color);
 			if(world.editing==1 && m_type == ZZT_INVISIBLE) {
-				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted && m_flash < 30)) {
 					st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, 0xB0);
 				}
 			} else {
-				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted && m_flash < 30)) {
 					st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, m_shape);
 				}
 			}
@@ -457,14 +463,14 @@ void ZZTObject::draw() {
 			if(world.editing==1 && m_type == ZZT_INVISIBLE) {
 				ct->putChar((int)m_position.x, (int)m_position.y, 0xB0);
 			} else {
-				if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted)) {
+				if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted && m_flash < 30)) {
 					ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
 				}
 			}
 		}
 	}
 	
-	m_highlighted = false;
+	if(m_flash > 40) m_flash = 0;
 }
 
 void ZZTObject::edit() {

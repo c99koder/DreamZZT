@@ -98,7 +98,8 @@ public:
 	int progPos() { return m_progpos; }
 	unsigned char height() { return m_height; }
 	void setHeight(unsigned char height) { m_height = height; }
-	void highlight() { m_highlighted = true; }
+	void setHighlighted(bool h) { m_flash = 0; m_highlighted = h; }
+	bool highlighted() { return m_highlighted; }
 	
 	void draw();
 	void edit();
@@ -132,6 +133,7 @@ protected:
 	bool m_updated;
 	bool m_pushed;
 	bool m_highlighted;
+	int m_flash;
 	
 	string m_modelName;
 	unsigned char m_height;

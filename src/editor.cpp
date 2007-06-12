@@ -338,7 +338,7 @@ void edit_zzt() {
 	ZZTObject *pattern[5];
 	ZZTObject *o=NULL;
 	std::string s;
-	int flash=0;
+
 	enum { NONE, ITEM, CREATURE, TERRAIN, TEXT } edit_menu_mode = NONE;
 
 	pattern[0] = create_object(ZZT_SOLID,0,0);
@@ -353,22 +353,10 @@ void edit_zzt() {
 	draw_color(edit_fg,edit_bg);
 	draw_pattern(pattern,edit_pat);
 	
+	currentbrd->board[edit_x][edit_y].obj->setHighlighted(true);
+	
 	do {
 		draw_board();
-		if(flash++ < 4) {
-			if(!(o = currentbrd->board[edit_x][edit_y].under)) {
-				o = currentbrd->board[edit_x][edit_y].obj;
-			}
-			if(o) {
-				o->highlight();
-			} else {
-				ct->locate(edit_x,edit_y);
-				ct->color(BLACK,WHITE);
-				*ct << " ";
-			}
-		} else if(flash>8) {
-			flash=0;
-		}
 		render();
 		Time::sleep(8000);
 
@@ -376,24 +364,31 @@ void edit_zzt() {
 			if(evt.type == Event::EvtQuit) {
 				edit_loop = false;
 			} else if(evt.type == Event::EvtKeypress) {
-				flash=0;
 				switch(evt.key) {
 					case Event::KeyUp:
+						currentbrd->board[edit_x][edit_y].obj->setHighlighted(false);
 						edit_y--;
 						if(edit_y<0) edit_y=0;
-							break;
+						currentbrd->board[edit_x][edit_y].obj->setHighlighted(true);
+						break;
 					case Event::KeyDown:
+						currentbrd->board[edit_x][edit_y].obj->setHighlighted(false);
 						edit_y++;
 						if(edit_y>=BOARD_Y) edit_y=BOARD_Y-1;
-							break;
+						currentbrd->board[edit_x][edit_y].obj->setHighlighted(true);
+						break;
 					case Event::KeyLeft:
+						currentbrd->board[edit_x][edit_y].obj->setHighlighted(false);
 						edit_x--;
 						if(edit_x<0) edit_x=0;
-							break;
+						currentbrd->board[edit_x][edit_y].obj->setHighlighted(true);
+						break;
 					case Event::KeyRight:
+						currentbrd->board[edit_x][edit_y].obj->setHighlighted(false);
 						edit_x++;
 						if(edit_x>=BOARD_X) edit_x=BOARD_X-1;
-							break;
+						currentbrd->board[edit_x][edit_y].obj->setHighlighted(true);
+						break;
 					case 'u':
 						if(world.use_3d) {
 							if(!(o = currentbrd->board[edit_x][edit_y].under)) {
@@ -786,4 +781,5 @@ void edit_zzt() {
 		}
 	} while(edit_loop);
 	world.editing=0;
+	currentbrd->board[edit_x][edit_y].obj->setHighlighted(false);
 }
