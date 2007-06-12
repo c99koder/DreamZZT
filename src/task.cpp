@@ -30,7 +30,7 @@ using namespace Tiki::Hid;
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <Tiki/drawables/console.h>
+#include "console.h"
 #include "board.h"
 #include "object.h"
 #include "task.h"

@@ -23,7 +23,7 @@
 #include <curl/easy.h>
 #include <Tiki/tiki.h>
 #include <Tiki/file.h>
-#include <Tiki/drawables/console.h>
+#include "console.h"
 
 using namespace Tiki;
 using namespace Tiki::GL;

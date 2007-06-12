@@ -31,7 +31,7 @@ using namespace Tiki::GL;
 using namespace Tiki::Hid;
 using namespace Tiki::Thread;
 
-#include <Tiki/drawables/console.h>
+#include "console.h"
 #include "GraphicsLayer.h"
 
 #include "window.h"

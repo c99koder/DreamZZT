@@ -24,7 +24,7 @@
 #include <Tiki/eventcollector.h>
 #include <Tiki/thread.h>
 #include <Tiki/tikitime.h>
-#include <Tiki/drawables/console.h>
+#include "console.h"
 
 using namespace Tiki;
 using namespace Tiki::GL;

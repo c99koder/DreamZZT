@@ -21,7 +21,7 @@
 #define _WINDOW_H
 
 #include <Tiki/eventcollector.h>
-#include <Tiki/drawables/console.h>
+#include "console.h"
 
 extern ConsoleText *ct;
 

@@ -32,7 +32,7 @@ using namespace Tiki::Hid;
 using namespace Tiki::Audio;
 using namespace Tiki::Thread;
 
-#include <Tiki/drawables/console.h>
+#include "console.h"
 #include "object.h"
 #include "board.h"
 #include "http.h"

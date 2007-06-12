@@ -33,7 +33,7 @@
 #ifdef NET
 #include <curl/curl.h>
 #endif
-#include <Tiki/drawables/console.h>
+#include "console.h"
 #include <Tiki/oggvorbis.h>
 
 using namespace Tiki;

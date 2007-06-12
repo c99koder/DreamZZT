@@ -1,6 +1,6 @@
 #include "GraphicsLayer.h"
 
-#include <Tiki/drawables/console.h>
+#include "console.h"
 
 using namespace Tiki;
 using namespace Tiki::Hid;

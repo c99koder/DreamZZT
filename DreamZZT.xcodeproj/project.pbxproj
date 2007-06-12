@@ -34,6 +34,12 @@
 		226F41110B18BFFB00FC07AE /* os.mm in Sources */ = {isa = PBXBuildFile; fileRef = 226F41100B18BFFB00FC07AE /* os.mm */; };
 		226F41BC0B19024300FC07AE /* doc_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 226F41BB0B19024300FC07AE /* doc_icon.icns */; };
 		226F41CA0B1909D800FC07AE /* sav_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 226F41C90B1909D800FC07AE /* sav_icon.icns */; };
+		228ED1BD0C1E28C3006D6823 /* AMFModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 228ED1B90C1E28C3006D6823 /* AMFModel.cpp */; };
+		228ED1BE0C1E28C3006D6823 /* AMFModelInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 228ED1BA0C1E28C3006D6823 /* AMFModelInstance.cpp */; };
+		228ED1BF0C1E28C3006D6823 /* GraphicsLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 228ED1BB0C1E28C3006D6823 /* GraphicsLayer.cpp */; };
+		228ED1C00C1E28C3006D6823 /* ModelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 228ED1BC0C1E28C3006D6823 /* ModelManager.cpp */; };
+		228ED2030C1E29CC006D6823 /* console.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 228ED2020C1E29CC006D6823 /* console.h */; };
+		228ED2880C1E2EE2006D6823 /* models in Resources */ = {isa = PBXBuildFile; fileRef = 228ED27B0C1E2EE2006D6823 /* models */; };
 		22907D680A1A947800B9BB6D /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22907D660A1A947800B9BB6D /* debug.cpp */; };
 		2296D4F70A0D338E00BD96D2 /* zzt-ascii.png in Resources */ = {isa = PBXBuildFile; fileRef = 2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */; };
 		229B982A0A1F6F4400E85BB8 /* genobjects.sh in Resources */ = {isa = PBXBuildFile; fileRef = 229B98290A1F6F4400E85BB8 /* genobjects.sh */; };
@@ -99,6 +105,7 @@
 			files = (
 				22C84B910C139AD3004F5B6D /* Sparkle.framework in CopyFiles */,
 				22C84B920C139AD3004F5B6D /* Tiki.framework in CopyFiles */,
+				228ED2030C1E29CC006D6823 /* console.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,6 +156,12 @@
 		226F41100B18BFFB00FC07AE /* os.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = os.mm; path = src/os.mm; sourceTree = "<group>"; };
 		226F41BB0B19024300FC07AE /* doc_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_icon.icns; sourceTree = "<group>"; };
 		226F41C90B1909D800FC07AE /* sav_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sav_icon.icns; sourceTree = "<group>"; };
+		228ED1B90C1E28C3006D6823 /* AMFModel.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AMFModel.cpp; path = src/AMFModel.cpp; sourceTree = "<group>"; };
+		228ED1BA0C1E28C3006D6823 /* AMFModelInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AMFModelInstance.cpp; path = src/AMFModelInstance.cpp; sourceTree = "<group>"; };
+		228ED1BB0C1E28C3006D6823 /* GraphicsLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsLayer.cpp; path = src/GraphicsLayer.cpp; sourceTree = "<group>"; };
+		228ED1BC0C1E28C3006D6823 /* ModelManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ModelManager.cpp; path = src/ModelManager.cpp; sourceTree = "<group>"; };
+		228ED2020C1E29CC006D6823 /* console.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = console.h; path = include/console.h; sourceTree = "<group>"; };
+		228ED27B0C1E2EE2006D6823 /* models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = models; path = resources/models; sourceTree = "<group>"; };
 		22907D650A1A947800B9BB6D /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/debug.h; sourceTree = "<group>"; };
 		22907D660A1A947800B9BB6D /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debug.cpp; path = src/debug.cpp; sourceTree = "<group>"; };
 		2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "zzt-ascii.png"; path = "resources/zzt-ascii.png"; sourceTree = "<group>"; };
@@ -252,6 +265,10 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				228ED1B90C1E28C3006D6823 /* AMFModel.cpp */,
+				228ED1BA0C1E28C3006D6823 /* AMFModelInstance.cpp */,
+				228ED1BB0C1E28C3006D6823 /* GraphicsLayer.cpp */,
+				228ED1BC0C1E28C3006D6823 /* ModelManager.cpp */,
 				226F410C0B18BF9C00FC07AE /* Controller.m */,
 				2242FE330A0C349300F4BDF2 /* Objects */,
 				2242FDA40A0C26F500F4BDF2 /* board.cpp */,
@@ -303,6 +320,7 @@
 		2242FBC70A0C106500F4BDF2 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				228ED2020C1E29CC006D6823 /* console.h */,
 				223A59B50C13738A008370C5 /* pluto.h */,
 				2242FBC90A0C109000F4BDF2 /* objects */,
 				2242FBD00A0C109000F4BDF2 /* board.h */,
@@ -465,6 +483,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				228ED27B0C1E2EE2006D6823 /* models */,
 				22243F800BF3D480000D3055 /* dreamzzt.png */,
 				226F41C90B1909D800FC07AE /* sav_icon.icns */,
 				226F41BB0B19024300FC07AE /* doc_icon.icns */,
@@ -544,6 +563,7 @@
 				22243F810BF3D480000D3055 /* dreamzzt.png in Resources */,
 				22F3FEC30C1207F600B3F65F /* tutor.lua in Resources */,
 				22C84C950C13AB22004F5B6D /* README in Resources */,
+				228ED2880C1E2EE2006D6823 /* models in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -633,6 +653,10 @@
 				22C84CB30C13AB22004F5B6D /* lundump.c in Sources */,
 				22C84CB50C13AB22004F5B6D /* lvm.c in Sources */,
 				22C84CB70C13AB22004F5B6D /* lzio.c in Sources */,
+				228ED1BD0C1E28C3006D6823 /* AMFModel.cpp in Sources */,
+				228ED1BE0C1E28C3006D6823 /* AMFModelInstance.cpp in Sources */,
+				228ED1BF0C1E28C3006D6823 /* GraphicsLayer.cpp in Sources */,
+				228ED1C00C1E28C3006D6823 /* ModelManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

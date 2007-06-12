@@ -3,7 +3,7 @@
 #include <sstream>
 
 #include <Tiki/tiki.h>
-#include <Tiki/drawables/console.h>
+#include "console.h"
 
 #include "debug.h"
 

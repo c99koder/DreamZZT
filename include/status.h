@@ -20,7 +20,7 @@
 #ifndef _STATUS_H
 #define _STATUS_H
 
-#include <Tiki/drawables/console.h>
+#include "console.h"
 
 void set_msg(char *text);
 void redraw_status();

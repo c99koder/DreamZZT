@@ -20,7 +20,7 @@
 
 #include <Tiki/tiki.h>
 #include <Tiki/plxcompat.h>
-#include <Tiki/drawables/console.h>
+#include "console.h"
 #include <stdarg.h>
 
 using namespace Tiki::GL;
