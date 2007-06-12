@@ -3,13 +3,13 @@
 
 class AMFModelInstance {
 public:
-	AMFModelInstance(const string modelName, const Vector3f& position, const Vector3f& color, const int height);
+	AMFModelInstance(const string modelName, const Vector& position, const Vector& color, const int height);
 	void draw() const;
 	
-	Vector3f position;
+	Vector position;
 
 private:
-	Vector3f color;
+	Vector color;
 	int height;
 	const AMFModel *model;
 };

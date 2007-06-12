@@ -9,18 +9,18 @@
 
 #include "Tiki/drawable.h"
 
-typedef Tiki::Math::Vector Vector3f;
-
 using namespace std;
 using namespace Tiki::GL;
+
+using Tiki::Math::Vector;
 
 class AMFModel {
 	class AMFVertex {
 	public:
-		Vector3f position;
-		Vector3f normal;
-		Vector3f tangent;
-		Vector3f binormal;
+		Vector position;
+		Vector normal;
+		Vector tangent;
+		Vector binormal;
 
 		void read(ifstream& infile);
 	};
@@ -67,7 +67,7 @@ public:
 
 	int getAnimationIndex(const string& animationName) const;
 	
-	void draw(const Vector3f& position, const int animation, const Vector3f& color, const unsigned char height) const;
+	void draw(const Vector& position, const int animation, const Vector& color, const unsigned char height) const;
 
 	Texture *getSkin() const;
 	int getAnimationFrames(int animationIndex) const;

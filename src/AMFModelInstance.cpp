@@ -7,7 +7,7 @@ using namespace Tiki::GL;
 using namespace Tiki::GL::Plxcompat;
 
 
-AMFModelInstance::AMFModelInstance(const string modelName, const Vector3f& position, const Vector3f& color, const int height) {
+AMFModelInstance::AMFModelInstance(const string modelName, const Vector& position, const Vector& color, const int height) {
 	model = modelManager.getModel(modelName);
 
 	if(!model) {

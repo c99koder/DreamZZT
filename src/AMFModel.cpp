@@ -6,6 +6,7 @@
 #include <Tiki/drawables/console.h>
 
 #include "debug.h"
+
 #include "AMFModel.h"
 
 extern ConsoleText *ct;
@@ -100,10 +101,10 @@ int AMFModel::getAnimationIndex(const string& animationName) const {
 	return 0;
 }
 
-void AMFModel::draw(const Vector3f& position, const int animation, const Vector3f& color, const unsigned char height) const {
+void AMFModel::draw(const Vector& position, const int animation, const Vector& color, const unsigned char height) const {
 	if(!isValid) return;
 
-	Vector3f &windowSize = ct->getSize();
+	Vector &windowSize = ct->getSize();
 	float xs = windowSize.x / 60.0f;
 	float ys = windowSize.y / 25.0f;
 
@@ -119,11 +120,11 @@ void AMFModel::draw(const Vector3f& position, const int animation, const Vector3
 
 	//glColor3fv((GLfloat *)&v);
 
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, (GLfloat *)&Vector3f(sin(st),cos(st),0));
+	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, (GLfloat *)&Vector(sin(st),cos(st),0));
 	//st += 0.00001;
 	
 
-	Vector3f pos = ct->getPosition() - (windowSize * 0.5f);
+	Vector pos = ct->getPosition() - (windowSize * 0.5f);
  
 	//glColor3f
 	glTranslatef(position.x * xs + pos.x, (position.y + 1.0f) * ys + pos.y - (float)height, 0.1f * (float)height);

@@ -90,10 +90,10 @@ void GraphicsLayer::draw(ObjType t) {
 	glMatrixMode(GL_MODELVIEW);*/
 
 	glEnable(GL_LIGHTING);
-	glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat *)&Vector3f(-.5,0.5,1,0));
+	glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat *)&Vector(-.5,0.5,1,0));
 	glEnable(GL_LIGHT0);
 
-	Vector3f &windowSize = ct->getSize();
+	Vector &windowSize = ct->getSize();
 	int sizex = (int)windowSize.x, sizey = (int)windowSize.y;
 
 
