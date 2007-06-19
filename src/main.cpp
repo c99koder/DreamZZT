@@ -47,6 +47,10 @@ using namespace Tiki::Thread;
 #include <shlobj.h>
 #endif
 
+#ifdef DZZT_LITE
+#include <SDL/SDL.h>
+#endif
+
 #include "window.h"
 #include "sound.h"
 #include "board.h"
@@ -72,7 +76,9 @@ extern struct board_info_node *currentbrd;
 bool gameFrozen;
 extern int debug_visible;
 ConsoleText *ct;
+#ifndef DZZT_LITE
 GraphicsLayer *gl;
+#endif
 
 extern ConsoleText *dt;
 extern ConsoleText *st;
@@ -83,16 +89,25 @@ extern EventCollector *playerEventCollector;
 extern std::string curl_auth_string;
 ZZTMusicStream *zm = NULL;
 Tiki::Thread::Thread *render_thread;
+#ifdef DZZT_LITE
+SDL_Surface *screen;
+SDL_Surface *zzt_font;
+#else
 Texture *zzt_font;
+#endif
 extern std::list<Task*> taskList;
 
 #define VERSION "3.0.8"
 
 #define SCREEN_X 640
+#ifdef DZZT_LITE
+#define SCREEN_Y 400
+#else
 #if TIKI_PLAT == TIKI_DC
 #define SCREEN_Y 424
 #else
 #define SCREEN_Y 480
+#endif
 #endif
 
 #define GAMESPEED_ALIVE 160000
@@ -274,6 +289,77 @@ void menu_background() {
 //How often to display average frame rate (in seconds)
 #define FPS_SAMPLE_RATE 10
 
+#ifdef DZZT_LITE
+/* Borrowed from the Tiki SDL port */
+
+class KbDevice : public Tiki::Hid::Device {
+public:
+	KbDevice() { }
+	virtual ~KbDevice() { }
+
+	virtual Type getType() const { return TypeKeyboard; }
+	virtual string getName() const { return "SDL Keyboard"; }
+};
+
+static RefPtr<KbDevice> SDLkb;
+
+static int translateSym(SDLKey key)
+{
+	switch(key)
+	{
+		case SDLK_UP:
+			return Event::KeyUp;
+		case SDLK_DOWN:
+			return Event::KeyDown;
+		case SDLK_LEFT:
+			return Event::KeyLeft;
+		case SDLK_RIGHT:
+			return Event::KeyRight;
+		case SDLK_INSERT:
+			return Event::KeyInsert;
+		case SDLK_DELETE:
+			return Event::KeyDelete;
+		case SDLK_HOME:
+			return Event::KeyHome;
+		case SDLK_END:
+			return Event::KeyEnd;
+		case SDLK_PAGEUP:
+			return Event::KeyPgup;
+		case SDLK_PAGEDOWN:
+			return Event::KeyPgdn;
+		case SDLK_ESCAPE:
+			return Event::KeyEsc;
+		case SDLK_F1:
+			return Event::KeyF1;
+		case SDLK_F2:
+			return Event::KeyF2;
+		case SDLK_F3:
+			return Event::KeyF3;
+		case SDLK_F4:
+			return Event::KeyF4;
+		case SDLK_F5:
+			return Event::KeyF5;
+		case SDLK_F6:
+			return Event::KeyF6;
+		case SDLK_F7:
+			return Event::KeyF7;
+		case SDLK_F8:
+			return Event::KeyF8;
+		case SDLK_F9:
+			return Event::KeyF9;
+		case SDLK_F10:
+			return Event::KeyF10;
+		case SDLK_F11:
+			return Event::KeyF11;
+		case SDLK_F12:
+			return Event::KeyF12;
+		default:
+			return key;
+	}
+	return key;
+}
+#endif
+
 void render() {
 	static long int fpsTimer = 1000000;
 	static long int avgFpsTimer = 1000000 * FPS_SAMPLE_RATE;
@@ -296,6 +382,11 @@ void render() {
 #endif
 	zzt_screen_mutex.lock();
 	frameTime = Time::gettime();
+#ifdef DZZT_LITE
+	ct->draw(screen);
+	st->draw(screen);
+	SDL_UpdateRect(screen, 0, 0, SCREEN_X, SCREEN_Y);
+#else	
 	Frame::begin();
 #if 0
 	if(player!=NULL) {
@@ -317,6 +408,7 @@ void render() {
 	if(debug_visible) dt->drawAll(Drawable::Trans);
 	st->drawAll(Drawable::Trans);
 	Frame::finish();
+#endif	
 	frameTime = Time::gettime() - frameTime;
 	frames++;
 	fpsTimer -= (long)frameTime;
@@ -340,14 +432,89 @@ void render() {
 #if TIKI_PLAT == TIKI_DC
 	update_lcds();
 #endif
+#ifdef DZZT_LITE
+// Poll for events, and handle the ones we care about.
+    SDL_Event event;
+	int mod = 0;
+	SDL_keysym lastPressed; //Used to detect repeats
+
+	/* Enable key repeat */
+	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
+		
+    while (SDL_PollEvent(&event)) {
+		if(event.key.keysym.mod & KMOD_SHIFT) mod |= Event::KeyShift;
+		if(event.key.keysym.mod & KMOD_CTRL) mod |= Event::KeyControl;
+		if(event.key.keysym.mod & KMOD_ALT) mod |= Event::KeyAlt;
+		
+		switch (event.type) {
+			case SDL_KEYDOWN:
+			{
+			  //Only keypress, not keydown, should repeat  
+			  if(!(lastPressed.sym == event.key.keysym.sym && lastPressed.mod == event.key.keysym.mod)) {
+					Event evt(Event::EvtKeyDown);
+					evt.dev = SDLkb;
+					evt.key = translateSym(event.key.keysym.sym);
+					evt.mod = mod;
+					sendEvent(evt);
+					
+					lastPressed.sym = event.key.keysym.sym;
+					lastPressed.mod = event.key.keysym.mod;
+				}
+								
+				Event evtPress(Event::EvtKeypress);
+				evtPress.dev = SDLkb;
+				evtPress.key = translateSym(event.key.keysym.sym);
+				evtPress.mod = mod;
+				sendEvent(evtPress);
+				//Debug::printf("HID:KB: KEYDOWN: %d\n", evt.key);
+			}
+				break;
+			case SDL_KEYUP:
+			{
+				Event evt(Event::EvtKeyUp);
+				evt.dev = SDLkb;
+				evt.key = translateSym(event.key.keysym.sym);
+				evt.mod = mod;
+				sendEvent(evt);
+
+				lastPressed.sym = (SDLKey)0;
+				lastPressed.mod = (SDLMod)0;
+			}
+				break;
+			case SDL_QUIT:
+			{
+				Event evt(Event::EvtQuit);
+				sendEvent(evt);
+			}
+			break;
+		}
+	}
+#endif
 	zzt_screen_mutex.unlock();
 }
 
+#ifdef DZZT_LITE
+extern "C" int SDL_main(int argc, char **argv) {
+#else
 extern "C" int tiki_main(int argc, char **argv) {
+#endif
 	TUIWindow *t, *c;
 	srand((unsigned int)time(NULL));
 		
 	// Init Tiki
+#ifdef DZZT_LITE	
+	printf("\nHello SDL User!\n");
+
+	/* initialize SDL */
+	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+	{
+		fprintf( stderr, "Video initialization failed: %s\n",
+			SDL_GetError( ) );
+		exit(1);
+	}
+	SDL_WM_SetCaption("DreamZZT Lite", NULL);
+	screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, 32, SDL_HWSURFACE);
+#endif
 	Tiki::init(argc, argv);
 	Tiki::setName("DreamZZT", NULL);
 	//Hid::callbackReg(tkCallback, NULL);
@@ -389,18 +556,26 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zm = new ZZTMusicStream;
 	zm->setVolume(0.4f);
 	
-	//initialize the screen		
+	//initialize the screen
+#ifdef DZZT_LITE
+	SDL_Surface *temp = SDL_LoadBMP("zzt-ascii.bmp");
+	zzt_font = SDL_ConvertSurface(temp, screen->format, SDL_SWSURFACE);
+	SDL_FreeSurface(temp);
+#else	
 	zzt_font = new Texture("zzt-ascii.png", true);
+#endif
 	ct = new ConsoleText(BOARD_X, 25, zzt_font);
 	ct->setSize(BOARD_X * 8,SCREEN_Y);
-	ct->translate(Vector(BOARD_X * 4,240,0));
+	ct->translate(Vector(BOARD_X * 4,SCREEN_Y/2,0));
 
+#ifndef DZZT_LITE
 	gl = new GraphicsLayer();
 	ct->subAdd(gl);
+#endif
 	
 	st = new ConsoleText(80 - BOARD_X, 25, zzt_font);
 	st->setSize((80 - BOARD_X) * 8, SCREEN_Y);
-	st->setTranslate(Vector(640 - ((80 - BOARD_X) * 4), 240, 0.9f));
+	st->setTranslate(Vector(640 - ((80 - BOARD_X) * 4), SCREEN_Y/2, 0.9f));
 	
 	debug_init();
 	ct->color(15,1);

@@ -14,6 +14,10 @@
 #include "Tiki/texture.h"
 #include "Tiki/color.h"
 
+#ifdef DZZT_LITE
+#include <SDL/SDL.h>
+#endif
+
 #include <vector>
 
 namespace Tiki {
@@ -43,10 +47,13 @@ namespace Tiki {
 		/** ConsoleText -- ConsoleText displays an array of fixed width characters. */
 		class ConsoleText : public Drawable {
 public:
+#ifdef DZZT_LITE
+			ConsoleText(int cols, int rows, SDL_Surface * font);
+#else
 			ConsoleText(int cols, int rows, Texture * texture);
+#endif
 			virtual ~ConsoleText();
 			
-			void setTexture(Texture * txr);
 			void setSize(float w, float h);
 			
 			void clear();
@@ -120,14 +127,22 @@ public:
 				printf("%f",input);
 				
 				return *this;
-			}			
+			}
+#ifdef DZZT_LITE
+			virtual void draw(SDL_Surface *screen);
+#else
 			virtual void draw(ObjType t);
 			void renderCharacter(float x, float y, float w, float h, unsigned char c, int color);
 			void renderBackground(float x, float y, float w, float h, int color);
+#endif
 			Tiki::Math::Vector ConsoleText::getSize() const;
 			Color ConsoleText::getConsoleColor(const int colorNumber) const;
 protected:
+#ifdef DZZT_LITE
+			SDL_Surface *m_font;
+#else
 			RefPtr<Texture>		m_texture;
+#endif
 			int m_rows, m_cols;
 			std::vector<unsigned char> m_charData;
 			std::vector<unsigned short> m_colorData;
@@ -144,14 +159,6 @@ private:
 			float	m_w, m_h;
 			unsigned char ansistr[51];
 			unsigned char ansiptr;
-			
-			void refresh() {
-				Frame::begin();
-				draw(Drawable::Opaque);
-				Frame::transEnable();
-				draw(Drawable::Trans);
-				Frame::finish();
-			}
 		};
 	};
 };

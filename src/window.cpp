@@ -45,7 +45,9 @@ extern int switchbrd;
 extern struct board_info_node *board_list;
 extern float zoom;
 
+#ifndef DZZT_LITE
 extern GraphicsLayer *gl;
+#endif
 
 void TUIWidget::focus(bool f) {
 	m_focus = f;
@@ -523,33 +525,44 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 	//draw a box using IBM extended ASCII
 	console->putColor(x,y,fg | (bg << 8));
 	console->putChar(x,y,218);
+#ifndef DZZT_LITE
 	gl->clear(x,y);
+#endif
 	
 	for(i=0;i<w;i++) {
 		console->putColor(x+i+1,y,fg | (bg << 8));
 		console->putChar(x+i+1,y,196);
+#ifndef DZZT_LITE
 		gl->clear(x+i+1,y);
+#endif
 	}
 	
 	console->putColor(x+w+1,y,fg | (bg << 8));
 	console->putChar(x+w+1,y,191);
+#ifndef DZZT_LITE
 	gl->clear(x+w+1,y);
+#endif
 	
 	for(i=0;i<h;i++) {
 		console->putColor(x,y+i+1,fg | (bg << 8));
 		console->putChar(x,y+i+1,179);
+#ifndef DZZT_LITE
 		gl->clear(x,y+i+1);
+#endif
 		
 		for(j=0;j<w;j++) {
 			console->putColor(x+j+1,y+i+1,fg | (bg << 8));
 			console->putChar(x+j+1,y+i+1,' ');
+#ifndef DZZT_LITE
 			gl->clear(x+j+1, y+i+1);
+#endif
 		}
 		
 		console->putColor(x+j+1,y+i+1,fg | (bg << 8));
 		console->putChar(x+j+1,y+i+1,179);
+#ifndef DZZT_LITE
 		gl->clear(x+j+1,y+i+1);
-		
+#endif		
 		if(shadow) draw_shadow(console,x+w+2,y+i+1);
 		if(shadow) draw_shadow(console,x+w+3,y+i+1);
 		console->color(fg,bg);
@@ -559,7 +572,9 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 	console->printf("%c",192);
 	for(i=0;i<w;i++) {
 		console->printf("%c",196);
+#ifndef DZZT_LITE
 		gl->clear(x+i,y+h+1);
+#endif
 	}
 
 	console->printf("%c",217);

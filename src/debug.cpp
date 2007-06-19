@@ -43,7 +43,11 @@ extern struct board_info_node *board_list;
 extern struct world_header world;
 extern int switchbrd;
 extern ZZTMusicStream *zm;
+#ifdef DZZT_LITE
+extern SDL_Surface *zzt_font;
+#else
 extern Texture *zzt_font;
+#endif
 
 ConsoleText *dt=NULL;
 extern ConsoleText *ct;
