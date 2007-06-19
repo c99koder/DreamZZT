@@ -15,7 +15,11 @@
 #include "Tiki/color.h"
 
 #ifdef DZZT_LITE
+#if TIKI_PLAT == TIKI_OSX
 #include <SDL/SDL.h>
+#else
+#include <SDL.h>
+#endif
 #endif
 
 #include <vector>

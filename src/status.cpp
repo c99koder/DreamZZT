@@ -38,7 +38,9 @@ using namespace Tiki::Hid;
 
 ConsoleText *st;
 extern ConsoleText *ct;
+#ifndef DZZT_LITE
 extern GraphicsLayer *gl;
+#endif
 
 extern struct board_info_node *currentbrd;
 extern unsigned char zztascii[55];
@@ -68,9 +70,11 @@ void draw_msg() {
 		ct->color((currentbrd->msgcount%6)+9,0);
 		ct->locate(left,BOARD_Y-1);
 		ct->printf(" %s ",currentbrd->message);
+#ifndef DZZT_LITE
 		for(int x=left; x<=left+length; x++) {
 			gl->clear(x,BOARD_Y-1);
 		}
+#endif
 		
 		currentbrd->msgcount--;
 		if(currentbrd->msgcount==0) redraw_status();

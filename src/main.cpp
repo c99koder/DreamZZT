@@ -47,10 +47,6 @@ using namespace Tiki::Thread;
 #include <shlobj.h>
 #endif
 
-#ifdef DZZT_LITE
-#include <SDL/SDL.h>
-#endif
-
 #include "window.h"
 #include "sound.h"
 #include "board.h"
@@ -438,6 +434,9 @@ void render() {
 	int mod = 0;
 	SDL_keysym lastPressed; //Used to detect repeats
 
+	lastPressed.sym = (SDLKey)0;
+	lastPressed.mod = (SDLMod)0;
+
 	/* Enable key repeat */
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
 		
@@ -493,11 +492,7 @@ void render() {
 	zzt_screen_mutex.unlock();
 }
 
-#ifdef DZZT_LITE
-extern "C" int SDL_main(int argc, char **argv) {
-#else
 extern "C" int tiki_main(int argc, char **argv) {
-#endif
 	TUIWindow *t, *c;
 	srand((unsigned int)time(NULL));
 		
@@ -543,7 +538,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 		f.close();
 	}
 #endif	
-	
+
 #if TIKI_PLAT == TIKI_DC
 #ifdef DEBUG
 	fs_chdir("/pc/Users/sam/Projects/DreamZZT/resources");
@@ -662,6 +657,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 	exit(0); //Win32 wont quit when this thread ends
 	return 0;
 }
+
+#ifdef DZZT_LITE
+extern "C" int SDL_main(int argc, char **argv) {
+	return tiki_main(argc, argv);
+}
+#endif
 
 void play_zzt(const char *filename, bool tempFile) {
 	int start,tasktype,complete;

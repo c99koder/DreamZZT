@@ -44,13 +44,15 @@ using namespace Tiki::Hid;
 
 extern ConsoleText *ct;
 extern world_header world;
-
 #endif
-
 #if TIKI_PLAT == TIKI_WIN32
 #include <windows.h>
 #include "pch.h"
+#endif
 
+#ifndef DZZT_LITE
+
+#if TIKI_PLAT == TIKI_WIN32
 static char szAppName[] = "DreamZZT";
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 #else
@@ -119,6 +121,7 @@ chdir(DATA_PATH);
 	return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
 #endif
 }
+#endif
 
 #ifdef WIN32
 std::string os_select_file(std::string title, std::string filter) {
