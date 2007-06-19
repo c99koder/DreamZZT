@@ -327,13 +327,17 @@ void debug_init() {
 	debug_input = new TUITextInput("> ", &debug_cmdline);
 	debug_input->setBg(BLACK);
 	debug_quitting=false;
+#ifndef DZZT_LITE
 	debug_thread = new Tiki::Thread::Thread(process_debug,NULL);
+#endif
 }
 
 void debug_shutdown() {
+#ifndef DZZT_LITE
 	Hid::callbackUnreg(debug_hidCookie);
 	debug_quitting=true;
 	debug_thread->join();
+#endif
 }
 
 void debug(const char *fmt, ...) {

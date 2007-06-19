@@ -5,25 +5,25 @@
 
 [Setup]
 AppVersion={#AppVersion}
-AppName=DreamZZT
-AppVerName=DreamZZT {#AppVersion}
+AppName=DreamZZT Lite
+AppVerName=DreamZZT Lite {#AppVersion}
 AppPublisher=Sam Steele
 AppPublisherURL=http://www.c99.org/
 AppSupportURL=http://forums.c99.org/
 AppUpdatesURL=http://dev.c99.org/DreamZZT/
-DefaultDirName={pf}\DreamZZT
-DefaultGroupName=DreamZZT
-OutputBaseFilename=dreamzzt-{#AppVersion}-setup
+DefaultDirName={pf}\DreamZZT-lite
+DefaultGroupName=DreamZZT Lite
+OutputBaseFilename=dreamzzt-lite-{#AppVersion}-setup
 Compression=lzma
 SolidCompression=true
 MinVersion=4.1.2222,5.0.2195
 LicenseFile=COPYING
 ChangesAssociations=true
-UninstallDisplayIcon={app}\DreamZZT.exe
-UninstallDisplayName=DreamZZT {#AppVersion}
-VersionInfoVersion={#GetFileVersion(AddBackslash(SourcePath) + "resources\DreamZZT.exe")}
+UninstallDisplayIcon={app}\DreamZZT-lite.exe
+UninstallDisplayName=DreamZZT Lite {#AppVersion}
+VersionInfoVersion={#GetFileVersion(AddBackslash(SourcePath) + "Release\DreamZZT-lite.exe")}
 VersionInfoCompany=Sam Steele
-VersionInfoDescription=DreamZZT {#AppVersion}
+VersionInfoDescription=DreamZZT Lite {#AppVersion}
 VersionInfoTextVersion={#AppVersion}
 VersionInfoCopyright=Copyright (C) 2000 - 2007 Sam Steele, All Rights Reserved.
 InternalCompressLevel=max
@@ -40,32 +40,33 @@ Name: registersav; Description: Associate DreamZZT with .SAV files; Flags: check
 [Files]
 Source: COPYING; DestDir: {app}
 Source: ChangeLog; DestDir: {app}
-Source: Release\DreamZZT.exe; DestDir: {app}; Flags: ignoreversion
+Source: Release\DreamZZT-lite.exe; DestDir: {app}; Flags: ignoreversion
 Source: resources\town.zzt; DestDir: {app}; Flags: ignoreversion
 Source: resources\tutorial.zzt; DestDir: {app}; Flags: ignoreversion
 Source: resources\enigma.zzt; DestDir: {app}; Flags: ignoreversion
-Source: resources\zzt-ascii.png; DestDir: {app}; Flags: ignoreversion
+Source: resources\zzt-ascii.bmp; DestDir: {app}; Flags: ignoreversion
 Source: win32\alut.dll; DestDir: {app}; Flags: ignoreversion
 Source: win32\OpenAL32.dll; DestDir: {app}; Flags: ignoreversion
 Source: win32\wrap_oal.dll; DestDir: {app}; Flags: ignoreversion
 Source: win32\libcurl.dll; DestDir: {app}; Flags: ignoreversion; Tasks: 
 Source: win32\vcredist80_x86.exe; DestDir: {tmp}; Flags: deleteafterinstall
+Source: win32\SDL.dll; DestDir: {app}; Flags: ignoreversion
 
 [INI]
 
 [Icons]
-Name: {group}\DreamZZT; Filename: {app}\DreamZZT.exe; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; IconIndex: 0; Comment: DreamZZT - Open Source ZZT Engine
+Name: {group}\DreamZZT; Filename: {app}\DreamZZT-lite.exe; WorkingDir: {app}; IconFilename: {app}\DreamZZT-lite.exe; IconIndex: 0; Comment: DreamZZT Lite - Open Source ZZT Engine
 Name: {group}\{cm:ProgramOnTheWeb,DreamZZT}; Filename: http://dev.c99.org/DreamZZT/; Tasks: ; Languages: 
 Name: {group}\{cm:UninstallProgram,DreamZZT}; Filename: {uninstallexe}
-Name: {userdesktop}\DreamZZT; Filename: {app}\DreamZZT.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; Comment: DreamZZT - Open Source ZZT Engine; IconIndex: 0
+Name: {userdesktop}\DreamZZT; Filename: {app}\DreamZZT.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\DreamZZT-lite.exe; Comment: DreamZZT Lite - Open Source ZZT Engine; IconIndex: 0
 Name: {group}\Forums; Filename: http://forums.c99.org/
 Name: {group}\Report a Bug; Filename: http://dev.c99.org/DreamZZT/newticket
-Name: {group}\Town of ZZT; Filename: {app}\town.zzt; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; IconIndex: 1
-Name: {group}\Mission Enigma; Filename: {app}\enigma.zzt; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; IconIndex: 1
-Name: {group}\DreamZZT Tutorial; Filename: {app}\tutorial.zzt; WorkingDir: {app}; IconFilename: {app}\DreamZZT.exe; IconIndex: 1
+Name: {group}\Town of ZZT; Filename: {app}\town.zzt; WorkingDir: {app}; IconFilename: {app}\DreamZZT-lite.exe; IconIndex: 1
+Name: {group}\Mission Enigma; Filename: {app}\enigma.zzt; WorkingDir: {app}; IconFilename: {app}\DreamZZT-lite.exe; IconIndex: 1
+Name: {group}\DreamZZT Tutorial; Filename: {app}\tutorial.zzt; WorkingDir: {app}; IconFilename: {app}\DreamZZT-lite.exe; IconIndex: 1
 
 [Run]
-Filename: {app}\DreamZZT.exe; Description: {cm:LaunchProgram,DreamZZT}; Flags: nowait postinstall skipifsilent
+Filename: {app}\DreamZZT-lite.exe; Description: {cm:LaunchProgram,DreamZZT}; Flags: nowait postinstall skipifsilent
 Filename: {tmp}\vcredist80_x86.exe; Parameters: /q; StatusMsg: Installing Microsoft Visual C++ 2005 Runtime...
 
 [UninstallDelete]
