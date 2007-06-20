@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib SDL.lib SDLmain.lib"
+				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib shfolder.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib SDL.lib SDLmain.lib"
 				OutputFile="$(OutDir)/DreamZZT-lite.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="C:\libcurl;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;..\tiki\win32\Release&quot;;c:\SDL\lib"

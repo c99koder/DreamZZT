@@ -58,7 +58,7 @@ Source: win32\SDL.dll; DestDir: {app}; Flags: ignoreversion
 Name: {group}\DreamZZT; Filename: {app}\DreamZZT-lite.exe; WorkingDir: {app}; IconFilename: {app}\DreamZZT-lite.exe; IconIndex: 0; Comment: DreamZZT Lite - Open Source ZZT Engine
 Name: {group}\{cm:ProgramOnTheWeb,DreamZZT}; Filename: http://dev.c99.org/DreamZZT/; Tasks: ; Languages: 
 Name: {group}\{cm:UninstallProgram,DreamZZT}; Filename: {uninstallexe}
-Name: {userdesktop}\DreamZZT; Filename: {app}\DreamZZT.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\DreamZZT-lite.exe; Comment: DreamZZT Lite - Open Source ZZT Engine; IconIndex: 0
+Name: {userdesktop}\DreamZZT; Filename: {app}\DreamZZT-lite.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\DreamZZT-lite.exe; Comment: DreamZZT Lite - Open Source ZZT Engine; IconIndex: 0
 Name: {group}\Forums; Filename: http://forums.c99.org/
 Name: {group}\Report a Bug; Filename: http://dev.c99.org/DreamZZT/newticket
 Name: {group}\Town of ZZT; Filename: {app}\town.zzt; WorkingDir: {app}; IconFilename: {app}\DreamZZT-lite.exe; IconIndex: 1
