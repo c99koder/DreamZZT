@@ -74,11 +74,6 @@ struct board_info_node {
 	struct board_info_node *next;
 };
 
-struct zzt_string {
-	unsigned char len;
-	unsigned char string[20];
-};
-
 struct world_header {
 	unsigned short int magic;
 	unsigned short int board_count;
@@ -92,8 +87,8 @@ struct world_header {
 	unsigned short int energizer_cycle;
 	unsigned short int pad1;
 	unsigned short int score;
-	struct zzt_string title;
-	struct zzt_string flag[10];
+	std::string title;
+	std::string flags[10];
 	unsigned short int time;
 	unsigned char saved;
 	unsigned char editing;

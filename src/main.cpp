@@ -242,7 +242,7 @@ bool submit_bug(std::string email, std::string summary, std::string description)
 	bug.setProperty("platform", plat, "string");
 
 	if(currentbrd!=NULL) {
-		bug.setProperty("game", std::string((const char*)world.title.string), "string");
+		bug.setProperty("game", world.title, "string");
 		bug.setProperty("board", ToString(currentbrd->num) + ": " + currentbrd->title, "string");
 	}
 	
@@ -696,8 +696,8 @@ void play_zzt(const char *filename, bool tempFile) {
 	}
 	
 #ifdef NET
-	if(std::string((const char *)world.title.string) != "") {
-		std::list<TracBug> bugs = search_tickets("status!=closed&amp;game~=" + std::string((const char *)world.title.string));
+	if(world.title != "") {
+		std::list<TracBug> bugs = search_tickets("status!=closed&amp;game~=" + world.title);
 		if(bugs.size() > 0) {
 			std::string bugWarning = "The following bugs have been reported for\rthis game:\r\r";
 			
@@ -756,7 +756,7 @@ complete this game.\r\
 		st->color(14,1);
 		st->printf("World: ");
 		st->color(15,1);
-		st->printf("%s",world.title.string);
+		st->printf("%s",world.title.c_str());
 		st->locate(2,9);
 	#if TIKI_PLAT == TIKI_DC
 		st->printf("   Press Start");
@@ -828,7 +828,7 @@ complete this game.\r\
 
 #ifdef NET
 	if(world.online==1) {
-		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + std::string((const char *)world.title.string));
+		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + world.title);
 		tasks = wordify(tmp,'\n');
 		for(tasks_iter=tasks.begin(); tasks_iter!=tasks.end(); tasks_iter++) {
 			params = wordify((*tasks_iter),'|');
@@ -1008,7 +1008,7 @@ std::string("!bugreport;Report a bug\r") +
 #ifdef NET
 	if(world.online && switchbrd != -2) {
 		std::string url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=SubmitScore";
-		url += "&GameID=" + std::string((const char *)world.title.string);
+		url += "&GameID=" +world.title;
 		url += "&Score=" + ToString((int)world.score);
 		std::string tmp = http_get_string(url);
 		if(tmp!="OK") {

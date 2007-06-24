@@ -170,9 +170,8 @@ void new_world() {
 	world.energizer_cycle=0;
 	world.pad1=0;
 	world.score=0;
-	strcpy((char *)world.title.string,"UNTITLED");
-	world.title.len=7;
-	for(int i=0; i<10; i++) world.flag[i].len = 0;
+	world.title = "UNTITLED";
+	for(int i=0; i<10; i++) world.flags[i] = "";
 	world.time=0;
 	world.saved=0;
 	world.editing=0;
@@ -813,7 +812,7 @@ void connect_lines(board_info_node *current) {
 
 int load_zzt(const char *filename, int titleonly) {
 	unsigned short int c,x,y,z,sum=0,q;
-	char pad[16];
+	char pad[20];
 	unsigned char len;
 	rle_block rle;
 	zzt_param param;
@@ -839,17 +838,20 @@ int load_zzt(const char *filename, int titleonly) {
 	fd.readle16(&world.energizer_cycle,1);
 	fd.readle16(&world.pad1,1);
 	fd.readle16(&world.score,1);
-	fd.read(&world.title, sizeof(zzt_string));
-	fd.read(world.flag, sizeof(zzt_string) * 10);
-	fd.readle16(&world.time,1);
+	fd.read(&len,1);
+	fd.read(pad,20);
+	pad[len] = '\0';
+	world.title = pad;
+	for(int i=0; i< 10; i++) {
+		fd.read(&len,1);
+		fd.read(pad,20);
+		pad[len] = '\0';
+		world.flags[i] = pad;
+	}
 	fd.read(&world.saved, 1);
 	world.editing = 0;
 	world.task_points = 0;
 	
-	world.title.string[world.title.len]='\0';
-	for(x=0;x<10;x++) {
-		world.flag[x].string[world.flag[x].len]='\0';
-	}
 #ifdef DEBUG
 	printf("Magic: %i\n",world.magic);
 	printf("Board count: %i\n",world.board_count);
@@ -864,7 +866,7 @@ int load_zzt(const char *filename, int titleonly) {
 	printf("White: %i\n",world.keys[6]);
 	printf("Health: %i\n",world.health);
 	printf("Start: %i\n",world.start);
-	printf("Title: %s (%i)\n",world.title.string,world.title.len);
+	printf("Title: %s\n",world.title.c_str());
 #endif
 	fd.seek(0x200,SEEK_SET); //seek to the first board
 	current=new board_info_node;
@@ -982,8 +984,18 @@ void save_game(const char *filename) {
 	fd.writele16(&world.energizer_cycle,1);
 	fd.writele16(&world.pad1,1);
 	fd.writele16(&world.score,1);
-	fd.write(&world.title,sizeof(zzt_string));
-	fd.write(world.flag,sizeof(zzt_string) * 10);
+	x=world.title.length();
+	fd.write(&x,1);
+	world.title.resize(20);
+	fd.write(world.title.c_str(),20);
+	world.title.resize(x);
+	for(int i=0; i<10; i++) {
+		x=world.flags[i].length();
+		fd.write(&x,1);
+		world.flags[i].resize(20);
+		fd.write(world.flags[i].c_str(),20);
+		world.flags[i].resize(x);
+	}
 	fd.writele16(&world.time,1); //FIXME: This should be total game time, not current board time remaining
 	fd.write(&world.saved,1);
 	

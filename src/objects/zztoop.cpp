@@ -478,10 +478,9 @@ void ZZTOOP::exec(std::string text) {
 	}
 	else if(words[0] == "set") {
 		for(i=0;i<10;i++) {
-			if(world.flag[i].len==0) {
+			if(world.flags[i]=="") {
 				debug("\x1b[0;37mFlag \x1b[1;37m%s\x1b[0;37m set\n",words[1].c_str());
-				strcpy((char *)world.flag[i].string,words[1].c_str());
-				world.flag[i].len = (unsigned char)words[1].length();
+				world.flags[i] = words[1];
 				break;
 			}
 		}
@@ -489,10 +488,9 @@ void ZZTOOP::exec(std::string text) {
 	}
 	else if(words[0] == "clear") {
 		for(i=0;i<10;i++) {
-			if(std::string((const char *)world.flag[i].string) == words[1]) {
+			if(world.flags[i] == words[1]) {
 				debug("\x1b[0;37mFlag \x1b[1;37m%s\x1b[0;37m cleared\n",words[1].c_str());
-				world.flag[i].string[0]='\0';
-				world.flag[i].len=0;
+				world.flags[i] = "";
 				break;
 			}
 		}
@@ -592,7 +590,7 @@ void ZZTOOP::exec(std::string text) {
 				res=(world.energizer_cycle>0);
 			} else {
 				for(i=0;i<10;i++) {
-					if(std::string((const char *)world.flag[i].string) == words[1]) {
+					if(world.flags[i] == words[1]) {
 						res=1;
 						break;
 					}

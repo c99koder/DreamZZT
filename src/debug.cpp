@@ -206,7 +206,7 @@ void *process_debug(void *) {
 			switchbrd=-5;
 		} else if(debug_cmdline == "flags") {
 			for(int i=0; i<10; i++) {
-				debug("%i: %s\n",i,world.flag[i].string);
+				debug("%i: %s\n",i,world.flags[i].c_str());
 			}
 		} else if(debug_cmdline == "warp") {
 			gameFrozen = true;

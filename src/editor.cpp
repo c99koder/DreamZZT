@@ -464,7 +464,7 @@ void edit_zzt() {
 							}
 							break;
 						case 's':
-							s = os_save_file("Select a game",std::string((const char *)world.title.string) + std::string(".zzt"),"zzt");
+							s = os_save_file("Select a game",world.title + ".zzt","zzt");
 							if(s!="") {
 								save_game(s.c_str());
 								draw_main();
