@@ -65,10 +65,6 @@ ConsoleText::ConsoleText(int cols, int rows, Texture * texture) {
 ConsoleText::~ConsoleText() {
 }
 
-void ConsoleText::setTexture(Texture * txr) {
-	m_texture = txr;
-}
-
 void ConsoleText::setSize(float w, float h) {
 	m_w = w;
 	m_h = h;
@@ -95,8 +91,6 @@ void ConsoleText::clear() {
 	
 	m_cursor_x = 0;
 	m_cursor_y = 0;
-	
-	if(m_autoRefresh) refresh();
 }
 
 void ConsoleText::scroll(int rows, int top, int left, int bottom, int right) {
@@ -113,8 +107,6 @@ void ConsoleText::scroll(int rows, int top, int left, int bottom, int right) {
 			}
 		}
 	}
-	
-	if(m_autoRefresh) refresh();
 }
 
 void ConsoleText::scroll(int rows) {
@@ -193,8 +185,6 @@ void ConsoleText::printf(const char *fmt, ...) {
 			m_cursor_x++;
 		}			
 	}
-	
-	if(m_autoRefresh) refresh();
 }
 
 void ConsoleText::renderCharacter(float x, float y, float w, float h, unsigned char c, int attr) {
