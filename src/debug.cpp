@@ -282,15 +282,16 @@ void debug_hidCallback(const Event & evt, void * data) {
 			if(evt.key == '`') {
 				if(debug_visible==0 && world.online == 0) {
 					debug_visible = 1;
-					ct->setSize(BOARD_X*8,240);
-					dt->setTranslate(Vector(BOARD_X*4,120,0));
-					ct->setTranslate(Vector(BOARD_X*4,360,0));
+					ct->setSize(ct->getSize().x, ct->getSize().y/2);
+					dt->setSize(ct->getSize().x, ct->getSize().y);
+					dt->setTranslate(Vector(ct->getSize().x/2,ct->getSize().y / 2,0));
+					ct->setTranslate(Vector(ct->getSize().x/2,ct->getSize().y / 2 * 3,0));
 					debug_input->focus(true);
 					debug_cmdline = "";
 				} else {
 					debug_visible = 0;
-					ct->setSize(BOARD_X*8,480);
-					ct->setTranslate(Vector(BOARD_X*4,240,0));
+					ct->setSize(ct->getSize().x, ct->getSize().y * 2);
+					ct->setTranslate(Vector(ct->getSize().x/2,ct->getSize().y / 2,0));
 					dt->setTranslate(Vector(1024,360,0));
 					if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 					st->color(WHITE|HIGH_INTENSITY, BLUE);
@@ -327,9 +328,7 @@ void debug_init() {
 	debug_input = new TUITextInput("> ", &debug_cmdline);
 	debug_input->setBg(BLACK);
 	debug_quitting=false;
-#ifndef DZZT_LITE
 	debug_thread = new Tiki::Thread::Thread(process_debug,NULL);
-#endif
 }
 
 void debug_shutdown() {

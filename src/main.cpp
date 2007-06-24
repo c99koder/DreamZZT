@@ -381,6 +381,7 @@ void render() {
 #ifdef DZZT_LITE
 	ct->draw(screen);
 	st->draw(screen);
+	if(debug_visible) dt->draw(screen);
 	SDL_UpdateRect(screen, 0, 0, SCREEN_X, SCREEN_Y);
 #else	
 	Frame::begin();
@@ -496,10 +497,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	TUIWindow *t, *c;
 	srand((unsigned int)time(NULL));
 		
-	// Init Tiki
 #ifdef DZZT_LITE	
-	printf("\nHello SDL User!\n");
-
 	/* initialize SDL */
 	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -510,6 +508,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	SDL_WM_SetCaption("DreamZZT Lite", NULL);
 	screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, 32, SDL_HWSURFACE);
 #endif
+	// Init Tiki
 	Tiki::init(argc, argv);
 	Tiki::setName("DreamZZT", NULL);
 	//Hid::callbackReg(tkCallback, NULL);

@@ -215,9 +215,9 @@ void ConsoleText::draw(SDL_Surface *screen) {
 			r.y = y*y_step + pos.y;
 			SDL_FillRect(screen,&r,bgc);
 			
-			for(int j=0; j<16; j++) {
-				for(int i=0; i<8; i++) {
-					if(((unsigned int*)m_font->pixels)[((j/2)+v)*(m_font->pitch / 4) + i + u]) {
+			for(int j=0; j<y_step; j++) {
+				for(int i=0; i<x_step; i++) {
+					if(((unsigned int*)m_font->pixels)[int((j/(y_step / 8))+v)*(m_font->pitch / 4) + i + u]) {
 						putpixel(screen, x*x_step + i + pos.x, y*y_step + j + pos.y, fgc);
 					}
 				}
