@@ -497,6 +497,39 @@ void edit_zzt() {
 							}
 						}
 						break;
+						case 'w':
+						{
+							TUIWindow t("World Info");
+
+							t.addWidget(new TUITextInput   ("         World Name: ", &world.title));
+							t.addWidget(new TUINumericInput("               Ammo: ", &world.ammo, 0, 65535));
+							t.addWidget(new TUINumericInput("               Gems: ", &world.gems, 0, 65535));
+							t.addWidget(new TUINumericInput("             Health: ", &world.health, 0, 65535));
+							t.addWidget(new TUINumericInput("            Torches: ", &world.torches, 0, 65535));
+							t.addWidget(new TUINumericInput("              Score: ", &world.score, 0, 65535));
+							t.addWidget(new TUILabel(""));
+							t.addWidget(new TUICheckBox    ("Saved Game", &world.saved));
+#ifndef DZZT_LITE
+							t.addWidget(new TUICheckBox    ("Use 3D Models", &world.use_3d));
+#endif
+							t.addWidget(new TUILabel(""));
+							t.addWidget(new TUILabel       ("                 Flags",true));
+							t.addWidget(new TUITextInput   ("   1: ", &world.flags[0]));
+							t.addWidget(new TUITextInput   ("   2: ", &world.flags[0]));
+							t.addWidget(new TUITextInput   ("   3: ", &world.flags[0]));
+							t.addWidget(new TUITextInput   ("   4: ", &world.flags[0]));
+							t.addWidget(new TUITextInput   ("   5: ", &world.flags[0]));
+							t.addWidget(new TUITextInput   ("   6: ", &world.flags[0]));
+							t.addWidget(new TUITextInput   ("   7: ", &world.flags[0]));
+							t.addWidget(new TUITextInput   ("   8: ", &world.flags[0]));
+							t.addWidget(new TUITextInput   ("   9: ", &world.flags[0]));
+							t.addWidget(new TUITextInput   ("  10: ", &world.flags[0]));
+							
+							ec.stop();
+							t.doMenu();
+							ec.start();
+						}
+						break;
 						case 'i':
 						{
 							TUIWindow t("Board Info");
@@ -521,11 +554,6 @@ void edit_zzt() {
 							t.addWidget(new TUINumericInput("          Maximum Shots: ",&currentbrd->maxshots,0,254));
 
 							rg=new TUIRadioGroup           ("         Animated Water: ",&currentbrd->animatedWater);
-							rg->add("Disabled");
-							rg->add("Enabled");
-							t.addWidget(rg);
-
-							rg=new TUIRadioGroup           ("  (World) Use 3D Models: ",&world.use_3d);
 							rg->add("Disabled");
 							rg->add("Enabled");
 							t.addWidget(rg);

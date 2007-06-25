@@ -106,22 +106,34 @@ class TUICheckBox : public TUIWidget {
 public:
 	TUICheckBox(std::string text, bool *checked) {
 		m_text=text;
-		m_checked=checked;
+		m_checked_b=checked;
+		m_checked_uc=NULL;
+	}
+
+	TUICheckBox(std::string text, unsigned char *checked) {
+		m_text=text;
+		m_checked_b=NULL;
+		m_checked_uc=checked;
 	}
 	
 	void draw(ConsoleText *ct) {
 		ct->color(WHITE|HIGH_INTENSITY,m_bg);
-		*ct << "  [" << ((*m_checked)?"\xfb":" ") << "] " << m_text;
+		if(m_checked_b != NULL) *ct << "  [" << ((*m_checked_b)?"\xfb":" ") << "] " << m_text;
+		if(m_checked_uc != NULL) *ct << "  [" << ((*m_checked_uc)?"\xfb":" ") << "] " << m_text;
 	}
 	
 	const std::string getHelpText() { return "Press SPACE to toggle this"; }
 	
 	void processHidEvent(const Hid::Event &evt) {
-		if(evt.type == Event::EvtKeypress && evt.key == ' ') (*m_checked) = !(*m_checked);
+		if(evt.type == Event::EvtKeypress && evt.key == ' ') {
+			if(m_checked_b != NULL) (*m_checked_b) = !(*m_checked_b);
+			if(m_checked_uc != NULL) (*m_checked_uc) = !(*m_checked_uc);
+		}
 	}
 private:
 	std::string m_text;
-	bool *m_checked;
+	bool *m_checked_b;
+	unsigned char *m_checked_uc;
 };
 
 class TUIRadioGroup : public TUIWidget {
