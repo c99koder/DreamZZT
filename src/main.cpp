@@ -417,7 +417,7 @@ void render() {
 		*dt << "\x1b[s"; // Save cursor position
 		dt->locate(0,0);
 		dt->color(WHITE|HIGH_INTENSITY, BLUE);
-		*dt << "FPS: " << (int)fps;
+		*dt << "FPS: " << (int)fps << "   ";
 		*dt << "\x1b[u"; // Restore cursor position				
 	}
 	if(avgFpsTimer <= 0) {
