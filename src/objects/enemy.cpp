@@ -142,11 +142,12 @@ void Enemy::message(ZZTObject *them, std::string message) {
 	if((
 			(message == "shot" && them->type() == ZZT_BULLET && them->param(1) == 0)
 			 || them->type()==ZZT_PLAYER || message == "bombed") && m_type != ZZT_SPINNING_GUN) {
-		give_score(2);
-		draw_score();
 		if(message == "touch" || message == "thud") {
 			them->message(this,"shot");
-		} 
+		} else {
+			give_score(2);
+			draw_score();
+		}
 		zm->setTune("t+c---c++++c--c");
 		zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
