@@ -25,3 +25,6 @@ CXXFLAGS+=-Iinclude -Ilua -I../libSDLDS/include/SDL -DDEBUG -DDZZT_LITE
 	@echo $(notdir $<)
 	@$(bin2o)
 
+%.nds: %.arm9
+	@ndstool -c $@ -g DCSQ SS "DreamZZT" 308 -b dreamzzt.bmp "DreamZZT 3.0.8;(C) 2007 Sam Steele; http://www.c99.org/" -9 $<
+	@echo built ... $(notdir $@)
