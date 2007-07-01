@@ -45,14 +45,17 @@ extern GraphicsLayer *gl;
 extern struct board_info_node *currentbrd;
 extern unsigned char zztascii[55];
 extern struct world_header world;
+extern Player *player;
 
 int msgcount=0;
+int msgoff=0;
 void redraw_status();
 
 void set_msg(char *text) {
 	redraw_status();
 	strcpy(currentbrd->message,text);
 	currentbrd->msgcount=24;
+	msgoff=0;
 }
 
 void redraw_status() {
@@ -63,13 +66,35 @@ void redraw_status() {
 	}
 }
 
+#if TIKI_PLAT == TIKI_NDS
+	extern int disp_off_x, disp_off_y;
+#endif
+
 void draw_msg() {
+	char message[60];
+
 	if(currentbrd->msgcount>0) {
 		int length = (int)strlen(currentbrd->message);
+#if TIKI_PLAT == TIKI_NDS
+		if(length > 30) length = 30;
+		int left = disp_off_x / 8;
+		left += 16 - ((length+2)/2);
+		if(left < 0) left=0;
+		int top = disp_off_y / 8;
+		int bot = top + 23;
+		if(bot > 24) bot = 24;
+		strcpy(message,currentbrd->message+msgoff);
+		message[30] = '\0';
+		if(strlen(currentbrd->message) > 30 && msgoff + 30 < strlen(currentbrd->message) && currentbrd->msgcount < 21) msgoff+=4;
+		if(msgoff > strlen(currentbrd->message) - 30) msgoff = strlen(currentbrd->message) - 30;
+#else
 		int left = (BOARD_X/2)-((length+2)/2);
+		int bot = BOARD_Y - 1;
+		strcpy(message,currentbrd->message);
+#endif
 		ct->color((currentbrd->msgcount%6)+9,0);
-		ct->locate(left,BOARD_Y-1);
-		ct->printf(" %s ",currentbrd->message);
+		ct->locate(left,bot);
+		ct->printf(" %s ",message);
 #ifndef DZZT_LITE
 		for(int x=left; x<=left+length; x++) {
 			gl->clear(x,BOARD_Y-1);
