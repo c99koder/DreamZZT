@@ -129,8 +129,8 @@ extern std::list<Task*> taskList;
 float zoom = 1;
 
 std::string MAIN_MENU = std::string(std::string("$Welcome to DreamZZT ") + std::string(VERSION) + "\r\r\
-Please select an option from the\r\
-menu below:\r\
+Please select an option from\r\
+the menu below:\r\
 \r\
 !new;Start a New Game\r\
 !restore;Restore a Saved Game\r\
@@ -138,13 +138,15 @@ menu below:\r\
 #ifdef NET
 std::string("!net;DreamZZT Online\r") +
 #endif
-#if TIKI_PLAT != TIKI_DC
+#if TIKI_PLAT != TIKI_DC && TIKI_PLAT != TIKI_NDS
 std::string("!edit;Editor\r") +
 #endif
-std::string("!credits;Credits\r\
-!quit;Quit DreamZZT\r\
-\r\
-Copyright (C) 2000 - 2007 Sam Steele\r\
+std::string("!credits;Credits\r") +
+#if TIKI_PLAT != TIKI_DC && TIKI_PLAT != TIKI_NDS
+std::string("!quit;Quit DreamZZT\r") + 
+#endif
+std::string("\r\
+(C) 2000 - 2007 Sam Steele\r\
 All Rights Reserved.\r");
 
 #define CREDITS "$Programming\r\r\
