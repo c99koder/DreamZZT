@@ -222,7 +222,7 @@ public:
 	}
 	
 	const std::string getHelpText() { 
-#if TIKI_PLAT == TIKI_DC
+#if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
 		return "Press A to select this"; 
 #else
 		return "Press ENTER to select this"; 
