@@ -886,6 +886,8 @@ complete this game.\r\
 		player->setShape(ZZT_EMPTY_SHAPE);
 		player->setColor(0,0);
 		playerEventCollector->stop();
+		disp_off_x = 14 * 8;
+		disp_off_y = 8;
 		titlePlayer = player;
 		player=NULL;
 		st->locate(1,7);
