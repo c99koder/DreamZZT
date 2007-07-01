@@ -42,6 +42,10 @@ using namespace Tiki::Audio;
 #include "status.h"
 #include "sound.h"
 
+#if TIKI_PLAT == TIKI_NDS
+extern int disp_off_x, disp_off_y;
+#endif
+
 extern ZZTMusicStream *zm;
 
 extern ConsoleText *ct;
@@ -346,12 +350,33 @@ void boardTransition(direction d, board_info_node *newbrd) {
 	bool changed[BOARD_X][BOARD_Y] = {0};
 	
 	if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
+#if TIKI_PLAT == TIKI_NDS
+	int newoff_x = player->position().x - 16;
+	int newoff_y = player->position().y - 16;
 	
+	if(newoff_x < 0) newoff_x = 0;
+	if(newoff_x > 28) newoff_x = 28;
+	if(newoff_y < 0) newoff_y = 0;
+	if(newoff_y > 24) newoff_y = 24;
+	
+	float tmpoff_x = disp_off_x;
+	float tmpoff_y = disp_off_y;
+	
+	float offstep_x = float((newoff_x*8.0f) - disp_off_x) / float((BOARD_X * BOARD_Y)/100.0f);
+	float offstep_y = float((newoff_y*8.0f) - disp_off_y)  / float((BOARD_X * BOARD_Y)/100.0f);
+#endif	
 	zoom = 1;
 	
 	switch(d) {
 		case IDLE:
 			for(i=0; i<(BOARD_X * BOARD_Y)/100; i++) {
+#if TIKI_PLAT == TIKI_NDS
+				tmpoff_x += offstep_x;
+				tmpoff_y += offstep_y;
+
+				disp_off_x = tmpoff_x;
+				disp_off_y = tmpoff_y;
+#endif
 				for(j=0; j<100; j++) {
 					do {
 						x=rand()%BOARD_X;
