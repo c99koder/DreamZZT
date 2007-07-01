@@ -17,19 +17,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */ 
 
-#include <stdarg.h>
-#include <string.h>
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
 #include <Tiki/eventcollector.h>
 #include <Tiki/thread.h>
 #include <Tiki/tikitime.h>
-#include "console.h"
 
 using namespace Tiki;
 using namespace Tiki::GL;
 using namespace Tiki::Hid;
 using namespace Tiki::Thread;
+
+#include <stdarg.h>
+#include <string.h>
+
+#include "window.h"
 
 #if TIKI_PLAT == TIKI_SDL
 #include <qt3/qapplication.h>
@@ -254,9 +256,9 @@ std::string os_select_file(std::string title, std::string filter) {
 	spinner("Working");
 	
 	while ( (de=fs_readdir(d)) ) {
-		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] + 32)) &&
-			 (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] + 32)) &&
-			 (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32))) {
+		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] - 32)) &&
+			 (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] - 32)) &&
+			 (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] - 32))) {
 			if(filter=="sav") {
 				char name[128];
 				char info[256];
@@ -356,9 +358,9 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 	
 	while ( (de=fs_readdir(d)) ) {
 		printf("Filename: %s\n",de->name);
-		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] + 32)) &&
-			 (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] + 32)) &&
-			 (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] + 32))) {
+		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] - 32)) &&
+			 (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] - 32)) &&
+			 (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] - 32))) {
 			if(filter=="sav") {
 				int fd = fs_open((std::string("/vmu/a1/") + std::string(de->name)).c_str(), O_RDONLY);
 				fs_read(fd,&pkg,sizeof(vmu_hdr_t));
@@ -402,9 +404,12 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 #if TIKI_PLAT == TIKI_NDS
 #include <nds.h>
 #include <fat.h>
+#include <sys/dir.h>
 
-#include "console.h"
+#include "board.h"
 
+extern ConsoleText *ct;
+extern struct world_header world;
 extern "C" int tiki_main(int argc, char *argv[]);
 
 int main(int argc, char *argv[]) {
@@ -419,9 +424,30 @@ int main(int argc, char *argv[]) {
 }
 
 std::string os_select_file(std::string title, std::string filter) {
-	return "town.zzt";
+	struct stat st;
+	char name[256]; // to hold a full filename and string terminator
+	DIR_ITER* dir;
+	TUIWindow t(title);
+	std::string tmp = title + std::string(":\n");
+	dir = diropen ("/"); 
+
+	if (dir == NULL) {
+		return "";
+	}
+	
+	while (dirnext(dir, name, &st) == 0) {
+		if((name[strlen(name)-3]==filter[0] || name[strlen(name)-3]==(filter[0] - 32)) &&
+			 (name[strlen(name)-2]==filter[1] || name[strlen(name)-2]==(filter[1] - 32)) &&
+			 (name[strlen(name)-1]==filter[2] || name[strlen(name)-1]==(filter[2] - 32))) {
+				tmp += std::string("!") + std::string(name) + std::string(";") + std::string(name) + std::string("\n");
+		}
+	}
+	dirclose(dir);
+	t.buildFromString(tmp,true);
+	t.doMenu(ct);
+	return t.getLabel();
 }
 std::string os_save_file(std::string title, std::string filename, std::string filter) {
-	return "town.sav";
+	return world.title + ".sav";
 }
 #endif
