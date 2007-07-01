@@ -66,8 +66,8 @@ void Bullet::message(ZZTObject *them, std::string message) {
 		 them->message(this,"shot");
 		if(them->type()==ZZT_BREAKABLE) {
 			remove_from_board(currentbrd,them);
-			zm->setTune("t-c");
-			zm->start();
+			if(zm!=NULL) zm->setTune("t-c");
+			if(zm!=NULL) zm->start();
 		}
 		remove_from_board(currentbrd,this);
 	}
@@ -111,13 +111,13 @@ void ZZTObject::shoot(enum direction dir) {
 		bullet->setCycle(1);
 		currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].under=currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj;
 		currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=bullet;
-		if(!zm->isPlaying()) {
+		if(zm != NULL && !zm->isPlaying()) {
 			if(m_type==ZZT_PLAYER) {
-				zm->setTune("t+c-c-c");
+				if(zm!=NULL) zm->setTune("t+c-c-c");
 			} else {
-				zm->setTune("c-f#");
+				if(zm!=NULL) zm->setTune("c-f#");
 			}
-			zm->start();
+			if(zm!=NULL) zm->start();
 		}
 	} else {
 		if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj!=NULL) {

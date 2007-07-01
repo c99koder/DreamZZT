@@ -88,15 +88,15 @@ void Transporter::message(ZZTObject *them, std::string message) {
 				break;
 			}
 		} while(x>0 && x<BOARD_X && y>0 && y<BOARD_Y);
-		zm->setTune("tc+d-e+f#-g#+a#c+d");
-		zm->start();
+		if(zm!=NULL) zm->setTune("tc+d-e+f#-g#+a#c+d");
+		if(zm!=NULL) zm->start();
 	}
 }
 	
 void Scroll::message(ZZTObject *them, std::string message) {
 	if(message == "get") {
-		zm->setTune("tc-c+d-d+e-e+f-f+g-g");
-		zm->start();
+		if(zm!=NULL) zm->setTune("tc-c+d-d+e-e+f-f+g-g");
+		if(zm!=NULL) zm->start();
 		m_progpos = 0;
 	}
 }
@@ -126,9 +126,9 @@ void Inventory::message(ZZTObject *them, std::string message) {
 				enermsg=1;
 				set_msg("Energizer - You are invincible!");
 			}
-			zm->setTune("s.-cd#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#e");
-			zm->lock();
-			zm->start();
+			if(zm!=NULL) zm->setTune("s.-cd#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#e");
+			if(zm!=NULL) zm->lock();
+			if(zm!=NULL) zm->start();
 			break;
 		case ZZT_GEM:
 			give_gems(1);
@@ -138,8 +138,8 @@ void Inventory::message(ZZTObject *them, std::string message) {
 				gemmsg=1;
 				set_msg("Gems give you Health!");
 			}
-			zm->setTune("t+c-gec");
-			zm->start();
+			if(zm!=NULL) zm->setTune("t+c-gec");
+			if(zm!=NULL) zm->start();
 			break;
 		case ZZT_AMMO:
 			give_ammo(5);
@@ -147,8 +147,8 @@ void Inventory::message(ZZTObject *them, std::string message) {
 				ammomsg=1;
 				set_msg("Ammunition - 5 shots per container.");
 			}
-			zm->setTune("tcc#d");
-			zm->start();
+			if(zm!=NULL) zm->setTune("tcc#d");
+			if(zm!=NULL) zm->start();
 			break;
 		case ZZT_TORCH:
 			give_torch(1);
@@ -156,21 +156,21 @@ void Inventory::message(ZZTObject *them, std::string message) {
 				torchmsg=1;
 				set_msg("Torch - used for lighting in the underground.");
 			}
-			zm->setTune("tcase");
-			zm->start();
+			if(zm!=NULL) zm->setTune("tcase");
+			if(zm!=NULL) zm->start();
 			break;
 		case ZZT_KEY:
 			if(world.keys[(m_fg%8)-1]==1) {
 				sprintf(tmp,"You already have a %s key!",int_to_color(*m_color).c_str());
-				zm->setTune("sc-c");
-				zm->start();
+				if(zm!=NULL) zm->setTune("sc-c");
+				if(zm!=NULL) zm->start();
 				ok=0;
 			} else {
 				world.keys[(m_fg%8)-1]=1;
 				sprintf(tmp,"You now have the %s key",int_to_color(*m_color).c_str());
 				draw_keys();
-				zm->setTune("t+cegcegceg+sc");
-				zm->start();
+				if(zm!=NULL) zm->setTune("t+cegcegceg+sc");
+				if(zm!=NULL) zm->start();
 			}
 			set_msg(tmp);
 			break;
@@ -184,14 +184,14 @@ void Inventory::message(ZZTObject *them, std::string message) {
 					draw_keys();
 					//remove_from_board(currentbrd, this);
 					//them->move(toward(this));
-					zm->setTune("tcgbcgb+ic");
-					zm->start();					
+					if(zm!=NULL) zm->setTune("tcgbcgb+ic");
+					if(zm!=NULL) zm->start();					
 				} else {
 					sprintf(tmp,"The %s door is locked.",int_to_color(*m_color).c_str());
 					set_msg(tmp);
 					ok=0;
-					zm->setTune("t--gc");
-					zm->start();
+					if(zm!=NULL) zm->setTune("t--gc");
+					if(zm!=NULL) zm->start();
 				}
 			}
 			break;

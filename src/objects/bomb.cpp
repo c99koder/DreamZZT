@@ -43,8 +43,8 @@ void Bomb::message(ZZTObject *them, std::string message) {
 		m_cycle=10;
 		m_flags|=F_PUSHABLE;
 		draw();
-		zm->setTune("tcf+cf+c");
-		zm->start();
+		if(zm!=NULL) zm->setTune("tcf+cf+c");
+		if(zm!=NULL) zm->start();
 	}
 }
 
@@ -59,8 +59,8 @@ void Bomb::update() {
 		m_counter=4;
 		draw();
 		if(m_shape<'9'){
-			zm->setTune((m_shape%2==0)?"t5":"t8");
-			zm->start();
+			if(zm!=NULL) zm->setTune((m_shape%2==0)?"t5":"t8");
+			if(zm!=NULL) zm->start();
 		}
 	}
 	
@@ -69,8 +69,8 @@ void Bomb::update() {
 		m_cycle=1;
 
 		if(m_counter==3) {
-			zm->setTune("t+++c-c-c-c-c-c");
-			zm->start();
+			if(zm!=NULL) zm->setTune("t+++c-c-c-c-c-c");
+			if(zm!=NULL) zm->start();
 		}
 		
 		for(y = (int)m_position.y - 4; y <= (int)m_position.y + 4; y++) {

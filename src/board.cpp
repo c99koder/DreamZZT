@@ -204,9 +204,13 @@ void *spinner_thd(void *text) {
 }
 	
 void spinner(char *text) {
+#if TIKI_PLAT != TIKI_NDS
 	if(spinner_active) spinner_clear();
 	spinner_active = true;
 	spinner_thread = new Thread::Thread(spinner_thd,text);
+#else
+	spinner_active = false;
+#endif
 }
 
 void spinner_clear() {
@@ -459,7 +463,11 @@ void boardTransition(direction d, board_info_node *newbrd) {
 			}
 		break;
 		case LEFT:
+#if TIKI_PLAT == TIKI_NDS
+			for(i=1; i< 31; i+=2) {
+#else		
 			for(i=1; i< BOARD_X; i+=4) {
+#endif
 				for(y=0; y<BOARD_Y; y++) {
 					for(x=0; x<BOARD_X; x++) {
 						if(x < i) {
@@ -498,7 +506,11 @@ void boardTransition(direction d, board_info_node *newbrd) {
 			}
 			break;
 		case RIGHT:
+#if TIKI_PLAT == TIKI_NDS
+			for(i=BOARD_X-1; i > 30; i-=2) {
+#else		
 			for(i=BOARD_X-1; i > 0; i-=4) {
+#endif
 				for(y=0; y<BOARD_Y; y++) {
 					for(x=0; x<BOARD_X; x++) {
 						if(x < i) {
@@ -811,8 +823,9 @@ void connect_lines(board_info_node *current) {
 }
 
 int load_zzt(const char *filename, int titleonly) {
+	printf("load_zzt()\n");
 	unsigned short int c,x,y,z,sum=0,q;
-	char pad[20];
+	char pad[128];
 	unsigned char len;
 	rle_block rle;
 	zzt_param param;
@@ -825,6 +838,7 @@ int load_zzt(const char *filename, int titleonly) {
 	fd.readle16(&world.magic,1);
 	if(world.magic!=65535) {
 		spinner_clear();
+		printf("Invalid magic.\n");
 		return -1;
 	}
 	fd.readle16(&world.board_count,1);
@@ -947,7 +961,6 @@ int load_zzt(const char *filename, int titleonly) {
 			}
 			current->params.push_back(param);
 		}
-		
 		if(q<world.board_count) {
 			current->next=new board_info_node;
 			current=current->next;
@@ -1091,8 +1104,8 @@ void update_brd() {
 			world.torch_cycle--;
 			draw_torch();
 			if(world.torch_cycle==0) {
-				zm->setTune("tc-c-c");
-				zm->start();
+				if(zm!=NULL) zm->setTune("tc-c-c");
+				if(zm!=NULL) zm->start();
 			}
 		}
 		
@@ -1102,10 +1115,10 @@ void update_brd() {
 	
 		world_sec--;
 		if(world.health==0 && world_sec==0) {
-			if(!zm->isLocked()) {
-				zm->setTune("s.-cd#g+c-ga#+dgfg#+cf----q.c");
-				zm->lock();
-				zm->start();
+			if(zm!=NULL && !zm->isLocked()) {
+				if(zm!=NULL) zm->setTune("s.-cd#g+c-ga#+dgfg#+cf----q.c");
+				if(zm!=NULL) zm->lock();
+				if(zm!=NULL) zm->start();
 			}
 			set_msg("Game Over - Press ESC");
 		}
@@ -1113,9 +1126,9 @@ void update_brd() {
 		if(world.energizer_cycle>0) {
 			world.energizer_cycle--;
 			if(world.energizer_cycle==0) {
-				zm->unlock();
-				zm->setTune("s.-c-a#gf#fd#c");
-				zm->start();
+				if(zm!=NULL) zm->unlock();
+				if(zm!=NULL) zm->setTune("s.-c-a#gf#fd#c");
+				if(zm!=NULL) zm->start();
 			}
 		}
 		
@@ -1123,8 +1136,8 @@ void update_brd() {
 			take_time(1);
 			if(world.time==10) { 
 				set_msg("Time is running out!"); 
-				zm->setTune("i.+cfc-f+cfq.c");
-				zm->start();
+				if(zm!=NULL) zm->setTune("i.+cfc-f+cfq.c");
+				if(zm!=NULL) zm->start();
 			}
 			if(world.time==0) player->message(player,"time");
 		}

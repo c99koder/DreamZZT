@@ -148,8 +148,8 @@ void Enemy::message(ZZTObject *them, std::string message) {
 			give_score(2);
 			draw_score();
 		}
-		zm->setTune("t+c---c++++c--c");
-		zm->start();
+		if(zm!=NULL) zm->setTune("t+c---c++++c--c");
+		if(zm!=NULL) zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
 		task_kill(this);
 		remove_from_board(currentbrd,this);
@@ -157,12 +157,12 @@ void Enemy::message(ZZTObject *them, std::string message) {
 	if(m_type == ZZT_BEAR && them->type() == ZZT_BREAKABLE) {
 		remove_from_board(currentbrd,them);
 		remove_from_board(currentbrd,this);
-		zm->setTune("t+c-c-c");
-		zm->start();
+		if(zm!=NULL) zm->setTune("t+c-c-c");
+		if(zm!=NULL) zm->start();
 	}
 	if(message == "crush") {
-		zm->setTune("t+c---c++++c--c");
-		zm->start();
+		if(zm!=NULL) zm->setTune("t+c---c++++c--c");
+		if(zm!=NULL) zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was crushed.\n",m_name.c_str());
 		remove_from_board(currentbrd,this);
 	}

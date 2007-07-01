@@ -270,7 +270,7 @@ void draw_hud_ingame() {
 	draw_gems();
 	draw_score();
 	draw_keys();
-#if TIKI_PLAT == TIKI_DC
+#if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
 	st->locate(9,15);
 	st->color(0,7);
 	st->printf(" X ");

@@ -17,7 +17,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */ 
 
+#include <stdarg.h>
+#include <string.h>
 #include <Tiki/tiki.h>
+#include <Tiki/hid.h>
+#include <Tiki/eventcollector.h>
+#include <Tiki/thread.h>
+#include <Tiki/tikitime.h>
+#include "console.h"
+
+using namespace Tiki;
+using namespace Tiki::GL;
+using namespace Tiki::Hid;
+using namespace Tiki::Thread;
 
 #if TIKI_PLAT == TIKI_SDL
 #include <qt3/qapplication.h>
@@ -384,5 +396,32 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 	t.doMenu(ct);
 	printf("Returning: %s\n",t.getLabel().c_str());
 	return t.getLabel();
+}
+#endif
+
+#if TIKI_PLAT == TIKI_NDS
+#include <nds.h>
+#include <fat.h>
+
+#include "console.h"
+
+extern "C" int tiki_main(int argc, char *argv[]);
+
+int main(int argc, char *argv[]) {
+	REG_POWERCNT = POWER_ALL_2D;
+
+	irqInit();
+	irqEnable(IRQ_VBLANK);
+	
+	fatInitDefault();
+
+	return tiki_main(argc, argv);
+}
+
+std::string os_select_file(std::string title, std::string filter) {
+	return "town.zzt";
+}
+std::string os_save_file(std::string title, std::string filename, std::string filter) {
+	return "town.sav";
 }
 #endif

@@ -697,13 +697,13 @@ void pluto_persist(lua_State *L, lua_Chunkwriter writer, void *ud)
 
 int bufwriter (lua_State *L, const void* p, size_t sz, void* ud) {
 	WriterInfo *wi = (WriterInfo *)ud;
-
+	char *p_ = p;
 	luaM_reallocvector(L, wi->buf, wi->buflen, wi->buflen+sz, char);
 	
 	while(sz)
 	{
 		/* how dearly I love ugly C pointer twiddling */
-		wi->buf[wi->buflen++] = *((char*)p)++;
+		wi->buf[wi->buflen++] = *(p_)++;
 		sz--;
 	}
 }

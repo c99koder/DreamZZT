@@ -43,10 +43,12 @@ extern struct board_info_node *board_list;
 extern struct world_header world;
 extern int switchbrd;
 extern ZZTMusicStream *zm;
+#if TIKI_PLAT != TIKI_NDS
 #ifdef DZZT_LITE
 extern SDL_Surface *zzt_font;
 #else
 extern Texture *zzt_font;
+#endif
 #endif
 
 ConsoleText *dt=NULL;
@@ -238,8 +240,8 @@ void *process_debug(void *) {
 		} else if(debug_cmdline == "quit") {
 			switchbrd = -2;
 		} else if(debug_cmdline.find("play ") == 0) {
-			zm->setTune(debug_cmdline.c_str() + 5);
-			zm->start();
+			if(zm!=NULL) zm->setTune(debug_cmdline.c_str() + 5);
+			if(zm!=NULL) zm->start();
 		} else if(debug_cmdline == "+reveal") {
 			debug_show_objects=true;
 			debug("Revealing objects.\n");
@@ -251,9 +253,9 @@ void *process_debug(void *) {
 			player->exec(debug_cmdline);
 		}
 		
-		if(!zm->isPlaying()) {
-			zm->setTune("i-g");
-			zm->start();
+		if(zm!=NULL && !zm->isPlaying()) {
+			if(zm!=NULL) zm->setTune("i-g");
+			if(zm!=NULL) zm->start();
 		}
 	}
 
@@ -318,6 +320,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 }
 
 void debug_init() {
+#if TIKI_PLAT != TIKI_NDS
 	dt = new ConsoleText(BOARD_X,25,zzt_font);
 	dt->setSize(BOARD_X*8,240);
 	dt->setTranslate(Vector(1024,360,0));
@@ -329,17 +332,17 @@ void debug_init() {
 	debug_input->setBg(BLACK);
 	debug_quitting=false;
 	debug_thread = new Tiki::Thread::Thread(process_debug,NULL);
-}
-
-void debug_shutdown() {
-#ifndef DZZT_LITE
-	Hid::callbackUnreg(debug_hidCookie);
-	debug_quitting=true;
-	debug_thread->join();
 #endif
 }
 
+void debug_shutdown() {
+	Hid::callbackUnreg(debug_hidCookie);
+	debug_quitting=true;
+	debug_thread->join();
+}
+
 void debug(const char *fmt, ...) {
+	if(dt==NULL) return;
 	char txt[1024];
 	va_list args;
 	

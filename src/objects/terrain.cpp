@@ -184,8 +184,8 @@ void Terrain::message(ZZTObject *them, std::string message) {
 				set_msg("A path is cleared through the forest.");
 				forestmsg=1;
 			}
-			zm->setTune("ta");
-			zm->start();
+			if(zm!=NULL) zm->setTune("ta");
+			if(zm!=NULL) zm->start();
 			remove_from_board(currentbrd,this);
 			them->move(them->toward(this));			
 			break;
@@ -194,8 +194,8 @@ void Terrain::message(ZZTObject *them, std::string message) {
 				set_msg("You are blocked by an invisible wall.");
 				invismsg=1;
 			}
-			zm->setTune("t--dc");
-			zm->start();
+			if(zm!=NULL) zm->setTune("t--dc");
+			if(zm!=NULL) zm->start();
 			m_type=ZZT_NORMAL;
 			m_shape=ZZT_NORMAL_SHAPE;
 			draw();
@@ -205,8 +205,8 @@ void Terrain::message(ZZTObject *them, std::string message) {
 				set_msg("Your path is blocked by water.");
 				watermsg=1;
 			}
-			zm->setTune("t+c+c");
-			zm->start();
+			if(zm!=NULL) zm->setTune("t+c+c");
+			if(zm!=NULL) zm->start();
 		}
 	}
 }

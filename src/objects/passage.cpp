@@ -71,8 +71,8 @@ void Passage::message(ZZTObject *them, std::string message) {
 
 		if(brd!=NULL) switchbrd=m_dest;
 		obj->setFlag(F_SLEEPING);
-		zm->setTune("tceg tc#fg# tdf#a td#ga# teg#+c");
-		zm->start();
+		if(zm!=NULL) zm->setTune("tceg tc#fg# tdf#a td#ga# teg#+c");
+		if(zm!=NULL) zm->start();
 	}
 }
 

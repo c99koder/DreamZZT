@@ -185,8 +185,8 @@ void Player::message(ZZTObject *them, std::string message) {
 			take_health(10);
 			if(message != "time" && world.health > 0) {
 				set_msg("Ouch!");
-				zm->setTune("t--c+c---c+d#");
-				zm->start();
+				if(zm!=NULL) zm->setTune("t--c+c---c+d#");
+				if(zm!=NULL) zm->start();
 			}
 			if(currentbrd->reenter && world.health>0) {
 				world.time=currentbrd->time;
@@ -247,7 +247,7 @@ void Player::update() {
 			Time::sleep(100000);
 			while (playerEventCollector->getEvent(evt)) {
 				processEvent(evt);
-			}	
+			}
 		} while(m_flags&F_SLEEPING);
 		st->locate(4,6);
 		st->color(15,1);

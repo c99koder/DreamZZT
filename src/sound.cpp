@@ -47,6 +47,7 @@ inline void ByteSwap(void * b, int n)
 }
 
 ZZTMusicStream::ZZTMusicStream() {
+#if TIKI_PLAT != TIKI_NDS
 	setFrequency(44100);
 	setChannelCount(1);
 	
@@ -65,7 +66,8 @@ ZZTMusicStream::ZZTMusicStream() {
 	m_drum = NULL;
 	
 	m_locked = false;
-	Stream::create();	
+	Stream::create();
+#endif
 }
 
 ZZTMusicStream::~ZZTMusicStream() {

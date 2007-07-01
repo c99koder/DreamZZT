@@ -585,6 +585,10 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 		if (shadow) draw_shadow(console,x+2+i,y+h+2);
 }
 
+#if TIKI_PLAT == TIKI_NDS
+extern int disp_off_x,disp_off_y;
+#endif
+
 void TUIWindow::doMenu(ConsoleText *ct) {
 	EventCollector ec;
 	Event evt;
@@ -598,6 +602,10 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 		if(player != NULL) player->setHeading(player->heading());
 	}
 
+#if TIKI_PLAT == TIKI_NDS
+	disp_off_x = (m_x+1) * 8;
+	disp_off_y = m_y * 8;
+#endif
 	zoom = 1;
 	
 	draw_box(ct, m_x, m_y, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
@@ -631,12 +639,18 @@ void TUIWindow::doMenu(ConsoleText *ct) {
 			
 			if(m_offset < m_h/2-2) {
 				for(i=0; i < m_h/2-2-m_offset; i++) {
-					ct->locate(m_x+(m_w/2)-20,m_y+3+i);
+					ct->locate(m_x+2,m_y+3+i);
 					if(m_h/2-2 - m_offset - i == 4) {
+#if TIKI_PLAT == TIKI_NDS
+					ct->locate(m_x,m_y+3+i);
+#endif
 						*ct << " \x1b[1;36mUse \x1b[37m\x18 \x1b[36mand \x1b[37m\x19 \x1b[36mto scroll and press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? "Start " : "Enter ") << "\x1b[36mor";
 					}
 					if(m_h/2-2 - m_offset - i == 3) {
-						*ct << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC) ? "A " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC) ? " B  " : "ESC ") << "\x1b[36mto close.    ";
+#if TIKI_PLAT == TIKI_NDS
+					ct->locate(m_x,m_y+3+i);
+#endif
+						*ct << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? "A " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? " B  " : "ESC ") << "\x1b[36mto close.    ";
 					}
 					if(m_h/2-2 - m_offset - i == 1) {
 						ct->color(YELLOW|HIGH_INTENSITY,BLUE);

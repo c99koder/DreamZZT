@@ -71,11 +71,11 @@ void Duplicator::update() {
 			obj2->setPosition(Vector((float)x,(float)y,0));
 			obj2->create();
 			draw_block(x,y);
-			zm->setTune("scdefg");
-			zm->start();			
+			if(zm!=NULL) zm->setTune("scdefg");
+			if(zm!=NULL) zm->start();			
 		} else {
-			zm->setTune("--g#f#");
-			zm->start();
+			if(zm!=NULL) zm->setTune("--g#f#");
+			if(zm!=NULL) zm->start();
 		}
 	}
 	m_animIndex%=6;

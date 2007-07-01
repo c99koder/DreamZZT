@@ -328,10 +328,10 @@ void ZZTOOP::exec(std::string text) {
 	}
 	else if(words[0] == "play") {
 		if(zm != NULL) {
-			if(playedLast==0 && !zm->isPlaying()) {
-				zm->setTune(args);
+			if(playedLast==0 && zm!=NULL && !zm->isPlaying()) {
+				if(zm!=NULL) zm->setTune(args);
 			} else {
-				zm->appendTune(args);
+				if(zm!=NULL) zm->appendTune(args);
 			}
 			goagain = 1;
 			playedLast = 1;

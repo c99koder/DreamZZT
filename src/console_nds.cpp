@@ -21,23 +21,70 @@
 #include <Tiki/tiki.h>
 #include "console.h"
 #include <stdarg.h>
+#include <nds.h>
 
 using namespace Tiki::GL;
 using namespace Tiki::GL::Plxcompat;
 
-ConsoleText::ConsoleText(int cols, int rows, SDL_Surface * font) {
-	m_font = font;
+extern const u8 zztascii_bin[];
+extern const u32 zztascii_bin_size;
+
+// Macro for palette selecting
+#define TILE_PALETTE(n)    ((n)<<12)
+
+ConsoleText::ConsoleText(int cols, int rows, bool sub) {
 	m_rows = rows;
 	m_cols = cols;
+	m_sub = sub;
+	
+	if(sub) {
+	    SUB_DISPLAY_CR = MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE;
+		SUB_BG0_CR = BG_64x32 | BG_COLOR_16 | BG_MAP_BASE(0) | BG_TILE_BASE(1);
+		SUB_BG1_CR = BG_64x32 | BG_COLOR_16 | BG_MAP_BASE(2) | BG_TILE_BASE(1);
+	    vramSetBankC(VRAM_C_SUB_BG);
+	    memcpy((void*)BG_TILE_RAM_SUB(1), zztascii_bin, zztascii_bin_size);
 
-	m_palette[0] = Color(0,0,0);
-	m_palette[1] = Color(0,0,0.5);
-	m_palette[2] = Color(0,0.5,0);
-	m_palette[3] = Color(0,0.5,0.5);
-	m_palette[4] = Color(0.5,0,0);
-	m_palette[5] = Color(0.5,0,0.5);
-	m_palette[6] = Color(0.5,0.5,0);
-	m_palette[7] = Color(0.5,0.5,0.5);
+		BG_PALETTE_SUB[(16*0)+1] = RGB15(0,0,0);
+		BG_PALETTE_SUB[(16*1)+1] = RGB15(0,0,15);
+		BG_PALETTE_SUB[(16*2)+1] = RGB15(0,15,0);
+		BG_PALETTE_SUB[(16*3)+1] = RGB15(0,15,15);
+		BG_PALETTE_SUB[(16*4)+1] = RGB15(15,0,0);
+		BG_PALETTE_SUB[(16*5)+1] = RGB15(15,0,15);
+		BG_PALETTE_SUB[(16*6)+1] = RGB15(15,15,0);
+		BG_PALETTE_SUB[(16*7)+1] = RGB15(15,15,15);
+		BG_PALETTE_SUB[(16*8)+1] = RGB15(0,0,0);
+		BG_PALETTE_SUB[(16*9)+1] = RGB15(0,0,31);
+		BG_PALETTE_SUB[(16*10)+1] = RGB15(0,31,0);
+		BG_PALETTE_SUB[(16*11)+1] = RGB15(0,31,31);
+		BG_PALETTE_SUB[(16*12)+1] = RGB15(31,0,0);
+		BG_PALETTE_SUB[(16*13)+1] = RGB15(31,0,31);
+		BG_PALETTE_SUB[(16*14)+1] = RGB15(31,31,0);
+		BG_PALETTE_SUB[(16*15)+1] = RGB15(31,31,31);
+	} else {
+	    DISPLAY_CR = MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE;
+		BG0_CR = BG_64x32 | BG_COLOR_16 | BG_MAP_BASE(0) | BG_TILE_BASE(1);
+		BG1_CR = BG_64x32 | BG_COLOR_16 | BG_MAP_BASE(2) | BG_TILE_BASE(1);
+	    vramSetBankA(VRAM_A_MAIN_BG);
+	    memcpy((void*)BG_TILE_RAM(1), zztascii_bin, zztascii_bin_size);
+
+		BG_PALETTE[(16*0)+1] = RGB15(0,0,0);
+		BG_PALETTE[(16*1)+1] = RGB15(0,0,15);
+		BG_PALETTE[(16*2)+1] = RGB15(0,15,0);
+		BG_PALETTE[(16*3)+1] = RGB15(0,15,15);
+		BG_PALETTE[(16*4)+1] = RGB15(15,0,0);
+		BG_PALETTE[(16*5)+1] = RGB15(15,0,15);
+		BG_PALETTE[(16*6)+1] = RGB15(15,15,0);
+		BG_PALETTE[(16*7)+1] = RGB15(15,15,15);
+		BG_PALETTE[(16*8)+1] = RGB15(0,0,0);
+		BG_PALETTE[(16*9)+1] = RGB15(0,0,31);
+		BG_PALETTE[(16*10)+1] = RGB15(0,31,0);
+		BG_PALETTE[(16*11)+1] = RGB15(0,31,31);
+		BG_PALETTE[(16*12)+1] = RGB15(31,0,0);
+		BG_PALETTE[(16*13)+1] = RGB15(31,0,31);
+		BG_PALETTE[(16*14)+1] = RGB15(31,31,0);
+		BG_PALETTE[(16*15)+1] = RGB15(31,31,31);
+	}
+	
 		
 	m_charData.resize(rows*cols, 0);
 	m_colorData.resize(rows*cols, 0);
@@ -179,59 +226,35 @@ void ConsoleText::printf(const char *fmt, ...) {
 	}
 }
 
-void putpixel(SDL_Surface *screen, int x, int y, int color)
-{
-	if(x<screen->w && y < screen->h) {
-		unsigned int *ptr = (unsigned int*)screen->pixels;
-		int lineoffset = y * (screen->pitch / 4);
-		ptr[lineoffset + x] = color;
-	}
-}
-
-void ConsoleText::draw(SDL_Surface *screen) {
-	int x=0,y=0;
-	float x_step=(m_w / m_cols);
-	float y_step=(m_h / m_rows);
-	Color fg,bg;
+void ConsoleText::draw() {
+	int x=0,y=0,fg,bg;
 	Vector pos = getPosition() - Vector(m_w/2, m_h/2, 0);
-	SDL_Rect r;
-	r.w = x_step;
-	r.h = y_step;
-
-	locate(0,0);
-	printf("X: %f Y: %f\n",x_step, y_step);
+	u16 *bg0Map, *bg1Map;
+	if(m_sub) {
+		bg0Map = (u16*)SCREEN_BASE_BLOCK_SUB(0);
+		bg1Map = (u16*)SCREEN_BASE_BLOCK_SUB(2);
+	} else {
+		bg0Map = (u16*)SCREEN_BASE_BLOCK(0);
+		bg1Map = (u16*)SCREEN_BASE_BLOCK(2);
+	}
 
 	for(y=0; y<m_rows; y++) {
 		for(x=0; x<m_cols; x++) {
 			if(m_colorData[y*(m_cols) + x] & HIGH_INTENSITY) {
-				fg = Color(0.25, 0.25, 0.25);
+				fg = 8;
 			} else {
-				fg = Color(0,0,0);
+				fg = 0;
 			}
-			fg += m_palette[m_colorData[y*(m_cols) + x] & 0x07];
-			bg = m_palette[(m_colorData[y*(m_cols) + x] >> 8) & 0x07];
-			int u = (m_charData[y*(m_cols) + x] % 16) * 8;
-			int v = (m_charData[y*(m_cols) + x] / 16) * 8;
-			int fgc = SDL_MapRGB(screen->format, fg.r * 255, fg.g * 255, fg.b * 255);
-			int bgc = SDL_MapRGB(screen->format, bg.r * 255, bg.g * 255, bg.b * 255);
-			/*r.x = x*x_step + pos.x;
-			r.y = y*y_step + pos.y;
-			SDL_FillRect(screen,&r,bgc);*/
-			
-			for(int j=0; j<y_step; j++) {
-				for(int i=0; i<x_step; i++) {
-					if(((unsigned int*)m_font->pixels)[int((j/(y_step / 8))+v)*(m_font->pitch / 4) + i + u]) {
-						putpixel(screen, x*x_step + i + pos.x, y*y_step + j + pos.y, fgc);
-					} else {
-						putpixel(screen, x*x_step + i + pos.x, y*y_step + j + pos.y, bgc);
-					}
-				}
+			fg += m_colorData[y*(m_cols) + x] & 0x07;
+			bg = (m_colorData[y*(m_cols) + x] >> 8) & 0x07;
+
+			if(x<32) {
+				bg1Map[(y * 32) + x] = 219 | TILE_PALETTE(bg);
+				bg0Map[(y * 32) + x] = m_charData[(y * m_cols) + x] | TILE_PALETTE(fg);
+			} else {
+				bg1Map[(y * 32) + (x-32) + 1024] = 219 | TILE_PALETTE(bg);
+				bg0Map[(y * 32) + (x-32) + 1024] = m_charData[(y * m_cols) + x] | TILE_PALETTE(fg);
 			}
-			/*if(list == Trans) { //Characters!
-				renderCharacter(x*x_step, y*y_step, x_step, y_step, m_charData[y*(m_cols) + x], m_colorData[y*(m_cols) + x]);
-			} else { //Background blocks!
-				renderBackground(x*x_step, y*y_step, x_step, y_step, (m_colorData[y*(m_cols) + x] >> 8) & 0x07);
-			}*/
 		}
 	}
 }

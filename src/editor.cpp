@@ -39,6 +39,11 @@ using namespace Tiki::Thread;
 #include "status.h"
 #include "os.h"
 
+#if TIKI_PLAT == TIKI_NDS
+std::string os_select_file(std::string title, std::string filter);
+std::string os_save_file(std::string title, std::string filename, std::string filter);
+#endif
+
 extern ConsoleText *ct;
 extern ConsoleText *st;
 

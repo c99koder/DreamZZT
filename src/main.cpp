@@ -65,7 +65,14 @@ using namespace Tiki::Thread;
 #include "vmu.h"
 #endif
 
+#if TIKI_PLAT == TIKI_NDS
+std::string os_select_file(std::string title, std::string filter);
+std::string os_save_file(std::string title, std::string filename, std::string filter);
+#endif
+
+#if TIKI_PLAT != TIKI_NDS
 Mutex zzt_screen_mutex;
+#endif
 
 extern struct world_header world;
 extern struct board_info_node *currentbrd;
@@ -85,11 +92,13 @@ extern EventCollector *playerEventCollector;
 extern std::string curl_auth_string;
 ZZTMusicStream *zm = NULL;
 Tiki::Thread::Thread *render_thread;
+#if TIKI_PLAT != TIKI_NDS
 #ifdef DZZT_LITE
 SDL_Surface *screen;
 SDL_Surface *zzt_font;
 #else
 Texture *zzt_font;
+#endif
 #endif
 extern std::list<Task*> taskList;
 
@@ -262,7 +271,9 @@ bool submit_bug(std::string email, std::string summary, std::string description)
 #if TIKI_PLAT == TIKI_WIN32
 			 _unlink(filename.c_str());
 #else
+#if TIKI_PLAT != TIKI_NDS
 			 unlink(filename.c_str());
+#endif
 #endif
 		}
 		return true;
@@ -285,7 +296,7 @@ void menu_background() {
 //How often to display average frame rate (in seconds)
 #define FPS_SAMPLE_RATE 10
 
-#ifdef DZZT_LITE
+#if defined(DZZT_LITE) && TIKI_PLAT != TIKI_NDS
 /* Borrowed from the Tiki SDL port */
 
 class KbDevice : public Tiki::Hid::Device {
@@ -356,6 +367,47 @@ static int translateSym(SDLKey key)
 }
 #endif
 
+#if TIKI_PLAT == TIKI_NDS
+#include <nds.h>
+
+int disp_off_x=0;
+int disp_off_y=0;
+
+#define CONTROLLER_BUTTON_MAP(OLDSTATE, NEWSTATE, BUTTON, EVENT) \
+                        if((NEWSTATE & BUTTON) && !(OLDSTATE & BUTTON)) { \
+                                Event evt(Event::EvtBtnPress); \
+                                evt.btn = EVENT; \
+                                evt.port = 1; \
+                                sendEvent(evt); \
+                        } \
+                        if(!(NEWSTATE & BUTTON) && (OLDSTATE & BUTTON)) { \
+                                Event evt(Event::EvtBtnRelease); \
+                                evt.btn = EVENT; \
+                                evt.port = 1; \
+                                sendEvent(evt); \
+                        } 
+
+#define CONTROLLER_KEY_MAP(OLDSTATE, NEWSTATE, BUTTON, EVENT) \
+                        if((NEWSTATE & BUTTON) && !(OLDSTATE & BUTTON)) { \
+                                Event evtPress(Event::EvtKeypress); \
+                                evtPress.key = EVENT; \
+                                evtPress.port = 1; \
+                                sendEvent(evtPress); \
+                                \
+                                Event evt(Event::EvtKeyDown); \
+                                evt.key = EVENT; \
+                                evt.port = 1; \
+                                sendEvent(evt); \
+                        } \
+                        if(!(NEWSTATE & BUTTON) && (OLDSTATE & BUTTON)) { \
+                                Event evt(Event::EvtKeyUp); \
+                                evt.key = EVENT; \
+                                evt.port = 1; \
+                                sendEvent(evt); \
+                        } 
+
+#endif
+
 void render() {
 	static long int fpsTimer = 1000000;
 	static long int avgFpsTimer = 1000000 * FPS_SAMPLE_RATE;
@@ -376,60 +428,66 @@ void render() {
 		ct->setSize((BOARD_X*8) * zoom, SCREEN_Y * zoom);
 	}
 #endif
+#if TIKI_PLAT != TIKI_NDS
 	zzt_screen_mutex.lock();
+#endif
 	frameTime = Time::gettime();
 #ifdef DZZT_LITE
-	ct->draw(screen);
-	st->draw(screen);
-	if(debug_visible) dt->draw(screen);
-	SDL_UpdateRect(screen, 0, 0, SCREEN_X, SCREEN_Y);
-#else	
-	Frame::begin();
-#if 0
-	if(player!=NULL) {
-		zzt_font->select();
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-		glViewport(x,y,w,h);
-		ct->drawAll(Drawable::Opaque);
-		ct->drawAll(Drawable::Trans);
-	}		
-	zzt_font->select();
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glViewport(0,192,256/*+74*/,192);
-#endif
-	ct->drawAll(Drawable::Opaque);
-	if(debug_visible) dt->drawAll(Drawable::Opaque);
-	st->drawAll(Drawable::Opaque);
-	Frame::transEnable();
-	ct->drawAll(Drawable::Trans);
-	if(debug_visible) dt->drawAll(Drawable::Trans);
-	st->drawAll(Drawable::Trans);
-	Frame::finish();
-#endif	
-	frameTime = Time::gettime() - frameTime;
-	frames++;
-	fpsTimer -= (long)frameTime;
-	avgFpsTimer -= (long)frameTime;
-	if(fpsTimer <= 0) {
-		fps = (fps + frames) / 2.0f;
-		fpsTimer = 1000000;
-		frames = 0;
-		*dt << "\x1b[s"; // Save cursor position
-		dt->locate(0,0);
-		dt->color(WHITE|HIGH_INTENSITY, BLUE);
-		*dt << "FPS: " << (int)fps << "   ";
-		*dt << "\x1b[u"; // Restore cursor position				
+#if TIKI_PLAT == TIKI_NDS
+	scanKeys();
+	u32 keys = keysHeld();
+	static u32 oldkeys = 0;
+	
+	if( keys & KEY_R) {
+		if(keys & KEY_LEFT) {
+			disp_off_x-=8;
+		}
+		if(keys & KEY_RIGHT) {
+			disp_off_x+=8;
+		}
+		if(keys & KEY_UP) {
+			disp_off_y-=8;
+		}
+		if(keys & KEY_DOWN) {
+			disp_off_y+=8;
+		}
+	} else {
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_UP, Event::BtnUp);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_DOWN, Event::BtnDown);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_LEFT, Event::BtnLeft);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_RIGHT, Event::BtnRight);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_A, Event::BtnA);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_B, Event::BtnB);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_X, Event::BtnX);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_Y, Event::BtnY);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_START, Event::BtnStart);
+		
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_UP, Event::KeyUp);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_DOWN, Event::KeyDown);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_LEFT, Event::KeyLeft);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_RIGHT, Event::KeyRight);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_START, 13);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_A, 32);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_B, Event::KeyEsc);
+		
+		if(playerEventCollector != NULL && playerEventCollector->listening()) {
+			disp_off_x = (player->position().x - 16) * 8;
+			disp_off_y = (player->position().y - 16) * 8;
+		}
 	}
-	if(avgFpsTimer <= 0) {
-#ifdef DEBUG
-		Debug::printf("Average FPS: %f\n",fps);
-#endif
-		avgFpsTimer = 1000000 * FPS_SAMPLE_RATE;
-	}
-#if TIKI_PLAT == TIKI_DC
-	update_lcds();
-#endif
-#ifdef DZZT_LITE
+	
+	oldkeys = keys;
+	if(disp_off_x > 28*8) disp_off_x = 28*8;
+	if(disp_off_x < 0) disp_off_x = 0;
+	if(disp_off_y > 8) disp_off_y = 8;
+	if(disp_off_y < 0) disp_off_y = 0;
+
+	BG0_X0 = disp_off_x;
+	BG1_X0 = disp_off_x;
+	BG0_Y0 = disp_off_y;
+	BG1_Y0 = disp_off_y;
+	
+#else
 // Poll for events, and handle the ones we care about.
     SDL_Event event;
 	int mod = 0;
@@ -490,7 +548,64 @@ void render() {
 		}
 	}
 #endif
+#if TIKI_PLAT == TIKI_NDS
+	ct->draw();
+	st->draw();
+#else
+	ct->draw(screen);
+	st->draw(screen);
+	if(debug_visible) dt->draw(screen);
+	SDL_UpdateRect(screen, 0, 0, SCREEN_X, SCREEN_Y);
+#endif
+#else	
+	Frame::begin();
+#if 0
+	if(player!=NULL) {
+		zzt_font->select();
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+		glViewport(x,y,w,h);
+		ct->drawAll(Drawable::Opaque);
+		ct->drawAll(Drawable::Trans);
+	}		
+	zzt_font->select();
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glViewport(0,192,256/*+74*/,192);
+#endif
+	ct->drawAll(Drawable::Opaque);
+	if(debug_visible) dt->drawAll(Drawable::Opaque);
+	st->drawAll(Drawable::Opaque);
+	Frame::transEnable();
+	ct->drawAll(Drawable::Trans);
+	if(debug_visible) dt->drawAll(Drawable::Trans);
+	st->drawAll(Drawable::Trans);
+	Frame::finish();
+#endif	
+	frameTime = Time::gettime() - frameTime;
+	frames++;
+	fpsTimer -= (long)frameTime;
+	avgFpsTimer -= (long)frameTime;
+	/*if(fpsTimer <= 0) {
+		fps = (fps + frames) / 2.0f;
+		fpsTimer = 1000000;
+		frames = 0;
+		*dt << "\x1b[s"; // Save cursor position
+		dt->locate(0,0);
+		dt->color(WHITE|HIGH_INTENSITY, BLUE);
+		*dt << "FPS: " << (int)fps;
+		*dt << "\x1b[u"; // Restore cursor position				
+	}*/
+	if(avgFpsTimer <= 0) {
+#ifdef DEBUG
+		Debug::printf("Average FPS: %f\n",fps);
+#endif
+		avgFpsTimer = 1000000 * FPS_SAMPLE_RATE;
+	}
+#if TIKI_PLAT == TIKI_DC
+	update_lcds();
+#endif
+#if TIKI_PLAT != TIKI_NDS
 	zzt_screen_mutex.unlock();
+#endif
 }
 
 extern "C" int tiki_main(int argc, char **argv) {
@@ -498,6 +613,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	srand((unsigned int)time(NULL));
 		
 #ifdef DZZT_LITE	
+#if TIKI_PLAT != TIKI_NDS
 	/* initialize SDL */
 	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -508,9 +624,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 	SDL_WM_SetCaption("DreamZZT Lite", NULL);
 	screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, 32, SDL_HWSURFACE);
 #endif
+#endif
 	// Init Tiki
+#if TIKI_PLAT != TIKI_NDS	
 	Tiki::init(argc, argv);
 	Tiki::setName("DreamZZT", NULL);
+#endif
 	//Hid::callbackReg(tkCallback, NULL);
 	
 #ifdef NET
@@ -546,19 +665,29 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 	zzt_vmu_init();
 #endif
-	
+
+#if TIKI_PLAT != TIKI_NDS	
 	zm = new ZZTMusicStream;
-	zm->setVolume(0.4f);
+	if(zm!=NULL) zm->setVolume(0.4f);
+#else
+	zm = NULL;
+#endif
 	
 	//initialize the screen
 #ifdef DZZT_LITE
+#if TIKI_PLAT != TIKI_NDS
 	SDL_Surface *temp = SDL_LoadBMP("zzt-ascii.bmp");
 	zzt_font = SDL_ConvertSurface(temp, screen->format, SDL_SWSURFACE);
 	SDL_FreeSurface(temp);
+#endif
 #else	
 	zzt_font = new Texture("zzt-ascii.png", true);
 #endif
+#if TIKI_PLAT == TIKI_NDS
+	ct = new ConsoleText(BOARD_X, 25, false);
+#else
 	ct = new ConsoleText(BOARD_X, 25, zzt_font);
+#endif
 	ct->setSize(BOARD_X * 8,SCREEN_Y);
 	ct->translate(Vector(BOARD_X * 4,SCREEN_Y/2,0));
 
@@ -567,11 +696,17 @@ extern "C" int tiki_main(int argc, char **argv) {
 	ct->subAdd(gl);
 #endif
 	
+#if TIKI_PLAT == TIKI_NDS
+	st = new ConsoleText(32, 25, true);
+#else
 	st = new ConsoleText(80 - BOARD_X, 25, zzt_font);
+#endif
 	st->setSize((80 - BOARD_X) * 8, SCREEN_Y);
 	st->setTranslate(Vector(640 - ((80 - BOARD_X) * 4), SCREEN_Y/2, 0.9f));
-	
+
+#if TIKI_PLAT != TIKI_NDS	
 	debug_init();
+#endif
 	ct->color(15,1);
 	ct->clear();
 	st->color(15,1);
@@ -690,7 +825,9 @@ void play_zzt(const char *filename, bool tempFile) {
 		#if TIKI_PLAT == TIKI_WIN32
 			 _unlink(filename);
 		#else
+#if TIKI_PLAT != TIKI_NDS
 			 unlink(filename);
+#endif
 		#endif
 	}
 	
@@ -757,7 +894,7 @@ complete this game.\r\
 		st->color(15,1);
 		st->printf("%s",world.title.c_str());
 		st->locate(2,9);
-	#if TIKI_PLAT == TIKI_DC
+	#if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
 		st->printf("   Press Start");
 	#else
 		st->printf("   Press Enter");
@@ -766,18 +903,19 @@ complete this game.\r\
 		st->printf("    to begin!");
 		draw_board();
 		do {
-		
 			if(!gameFrozen && (Time::gettime() - ticker) > gamespeed) {
 				update_brd();
 				sm.update();				
 				gamespeed = (uint64)(GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f));
 				vm.update();
-				zm->setVolume((float)volmod / 16.0f);
+#if TIKI_PLAT != TIKI_NDS
+				if(zm!=NULL) zm->setVolume((float)volmod / 16.0f);
+#endif
 				draw_board();
 				draw_msg();
 				st->locate(2,19);
 				st->color(0,3);
-#if TIKI_PLAT == TIKI_DC
+#if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
 				st->printf(" X ");
 #else
 				st->printf(" S ");
@@ -788,6 +926,7 @@ complete this game.\r\
 				sm.draw(st);
 				st->locate(2,22);
 				st->color(0,7);
+#if TIKI_PLAT != TIKI_NDS
 #if TIKI_PLAT == TIKI_DC
 				st->printf(" Y ");
 #else
@@ -797,6 +936,7 @@ complete this game.\r\
 				st->printf(" Volume:");
 				st->locate(4,23);
 				vm.draw(st);
+#endif
 				ticker = Time::gettime();
 			}
 			render();
@@ -1175,7 +1315,9 @@ C99.ORG Forums account.\n\
 			#if TIKI_PLAT == TIKI_WIN32
 				 _unlink(filename.c_str());
 			#else
+#if TIKI_PLAT != TIKI_NDS
 				 unlink(filename.c_str());
+#endif
 			#endif
 
 			url = DZZTNET_HOST + DZZTNET_HOME;
