@@ -699,7 +699,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 	
 #if TIKI_PLAT == TIKI_NDS
-	st = new ConsoleText(32, 25, true);
+	st = new ConsoleText(64, 25, true);
+	
+	SUB_BG0_X0 = -48;
+	SUB_BG1_X0 = -48;
 #else
 	st = new ConsoleText(80 - BOARD_X, 25, zzt_font);
 #endif
