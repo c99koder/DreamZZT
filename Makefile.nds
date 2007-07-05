@@ -1,30 +1,48 @@
-TIKI_DIR = ../tiki
-TIKI_PLAT = nds
-DEPSDIR = .deps
+#---------------------------------------------------------------------------------
+.SUFFIXES:
+#---------------------------------------------------------------------------------
+ifeq ($(strip $(DEVKITARM)),)
+$(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM)
+endif
 
-OBJS = src/DreamZZT.o src/main.o src/console_nds.o src/debug.o src/sound.o src/task.o src/word.o \
-src/window.o src/board.o src/status.o src/object.o src/editor.o \
-src/objects/passage.o src/objects/terrain.o src/objects/bullet.o src/objects/enemy.o \
-src/objects/dup.o src/objects/zztoop.o src/objects/pusher.o src/objects/bomb.o src/objects/items.o \
-src/objects/conveyer.o src/objects/player.o src/objects/centipede.o
+include $(DEVKITARM)/ds_rules
 
-all: dreamzzt.nds dreamzzt.ds.gba
+export TARGET		:=	dreamzzt
+export TOPDIR		:=	$(CURDIR)
 
-dreamzzt.elf: resources/zztascii.bin.o $(OBJS)
-	$(CXX) $(LDFLAGS) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) resources/zztascii.bin.o -lfat $(TIKI_BASE_LIBS) -o dreamzzt.elf
 
+#---------------------------------------------------------------------------------
+# path to tools - this can be deleted if you set the path in windows
+#---------------------------------------------------------------------------------
+export PATH		:=	$(DEVKITARM)/bin:$(PATH)
+
+.PHONY: $(TARGET).arm7 $(TARGET).arm9
+
+#---------------------------------------------------------------------------------
+# main targets
+#---------------------------------------------------------------------------------
+all: $(TARGET).ds.gba
+
+$(TARGET).ds.gba	: $(TARGET).nds
+
+#---------------------------------------------------------------------------------
+$(TARGET).nds	:	$(TARGET).arm7 $(TARGET).arm9
+	ndstool	-c $(TARGET).nds -g DCSQ SS "DreamZZT" 308 -b dreamzzt.bmp "DreamZZT 3.0.8;(C) 2007 Sam Steele; http://www.c99.org/" -7 $(TARGET).arm7 -9 $(TARGET).arm9
+
+#---------------------------------------------------------------------------------
+$(TARGET).arm7	: arm7/$(TARGET).elf
+$(TARGET).arm9	: arm9/$(TARGET).elf
+
+#---------------------------------------------------------------------------------
+arm7/$(TARGET).elf:
+	$(MAKE) -C arm7
+	
+#---------------------------------------------------------------------------------
+arm9/$(TARGET).elf:
+	$(MAKE) -C arm9
+
+#---------------------------------------------------------------------------------
 clean:
-	-rm -f $(OBJS) dreamzzt.elf dreamzzt.nds dreamzzt.ds.gba
-
-include $(TIKI_DIR)/$(TIKI_PLAT)/Makefile.rules
-CXXFLAGS+=-Iinclude -Ilua -I../libSDLDS/include/SDL -DDEBUG -DDZZT_LITE
-
-#---------------------------------------------------------------------------------
-%.bin.o :       %.bin
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
-
-%.nds: %.arm9
-	@ndstool -c $@ -g DCSQ SS "DreamZZT" 308 -b dreamzzt.bmp "DreamZZT 3.0.8;(C) 2007 Sam Steele; http://www.c99.org/" -9 $<
-	@echo built ... $(notdir $@)
+	$(MAKE) -C arm9 clean
+	$(MAKE) -C arm7 clean
+	rm -f $(TARGET).ds.gba $(TARGET).nds $(TARGET).arm7 $(TARGET).arm9

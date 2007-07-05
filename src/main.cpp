@@ -371,6 +371,7 @@ static int translateSym(SDLKey key)
 
 #if TIKI_PLAT == TIKI_NDS
 #include <nds.h>
+#include "soundcommon.h"
 
 int disp_off_x=0;
 int disp_off_y=0;
@@ -407,6 +408,75 @@ int disp_off_y=0;
                                 evt.port = 1; \
                                 sendEvent(evt); \
                         } 
+
+u32 framecounter = 0,soundoffset = 0;
+void SoundMixCallback(void *stream,u32 len)
+{
+	int samples = len;
+	memset(stream,0,len);
+	if(zm->isPlaying()) {
+		if(zm->getData((uint16*)stream,&samples) != Stream::GDSuccess) {
+			zm->stop();
+		}
+	}
+}
+void MixSound(void)
+{
+	int remain;
+
+	if(soundsystem->format == 8)
+	{
+		if((soundsystem->soundcursor + soundsystem->numsamples) > soundsystem->buffersize)
+		{
+			SoundMixCallback(&soundsystem->mixbuffer[soundsystem->soundcursor],soundsystem->buffersize - soundsystem->soundcursor);
+			remain = soundsystem->numsamples - (soundsystem->buffersize - soundsystem->soundcursor);
+			SoundMixCallback(soundsystem->mixbuffer,remain);
+		}
+		else
+		{
+			SoundMixCallback(&soundsystem->mixbuffer[soundsystem->soundcursor],soundsystem->numsamples);
+		}
+	}
+	else
+	{
+		if((soundsystem->soundcursor + soundsystem->numsamples) > (soundsystem->buffersize >> 1))
+		{
+			SoundMixCallback(&soundsystem->mixbuffer[soundsystem->soundcursor << 1],(soundsystem->buffersize >> 1) - soundsystem->soundcursor);
+			remain = soundsystem->numsamples - ((soundsystem->buffersize >> 1) - soundsystem->soundcursor);
+			SoundMixCallback(soundsystem->mixbuffer,remain);
+		}
+		else
+		{
+			SoundMixCallback(&soundsystem->mixbuffer[soundsystem->soundcursor << 1],soundsystem->numsamples);
+		}
+	}
+}
+void InterruptHandler(void)
+{
+	framecounter++;
+}
+void FiFoHandler(void)
+{
+	u32 command,remain;
+	while ( !(REG_IPC_FIFO_CR & (IPC_FIFO_RECV_EMPTY)) ) 
+	{
+		command = REG_IPC_FIFO_RX;
+
+		switch(command)
+		{
+		case FIFO_NONE:
+			break;
+		case UPDATEON_ARM9:
+			REG_IME = 0;
+			MixSound();
+			REG_IME = 1;
+			SendCommandToArm7(MIXCOMPLETE_ONARM9);
+			break;
+		}
+	}
+}
+
+
 
 #endif
 
@@ -477,8 +547,7 @@ void render() {
 			disp_off_y = (player->position().y - 16) * 8;
 		}
 	}
-	
-	oldkeys = keys;
+
 	if(disp_off_x > 28*8) disp_off_x = 28*8;
 	if(disp_off_x < 0) disp_off_x = 0;
 	if(disp_off_y > 8) disp_off_y = 8;
@@ -489,6 +558,7 @@ void render() {
 	BG0_Y0 = disp_off_y;
 	BG1_Y0 = disp_off_y;
 	
+	oldkeys = keys;
 #else
 // Poll for events, and handle the ones we care about.
     SDL_Event event;
@@ -586,16 +656,22 @@ void render() {
 	frames++;
 	fpsTimer -= (long)frameTime;
 	avgFpsTimer -= (long)frameTime;
-	/*if(fpsTimer <= 0) {
+	if(fpsTimer <= 0) {
 		fps = (fps + frames) / 2.0f;
 		fpsTimer = 1000000;
 		frames = 0;
+#if TIKI_PLAT == TIKI_NDS
+		st->locate(0,23);
+		st->color(WHITE|HIGH_INTENSITY, BLUE);
+		*st << "FPS: " << (int)fps;
+#else
 		*dt << "\x1b[s"; // Save cursor position
 		dt->locate(0,0);
 		dt->color(WHITE|HIGH_INTENSITY, BLUE);
 		*dt << "FPS: " << (int)fps;
-		*dt << "\x1b[u"; // Restore cursor position				
-	}*/
+		*dt << "\x1b[u"; // Restore cursor position
+#endif		
+	}
 	if(avgFpsTimer <= 0) {
 #ifdef DEBUG
 		Debug::printf("Average FPS: %f\n",fps);
@@ -668,13 +744,21 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zzt_vmu_init();
 #endif
 
-#if TIKI_PLAT != TIKI_NDS	
 	zm = new ZZTMusicStream;
 	if(zm!=NULL) zm->setVolume(0.4f);
-#else
-	zm = NULL;
-#endif
+
+#if TIKI_PLAT == TIKI_NDS
+	//Start the sound system
+	irqSet(IRQ_VBLANK,&InterruptHandler);
+	irqSet(IRQ_FIFO_NOT_EMPTY,&FiFoHandler);
+	irqEnable(IRQ_FIFO_NOT_EMPTY);
 	
+	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
+
+	SoundSystemInit(44100,16384,0,16);
+	SoundStartMixer();
+#endif
+
 	//initialize the screen
 #ifdef DZZT_LITE
 #if TIKI_PLAT != TIKI_NDS

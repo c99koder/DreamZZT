@@ -38,12 +38,10 @@ public:
 			void unlock() { m_locked = false; }
 			bool isLocked() { return m_locked; }
 			bool hasTune() { return m_tune.length() > 0; }
-protected:
 			virtual GetDataResult getData(uint16 * buffer, int * numSamples);
 
-			float m_note_table[128];
-			
 private:
+			float m_note_table[128];
 			double m_note_len;
 			float m_note_freq;
 			float m_note_duration;
