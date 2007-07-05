@@ -660,11 +660,7 @@ void render() {
 		fps = (fps + frames) / 2.0f;
 		fpsTimer = 1000000;
 		frames = 0;
-#if TIKI_PLAT == TIKI_NDS
-		st->locate(0,23);
-		st->color(WHITE|HIGH_INTENSITY, BLUE);
-		*st << "FPS: " << (int)fps;
-#else
+#if TIKI_PLAT != TIKI_NDS
 		*dt << "\x1b[s"; // Save cursor position
 		dt->locate(0,0);
 		dt->color(WHITE|HIGH_INTENSITY, BLUE);

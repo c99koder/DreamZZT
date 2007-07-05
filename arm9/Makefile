@@ -19,7 +19,7 @@ clean:
 	rm -f $(OBJS) dreamzzt.elf
 
 include $(TIKI_DIR)/$(TIKI_PLAT)/Makefile.rules
-CXXFLAGS+=-I../include -I. -DDEBUG -DDZZT_LITE
+CXXFLAGS+=-I../include -I. -DDZZT_LITE
 
 #---------------------------------------------------------------------------------
 %.bin.o :       %.bin
