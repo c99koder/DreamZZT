@@ -19,8 +19,11 @@
 
 #include "object.h"
 
-#define BOARD_X 60
-#define BOARD_Y 25
+#define MAX_BOARD_X 96
+#define MAX_BOARD_Y 80
+
+#define BOARD_X world.board_x
+#define BOARD_Y world.board_y
 
 struct board_data {
 	ZZTObject *obj;
@@ -67,7 +70,7 @@ struct board_info_node {
 	unsigned char animatedWater;
 	char message[60];
 	int msgcount;
-	struct board_data board[BOARD_X][BOARD_Y];
+	struct board_data board[MAX_BOARD_X][MAX_BOARD_Y];
 	bool compressed;
 	std::list<rle_block> rle_data;
 	std::list<zzt_param> params;
@@ -88,13 +91,14 @@ struct world_header {
 	unsigned short int pad1;
 	unsigned short int score;
 	std::string title;
-	std::string flags[10];
+	std::string flags[16];
 	unsigned short int time;
 	unsigned char saved;
 	unsigned char editing;
 	unsigned char online;
 	unsigned short int task_points;
 	unsigned char use_3d;
+	unsigned int board_x, board_y;
 };
 void spinner(char *text);
 void spinner_clear();

@@ -57,12 +57,28 @@ struct board_info_node *board_list=NULL;
 struct board_info_node *currentbrd=NULL;
 extern Player *player;
 extern EventCollector *playerEventCollector;
+extern Texture *zzt_font;
+
+#define SCREEN_X 640
+#ifdef DZZT_LITE
+#define SCREEN_Y 400
+#else
+#if TIKI_PLAT == TIKI_DC
+#define SCREEN_Y 424
+#else
+#define SCREEN_Y 480
+#endif
+#endif
+
 
 struct board_info_node *get_current_board() { return currentbrd; }
 int world_sec=10;
 extern float zoom;
 
 char spin_anim[4]={'|','/','-','\\'};
+
+int disp_off_x = 0;
+int disp_off_y = 0;
 
 void free_world() {
 	struct board_info_node *current=board_list;
@@ -163,6 +179,8 @@ void new_world() {
 	free_world();
 	
 	world.magic=65535;
+	world.board_x = 60;
+	world.board_y = 25;	
 	world.board_count=0;
 	world.ammo=0;
 	world.gems=0;
@@ -347,7 +365,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 	float a,b;
 	Vector dist;
 	struct board_info_node *board=newbrd;
-	bool changed[BOARD_X][BOARD_Y] = {0};
+	bool changed[MAX_BOARD_X][MAX_BOARD_Y] = {0};
 	
 	if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
 #if TIKI_PLAT == TIKI_NDS
@@ -383,6 +401,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 						y=rand()%BOARD_Y;
 					} while(changed[x][y]);
 					changed[x][y]=true;
+					if(x>=ct->getCols() || y>=ct->getRows()) continue;
 					o = newbrd->board[x][y].obj;
 					dist = o->position() - player->position();
 					
@@ -768,8 +787,13 @@ void decompress(board_info_node *board, bool silent) {
 			curobj->setParam(3,(*param_iter).data[2]);
 			curobj->setProg((*param_iter).prog,(*param_iter).proglen,(*param_iter).progpos);
 			board->board[(*param_iter).x][(*param_iter).y].under=create_object((*param_iter).ut,(*param_iter).x,(*param_iter).y);
-			board->board[(*param_iter).x][(*param_iter).y].under->setFg((*param_iter).uc%16);
-			board->board[(*param_iter).x][(*param_iter).y].under->setBg((*param_iter).uc/16);
+			if(board->board[(*param_iter).x][(*param_iter).y].under != NULL) {
+				board->board[(*param_iter).x][(*param_iter).y].under->setFg((*param_iter).uc%16);
+				board->board[(*param_iter).x][(*param_iter).y].under->setBg((*param_iter).uc/16);
+			} else {
+				printf("Unknown type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
+				board->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
+			}
 		} else {
 			Debug::printf("Invalid object at: (%i,%i)\n",x,y);
 		}
@@ -847,8 +871,7 @@ void connect_lines(board_info_node *current) {
 	}
 }
 
-int load_zzt(const char *filename, int titleonly) {
-	printf("load_zzt()\n");
+int load_szt(const char *filename, int titleonly) {
 	unsigned short int c,x,y,z,sum=0,q;
 	char pad[128];
 	unsigned char len;
@@ -861,11 +884,177 @@ int load_zzt(const char *filename, int titleonly) {
 
 	spinner("Loading");
 	fd.readle16(&world.magic,1);
-	if(world.magic!=65535) {
+	if(world.magic!=65534) {
+		printf("Invalid magic: %i\n", world.magic);
 		spinner_clear();
-		printf("Invalid magic.\n");
 		return -1;
 	}
+	world.board_x = 96;
+	world.board_y = 80;
+	fd.readle16(&world.board_count,1);
+	fd.readle16(&world.ammo,1);
+	fd.readle16(&world.gems,1);
+	fd.read(world.keys, 7);
+	fd.readle16(&world.health,1);
+	fd.readle16(&world.start,1);
+	fd.readle16(&world.pad1,1);
+	fd.readle16(&world.score,1);
+	fd.readle16(&world.pad1,1);
+	fd.readle16(&world.energizer_cycle,1);
+	fd.read(&len,1);
+	fd.read(pad,21);
+	pad[len] = '\0';
+	world.title = pad;
+	for(int i=0; i< 16; i++) {
+		fd.read(&len,1);
+		fd.read(pad,21);
+		pad[len] = '\0';
+		world.flags[i] = pad;
+		printf("Flag %i: %s\n", i, pad);
+	}
+	fd.read(pad,3);
+	fd.read(&world.saved, 1);
+	world.editing = 0;
+	world.task_points = 0;
+	
+#ifdef DEBUG
+	printf("Magic: %i\n",world.magic);
+	printf("Board count: %i\n",world.board_count);
+	printf("Ammo: %i\n",world.ammo);
+	printf("Gems: %i\n",world.gems);
+	printf("Blue: %i\n",world.keys[0]);
+	printf("Green: %i\n",world.keys[1]);
+	printf("Cyan: %i\n",world.keys[2]);
+	printf("Red: %i\n",world.keys[3]);
+	printf("Purple: %i\n",world.keys[4]);
+	printf("Yellow: %i\n",world.keys[5]);
+	printf("White: %i\n",world.keys[6]);
+	printf("Health: %i\n",world.health);
+	printf("Start: %i\n",world.start);
+	printf("Title: %s\n",world.title.c_str());
+#endif
+	fd.seek(0x400,SEEK_SET); //seek to the first board
+	current=new board_info_node;
+	board_list=current;
+	if(titleonly==1) world.board_count=1;
+	for(q=0;q<=world.board_count;q++) {
+		fd.readle16(&current->size, 1);
+		fd.read(&len,1);
+		fd.read(current->title,60);
+		current->title[len]='\0';
+#ifdef DEBUG
+		printf("Board title: %s\n",current->title);
+#endif
+		//here comes the RLE data!
+		x=0;y=0;z=0;
+		while(z<7680) {
+			fd.read(&rle.len,1);
+			fd.read(&rle.cod,1);
+			fd.read(&rle.col,1);
+			current->rle_data.push_back(rle);
+			z += rle.len;
+		}
+		if(z!=7680) { 
+			printf("RLE mismatch: %i\n", z); 
+			spinner_clear();
+			return -1; 
+		}
+
+		current->num=q;
+		current->compressed=true;
+		fd.read(&current->maxshots,1);
+		fd.read(&current->dark,1);
+		fd.read(&current->board_up,1);
+		fd.read(&current->board_down,1);
+		fd.read(&current->board_left,1);
+		fd.read(&current->board_right,1);
+		fd.read(&current->reenter,1);
+		current->msgcount=0;
+		current->message[0]='\0';
+		fd.read(pad,5);
+		fd.readle16(&current->time,1);
+		printf("maxshots: %i\n", current->maxshots);
+		printf("dark: %i\n", current->dark);
+		printf("up: %i\n", current->board_up);
+		printf("down: %i\n", current->board_down);
+		printf("left: %i\n", current->board_left);
+		printf("right: %i\n", current->board_right);
+		printf("reenter: %i\n", current->reenter);
+		printf("Time: %i\n", current->time);
+		//fd.read(&current->animatedWater,1);
+		fd.read(pad,14);
+		
+		//Load the object params
+		fd.readle16(&c,1); //number of objects
+#ifdef DEBUG
+		printf("Loading %i objects...\n",c);
+#endif
+		for(z=0;z<=c;z++) {
+			fd.read(&param.x,1); param.x--;
+			fd.read(&param.y,1); param.y--;
+			fd.readle16(&param.xstep,1); 
+			fd.readle16(&param.ystep,1);
+			fd.readle16(&param.cycle,1);
+			fd.read(&param.data[0],1);
+			fd.read(&param.data[1],1);
+			fd.read(&param.data[2],1);
+			fd.read(pad,4);
+			fd.read(&param.ut,1);
+			fd.read(&param.uc,1);
+			fd.read(pad,4);
+			fd.readle16(&param.progpos,1);
+			fd.readle16(&param.proglen,1);
+			param.prog="";
+			if(param.proglen>0) {
+				prog=(char *)malloc(param.proglen+1);
+				fd.read(prog,param.proglen);
+				prog[param.proglen]='\0';
+				param.prog = prog;
+				free(prog);
+			}
+			current->params.push_back(param);
+		}
+		if(q<world.board_count) {
+			current->next=new board_info_node;
+			current=current->next;
+		} else {
+			current->next=NULL;
+		}
+	}
+	fd.close();
+	spinner_clear();
+	current=NULL;
+	delete ct;
+	ct = new ConsoleText(30, 25, zzt_font);
+	ct->setSize(30 * 16, SCREEN_Y);
+	ct->translate(Vector(30 * 8, SCREEN_Y / 2,0));
+	return 1;
+}
+
+int load_zzt(const char *filename, int titleonly) {
+	unsigned short int c,x,y,z,sum=0,q;
+	char pad[128];
+	unsigned char len;
+	rle_block rle;
+	zzt_param param;
+	struct board_info_node *current=NULL;
+	char *prog;
+
+	File fd(filename,"rb");
+
+	spinner("Loading");
+	fd.readle16(&world.magic,1);
+	if(world.magic == 65534) {
+		fd.close();
+		return load_szt(filename, titleonly);
+	}
+	else if(world.magic!=65535) {
+		printf("Invalid magic: %i\n", world.magic);
+		spinner_clear();
+		return -1;
+	}
+	world.board_x = 60;
+	world.board_y = 25;	
 	fd.readle16(&world.board_count,1);
 	fd.readle16(&world.ammo,1);
 	fd.readle16(&world.gems,1);
@@ -1225,6 +1414,38 @@ void draw_board() {
 	for(y=0;y<BOARD_Y;y++) {
 		for(x=0;x<BOARD_X;x++) {
 			draw_block(x,y);
+		}
+	}
+	
+	if(world.magic == 65534) {
+		for(y=0; y<ct->getRows(); y++) {
+			for(x=0; x<ct->getCols(); x++) {
+				ct->locate(x,y);
+				if(x<2 || x > ct->getCols() - 2 || y < 1 || y > ct->getRows() - 3 || (y == 1 && x == ct->getCols() - 2)) {
+					ct->color(15,1);
+					ct->printf(" ");
+				}
+				if(y == 1 && x >= 2 && x <= ct->getCols() - 3) {
+					ct->color(15,1);
+					ct->printf("%c", 0xDC);
+				}
+				if(y > 1 && y < ct->getRows() - 3 && (x == 2 || x == ct->getCols() - 3)) {
+					ct->color(15,1);
+					ct->printf("%c", 0xDB);
+				}
+				if(x == ct->getCols() - 2 && y > 1 && y < ct->getRows() - 2) {
+					ct->color(7,1);
+					ct->printf("%c", 0xDD);
+				}
+				if(y == ct->getRows() - 3 && x > 2 && x < ct->getCols() - 2) {
+					ct->color(15,7);
+					ct->printf("%c", 0xDF);
+				}
+				if(y == ct->getRows() - 3 && x == 2) {
+					ct->color(15,1);
+					ct->printf("%c", 0xDF);
+				}
+			}
 		}
 	}
 }

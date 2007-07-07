@@ -53,6 +53,13 @@
 #define ZZT_FAKE_FLAGS F_EMPTY
 #define ZZT_FAKE_CLASS Terrain
 
+//FLOOR
+#define ZZT_FLOOR_SHAPE 0xB2
+#define ZZT_FLOOR_NAME "floor"
+#define ZZT_FLOOR_FLAGS F_EMPTY
+#define ZZT_FLOOR_CLASS Terrain
+
+
 //BREAKABLE
 #define ZZT_BREAKABLE_SHAPE 0xB1
 #define ZZT_BREAKABLE_NAME "breakable"
@@ -70,6 +77,30 @@
 #define ZZT_WATER_NAME "water"
 #define ZZT_WATER_FLAGS F_NONE
 #define ZZT_WATER_CLASS Water
+
+//WATER (N)
+#define ZZT_WATER_N_SHAPE 0x1e
+#define ZZT_WATER_N_NAME "water-n"
+#define ZZT_WATER_N_FLAGS F_EMPTY
+#define ZZT_WATER_N_CLASS Water
+
+//WATER (S)
+#define ZZT_WATER_S_SHAPE 0x1f
+#define ZZT_WATER_S_NAME "water-s"
+#define ZZT_WATER_S_FLAGS F_EMPTY
+#define ZZT_WATER_S_CLASS Water
+
+//WATER (E)
+#define ZZT_WATER_E_SHAPE 0x10
+#define ZZT_WATER_E_NAME "water-e"
+#define ZZT_WATER_E_FLAGS F_EMPTY
+#define ZZT_WATER_E_CLASS Water
+
+//WATER (W)
+#define ZZT_WATER_W_SHAPE 0x11
+#define ZZT_WATER_W_NAME "water-w"
+#define ZZT_WATER_W_FLAGS F_EMPTY
+#define ZZT_WATER_W_CLASS Water
 
 //INVISIBLE
 #define ZZT_INVISIBLE_SHAPE ' '

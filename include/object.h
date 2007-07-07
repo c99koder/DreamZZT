@@ -142,7 +142,7 @@ private:
 	bool m_isValid;
 };
 
-#define ZZT_TYPE_COUNT 0x3e
+#define ZZT_TYPE_COUNT 0x40
 #define ZZT_EMPTY 0x00
 #define ZZT_EDGE 0x01
 #define ZZT_EXPLOSION 0x02
@@ -160,7 +160,7 @@ private:
 #define ZZT_STAR 0x0F
 #define ZZT_CONVEYER_CW 0x10
 #define ZZT_CONVEYER_CCW 0x11
-#define ZZT_BULLET 0x12
+#define ZZT_BULLET (world.magic == 65535 ? 0x12 : 0x45)
 #define ZZT_WATER 0x13
 #define ZZT_FOREST 0x14
 #define ZZT_SOLID 0x15
@@ -175,7 +175,7 @@ private:
 #define ZZT_TRANSPORTER 0x1E
 #define ZZT_LINE 0x1F
 #define ZZT_RICOCHET 0x20
-#define ZZT_HORIZONTAL_BLINK 0x21
+#define ZZT_HORIZONTAL_BLINK (world.magic == 65535 ? 0x21 : 0x46)
 #define ZZT_BEAR 0x22
 #define ZZT_RUFFIAN 0x23
 #define ZZT_OBJECT 0x24
@@ -185,16 +185,21 @@ private:
 #define ZZT_PUSHER 0x28
 #define ZZT_LION 0x29
 #define ZZT_TIGER 0x2A
-#define ZZT_VERTICAL_BLINK 0x2B
+#define ZZT_VERTICAL_BLINK (world.magic == 65535 ? 0x2B : 0x47)
 #define ZZT_CENTIPEDE_HEAD 0x2C
 #define ZZT_CENTIPEDE_BODY 0x2D
-#define ZZT_BLUE_TEXT 0x2F
-#define ZZT_GREEN_TEXT 0x30
-#define ZZT_CYAN_TEXT 0x31
-#define ZZT_RED_TEXT 0x32
-#define ZZT_PURPLE_TEXT 0x33
-#define ZZT_YELLOW_TEXT 0x34
-#define ZZT_WHITE_TEXT 0x35
+#define ZZT_FLOOR (world.magic == 65534 ? 0x2F : 0xFF)
+#define ZZT_WATER_N (world.magic == 65534 ? 0x30 : 0xFF)
+#define ZZT_WATER_S (world.magic == 65534 ? 0x31 : 0xFF)
+#define ZZT_WATER_W (world.magic == 65534 ? 0x32 : 0xFF)
+#define ZZT_WATER_E (world.magic == 65534 ? 0x33 : 0xFF)
+#define ZZT_BLUE_TEXT (world.magic == 65535 ? 0x2F : 0x49)
+#define ZZT_GREEN_TEXT (world.magic == 65535 ? 0x30 : 0x4A)
+#define ZZT_CYAN_TEXT (world.magic == 65535 ? 0x31 : 0x4B)
+#define ZZT_RED_TEXT (world.magic == 65535 ? 0x32 : 0x4C)
+#define ZZT_PURPLE_TEXT (world.magic == 65535 ? 0x33 : 0x4D)
+#define ZZT_YELLOW_TEXT (world.magic == 65535 ? 0x34 : 0x4E)
+#define ZZT_WHITE_TEXT (world.magic == 65535 ? 0x35 : 0x4F)
 /*#define ZZT_EMPTY 0x36	 | (set in colour byte) | White blinking text
 #define ZZT_EMPTY 0x37	 | (set in colour byte) | Blue blinking text
 #define ZZT_EMPTY 0x38	 | (set in colour byte) | Green blinking text
@@ -203,7 +208,7 @@ private:
 #define ZZT_EMPTY 0x3B	 | (set in colour byte) | Purple blinking text
 #define ZZT_EMPTY 0x3C	 | (set in colour byte) | Yellow blinking text
 #define ZZT_EMPTY 0x3D	 | (set in colour byte) | Grey blinking text*/
-#define ZZT_LUA 0x40
+#define ZZT_LUA 0x60
 
 #define F_NONE 0
 #define F_EMPTY 1

@@ -220,6 +220,8 @@ void whip(struct object *me, int x, int y, char shape) {
 	draw_block(x,y);*/
 }
 
+extern int disp_off_x, disp_off_y;
+
 void Player::update() {
 	int s=0;
 	Event evt;
@@ -227,18 +229,34 @@ void Player::update() {
 	ZZTObject *obj;
 	direction oldMove = m_move;
 	direction oldShoot = m_shoot;
+
+	if(BOARD_X > ct->getCols() || BOARD_Y > ct->getRows()) {
+		disp_off_x = (m_position.x - (ct->getCols() - 6) / 2);
+		disp_off_y = (m_position.y - (ct->getRows() - 5) / 2);
+	}
+
+	if(disp_off_x < 0) disp_off_x = 0;
+	if(disp_off_x > (BOARD_X - ct->getCols() + 6)) disp_off_x = BOARD_X - ct->getCols() + 6;
+	if(disp_off_y < 0) disp_off_y = 0;
+	if(disp_off_y > (BOARD_Y - ct->getRows() + 5)) disp_off_y = BOARD_Y - ct->getRows() + 5;
+	
+	if(world.magic == 65534) {
+		disp_off_x -= 3;
+		disp_off_y -= 2;
+	}
 	
 	if(m_flags&F_SLEEPING && world.health > 0) {
 		st->locate(4,6);
 		st->color(15,1);
 		st->printf("Pausing...");
 		do {
+			draw_board();
 			if(s==0) {
 				draw();
 				s++;
 			} else {
 				s=0;
-				ct->locate((int)m_position.x, (int)m_position.y);
+				ct->locate((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y);
 				ct->color(currentbrd->board[(int)m_position.x][(int)m_position.y].under->fg(),currentbrd->board[(int)m_position.x][(int)m_position.y].under->bg());
 				ct->printf("%c",currentbrd->board[(int)m_position.x][(int)m_position.y].under->shape());
 			}
@@ -271,6 +289,25 @@ void Player::update() {
 		processEvent(evt);
 		if((m_move != IDLE || m_shoot != IDLE) && (m_move != oldMove || m_shoot != oldShoot)) break;
 	}	
+	
+	if(world.magic == 65534) {
+		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_N) {
+			move(UP);
+			return;
+		}
+		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S) {
+			move(DOWN);
+			return;
+		}
+		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_E) {
+			move(RIGHT);
+			return;
+		}
+		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_W) {
+			move(LEFT);
+			return;
+		}
+	}
 	
 	switch(m_move) {
 		case UP:

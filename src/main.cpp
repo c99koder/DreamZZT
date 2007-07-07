@@ -132,7 +132,8 @@ std::string MAIN_MENU = std::string(std::string("$Welcome to DreamZZT ") + std::
 Please select an option from\r\
 the menu below:\r\
 \r\
-!new;Start a New Game\r\
+!new;Start a ZZT Game\r\
+!szt;Start a SuperZZT Game\r\
 !restore;Restore a Saved Game\r\
 !tutorial;Tutorial\r") +
 #ifdef NET
@@ -287,8 +288,8 @@ bool submit_bug(std::string email, std::string summary, std::string description)
 void menu_background() {
 	int x,y;
 	ct->color(1,0);
-	for(y=0;y<BOARD_Y;y++) {
-		for(x=0;x<BOARD_X;x++) {
+	for(y=0;y<25;y++) {
+		for(x=0;x<60;x++) {
 			ct->locate(x,y);
 			ct->printf("%c",177);
 		}
@@ -369,12 +370,12 @@ static int translateSym(SDLKey key)
 }
 #endif
 
+extern int disp_off_x;
+extern int disp_off_y;
+
 #if TIKI_PLAT == TIKI_NDS
 #include <nds.h>
 #include "soundcommon.h"
-
-int disp_off_x=0;
-int disp_off_y=0;
 
 #define CONTROLLER_BUTTON_MAP(OLDSTATE, NEWSTATE, BUTTON, EVENT) \
                         if((NEWSTATE & BUTTON) && !(OLDSTATE & BUTTON)) { \
@@ -504,6 +505,7 @@ void render() {
 	zzt_screen_mutex.lock();
 #endif
 	frameTime = Time::gettime();
+	
 #ifdef DZZT_LITE
 #if TIKI_PLAT == TIKI_NDS
 	scanKeys();
@@ -541,17 +543,7 @@ void render() {
 		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_START, 13);
 		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_A, 32);
 		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_B, Event::KeyEsc);
-		
-		if(playerEventCollector != NULL && playerEventCollector->listening()) {
-			disp_off_x = (player->position().x - 16) * 8;
-			disp_off_y = (player->position().y - 16) * 8;
-		}
 	}
-
-	if(disp_off_x > 28*8) disp_off_x = 28*8;
-	if(disp_off_x < 0) disp_off_x = 0;
-	if(disp_off_y > 8) disp_off_y = 8;
-	if(disp_off_y < 0) disp_off_y = 0;
 
 	BG0_X0 = disp_off_x;
 	BG1_X0 = disp_off_x;
@@ -766,12 +758,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zzt_font = new Texture("zzt-ascii.png", true);
 #endif
 #if TIKI_PLAT == TIKI_NDS
-	ct = new ConsoleText(BOARD_X, 25, false);
+	ct = new ConsoleText(60, 25, false);
 #else
-	ct = new ConsoleText(BOARD_X, 25, zzt_font);
+	ct = new ConsoleText(60, 25, zzt_font);
 #endif
-	ct->setSize(BOARD_X * 8,SCREEN_Y);
-	ct->translate(Vector(BOARD_X * 4,SCREEN_Y/2,0));
+	ct->setSize(60 * 8, SCREEN_Y);
+	ct->translate(Vector(60 * 4, SCREEN_Y / 2,0));
 
 #ifndef DZZT_LITE
 	gl = new GraphicsLayer();
@@ -784,10 +776,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 	SUB_BG0_X0 = -48;
 	SUB_BG1_X0 = -48;
 #else
-	st = new ConsoleText(80 - BOARD_X, 25, zzt_font);
+	st = new ConsoleText(20, 25, zzt_font);
 #endif
-	st->setSize((80 - BOARD_X) * 8, SCREEN_Y);
-	st->setTranslate(Vector(640 - ((80 - BOARD_X) * 4), SCREEN_Y/2, 0.9f));
+	st->setSize(20 * 8, SCREEN_Y);
+	st->setTranslate(Vector(640 - 20 * 4, SCREEN_Y/2, 0.9f));
 
 #if TIKI_PLAT != TIKI_NDS	
 	debug_init();
@@ -806,7 +798,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
 	}
-
+	
 	while(switchbrd != -2) {
 		ct->color(15,1);
 		ct->clear();
@@ -821,6 +813,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 			break;
 		} else if(t->getLabel() == "new") {
 			std::string s = os_select_file("Select a game","zzt");
+			if(s!="")  play_zzt(s.c_str());
+		} else if(t->getLabel() == "szt") {
+			std::string s = os_select_file("Select a game","szt");
 			if(s!="")  play_zzt(s.c_str());
 		} else if(t->getLabel() == "tutorial") {
 			play_zzt("tutorial.zzt");
@@ -968,13 +963,17 @@ complete this game.\r\
 	EventCollector ec;
 	if(filename[strlen(filename)-1]!='v' && filename[strlen(filename)-1]!='V') {
 		switch_board(0);
-		player->setShape(ZZT_EMPTY_SHAPE);
-		player->setColor(0,0);
+		titlePlayer = player;
+		if(world.magic == 65535) {
+			player->setShape(ZZT_EMPTY_SHAPE);
+			player->setColor(0,0);
+			player=NULL;
+		}
 		playerEventCollector->stop();
+#if TIKI_PLAT == TIKI_NDS
 		disp_off_x = 14 * 8;
 		disp_off_y = 8;
-		titlePlayer = player;
-		player=NULL;
+#endif
 		st->locate(1,7);
 		st->color(14,1);
 		st->printf("World: ");
@@ -1051,6 +1050,7 @@ complete this game.\r\
 
 	titlePlayer->setShape(ZZT_PLAYER_SHAPE);
 	titlePlayer->setColor(15,1);
+	titlePlayer->setHeading(IDLE);
 
 #ifdef NET
 	if(world.online==1) {

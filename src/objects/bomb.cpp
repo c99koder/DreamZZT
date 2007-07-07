@@ -36,6 +36,7 @@ using namespace Tiki::Audio;
 extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
+extern struct world_header world;
 
 void Bomb::message(ZZTObject *them, std::string message) {
 	if(them->type()==ZZT_PLAYER && message == "touch" && m_shape==ZZT_BOMB_SHAPE) {

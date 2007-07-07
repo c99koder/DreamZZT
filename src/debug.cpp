@@ -321,8 +321,8 @@ void debug_hidCallback(const Event & evt, void * data) {
 
 void debug_init() {
 #if TIKI_PLAT != TIKI_NDS
-	dt = new ConsoleText(BOARD_X,25,zzt_font);
-	dt->setSize(BOARD_X*8,240);
+	dt = new ConsoleText(60,25,zzt_font);
+	dt->setSize(60*8,240);
 	dt->setTranslate(Vector(1024,360,0));
 	dt->setANSI(true);
 	dt->color(GREY, BLACK);

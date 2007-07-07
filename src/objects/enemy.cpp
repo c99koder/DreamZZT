@@ -38,6 +38,7 @@ using namespace Tiki::Audio;
 extern ZZTMusicStream *zm;
 
 extern struct board_info_node *currentbrd;
+extern struct world_header world;
 extern Player *player;
 
 void Lion::update() {

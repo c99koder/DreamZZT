@@ -1,5 +1,5 @@
 
-//Generated on Fri Jun  1 23:11:38 EDT 2007 by sam 
+//Generated on Fri Jul  6 22:09:54 EDT 2007 by sam 
 
 int str_to_obj(std::string str) { 
   if(str == "") {
@@ -100,6 +100,16 @@ int str_to_obj(std::string str) {
     return ZZT_CENTIPEDE_HEAD;
   } else if(str.find(ZZT_CENTIPEDE_BODY_NAME) == 0) {
     return ZZT_CENTIPEDE_BODY;
+  } else if(str.find(ZZT_FLOOR_NAME) == 0) {
+    return ZZT_FLOOR;
+  } else if(str.find(ZZT_WATER_N_NAME) == 0) {
+    return ZZT_WATER_N;
+  } else if(str.find(ZZT_WATER_S_NAME) == 0) {
+    return ZZT_WATER_S;
+  } else if(str.find(ZZT_WATER_E_NAME) == 0) {
+    return ZZT_WATER_E;
+  } else if(str.find(ZZT_WATER_W_NAME) == 0) {
+    return ZZT_WATER_W;
   } else if(str.find(ZZT_LUA_NAME) == 0) {
     return ZZT_LUA;
   } else {
@@ -207,6 +217,16 @@ ZZTObject *create_object(int type, int x, int y) {
     return new ZZT_CENTIPEDE_HEAD_CLASS(type, x, y, ZZT_CENTIPEDE_HEAD_SHAPE, ZZT_CENTIPEDE_HEAD_FLAGS, ZZT_CENTIPEDE_HEAD_NAME);
   } else if(type == ZZT_CENTIPEDE_BODY) {
     return new ZZT_CENTIPEDE_BODY_CLASS(type, x, y, ZZT_CENTIPEDE_BODY_SHAPE, ZZT_CENTIPEDE_BODY_FLAGS, ZZT_CENTIPEDE_BODY_NAME);
+  } else if(type == ZZT_FLOOR) {
+    return new ZZT_FLOOR_CLASS(type, x, y, ZZT_FLOOR_SHAPE, ZZT_FLOOR_FLAGS, ZZT_FLOOR_NAME);
+  } else if(type == ZZT_WATER_N) {
+    return new ZZT_WATER_N_CLASS(type, x, y, ZZT_WATER_N_SHAPE, ZZT_WATER_N_FLAGS, ZZT_WATER_N_NAME);
+  } else if(type == ZZT_WATER_S) {
+    return new ZZT_WATER_S_CLASS(type, x, y, ZZT_WATER_S_SHAPE, ZZT_WATER_S_FLAGS, ZZT_WATER_S_NAME);
+  } else if(type == ZZT_WATER_E) {
+    return new ZZT_WATER_E_CLASS(type, x, y, ZZT_WATER_E_SHAPE, ZZT_WATER_E_FLAGS, ZZT_WATER_E_NAME);
+  } else if(type == ZZT_WATER_W) {
+    return new ZZT_WATER_W_CLASS(type, x, y, ZZT_WATER_W_SHAPE, ZZT_WATER_W_FLAGS, ZZT_WATER_W_NAME);
   } else if(type == ZZT_LUA) {
     return new ZZT_LUA_CLASS(type, x, y, ZZT_LUA_SHAPE, ZZT_LUA_FLAGS, ZZT_LUA_NAME);
   } else {
@@ -314,6 +334,16 @@ ZZTObject *create_copy(ZZTObject *source) {
     return new ZZT_CENTIPEDE_HEAD_CLASS(*(ZZT_CENTIPEDE_HEAD_CLASS *)source);
   } else if(source->type() == ZZT_CENTIPEDE_BODY) {
     return new ZZT_CENTIPEDE_BODY_CLASS(*(ZZT_CENTIPEDE_BODY_CLASS *)source);
+  } else if(source->type() == ZZT_FLOOR) {
+    return new ZZT_FLOOR_CLASS(*(ZZT_FLOOR_CLASS *)source);
+  } else if(source->type() == ZZT_WATER_N) {
+    return new ZZT_WATER_N_CLASS(*(ZZT_WATER_N_CLASS *)source);
+  } else if(source->type() == ZZT_WATER_S) {
+    return new ZZT_WATER_S_CLASS(*(ZZT_WATER_S_CLASS *)source);
+  } else if(source->type() == ZZT_WATER_E) {
+    return new ZZT_WATER_E_CLASS(*(ZZT_WATER_E_CLASS *)source);
+  } else if(source->type() == ZZT_WATER_W) {
+    return new ZZT_WATER_W_CLASS(*(ZZT_WATER_W_CLASS *)source);
   } else if(source->type() == ZZT_LUA) {
     return new ZZT_LUA_CLASS(*(ZZT_LUA_CLASS *)source);
   } else {

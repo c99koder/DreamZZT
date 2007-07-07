@@ -71,6 +71,9 @@ public:
 			void scroll(int rows, int top, int left, int bottom, int right);
 			void scroll(int rows);
 			
+			int getRows() { return m_rows; }
+			int getCols() { return m_cols; }
+			
 			void setAutoScroll(bool s) {
 				m_autoScroll = s;
 			}

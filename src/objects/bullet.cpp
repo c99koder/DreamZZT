@@ -103,8 +103,10 @@ void ZZTObject::shoot(enum direction dir) {
 		}
 	}
 	if(is_empty(dir) || currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->type() == ZZT_WATER) {
-		if(m_type==ZZT_PLAYER) world.ammo--;
-		draw_ammo();
+		if(m_type==ZZT_PLAYER) {
+			world.ammo--;
+			draw_ammo();
+		}
 		bullet=create_object(ZZT_BULLET,dir);
 		bullet->setParam(1,m_type==ZZT_PLAYER?0:1);
 		bullet->setHeading(dir);
@@ -127,8 +129,10 @@ void ZZTObject::shoot(enum direction dir) {
 				currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->message(this,"shot");
 			} 
 			if(is_empty(dir)) {
-				if(m_type==ZZT_PLAYER) world.ammo--;
-				draw_ammo();
+				if(m_type==ZZT_PLAYER) {
+					world.ammo--;
+					draw_ammo();
+				}
 			}
 		}
 	}

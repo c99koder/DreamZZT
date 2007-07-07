@@ -37,6 +37,7 @@ extern ZZTMusicStream *zm;
 extern ConsoleText *ct;
 
 extern struct board_info_node *currentbrd;
+extern struct world_header world;
 int forestmsg=0,invismsg=0,watermsg=0;
 
 void Laser::setParam(int arg, unsigned char val) {
@@ -137,6 +138,9 @@ void Terrain::create() {
 		//m_bg=1;
 		//m_fg=15;
 		m_cycle=1;
+		break;
+	case 0x2F: //floor
+		//m_fg=0;
 		break;
 	}
 }

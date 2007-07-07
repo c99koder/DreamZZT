@@ -409,20 +409,24 @@ ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string n
 }
 
 extern bool debug_show_objects;
+extern int disp_off_x;
+extern int disp_off_y;
 
 void ZZTObject::draw() {
 	float a,b;
 	Vector dist(0,0,0);
 	
+	if(m_position.x - disp_off_x < 0 || m_position.x - disp_off_x >= ct->getCols() || m_position.y - disp_off_y < 0 || m_position.y - disp_off_y >= ct->getRows()) return;
+	
 	if(m_type == ZZT_OBJECT && debug_show_objects) {
-		ct->putColor((int)m_position.x, (int)m_position.y, (HIGH_INTENSITY | ((rand() % 6)+1)));
-		ct->putChar((int)m_position.x, (int)m_position.y, (rand()%125) + 129);
+		ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, (HIGH_INTENSITY | ((rand() % 6)+1)));
+		ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, (rand()%125) + 129);
 		return;
 	}
 	
 	if(m_highlighted && m_flash++ < 30) {
-		ct->putColor((int)m_position.x, (int)m_position.y, WHITE);
-		ct->putChar((int)m_position.x, (int)m_position.y, 0xDB);
+		ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, WHITE);
+		ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, 0xDB);
 		return;
 	}
 	
@@ -433,28 +437,28 @@ void ZZTObject::draw() {
 	
 	if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
 		int color = (HIGH_INTENSITY | BLACK);
-		ct->putColor((int)m_position.x, (int)m_position.y, color);
-		ct->putChar((int)m_position.x, (int)m_position.y, 177);
+		ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
+		ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, 177);
 #ifndef DZZT_LITE
-		gl->clear((int)m_position.x, (int)m_position.y);
+		gl->clear((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y);
 #endif
 	} else if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
 		int color = (HIGH_INTENSITY | BLACK);
 #ifndef DZZT_LITE
-		if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
+		if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
 #endif
-			ct->putColor((int)m_position.x, (int)m_position.y, color);
-			ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
+			ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
+			ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, m_shape);
 #ifndef DZZT_LITE
 		}
 #endif
 	} else if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
 		int color = m_fg%8;
 #ifndef DZZT_LITE
-		if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
+		if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
 #endif
-			ct->putColor((int)m_position.x, (int)m_position.y, color);
-			ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
+			ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
+			ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, m_shape);
 #ifndef DZZT_LITE
 		}
 #endif
@@ -475,14 +479,14 @@ void ZZTObject::draw() {
 			}
 		} else {
 			int color = ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8);
-			ct->putColor((int)m_position.x, (int)m_position.y, ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8));
+			ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8));
 			if(world.editing==1 && m_type == ZZT_INVISIBLE) {
-				ct->putChar((int)m_position.x, (int)m_position.y, 0xB0);
+				ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, 0xB0);
 			} else {
 #ifndef DZZT_LITE
-				if(!gl->put((int)m_position.x, (int)m_position.y, color, m_height, m_modelName, m_highlighted && (m_flash < 30)))
+				if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30)))
 #endif
-					ct->putChar((int)m_position.x, (int)m_position.y, m_shape);
+					ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, m_shape);
 			}
 		}
 	}
