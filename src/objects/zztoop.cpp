@@ -855,7 +855,7 @@ void ZZTOOP::update() {
 #ifdef DEBUG
 		//Debug::printf("%s: %s\n",get_zztobj_name().c_str(), msg.c_str());
 #endif
-		if(msg.find("\r") != msg.npos && msg.find("\r") != (msg.length() - 1)) {
+		if(msg.find("\r") != msg.npos && msg.find("\r") != (msg.length() - 1) && (world.magic==65535 || (msg.find("\r", msg.find("\r") + 1) != (msg.length() - 1)))) {
 			if(zm!=NULL && zm->hasTune()) zm->start();
 			TUIWindow *t= new TUIWindow(get_zztobj_name());
 			t->buildFromString(msg);

@@ -94,8 +94,8 @@ void draw_msg() {
 		if(left < 0) left=0;
 		strcpy(message,message+msgoff);
 		message[(ct->getCols() - 2)] = '\0';
-		if(strlen(currentbrd->message) > (ct->getCols() - 2) && msgoff + (ct->getCols() - 2) < strlen(currentbrd->message) && currentbrd->msgcount < 21) msgoff+=4;
-		if(msgoff > strlen(currentbrd->message) - (ct->getCols() - 2)) msgoff = strlen(currentbrd->message) - (ct->getCols() - 2);
+		if(strlen(message) > (ct->getCols() - 2) && msgoff + (ct->getCols() - 2) < strlen(message) && currentbrd->msgcount < 21) msgoff+=4;
+		if(msgoff > strlen(message) - (ct->getCols() - 2)) msgoff = strlen(message) - (ct->getCols() - 2);
 		ct->color((currentbrd->msgcount%6)+9,0);
 		ct->locate(left,ct->getRows() - 1);
 		ct->printf(" %s ",message);
