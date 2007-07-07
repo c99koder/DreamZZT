@@ -230,21 +230,6 @@ void Player::update() {
 	direction oldMove = m_move;
 	direction oldShoot = m_shoot;
 
-	if(BOARD_X > ct->getCols() || BOARD_Y > ct->getRows()) {
-		disp_off_x = (m_position.x - (ct->getCols() - 6) / 2);
-		disp_off_y = (m_position.y - (ct->getRows() - 5) / 2);
-	}
-
-	if(disp_off_x < 0) disp_off_x = 0;
-	if(disp_off_x > (BOARD_X - ct->getCols() + 6)) disp_off_x = BOARD_X - ct->getCols() + 6;
-	if(disp_off_y < 0) disp_off_y = 0;
-	if(disp_off_y > (BOARD_Y - ct->getRows() + 5)) disp_off_y = BOARD_Y - ct->getRows() + 5;
-	
-	if(world.magic == 65534) {
-		disp_off_x -= 3;
-		disp_off_y -= 2;
-	}
-	
 	if(m_flags&F_SLEEPING && world.health > 0) {
 		st->locate(4,6);
 		st->color(15,1);
@@ -290,25 +275,6 @@ void Player::update() {
 		if((m_move != IDLE || m_shoot != IDLE) && (m_move != oldMove || m_shoot != oldShoot)) break;
 	}	
 	
-	if(world.magic == 65534) {
-		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_N) {
-			move(UP);
-			return;
-		}
-		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S) {
-			move(DOWN);
-			return;
-		}
-		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_E) {
-			move(RIGHT);
-			return;
-		}
-		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_W) {
-			move(LEFT);
-			return;
-		}
-	}
-	
 	switch(m_move) {
 		case UP:
 			if(m_position.y==0&&board_up()>0) {
@@ -323,6 +289,8 @@ void Player::update() {
 				switchbrd=board_up();
 				m_move=IDLE;
 			}
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
+				m_move=IDLE;
 			break;
 		case DOWN:
 			if(m_position.y>=BOARD_Y-1&&board_down()>0) {
@@ -337,6 +305,8 @@ void Player::update() {
 				switchbrd=board_down();
 				m_move=IDLE;
 			}
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_N)
+				m_move=IDLE;
 			break;
 		case LEFT:
 			if(m_position.x==0&&board_left()>0) {
@@ -351,6 +321,8 @@ void Player::update() {
 				switchbrd=board_left();
 				m_move=IDLE;
 			}
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
+				m_move=IDLE;
 			break;
 		case RIGHT:
 			if(m_position.x>=BOARD_X-1&&board_right()>0) {
@@ -365,6 +337,8 @@ void Player::update() {
 				switchbrd=board_right();
 				m_move=IDLE;
 			}
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
+				m_move=IDLE;
 			break;
 	}
 	if(m_move!=IDLE) {
@@ -378,6 +352,36 @@ void Player::update() {
 	if(m_shoot!=IDLE) {
 		shoot(m_shoot);
 	}
+
+	if(world.magic == 65534) {
+		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_N) {
+			move(UP);
+		}
+		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S) {
+			move(DOWN);
+		}
+		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_E) {
+			move(RIGHT);
+		}
+		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_W) {
+			move(LEFT);
+		}
+	}
+	
+	if(BOARD_X > ct->getCols() || BOARD_Y > ct->getRows()) {
+		disp_off_x = (m_position.x - (ct->getCols() - 6) / 2);
+		disp_off_y = (m_position.y - (ct->getRows() - 5) / 2);
+	}
+
+	if(disp_off_x < 0) disp_off_x = 0;
+	if(disp_off_x > (BOARD_X - ct->getCols() + 6)) disp_off_x = BOARD_X - ct->getCols() + 6;
+	if(disp_off_y < 0) disp_off_y = 0;
+	if(disp_off_y > (BOARD_Y - ct->getRows() + 5)) disp_off_y = BOARD_Y - ct->getRows() + 5;
+	
+	if(world.magic == 65534) {
+		disp_off_x -= 3;
+		disp_off_y -= 2;
+	}	
 }
 
 Player::~Player()
