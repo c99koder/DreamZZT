@@ -188,11 +188,11 @@ private:
 #define ZZT_VERTICAL_BLINK (world.magic == 65535 ? 0x2B : 0x47)
 #define ZZT_CENTIPEDE_HEAD 0x2C
 #define ZZT_CENTIPEDE_BODY 0x2D
-#define ZZT_FLOOR (world.magic == 65534 ? 0x2F : 0xFF)
-#define ZZT_WATER_N (world.magic == 65534 ? 0x30 : 0xFF)
-#define ZZT_WATER_S (world.magic == 65534 ? 0x31 : 0xFF)
-#define ZZT_WATER_W (world.magic == 65534 ? 0x32 : 0xFF)
-#define ZZT_WATER_E (world.magic == 65534 ? 0x33 : 0xFF)
+#define ZZT_FLOOR (world.magic == 65534 ? SZT_FLOOR : 0xFF)
+#define ZZT_WATER_N (world.magic == 65534 ? SZT_WATER_N : 0xFF)
+#define ZZT_WATER_S (world.magic == 65534 ? SZT_WATER_S : 0xFF)
+#define ZZT_WATER_W (world.magic == 65534 ? SZT_WATER_W : 0xFF)
+#define ZZT_WATER_E (world.magic == 65534 ? SZT_WATER_E : 0xFF)
 #define ZZT_BLUE_TEXT (world.magic == 65535 ? 0x2F : 0x49)
 #define ZZT_GREEN_TEXT (world.magic == 65535 ? 0x30 : 0x4A)
 #define ZZT_CYAN_TEXT (world.magic == 65535 ? 0x31 : 0x4B)
@@ -209,6 +209,13 @@ private:
 #define ZZT_EMPTY 0x3C	 | (set in colour byte) | Yellow blinking text
 #define ZZT_EMPTY 0x3D	 | (set in colour byte) | Grey blinking text*/
 #define ZZT_LUA 0x60
+
+#define SZT_FLOOR 0x2F
+#define SZT_WATER_N 0x30
+#define SZT_WATER_S 0x31
+#define SZT_WATER_W 0x32
+#define SZT_WATER_E 0x33
+
 
 #define F_NONE 0
 #define F_EMPTY 1
