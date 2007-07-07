@@ -142,10 +142,10 @@ void Inventory::message(ZZTObject *them, std::string message) {
 			if(zm!=NULL) zm->start();
 			break;
 		case ZZT_AMMO:
-			give_ammo(5);
+			give_ammo((world.magic == 65534) ? 10 : 5);
 			if(ammomsg==0) {
 				ammomsg=1;
-				set_msg("Ammunition - 5 shots per container.");
+				set_msg((char *)((world.magic == 65534) ? "Ammunition:\r10 shots" : "Ammunition - 5 shots per container."));
 			}
 			if(zm!=NULL) zm->setTune("tcc#d");
 			if(zm!=NULL) zm->start();

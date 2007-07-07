@@ -66,34 +66,38 @@ void redraw_status() {
 	}
 }
 
-#if TIKI_PLAT == TIKI_NDS
-	extern int disp_off_x, disp_off_y;
-#endif
+extern int disp_off_x, disp_off_y;
 
 void draw_msg() {
 	char message[60];
+	int i, length, left, bot;
 
 	if(currentbrd->msgcount>0) {
-		int length = (int)strlen(currentbrd->message);
-#if TIKI_PLAT == TIKI_NDS
-		if(length > 30) length = 30;
-		int left = disp_off_x / 8;
-		left += 16 - ((length+2)/2);
-		if(left < 0) left=0;
-		int top = disp_off_y / 8;
-		int bot = top + 23;
-		if(bot > 24) bot = 24;
-		strcpy(message,currentbrd->message+msgoff);
-		message[30] = '\0';
-		if(strlen(currentbrd->message) > 30 && msgoff + 30 < strlen(currentbrd->message) && currentbrd->msgcount < 21) msgoff+=4;
-		if(msgoff > strlen(currentbrd->message) - 30) msgoff = strlen(currentbrd->message) - 30;
-#else
-		int left = (BOARD_X/2)-((length+2)/2);
-		int bot = BOARD_Y - 1;
+		
 		strcpy(message,currentbrd->message);
-#endif
+		for(i=0; i<strlen(message); i++) {
+			if(message[i] == '\r') {
+				left = (ct->getCols() / 2) - ((i+2)/2);
+				message[i] = '\0';
+				ct->color((currentbrd->msgcount%6)+9,0);
+				ct->locate(left,ct->getRows() - 2);
+				ct->printf(" %s ",message);
+				break;
+			}
+		}
+		if(i < strlen(currentbrd->message)) {
+			strcpy(message,currentbrd->message + i + 1);
+		}	
+		length = (int)strlen(message);
+		if(length > ct->getCols() - 2) length = ct->getCols() - 2;
+		left = (ct->getCols() / 2) - ((length+2)/2);
+		if(left < 0) left=0;
+		strcpy(message,message+msgoff);
+		message[(ct->getCols() - 2)] = '\0';
+		if(strlen(currentbrd->message) > (ct->getCols() - 2) && msgoff + (ct->getCols() - 2) < strlen(currentbrd->message) && currentbrd->msgcount < 21) msgoff+=4;
+		if(msgoff > strlen(currentbrd->message) - (ct->getCols() - 2)) msgoff = strlen(currentbrd->message) - (ct->getCols() - 2);
 		ct->color((currentbrd->msgcount%6)+9,0);
-		ct->locate(left,bot);
+		ct->locate(left,ct->getRows() - 1);
 		ct->printf(" %s ",message);
 #ifndef DZZT_LITE
 		for(int x=left; x<=left+length; x++) {
