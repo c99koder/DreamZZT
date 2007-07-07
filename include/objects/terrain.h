@@ -54,11 +54,10 @@
 #define ZZT_FAKE_CLASS Terrain
 
 //FLOOR
-#define ZZT_FLOOR_SHAPE 0xB2
+#define ZZT_FLOOR_SHAPE 0xB0
 #define ZZT_FLOOR_NAME "floor"
 #define ZZT_FLOOR_FLAGS F_EMPTY
 #define ZZT_FLOOR_CLASS Terrain
-
 
 //BREAKABLE
 #define ZZT_BREAKABLE_SHAPE 0xB1

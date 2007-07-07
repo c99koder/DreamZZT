@@ -139,9 +139,6 @@ void Terrain::create() {
 		//m_fg=15;
 		m_cycle=1;
 		break;
-	case SZT_FLOOR:
-		m_shape=176;
-		break;
 	}
 }
 
