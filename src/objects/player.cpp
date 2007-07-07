@@ -369,19 +369,19 @@ void Player::update() {
 	}
 	
 	if(BOARD_X > ct->getCols() || BOARD_Y > ct->getRows()) {
-		disp_off_x = (m_position.x - (ct->getCols() - 6) / 2);
-		disp_off_y = (m_position.y - (ct->getRows() - 5) / 2);
+		disp_off_x = (m_position.x - (ct->getCols() - ((world.magic == 65534) ? 6 : 0)) / 2);
+		disp_off_y = (m_position.y - (ct->getRows() - ((world.magic == 65534) ? 5 : 0)) / 2);
 	}
 
 	if(disp_off_x < 0) disp_off_x = 0;
-	if(disp_off_x > (BOARD_X - ct->getCols() + 6)) disp_off_x = BOARD_X - ct->getCols() + 6;
+	if(disp_off_x > (BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0))) disp_off_x = BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0);
 	if(disp_off_y < 0) disp_off_y = 0;
-	if(disp_off_y > (BOARD_Y - ct->getRows() + 5)) disp_off_y = BOARD_Y - ct->getRows() + 5;
+	if(disp_off_y > (BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0))) disp_off_y = BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0);
 	
 	if(world.magic == 65534) {
 		disp_off_x -= 3;
 		disp_off_y -= 2;
-	}	
+	}
 }
 
 Player::~Player()

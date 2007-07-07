@@ -121,7 +121,6 @@ protected:
 	int m_fg;
 	int m_bg;
 	int *m_color;
-	int m_board;
 	direction m_heading;
 	int m_type;
 	unsigned char m_shape;
@@ -140,6 +139,7 @@ protected:
 
 private:
 	bool m_isValid;
+	struct board_info_node *m_board;
 };
 
 #define ZZT_TYPE_COUNT 0x40

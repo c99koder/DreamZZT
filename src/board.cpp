@@ -387,6 +387,40 @@ struct board_info_node *get_board(int num) {
 	return NULL;
 }
 
+void draw_szt_frame() {
+	int x,y;
+
+	for(y=0; y<ct->getRows(); y++) {
+		for(x=0; x<ct->getCols(); x++) {
+			ct->locate(x,y);
+			if(x<2 || x > ct->getCols() - 2 || y < 1 || y > ct->getRows() - 3 || (y == 1 && x == ct->getCols() - 2)) {
+				ct->color(15,1);
+				ct->printf(" ");
+			}
+			if(y == 1 && x >= 2 && x <= ct->getCols() - 3) {
+				ct->color(15,1);
+				ct->printf("%c", 0xDC);
+			}
+			if(y > 1 && y < ct->getRows() - 3 && (x == 2 || x == ct->getCols() - 3)) {
+				ct->color(15,1);
+				ct->printf("%c", 0xDB);
+			}
+			if(x == ct->getCols() - 2 && y > 1 && y < ct->getRows() - 2) {
+				ct->color(7,1);
+				ct->printf("%c", 0xDD);
+			}
+			if(y == ct->getRows() - 3 && x > 2 && x < ct->getCols() - 2) {
+				ct->color(15,7);
+				ct->printf("%c", 0xDF);
+			}
+			if(y == ct->getRows() - 3 && x == 2) {
+				ct->color(15,1);
+				ct->printf("%c", 0xDF);
+			}
+		}
+	}
+}	
+
 void boardTransition(direction d, board_info_node *newbrd) {
 	int i,j,x,y;
 	ZZTObject *o;
@@ -396,228 +430,139 @@ void boardTransition(direction d, board_info_node *newbrd) {
 	bool changed[MAX_BOARD_X][MAX_BOARD_Y] = {0};
 	
 	if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
-#if TIKI_PLAT == TIKI_NDS
-	int newoff_x = player->position().x - 16;
-	int newoff_y = player->position().y - 16;
+
+	if(BOARD_X > ct->getCols() || BOARD_Y > ct->getRows()) {
+		disp_off_x = (player->position().x - (ct->getCols() - ((world.magic == 65534) ? 6 : 0)) / 2);
+		disp_off_y = (player->position().y - (ct->getRows() - ((world.magic == 65534) ? 5 : 0)) / 2);
+	}
+
+	if(disp_off_x < 0) disp_off_x = 0;
+	if(disp_off_x > (BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0))) disp_off_x = BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0);
+	if(disp_off_y < 0) disp_off_y = 0;
+	if(disp_off_y > (BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0))) disp_off_y = BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0);
 	
-	if(newoff_x < 0) newoff_x = 0;
-	if(newoff_x > 28) newoff_x = 28;
-	if(newoff_y < 0) newoff_y = 0;
-	if(newoff_y > 24) newoff_y = 24;
-	
-	float tmpoff_x = disp_off_x;
-	float tmpoff_y = disp_off_y;
-	
-	float offstep_x = float((newoff_x*8.0f) - disp_off_x) / float((BOARD_X * BOARD_Y)/100.0f);
-	float offstep_y = float((newoff_y*8.0f) - disp_off_y)  / float((BOARD_X * BOARD_Y)/100.0f);
-#endif	
+	if(world.magic == 65534) {
+		disp_off_x -= 3;
+		disp_off_y -= 2;
+	}
+
 	zoom = 1;
 	
 	switch(d) {
 		case IDLE:
-			for(i=0; i<(BOARD_X * BOARD_Y)/100; i++) {
-#if TIKI_PLAT == TIKI_NDS
-				tmpoff_x += offstep_x;
-				tmpoff_y += offstep_y;
-
-				disp_off_x = tmpoff_x;
-				disp_off_y = tmpoff_y;
-#endif
-				for(j=0; j<100; j++) {
+			for(i=0; i<14; i++) {
+				for(j=0; j<int(ct->getCols() * ct->getRows())/15; j++) {
 					do {
-						x=rand()%BOARD_X;
-						y=rand()%BOARD_Y;
+						x=(rand()%ct->getCols());
+						y=(rand()%ct->getRows());
 					} while(changed[x][y]);
 					changed[x][y]=true;
-					if(x>=ct->getCols() || y>=ct->getRows()) continue;
+					x+=disp_off_x;
+					y+=disp_off_y;
+					if(x-disp_off_x>=ct->getCols() || y-disp_off_y>=ct->getRows() || x >= BOARD_X || y >= BOARD_Y) continue;
 					o = newbrd->board[x][y].obj;
-					dist = o->position() - player->position();
-					
-					a=(dist.x)*(dist.x)/2.0f;
-					b=(dist.y)*(dist.y);
-										
-					if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
-						ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-						ct->putChar(x,y,177);
-					} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
-						ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-						ct->putChar(x,y,o->shape());
-					} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
-						ct->putColor(x,y,o->fg()%8);
-						ct->putChar(x,y,o->shape());
-					} else {
-						ct->putColor(x,y,((o->fg() > 7) ? HIGH_INTENSITY : 0) | (o->fg()%8) | (o->bg() << 8));
-						ct->putChar(x,y,o->shape());
-					}
+					o->draw();
 				}
+				if(world.magic == 65534) 
+					draw_szt_frame();
 				render();
-#if TIKI_PLAT != TIKI_DC
 				Time::sleep(8000);
-#endif
 			}
 			break;
 		case UP:
-			for(i=1; i< BOARD_Y; i+=2) {
+			for(i=1; i<= ct->getRows(); i+=1+int(ct->getRows() / 30)) {
 				for(y=0; y<BOARD_Y; y++) {
 					for(x=0; x<BOARD_X; x++) {
 						if(y < i) {
 							o=newbrd->board[x][BOARD_Y+y-i].obj;
-							board=newbrd;
+							disp_off_y += ct->getRows() - i;
+							o->draw();
+							disp_off_y -= ct->getRows() - i;
 						} else {
 							o=currentbrd->board[x][y-i].obj;
 							if(o->type() == ZZT_PLAYER) o=currentbrd->board[x][y-i].under;
-							board=currentbrd;
-						}
-						
-						dist = o->position() - player->position();
-						
-						a=(dist.x)*(dist.x)/2.0f;
-						b=(dist.y)*(dist.y);
-						
-						if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
-							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-							ct->putChar(x,y,177);
-						} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
-							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-							ct->putChar(x,y,o->shape());
-						} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
-							ct->putColor(x,y,o->fg()%8);
-							ct->putChar(x,y,o->shape());
-						} else {
-							ct->putColor(x,y,((o->fg() > 7) ? HIGH_INTENSITY : 0) | (o->fg()%8) | (o->bg() << 8));
-							ct->putChar(x,y,o->shape());
+							disp_off_y -= BOARD_Y-ct->getRows()+i;
+							o->draw();
+							disp_off_y += BOARD_Y-ct->getRows()+i;
 						}
 					}
 				}
+				if(world.magic == 65534) 
+					draw_szt_frame();
 				render();
-#if TIKI_PLAT != TIKI_DC
-				Time::sleep(6000);
-#endif
+				Time::sleep(8000);
 			}
 			break;
 		case DOWN:
-			for(i=BOARD_Y-1; i > 0; i-=2) {
+			for(i=ct->getRows()-1; i>=0; i-=1+int(ct->getRows() / 30)) {
 				for(y=0; y<BOARD_Y; y++) {
 					for(x=0; x<BOARD_X; x++) {
 						if(y < i) {
 							o=currentbrd->board[x][BOARD_Y+y-i].obj;
 							if(o->type() == ZZT_PLAYER) o=currentbrd->board[x][BOARD_Y+y-i].under;
-							board=currentbrd;
+							disp_off_y += BOARD_Y - i;
+							o->draw();
+							disp_off_y -= BOARD_Y - i;
 						} else {
 							o=newbrd->board[x][y-i].obj;
-							board=newbrd;
-						}
-						
-						dist = o->position() - player->position();
-						
-						a=(dist.x)*(dist.x)/2.0f;
-						b=(dist.y)*(dist.y);
-						
-						if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
-							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-							ct->putChar(x,y,177);
-						} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
-							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-							ct->putChar(x,y,o->shape());
-						} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
-							ct->putColor(x,y,o->fg()%8);
-							ct->putChar(x,y,o->shape());
-						} else {
-							ct->putColor(x,y,((o->fg() > 7) ? HIGH_INTENSITY : 0) | (o->fg()%8) | (o->bg() << 8));
-							ct->putChar(x,y,o->shape());
+							disp_off_y -= i;
+							o->draw();
+							disp_off_y += i;
 						}
 					}
 				}
+				if(world.magic == 65534) 
+					draw_szt_frame();
 				render();
-#if TIKI_PLAT != TIKI_DC
-				Time::sleep(6000);
-#endif
+				Time::sleep(8000);
 			}
-		break;
+			break;
 		case LEFT:
-#if TIKI_PLAT == TIKI_NDS
-			for(i=1; i< 31; i+=2) {
-#else		
-			for(i=1; i< BOARD_X; i+=4) {
-#endif
+			for(i=1; i<= ct->getCols(); i+=1+int(ct->getCols() / 30)) {
 				for(y=0; y<BOARD_Y; y++) {
 					for(x=0; x<BOARD_X; x++) {
 						if(x < i) {
 							o=newbrd->board[BOARD_X+x-i][y].obj;
-							board=newbrd;
+							disp_off_x += ct->getCols() - i;
+							o->draw();
+							disp_off_x -= ct->getCols() - i;
 						} else {
 							o=currentbrd->board[x-i][y].obj;
 							if(o->type() == ZZT_PLAYER) o=currentbrd->board[x-i][y].under;
-							board=currentbrd;
-						}
-						
-						dist = o->position() - player->position();
-						
-						a=(dist.x)*(dist.x)/2.0f;
-						b=(dist.y)*(dist.y);
-						
-						if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
-							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-							ct->putChar(x,y,177);
-						} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
-							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-							ct->putChar(x,y,o->shape());
-						} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
-							ct->putColor(x,y,o->fg()%8);
-							ct->putChar(x,y,o->shape());
-						} else {
-							ct->putColor(x,y,((o->fg() > 7) ? HIGH_INTENSITY : 0) | (o->fg()%8) | (o->bg() << 8));
-							ct->putChar(x,y,o->shape());
+							disp_off_x -= BOARD_X-ct->getCols()+i;
+							o->draw();
+							disp_off_x += BOARD_X-ct->getCols()+i;
 						}
 					}
 				}
+				if(world.magic == 65534) 
+					draw_szt_frame();
 				render();
-#if TIKI_PLAT != TIKI_DC
-				Time::sleep(6000);
-#endif
+				Time::sleep(8000);
 			}
 			break;
 		case RIGHT:
-#if TIKI_PLAT == TIKI_NDS
-			for(i=BOARD_X-1; i > 30; i-=2) {
-#else		
-			for(i=BOARD_X-1; i > 0; i-=4) {
-#endif
+			for(i=ct->getCols()-1; i>=0; i-=1+int(ct->getCols() / 30)) {
 				for(y=0; y<BOARD_Y; y++) {
 					for(x=0; x<BOARD_X; x++) {
 						if(x < i) {
 							o=currentbrd->board[BOARD_X+x-i][y].obj;
 							if(o->type() == ZZT_PLAYER) o=currentbrd->board[BOARD_X+x-i][y].under;
-							board=currentbrd;
+							disp_off_x += BOARD_X - i;
+							o->draw();
+							disp_off_x -= BOARD_X - i;
 						} else {
 							o=newbrd->board[x-i][y].obj;
-							board=newbrd;
-						}
-						
-						dist = o->position() - player->position();
-						
-						a=(dist.x)*(dist.x)/2.0f;
-						b=(dist.y)*(dist.y);
-						
-						if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
-							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-							ct->putChar(x,y,177);
-						} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
-							ct->putColor(x,y,(HIGH_INTENSITY | BLACK));
-							ct->putChar(x,y,o->shape());
-						} else if(board->dark && !(o->flags()&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
-							ct->putColor(x,y,o->fg()%8);
-							ct->putChar(x,y,o->shape());
-						} else {
-							ct->putColor(x,y,((o->fg() > 7) ? HIGH_INTENSITY : 0) | (o->fg()%8) | (o->bg() << 8));
-							ct->putChar(x,y,o->shape());
+							disp_off_x -= i;
+							o->draw();
+							disp_off_x += i;
 						}
 					}
 				}
+				if(world.magic == 65534) 
+					draw_szt_frame();
 				render();
-#if TIKI_PLAT != TIKI_DC
-				Time::sleep(6000);
-#endif
+				Time::sleep(8000);
 			}
 			break;
 	}
@@ -776,12 +721,15 @@ void decompress(board_info_node *board, bool silent) {
 	ZZTObject *prev=NULL; 
 	std::list<rle_block>::iterator rle_iter;
 	std::list<zzt_param>::iterator param_iter;
+	board_info_node *oldbrd = currentbrd;
 	
 	if(!board->compressed) return;
 	if(!silent) spinner("Working");
 #ifdef DEBUG
 	Debug::printf("Decompressing board...\n");
 #endif
+	
+	currentbrd = board;
 	
 	for(rle_iter=board->rle_data.begin(); rle_iter != board->rle_data.end(); rle_iter++) {
 		for(z=0; z<(*rle_iter).len; z++) {
@@ -836,8 +784,10 @@ void decompress(board_info_node *board, bool silent) {
 	
 	board->rle_data.clear();
 	board->params.clear();
-	
 	board->compressed=false;
+	
+	currentbrd = oldbrd;
+	
 	if(!silent) spinner_clear();
 #ifdef DEBUG
 	Debug::printf("Done!\n");
@@ -1450,34 +1400,6 @@ void draw_board() {
 	}
 	
 	if(world.magic == 65534) {
-		for(y=0; y<ct->getRows(); y++) {
-			for(x=0; x<ct->getCols(); x++) {
-				ct->locate(x,y);
-				if(x<2 || x > ct->getCols() - 2 || y < 1 || y > ct->getRows() - 3 || (y == 1 && x == ct->getCols() - 2)) {
-					ct->color(15,1);
-					ct->printf(" ");
-				}
-				if(y == 1 && x >= 2 && x <= ct->getCols() - 3) {
-					ct->color(15,1);
-					ct->printf("%c", 0xDC);
-				}
-				if(y > 1 && y < ct->getRows() - 3 && (x == 2 || x == ct->getCols() - 3)) {
-					ct->color(15,1);
-					ct->printf("%c", 0xDB);
-				}
-				if(x == ct->getCols() - 2 && y > 1 && y < ct->getRows() - 2) {
-					ct->color(7,1);
-					ct->printf("%c", 0xDD);
-				}
-				if(y == ct->getRows() - 3 && x > 2 && x < ct->getCols() - 2) {
-					ct->color(15,7);
-					ct->printf("%c", 0xDF);
-				}
-				if(y == ct->getRows() - 3 && x == 2) {
-					ct->color(15,1);
-					ct->printf("%c", 0xDF);
-				}
-			}
-		}
+		draw_szt_frame();
 	}
 }

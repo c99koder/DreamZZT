@@ -404,7 +404,7 @@ ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string n
 	m_highlighted = false;
 	m_modelName="";
 	m_height=0;
-
+	m_board=currentbrd;
 	m_isValid = true;
 }
 
@@ -435,14 +435,14 @@ void ZZTObject::draw() {
 	a=(dist.x)*(dist.x)/2.0f;
 	b=(dist.y)*(dist.y);
 	
-	if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
+	if(m_board->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
 		int color = (HIGH_INTENSITY | BLACK);
 		ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
 		ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, 177);
 #ifndef DZZT_LITE
 		gl->clear((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y);
 #endif
-	} else if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
+	} else if(m_board->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
 		int color = (HIGH_INTENSITY | BLACK);
 #ifndef DZZT_LITE
 		if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
@@ -452,7 +452,7 @@ void ZZTObject::draw() {
 #ifndef DZZT_LITE
 		}
 #endif
-	} else if(currentbrd->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
+	} else if(m_board->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
 		int color = m_fg%8;
 #ifndef DZZT_LITE
 		if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
