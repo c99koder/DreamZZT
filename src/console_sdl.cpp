@@ -198,9 +198,6 @@ void ConsoleText::draw(SDL_Surface *screen) {
 	r.w = x_step;
 	r.h = y_step;
 
-	locate(0,0);
-	printf("X: %f Y: %f\n",x_step, y_step);
-
 	for(y=0; y<m_rows; y++) {
 		for(x=0; x<m_cols; x++) {
 			if(m_colorData[y*(m_cols) + x] & HIGH_INTENSITY) {
@@ -220,7 +217,7 @@ void ConsoleText::draw(SDL_Surface *screen) {
 			
 			for(int j=0; j<y_step; j++) {
 				for(int i=0; i<x_step; i++) {
-					if(((unsigned int*)m_font->pixels)[int((j/(y_step / 8))+v)*(m_font->pitch / 4) + i + u]) {
+					if(((unsigned int*)m_font->pixels)[int((j/(y_step / 8))+v)*(m_font->pitch / 4) + int(i/(x_step / 8)) + u]) {
 						putpixel(screen, x*x_step + i + pos.x, y*y_step + j + pos.y, fgc);
 					} else {
 						putpixel(screen, x*x_step + i + pos.x, y*y_step + j + pos.y, bgc);
