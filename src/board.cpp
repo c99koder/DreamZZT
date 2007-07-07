@@ -57,7 +57,13 @@ struct board_info_node *board_list=NULL;
 struct board_info_node *currentbrd=NULL;
 extern Player *player;
 extern EventCollector *playerEventCollector;
+#if TIKI_PLAT != TIKI_NDS
+#ifdef DZZT_LITE
+extern SDL_Surface *zzt_font;
+#else
 extern Texture *zzt_font;
+#endif
+#endif
 
 #define SCREEN_X 640
 #ifdef DZZT_LITE
@@ -342,7 +348,29 @@ void remove_from_board(struct board_info_node *brd, ZZTObject *me) {
 	Vector pos = me->position();
 	brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
 	if(brd->board[(int)pos.x][(int)pos.y].obj==NULL || !brd->board[(int)pos.x][(int)pos.y].obj->isValid()) {
-		brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY, (int)pos.x, (int)pos.y);
+		if(world.magic == 65534 && brd->board[(int)pos.x+1][(int)pos.y].obj->type() == SZT_FLOOR) {
+			brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+			brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x+1][(int)pos.y].obj->fg());
+			brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x+1][(int)pos.y].obj->bg());
+		}
+		else if(world.magic == 65534 && brd->board[(int)pos.x-1][(int)pos.y].obj->type() == SZT_FLOOR) {
+			brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+			brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x-1][(int)pos.y].obj->fg());
+			brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x-1][(int)pos.y].obj->bg());
+		}
+		else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y+1].obj->type() == SZT_FLOOR) {
+			brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+			brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y+1].obj->fg());
+			brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y+1].obj->bg());
+		}
+		else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y-1].obj->type() == SZT_FLOOR) {
+			brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+			brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y-1].obj->fg());
+			brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y-1].obj->bg());
+		} else {
+			brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY, (int)pos.x, (int)pos.y);
+		}
+		brd->board[(int)pos.x][(int)pos.y].obj->create();
 	}
 	brd->board[(int)pos.x][(int)pos.y].under=NULL;
 	me->setFlag(F_DELETED);
@@ -791,7 +819,7 @@ void decompress(board_info_node *board, bool silent) {
 				board->board[(*param_iter).x][(*param_iter).y].under->setFg((*param_iter).uc%16);
 				board->board[(*param_iter).x][(*param_iter).y].under->setBg((*param_iter).uc/16);
 			} else {
-				printf("Unknown type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
+				printf("Unknown under type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
 				board->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
 			}
 		} else {
@@ -1025,7 +1053,11 @@ int load_szt(const char *filename, int titleonly) {
 	spinner_clear();
 	current=NULL;
 	delete ct;
+#if TIKI_PLAT == TIKI_NDS
+	ct = new ConsoleText(30, 25, false);
+#else
 	ct = new ConsoleText(30, 25, zzt_font);
+#endif
 	ct->setSize(30 * 16, SCREEN_Y);
 	ct->translate(Vector(30 * 8, SCREEN_Y / 2,0));
 	return 1;
