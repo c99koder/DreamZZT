@@ -51,6 +51,8 @@ extern struct world_header world;
 extern struct board_info_node *board_list;
 extern struct board_info_node *currentbrd;
 
+extern int switchbrd;
+
 void draw_main() {
 	ct->color(15,1);
 	ct->clear();
@@ -368,6 +370,7 @@ void edit_zzt() {
 		while (ec.getEvent(evt)) {
 			if(evt.type == Event::EvtQuit) {
 				edit_loop = false;
+				switchbrd = -2;
 			} else if(evt.type == Event::EvtKeypress) {
 				switch(evt.key) {
 					case Event::KeyUp:
@@ -796,7 +799,7 @@ void edit_zzt() {
 				draw_pattern(pattern,edit_pat);
 			}			
 		}
-	} while(edit_loop);
+	} while(edit_loop && switchbrd != -2);
 	world.editing=0;
 	currentbrd->board[edit_x][edit_y].obj->setHighlighted(false);
 }
