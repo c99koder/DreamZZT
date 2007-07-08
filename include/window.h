@@ -238,7 +238,11 @@ public:
 #if TIKI_PLAT == TIKI_NDS
 	TUIWindow(std::string title,int x=6, int y=1, int w=32, int h=21);
 #else
+#ifdef DZZT_LITE
+	TUIWindow(std::string title,int x=6, int y=3, int w=45, int h=17);
+#else
 	TUIWindow(std::string title,int x=6, int y=6, int w=45, int h=17);
+#endif
 #endif
 	
 	~TUIWindow() {
