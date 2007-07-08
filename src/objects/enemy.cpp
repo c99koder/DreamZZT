@@ -189,6 +189,18 @@ void Enemy::message(ZZTObject *them, std::string message) {
 	}
 }
 
+void Slime::message(ZZTObject *them, std::string message) {
+	if(message=="touch" && them->type() == ZZT_PLAYER) {
+		if(zm!=NULL) zm->setTune("t+c---c++++c--c");
+		if(zm!=NULL) zm->start();
+		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
+		currentbrd->board[(int)m_position.x][(int)m_position.y].under=this;
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE, m_position.x, m_position.y);
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj->setColor(m_fg, m_bg);
+		setFlag(F_DELETED);
+	}
+}
+
 void Slime::create() {
 	m_counter = m_rate;
 }

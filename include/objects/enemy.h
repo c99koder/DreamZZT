@@ -205,7 +205,8 @@ public:
 	
 	~Slime() { }
 	void create();
-	void update();	
+	void update();
+	void message(ZZTObject *them, std::string msg);
 	void setParam(int arg, unsigned char val) { if(arg==2) m_rate = val; }
 	unsigned char param(int arg) { if(arg==1) return m_rate; else return 0; }
 	
