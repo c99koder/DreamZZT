@@ -1,5 +1,5 @@
 
-//Generated on Fri Jul  6 22:09:54 EDT 2007 by sam 
+//Generated on Sun Jul  8 12:45:58 EDT 2007 by sam 
 
 int str_to_obj(std::string str) { 
   if(str == "") {
@@ -100,6 +100,8 @@ int str_to_obj(std::string str) {
     return ZZT_CENTIPEDE_HEAD;
   } else if(str.find(ZZT_CENTIPEDE_BODY_NAME) == 0) {
     return ZZT_CENTIPEDE_BODY;
+  } else if(str.find(ZZT_SLIME_NAME) == 0) {
+    return ZZT_SLIME;
   } else if(str.find(ZZT_FLOOR_NAME) == 0) {
     return ZZT_FLOOR;
   } else if(str.find(ZZT_WATER_N_NAME) == 0) {
@@ -217,6 +219,8 @@ ZZTObject *create_object(int type, int x, int y) {
     return new ZZT_CENTIPEDE_HEAD_CLASS(type, x, y, ZZT_CENTIPEDE_HEAD_SHAPE, ZZT_CENTIPEDE_HEAD_FLAGS, ZZT_CENTIPEDE_HEAD_NAME);
   } else if(type == ZZT_CENTIPEDE_BODY) {
     return new ZZT_CENTIPEDE_BODY_CLASS(type, x, y, ZZT_CENTIPEDE_BODY_SHAPE, ZZT_CENTIPEDE_BODY_FLAGS, ZZT_CENTIPEDE_BODY_NAME);
+  } else if(type == ZZT_SLIME) {
+    return new ZZT_SLIME_CLASS(type, x, y, ZZT_SLIME_SHAPE, ZZT_SLIME_FLAGS, ZZT_SLIME_NAME);
   } else if(type == ZZT_FLOOR) {
     return new ZZT_FLOOR_CLASS(type, x, y, ZZT_FLOOR_SHAPE, ZZT_FLOOR_FLAGS, ZZT_FLOOR_NAME);
   } else if(type == ZZT_WATER_N) {
@@ -334,6 +338,8 @@ ZZTObject *create_copy(ZZTObject *source) {
     return new ZZT_CENTIPEDE_HEAD_CLASS(*(ZZT_CENTIPEDE_HEAD_CLASS *)source);
   } else if(source->type() == ZZT_CENTIPEDE_BODY) {
     return new ZZT_CENTIPEDE_BODY_CLASS(*(ZZT_CENTIPEDE_BODY_CLASS *)source);
+  } else if(source->type() == ZZT_SLIME) {
+    return new ZZT_SLIME_CLASS(*(ZZT_SLIME_CLASS *)source);
   } else if(source->type() == ZZT_FLOOR) {
     return new ZZT_FLOOR_CLASS(*(ZZT_FLOOR_CLASS *)source);
   } else if(source->type() == ZZT_WATER_N) {

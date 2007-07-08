@@ -188,3 +188,28 @@ void Enemy::message(ZZTObject *them, std::string message) {
 		remove_from_board(currentbrd,this);
 	}
 }
+
+void Slime::create() {
+	m_counter = m_rate;
+}
+
+void Slime::update() {
+	ZZTObject *s;
+	
+	if(m_counter == 0) {
+		for(direction d = LEFT; d <= DOWN; (int(d))++) {
+			if(is_empty(d)) {
+				s=create_object(ZZT_SLIME, d);
+				s->setParam(2,m_rate);
+				s->setCycle(m_cycle);
+				s->setColor(m_fg,m_bg);
+				put(s);
+			}
+		}
+		currentbrd->board[(int)m_position.x][(int)m_position.y].under=this;
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE, m_position.x, m_position.y);
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj->setColor(m_fg, m_bg);
+		setFlag(F_DELETED);
+	}
+	m_counter--;
+}

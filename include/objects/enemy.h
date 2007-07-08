@@ -57,6 +57,11 @@
 #define ZZT_CENTIPEDE_BODY_FLAGS F_OBJECT
 #define ZZT_CENTIPEDE_BODY_CLASS Centipede
 
+#define ZZT_SLIME_SHAPE '*'
+#define ZZT_SLIME_NAME "slime"
+#define ZZT_SLIME_FLAGS F_OBJECT
+#define ZZT_SLIME_CLASS Slime
+
 class Enemy : public ZZTObject {
 public:
 	Enemy(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
@@ -189,4 +194,25 @@ private:
 	Centipede *m_next,*m_prev;
 	bool m_discovery;
 	int m_deviance;
+};
+
+class Slime : public ZZTObject {
+public:
+	Slime(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+		m_rate = m_counter = 4;
+		m_cycle = 3;
+	}
+	
+	~Slime() { }
+	void create();
+	void update();	
+	void setParam(int arg, unsigned char val) { if(arg==2) m_rate = val; }
+	unsigned char param(int arg) { if(arg==1) return m_rate; else return 0; }
+	
+	void addEditWidgets(TUIWindow *w) {
+		w->addWidget(new TUISlider("Rate                 ",&m_rate));
+	}
+	
+protected:
+	int m_rate, m_counter;
 };
