@@ -573,19 +573,38 @@ void boardTransition(direction d, board_info_node *newbrd) {
 void switch_board(int num) {
 	int oldbrd = world.start;
 	direction h = (player==NULL)?IDLE:player->heading();
+#if TIKI_PLAT == TIKI_NDS
+	if(world.magic == 65534) { //SuperZZT boards are too big to fit 2 in RAM on the DS
+		if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
+		h=IDLE;
+	}
+#endif
 	decompress(get_board(num));
 	world.start=num;
 	player=(Player *)get_obj_by_type(get_board(num),ZZT_PLAYER);
-
 	connect_lines(get_board(num));
 	if(player!=NULL && currentbrd!=NULL && !world.editing) boardTransition(h,get_board(num));
-	
 	if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
 	
 	currentbrd=get_board(num);
 	if(player!=NULL) {
 		currentbrd->reenter_x = (unsigned char)player->position().x;
 		currentbrd->reenter_y = (unsigned char)player->position().y;
+
+		if(BOARD_X > ct->getCols() || BOARD_Y > ct->getRows()) {
+			disp_off_x = (player->position().x - (ct->getCols() - ((world.magic == 65534) ? 6 : 0)) / 2);
+			disp_off_y = (player->position().y - (ct->getRows() - ((world.magic == 65534) ? 5 : 0)) / 2);
+		}
+
+		if(disp_off_x < 0) disp_off_x = 0;
+		if(disp_off_x > (BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0))) disp_off_x = BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0);
+		if(disp_off_y < 0) disp_off_y = 0;
+		if(disp_off_y > (BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0))) disp_off_y = BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0);
+		
+		if(world.magic == 65534) {
+			disp_off_x -= 3;
+			disp_off_y -= 2;
+		}
 	}
 	world.time=currentbrd->time;
 	world_sec=10;
@@ -1003,7 +1022,7 @@ int load_szt(const char *filename, int titleonly) {
 	current=NULL;
 	delete ct;
 #if TIKI_PLAT == TIKI_NDS
-	ct = new ConsoleText(30, 25, false);
+	ct = new ConsoleText(32, 24, false);
 #else
 	ct = new ConsoleText(30, 25, zzt_font);
 #endif
@@ -1315,7 +1334,11 @@ void update_brd() {
 				if(zm!=NULL) zm->lock();
 				if(zm!=NULL) zm->start();
 			}
+#if TIKI_PLAT == TIKI_DS || TIKI_PLAT == TIKI_NDS			
+			set_msg("Game Over - Press B");
+#else
 			set_msg("Game Over - Press ESC");
+#endif
 		}
 		
 		if(world.energizer_cycle>0) {
@@ -1392,9 +1415,9 @@ void draw_block(int x, int y) {
 void draw_board() {
 	int x,y;
 	
-	for(y=0;y<BOARD_Y;y++) {
-		for(x=0;x<BOARD_X;x++) {
-			draw_block(x,y);
+	for(y=0;y<ct->getRows();y++) {
+		for(x=0;x<ct->getCols();x++) {
+			draw_block(x+disp_off_x,y+disp_off_y);
 		}
 	}
 	

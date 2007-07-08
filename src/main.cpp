@@ -289,8 +289,8 @@ bool submit_bug(std::string email, std::string summary, std::string description)
 void menu_background() {
 	int x,y;
 	ct->color(1,0);
-	for(y=0;y<25;y++) {
-		for(x=0;x<60;x++) {
+	for(y=0;y<ct->getRows();y++) {
+		for(x=0;x<ct->getCols();x++) {
 			ct->locate(x,y);
 			ct->printf("%c",177);
 		}
@@ -515,16 +515,16 @@ void render() {
 	
 	if( keys & KEY_R) {
 		if(keys & KEY_LEFT) {
-			disp_off_x-=8;
+			disp_off_x--;
 		}
 		if(keys & KEY_RIGHT) {
-			disp_off_x+=8;
+			disp_off_x++;
 		}
 		if(keys & KEY_UP) {
-			disp_off_y-=8;
+			disp_off_y--;
 		}
 		if(keys & KEY_DOWN) {
-			disp_off_y+=8;
+			disp_off_y++;
 		}
 	} else {
 		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_UP, Event::BtnUp);
@@ -545,11 +545,6 @@ void render() {
 		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_A, 32);
 		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_B, Event::KeyEsc);
 	}
-
-	BG0_X0 = disp_off_x;
-	BG1_X0 = disp_off_x;
-	BG0_Y0 = disp_off_y;
-	BG1_Y0 = disp_off_y;
 	
 	oldkeys = keys;
 #else
@@ -614,9 +609,9 @@ void render() {
 	}
 #endif
 #if TIKI_PLAT == TIKI_NDS
-	ct->draw();
 	st->draw();
-	if(mt!=NULL) mt->draw()
+	if(mt!=NULL) mt->draw();
+	else ct->draw();
 #else
 	ct->draw(screen);
 	st->draw(screen);
@@ -648,7 +643,7 @@ void render() {
 	st->drawAll(Drawable::Trans);
 	if(mt != NULL) mt->drawAll(Drawable::Trans);
 	Frame::finish();
-#endif	
+#endif
 	frameTime = Time::gettime() - frameTime;
 	frames++;
 	fpsTimer -= (long)frameTime;
@@ -763,7 +758,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zzt_font = new Texture("zzt-ascii.png", true);
 #endif
 #if TIKI_PLAT == TIKI_NDS
-	ct = new ConsoleText(60, 25, false);
+	ct = new ConsoleText(32, 24, false);
 #else
 	ct = new ConsoleText(60, 25, zzt_font);
 #endif
@@ -975,10 +970,6 @@ complete this game.\r\
 			player=NULL;
 		}
 		playerEventCollector->stop();
-#if TIKI_PLAT == TIKI_NDS
-		disp_off_x = 14 * 8;
-		disp_off_y = 8;
-#endif
 		st->locate(1,7);
 		st->color(14,1);
 		st->printf("World: ");
@@ -1109,6 +1100,7 @@ complete this game.\r\
 	st->clear();
 	dzzt_logo();
 	draw_hud_ingame();
+	render();
 	switch_board(start);
 	if(!playerEventCollector->listening()) playerEventCollector->start();
 	if(currentbrd->reenter_x == 254 && player!=NULL) currentbrd->reenter_x = (unsigned char)player->position().x;

@@ -297,7 +297,7 @@ std::string os_select_file(std::string title, std::string filter) {
 	fs_close(d);
 	spinner_clear();
 	t.buildFromString(tmp,true);
-	t.doMenu(ct);
+	t.doMenu();
 	return t.getLabel();
 }
 
@@ -395,7 +395,7 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 	fs_close(d);
 	spinner_clear();
 	t.buildFromString(tmp,true);
-	t.doMenu(ct);
+	t.doMenu();
 	printf("Returning: %s\n",t.getLabel().c_str());
 	return t.getLabel();
 }
@@ -444,7 +444,7 @@ std::string os_select_file(std::string title, std::string filter) {
 	}
 	dirclose(dir);
 	t.buildFromString(tmp,true);
-	t.doMenu(ct);
+	t.doMenu();
 	return t.getLabel();
 }
 std::string os_save_file(std::string title, std::string filename, std::string filter) {
