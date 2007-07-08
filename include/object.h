@@ -223,10 +223,9 @@ private:
 #define F_DELETED 4
 #define F_SLEEPING 8
 #define F_ITEM 16
-#define F_ENEMY 32
+#define F_PUSHER 32
 #define F_GLOW 64
 #define F_OBJECT 128
-#define F_PUSHER 256
 
 #include "objects/objects.h"
 #include "objects/terrain.h"
