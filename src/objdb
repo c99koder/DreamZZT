@@ -1,5 +1,5 @@
 
-//Generated on Sun Jul  8 12:45:58 EDT 2007 by sam 
+//Generated on Sun Jul  8 14:02:28 EDT 2007 by sam 
 
 int str_to_obj(std::string str) { 
   if(str == "") {
@@ -44,6 +44,8 @@ int str_to_obj(std::string str) {
     return ZZT_DUPLICATOR;
   } else if(str.find(ZZT_TRANSPORTER_NAME) == 0) {
     return ZZT_TRANSPORTER;
+  } else if(str.find(ZZT_RICOCHET_NAME) == 0) {
+    return ZZT_RICOCHET;
   } else if(str.find(ZZT_BOULDER_NAME) == 0) {
     return ZZT_BOULDER;
   } else if(str.find(ZZT_EMPTY_NAME) == 0) {
@@ -163,6 +165,8 @@ ZZTObject *create_object(int type, int x, int y) {
     return new ZZT_DUPLICATOR_CLASS(type, x, y, ZZT_DUPLICATOR_SHAPE, ZZT_DUPLICATOR_FLAGS, ZZT_DUPLICATOR_NAME);
   } else if(type == ZZT_TRANSPORTER) {
     return new ZZT_TRANSPORTER_CLASS(type, x, y, ZZT_TRANSPORTER_SHAPE, ZZT_TRANSPORTER_FLAGS, ZZT_TRANSPORTER_NAME);
+  } else if(type == ZZT_RICOCHET) {
+    return new ZZT_RICOCHET_CLASS(type, x, y, ZZT_RICOCHET_SHAPE, ZZT_RICOCHET_FLAGS, ZZT_RICOCHET_NAME);
   } else if(type == ZZT_BOULDER) {
     return new ZZT_BOULDER_CLASS(type, x, y, ZZT_BOULDER_SHAPE, ZZT_BOULDER_FLAGS, ZZT_BOULDER_NAME);
   } else if(type == ZZT_EMPTY) {
@@ -282,6 +286,8 @@ ZZTObject *create_copy(ZZTObject *source) {
     return new ZZT_DUPLICATOR_CLASS(*(ZZT_DUPLICATOR_CLASS *)source);
   } else if(source->type() == ZZT_TRANSPORTER) {
     return new ZZT_TRANSPORTER_CLASS(*(ZZT_TRANSPORTER_CLASS *)source);
+  } else if(source->type() == ZZT_RICOCHET) {
+    return new ZZT_RICOCHET_CLASS(*(ZZT_RICOCHET_CLASS *)source);
   } else if(source->type() == ZZT_BOULDER) {
     return new ZZT_BOULDER_CLASS(*(ZZT_BOULDER_CLASS *)source);
   } else if(source->type() == ZZT_EMPTY) {

@@ -123,6 +123,18 @@ private:
 	unsigned short int m_owner;
 };
 
+//RICOCHET
+#define ZZT_RICOCHET_SHAPE '*'
+#define ZZT_RICOCHET_NAME "ricochet"
+#define ZZT_RICOCHET_FLAGS F_NONE
+#define ZZT_RICOCHET_CLASS Ricochet
+
+class Ricochet : public ZZTObject {
+public:
+	Ricochet(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	}
+};
+
 //PUSHER
 #define ZZT_PUSHER_SHAPE 0x10
 #define ZZT_PUSHER_NAME "pusher"

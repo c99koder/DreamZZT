@@ -69,6 +69,28 @@ void Bullet::message(ZZTObject *them, std::string message) {
 			if(zm!=NULL) zm->setTune("t-c");
 			if(zm!=NULL) zm->start();
 		}
+		if(them->type()==ZZT_RICOCHET) {
+			m_heading = opposite(m_heading);
+			if(zm!=NULL && !zm->isPlaying()) {
+				zm->setTune("t9");
+				if(zm!=NULL) zm->start();
+			}
+			return;
+		}
+		for(direction d = LEFT; d <= DOWN; (int(d))++) {
+			ZZTObject *o=get(d);
+			if(o!=NULL && o->type() == ZZT_RICOCHET) {
+				if(zm!=NULL && !zm->isPlaying()) {
+					zm->setTune("t9");
+					if(zm!=NULL) zm->start();
+				}
+				m_heading = opposite(toward(o));
+				if(!is_empty(m_heading)) remove_from_board(currentbrd, this);
+				else(move(m_heading));
+				return;
+			}
+		}
+		if(them->type()==ZZT_BULLET) remove_from_board(currentbrd, them);
 		remove_from_board(currentbrd,this);
 	}
 }
@@ -111,8 +133,7 @@ void ZZTObject::shoot(enum direction dir) {
 		bullet->setParam(1,m_type==ZZT_PLAYER?0:1);
 		bullet->setHeading(dir);
 		bullet->setCycle(1);
-		currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].under=currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj;
-		currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj=bullet;
+		put(bullet);
 		if(zm != NULL && !zm->isPlaying()) {
 			if(m_type==ZZT_PLAYER) {
 				if(zm!=NULL) zm->setTune("t+c-c-c");
@@ -122,11 +143,12 @@ void ZZTObject::shoot(enum direction dir) {
 			if(zm!=NULL) zm->start();
 		}
 	} else {
-		if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj!=NULL) {
-			if(currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->type()==ZZT_BREAKABLE) {
-				remove_from_board(currentbrd,currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj);
+		ZZTObject *o = get(dir);
+		if(o!=NULL) {
+			if(o->type()==ZZT_BREAKABLE) {
+				remove_from_board(currentbrd,o);
 			} else {
-				currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->message(this,"shot");
+				o->message(this,"shot");
 			} 
 			if(is_empty(dir)) {
 				if(m_type==ZZT_PLAYER) {

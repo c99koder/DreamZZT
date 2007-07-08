@@ -53,6 +53,7 @@ public:
 	bool move(direction d, bool trying=false, bool origin=true);
 	bool is_empty(direction d, bool ignorePlayer=false);
 	ZZTObject *create_object(int type, direction d);
+	ZZTObject *get(direction d);
 	
 	Vector position() { return m_position; }
 	void setPosition(Vector p) { m_position = p; }

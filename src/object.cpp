@@ -226,6 +226,34 @@ ZZTObject *ZZTObject::create_object(int type, direction d) {
 	return false;
 }
 
+ZZTObject *ZZTObject::get(direction d) {
+	int dx=0,dy=0;
+
+	switch(d) {
+		case UP:
+		 dx=0; dy=-1;
+		 break;
+		case DOWN:
+		 dx=0; dy=1;
+		 break;
+		case LEFT:
+		 dx=-1; dy=0;
+		 break;
+		case RIGHT:
+		 dx=1; dy=0;
+		 break;
+		case IDLE:
+		case SHOOTING:
+			return NULL;
+	}
+	
+	if(m_position.x + dx >= 0 && m_position.x + dx < BOARD_X && m_position.y + dy >= 0 && m_position.y + dy < BOARD_Y) {
+		return currentbrd->board[(int)m_position.x + dx][(int)m_position.y + dy].obj;
+	}
+	
+	return NULL;
+}
+
 bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	//move in the specified direction
 	ZZTObject *them=NULL;

@@ -768,7 +768,7 @@ void decompress(board_info_node *board, bool silent) {
 	}
 	
 	for(param_iter=board->params.begin(); param_iter != board->params.end(); param_iter++) {
-		if((*param_iter).x >= 0 && (*param_iter).x < BOARD_X && (*param_iter).y >= 0 && (*param_iter).y < BOARD_Y) {
+		if((*param_iter).x < BOARD_X && (*param_iter).y < BOARD_Y) {
 			curobj = board->board[(*param_iter).x][(*param_iter).y].obj;
 		} else {
 			Debug::printf("Params out of bounds: %i, %i\n",(*param_iter).x,(*param_iter).y);

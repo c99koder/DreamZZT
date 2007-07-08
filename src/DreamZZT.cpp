@@ -440,6 +440,9 @@ std::string os_select_file(std::string title, std::string filter) {
 			 (name[strlen(name)-2]==filter[1] || name[strlen(name)-2]==(filter[1] - 32)) &&
 			 (name[strlen(name)-1]==filter[2] || name[strlen(name)-1]==(filter[2] - 32))) {
 				tmp += std::string("!") + std::string(name) + std::string(";") + std::string(name) + std::string("\n");
+				/*
+					TODO: Parse file header and display Dreamcast-style save selector
+				*/
 		}
 	}
 	dirclose(dir);
