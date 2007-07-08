@@ -139,6 +139,26 @@ void Tiger::update() {
 	}
 }
 
+void Enemy::create() {
+	switch(m_type) {
+		case ZZT_LION:
+			m_fg = 12;
+			break;
+		case ZZT_TIGER:
+			m_fg = 11;
+			break;
+		case ZZT_BEAR:
+			m_fg = ((world.magic == 65535) ? 6 : 2);
+			break;
+		case ZZT_RUFFIAN:
+			m_fg = 13;
+			break;
+		case ZZT_SHARK:
+			m_fg = 7;
+			break;
+	}
+}
+
 void Enemy::message(ZZTObject *them, std::string message) {
 	if((
 			(message == "shot" && them->type() == ZZT_BULLET && them->param(1) == 0)

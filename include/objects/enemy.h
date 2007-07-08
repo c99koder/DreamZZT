@@ -27,7 +27,7 @@
 #define ZZT_SHARK_FLAGS F_PUSHABLE|F_ENEMY|F_OBJECT
 #define ZZT_SHARK_CLASS Lion
 
-#define ZZT_BEAR_SHAPE 0x99
+#define ZZT_BEAR_SHAPE ((world.magic == 65535) ? 0x99 : 0xEB)
 #define ZZT_BEAR_NAME "bear"
 #define ZZT_BEAR_FLAGS F_PUSHABLE|F_ENEMY|F_OBJECT
 #define ZZT_BEAR_CLASS Bear
@@ -65,26 +65,7 @@ public:
 	}
 	
 	virtual ~Enemy() { }
-	
-	void create() {
-		switch(m_type) {
-			case ZZT_LION:
-				m_fg = 12;
-				break;
-			case ZZT_TIGER:
-				m_fg = 11;
-				break;
-			case ZZT_BEAR:
-				m_fg = 6;
-				break;
-			case ZZT_RUFFIAN:
-				m_fg = 13;
-				break;
-			case ZZT_SHARK:
-				m_fg = 7;
-				break;
-		}
-	}
+	void create();
 		
 	void setParam(int arg, unsigned char val) { if(arg==1) m_intel = val; }
 	unsigned char param(int arg) { if(arg==1) return m_intel; else return 0; }
