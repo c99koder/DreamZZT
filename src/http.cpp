@@ -31,16 +31,16 @@ using namespace Tiki::GL;
 #include "http.h"
 
 #ifdef DREAMCAST
-#define USER_AGENT "DreamZZT/3.0.6.1 (Dreamcast)"
+#define USER_AGENT "DreamZZT/3.1.0 (Dreamcast)"
 #endif
 #if TIKI_PLAT == TIKI_SDL
-#define USER_AGENT "DreamZZT/3.0.6.1 (Linux)"
+#define USER_AGENT "DreamZZT/3.1.0 (Linux)"
 #endif
 #if TIKI_PLAT == TIKI_WIN32
-#define USER_AGENT "DreamZZT/3.0.6.1 (Windows)"
+#define USER_AGENT "DreamZZT/3.1.0 (Windows)"
 #endif
 #if TIKI_PLAT == TIKI_OSX
-#define USER_AGENT "DreamZZT/3.0.6.1 (Macintosh)"
+#define USER_AGENT "DreamZZT/3.1.0 (Macintosh)"
 #endif
 
 int hex_to_int(char c) {

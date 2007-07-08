@@ -134,6 +134,7 @@ void put(ZZTObject *o) {
 int new_board(char *title) {
 	struct board_info_node *current=board_list;
 	struct board_info_node *prev=NULL;
+	struct board_info_node *oldcurrent=currentbrd;
 	int num=0;
 	
 	while(current!=NULL) {
@@ -143,7 +144,7 @@ int new_board(char *title) {
 	}
 	
 	current=new board_info_node;
-	
+	currentbrd = current;
 	if(prev!=NULL) prev->next=current;
 	else board_list=current;
 	
@@ -177,7 +178,7 @@ int new_board(char *title) {
 	}
 	
 	world.board_count=num;
-	
+	currentbrd=oldcurrent;
 	return current->num;
 }
 
@@ -1334,7 +1335,7 @@ void update_brd() {
 				if(zm!=NULL) zm->lock();
 				if(zm!=NULL) zm->start();
 			}
-#if TIKI_PLAT == TIKI_DS || TIKI_PLAT == TIKI_NDS			
+#if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS			
 			set_msg("Game Over - Press B");
 #else
 			set_msg("Game Over - Press ESC");

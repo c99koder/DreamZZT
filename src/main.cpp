@@ -103,7 +103,8 @@ Texture *zzt_font;
 #endif
 extern std::list<Task*> taskList;
 
-#define VERSION "3.0.8"
+#define VERSION "3.1.0"
+#define BETA_VERSION
 
 #define SCREEN_X 640
 #ifdef DZZT_LITE
