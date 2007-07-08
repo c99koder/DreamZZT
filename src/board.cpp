@@ -767,7 +767,6 @@ void decompress(board_info_node *board, bool silent) {
 				board->board[(*param_iter).x][(*param_iter).y].under->setFg((*param_iter).uc%16);
 				board->board[(*param_iter).x][(*param_iter).y].under->setBg((*param_iter).uc/16);
 			} else {
-				printf("Unknown under type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
 				board->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
 			}
 		} else {
