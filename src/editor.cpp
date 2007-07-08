@@ -491,7 +491,7 @@ void edit_zzt() {
 
 							TUIWindow t("Select a board");
 							t.buildFromString(boardmenu);
-							t.doMenu(ct);
+							t.doMenu();
 							
 							if(t.getLabel() != "") {
 								if(t.getLabel() == "create") {
@@ -570,7 +570,7 @@ void edit_zzt() {
 							t.addWidget(new TUIBoardList	 ("  East: ", &currentbrd->board_right));
 							t.addWidget(new TUIBoardList	 ("  West: ", &currentbrd->board_left));
 							ec.stop();
-							t.doMenu(ct);
+							t.doMenu();
 							strcpy(currentbrd->title, title.c_str());
 							ec.start();
 						}

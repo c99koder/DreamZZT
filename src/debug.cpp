@@ -116,7 +116,7 @@ void *process_debug(void *) {
 					dt->setANSI(false);
 					TUIWindow t(((ZZTOOP *)(currentbrd->board[debugselect_x][debugselect_y].obj))->get_zztobj_name());
 					t.buildFromString(currentbrd->board[debugselect_x][debugselect_y].obj->prog());
-					t.doMenu(dt);
+					t.doMenu();
 					dt->setANSI(true);
 					dt->color(GREY, BLACK);
 					dt->clear();
@@ -225,7 +225,7 @@ void *process_debug(void *) {
 			dt->setANSI(false);
 			TUIWindow t("Select a board");
 			t.buildFromString(boardmenu);
-			t.doMenu(dt);
+			t.doMenu();
 			dt->setANSI(true);
 			dt->color(GREY, BLACK);
 			dt->clear();

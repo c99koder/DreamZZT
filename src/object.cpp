@@ -504,7 +504,7 @@ void ZZTObject::edit() {
 	w.addWidget(new TUINumericInput("X Step  ",&m_step.x,-128,127));
 	w.addWidget(new TUINumericInput("Y Step  ",&m_step.y,-128,127));
 	
-	w.doMenu(ct);
+	w.doMenu();
 	create();
 }
 

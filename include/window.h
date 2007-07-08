@@ -23,8 +23,6 @@
 #include <Tiki/eventcollector.h>
 #include "console.h"
 
-extern ConsoleText *ct;
-
 class TUIWidget {
 public:
 	TUIWidget() {
@@ -238,19 +236,10 @@ private:
 class TUIWindow {
 public:
 #if TIKI_PLAT == TIKI_NDS
-	TUIWindow(std::string title,int x=6, int y=1, int w=32, int h=21) {
+	TUIWindow(std::string title,int x=6, int y=1, int w=32, int h=21);
 #else
-	TUIWindow(std::string title,int x=6, int y=1, int w=45, int h=17) {
+	TUIWindow(std::string title,int x=6, int y=6, int w=45, int h=17);
 #endif
-		m_x=x;
-		m_y=y;
-		m_w=w;
-		m_h=h;
-		m_title=title;
-		m_label="\0";
-		m_offset=0;
-		m_dirty=0;
-	}
 	
 	~TUIWindow() {
 		TUIWidget *t;
@@ -264,7 +253,7 @@ public:
 	void draw_shadow(ConsoleText *console, int x, int y);
 	void draw_box(ConsoleText *console, int x, int y, int w, int h, int fg, int bg, bool shadow=true);
 	void buildFromString(std::string s, bool ANSI=false);
-	void doMenu(ConsoleText *c=ct);
+	void doMenu();
 	void addWidget(TUIWidget *w) {
 		m_widgets.push_back(w);
 	}

@@ -85,6 +85,7 @@ GraphicsLayer *gl;
 
 extern ConsoleText *dt;
 extern ConsoleText *st;
+extern ConsoleText *mt;
 extern struct board_info_node *board_list;
 int switchbrd=-1;
 extern Player *player;
@@ -208,7 +209,7 @@ void check_updates() {
 			std::string("!install;Install update\r") +
 #endif
 			std::string("!ok;Ok\r"));
-		t.doMenu(ct);
+		t.doMenu();
 #if TIKI_PLAT == TIKI_WIN32
 		if(t.getLabel() == "install") {
 			STARTUPINFO si;
@@ -615,9 +616,11 @@ void render() {
 #if TIKI_PLAT == TIKI_NDS
 	ct->draw();
 	st->draw();
+	if(mt!=NULL) mt->draw()
 #else
 	ct->draw(screen);
 	st->draw(screen);
+	if(mt!=NULL) mt->draw(screen);
 	if(debug_visible) dt->draw(screen);
 	SDL_UpdateRect(screen, 0, 0, SCREEN_X, SCREEN_Y);
 #endif
@@ -638,10 +641,12 @@ void render() {
 	ct->drawAll(Drawable::Opaque);
 	if(debug_visible) dt->drawAll(Drawable::Opaque);
 	st->drawAll(Drawable::Opaque);
+	if(mt != NULL) mt->drawAll(Drawable::Opaque);
 	Frame::transEnable();
 	ct->drawAll(Drawable::Trans);
 	if(debug_visible) dt->drawAll(Drawable::Trans);
 	st->drawAll(Drawable::Trans);
+	if(mt != NULL) mt->drawAll(Drawable::Trans);
 	Frame::finish();
 #endif	
 	frameTime = Time::gettime() - frameTime;
@@ -798,7 +803,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	if(argc > 1 && argv[argc-1][0] != '-') {
 		play_zzt(argv[argc-1]);
 	}
-	
+
 	while(switchbrd != -2) {
 		ct->color(15,1);
 		ct->clear();
@@ -807,7 +812,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 
 		t = new TUIWindow("Main Menu");
 		t->buildFromString(MAIN_MENU);
-		t->doMenu(ct);
+		t->doMenu();
 		
 		if(t->getLabel() == "quit" || t->getLabel() =="\0") {
 			break;
@@ -837,7 +842,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 		} else if(t->getLabel() == "credits") {
 			c = new TUIWindow("Credits");
 			c->buildFromString(CREDITS);
-			c->doMenu(ct);
+			c->doMenu();
 			
 			delete c;
 		}
@@ -897,7 +902,7 @@ void play_zzt(const char *filename, bool tempFile) {
 	if(load_zzt(filename,0)==-1) {
 		TUIWindow t("Error");
 		t.buildFromString("Unable to load world\r\r!ok;Ok");
-		t.doMenu(ct);
+		t.doMenu();
 		return;
 	}
 	
@@ -930,7 +935,7 @@ complete this game.\r\
 			TUIWindow t("Warning");
 			t.buildFromString(bugWarning);
 			do {
-				t.doMenu(ct);
+				t.doMenu();
 				
 				if(t.getLabel() != "" && atoi(t.getLabel().c_str()) > 0) {
 					for(std::list<TracBug>::iterator bi = bugs.begin(); bi != bugs.end(); bi++) {
@@ -947,7 +952,7 @@ complete this game.\r\
 							
 							TUIWindow bw((*bi).getProperty("summary"));
 							bw.buildFromString(bug);
-							bw.doMenu(ct);
+							bw.doMenu();
 						}
 					}
 				} else if(t.getLabel() == "quit") {
@@ -1141,7 +1146,7 @@ std::string("!bugreport;Report a bug\r") +
 !save;Save Game\r\
 !game;Return to Game\r\
 !quit;Return to Main Menu\r");
-			t.doMenu(ct);
+			t.doMenu();
 			if(t.getLabel() == "bugreport") {
 				TUIWindow bugReport("Bug Report");
 				std::string email;
@@ -1157,7 +1162,7 @@ std::string("!bugreport;Report a bug\r") +
 				bugReport.addWidget(new TUITextInput("",&description3));
 				bugReport.addWidget(new TUILabel(""));
 				bugReport.addWidget(new TUIHyperLink("submit","Submit bug report"));
-				bugReport.doMenu(ct);
+				bugReport.doMenu();
 				
 				if(bugReport.getLabel() == "submit") {
 					submit_bug(email, summary, description1 + std::string("\n") + description2 + std::string("\n") + description3);
@@ -1198,7 +1203,7 @@ std::string("!bugreport;Report a bug\r") +
 				if(s!="OK") {
 					TUIWindow t("");
 					t.buildFromString(s);
-					t.doMenu(ct);
+					t.doMenu();
 				}
 #endif
 			} else {
@@ -1248,7 +1253,7 @@ std::string("!bugreport;Report a bug\r") +
 			}
 			t = new TUIWindow(title);
 			t->buildFromString(tmp);
-			t->doMenu(ct);
+			t->doMenu();
 		}
 	}
 #endif
@@ -1279,7 +1284,7 @@ C99.ORG Forums account.\n\
 \n\
 !Create;Create new account\n\
 !Existing;Use existing acount\n");
-		t->doMenu(ct);
+		t->doMenu();
 		if(switchbrd==-2 || t->getLabel() == "") return;
 		
 		if(t->getLabel() == "Existing") {
@@ -1294,7 +1299,7 @@ C99.ORG Forums account.\n\
 				t->addWidget(new TUIWidget());
 				t->addWidget(new TUIHyperLink("login","Login to C99.ORG"));
 				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
-				t->doMenu(ct);
+				t->doMenu();
 				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "") return;
 				curl_auth_string = user + std::string(":") + pass;
 				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
@@ -1310,7 +1315,7 @@ C99.ORG Forums account.\n\
 					}
 					t = new TUIWindow(title);
 					t->buildFromString(tmp);
-					t->doMenu(ct);
+					t->doMenu();
 					if(switchbrd==-2) return;
 				}
 			} while(tmp != "OK" && switchbrd != -2);
@@ -1340,7 +1345,7 @@ C99.ORG Forums account.\n\
 				t->addWidget(new TUIWidget());
 				t->addWidget(new TUILabel("The terms of service can be viewed at",true));
 				t->addWidget(new TUILabel("http://forums.c99.org/",true));
-				t->doMenu(ct);
+				t->doMenu();
 				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "") return;
 				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=Register";
 				url += "&Name=" + user;
@@ -1365,7 +1370,7 @@ C99.ORG Forums account.\n\
 					}
 					t = new TUIWindow(title);
 					t->buildFromString(tmp);
-					t->doMenu(ct);
+					t->doMenu();
 					if(switchbrd==-2) return;
 				}
 			} while(tmp != "OK" && switchbrd != -2);
@@ -1423,7 +1428,7 @@ C99.ORG Forums account.\n\
 				}
 				TUIWindow t(title);
 				t.buildFromString(tmp);
-				t.doMenu(ct);
+				t.doMenu();
 				url = t.getLabel();
 				if(url != "") {
 					if(url[0] == '/') {
@@ -1461,11 +1466,11 @@ the following task:\r\
 $" + ((*task_iter)->getTitle()) + "\r\r" + ((*task_iter)->getDescription()) + "\r\
 \r\
 You've earned a bonus of " + ToString((*task_iter)->getValue()) + " points.\r");
-					t.doMenu(ct);
+					t.doMenu();
 				} else {
 					TUIWindow t("Task Submission Error");
 					t.buildFromString("The task may already be complete or\nhas been removed from the server.\n\nThis may also indicate an invalid\nusername or password.\n\nTaskID: " + ToString((*task_iter)->getID()) + "\n");
-					t.doMenu(ct);
+					t.doMenu();
 				}
 			}
 		}

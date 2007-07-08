@@ -859,7 +859,7 @@ void ZZTOOP::update() {
 			if(zm!=NULL && zm->hasTune()) zm->start();
 			TUIWindow *t= new TUIWindow(get_zztobj_name());
 			t->buildFromString(msg);
-			t->doMenu(ct);
+			t->doMenu();
 			draw_board();
 			if(t->getLabel()!="\0") { zzt_goto(t->getLabel()); }
 			delete t;
