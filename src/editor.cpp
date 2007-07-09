@@ -52,6 +52,7 @@ extern struct board_info_node *board_list;
 extern struct board_info_node *currentbrd;
 
 extern int switchbrd;
+extern bool debug_visible;
 
 void draw_main() {
 	ct->color(15,1);
@@ -371,7 +372,7 @@ void edit_zzt() {
 			if(evt.type == Event::EvtQuit) {
 				edit_loop = false;
 				switchbrd = -2;
-			} else if(evt.type == Event::EvtKeypress) {
+			} else if(evt.type == Event::EvtKeypress && !debug_visible) {
 				switch(evt.key) {
 					case Event::KeyUp:
 						currentbrd->board[edit_x][edit_y].obj->setHighlighted(false);
@@ -414,7 +415,7 @@ void edit_zzt() {
 						}
 						break;
 				}
-			} else if(evt.type == Event::EvtKeyUp) {
+			} else if(evt.type == Event::EvtKeyUp && !debug_visible) {
 				switch(evt.key) {
 					case Event::KeyEsc:
 						edit_menu_mode=NONE;
@@ -423,7 +424,7 @@ void edit_zzt() {
 						draw_pattern(pattern,edit_pat);							
 						break;
 				}
-			} else if(evt.type == Event::EvtKeyDown) {
+			} else if(evt.type == Event::EvtKeyDown && !debug_visible) {
 				switch(evt.key) {		
 					case Event::KeyF1:
 						edit_menu_mode=ITEM;
