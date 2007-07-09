@@ -119,16 +119,18 @@ void free_world() {
 	currentbrd=NULL;
 }
 
-void put(ZZTObject *o) {
-	if(currentbrd->board[(int)o->position().x][(int)o->position().y].under != NULL) delete currentbrd->board[(int)o->position().x][(int)o->position().y].under;
-	
-	if(o->flags() & F_OBJECT) 
-		currentbrd->board[(int)o->position().x][(int)o->position().y].under = currentbrd->board[(int)o->position().x][(int)o->position().y].obj;
-	else
-		currentbrd->board[(int)o->position().x][(int)o->position().y].under = NULL;
-	
+void put(ZZTObject *o, bool ignoreUnder) {
+	if(!ignoreUnder) {
+		if(currentbrd->board[(int)o->position().x][(int)o->position().y].under != NULL) delete currentbrd->board[(int)o->position().x][(int)o->position().y].under;
+		
+		if(o->flags() & F_OBJECT) 
+			currentbrd->board[(int)o->position().x][(int)o->position().y].under = currentbrd->board[(int)o->position().x][(int)o->position().y].obj;
+		else
+			currentbrd->board[(int)o->position().x][(int)o->position().y].under = NULL;
+	}
 	currentbrd->board[(int)o->position().x][(int)o->position().y].obj = o;
 	o->create();
+	if(o->flag(F_OBJECT)) currentbrd->objects.push_back(o);
 }
 
 int new_board(char *title) {
@@ -345,36 +347,42 @@ ZZTObject *get_obj_by_name(struct board_info_node *board, std::string name) {
 	return NULL;
 }
 
-void remove_from_board(struct board_info_node *brd, ZZTObject *me) {	
+void remove_from_board(struct board_info_node *brd, ZZTObject *me, bool ignoreUnder) {
 	Vector pos = me->position();
-	brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
-	if(brd->board[(int)pos.x][(int)pos.y].obj==NULL || !brd->board[(int)pos.x][(int)pos.y].obj->isValid()) {
-		if(world.magic == 65534 && brd->board[(int)pos.x+1][(int)pos.y].obj->type() == SZT_FLOOR) {
-			brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
-			brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x+1][(int)pos.y].obj->fg());
-			brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x+1][(int)pos.y].obj->bg());
-		}
-		else if(world.magic == 65534 && brd->board[(int)pos.x-1][(int)pos.y].obj->type() == SZT_FLOOR) {
-			brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
-			brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x-1][(int)pos.y].obj->fg());
-			brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x-1][(int)pos.y].obj->bg());
-		}
-		else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y+1].obj->type() == SZT_FLOOR) {
-			brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
-			brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y+1].obj->fg());
-			brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y+1].obj->bg());
-		}
-		else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y-1].obj->type() == SZT_FLOOR) {
-			brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
-			brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y-1].obj->fg());
-			brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y-1].obj->bg());
-		} else {
-			brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY, (int)pos.x, (int)pos.y);
-		}
-		brd->board[(int)pos.x][(int)pos.y].obj->create();
-	}
-	brd->board[(int)pos.x][(int)pos.y].under=NULL;
 	me->setFlag(F_DELETED);
+
+	if(!ignoreUnder) {
+		if(brd->board[(int)pos.x][(int)pos.y].under==NULL || !brd->board[(int)pos.x][(int)pos.y].under->isValid() || brd->board[(int)pos.x][(int)pos.y].under->flag(F_DELETED)) {
+			if(world.magic == 65534 && brd->board[(int)pos.x+1][(int)pos.y].obj->type() == SZT_FLOOR) {
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x+1][(int)pos.y].obj->fg());
+				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x+1][(int)pos.y].obj->bg());
+			}
+			else if(world.magic == 65534 && brd->board[(int)pos.x-1][(int)pos.y].obj->type() == SZT_FLOOR) {
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x-1][(int)pos.y].obj->fg());
+				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x-1][(int)pos.y].obj->bg());
+			}
+			else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y+1].obj->type() == SZT_FLOOR) {
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y+1].obj->fg());
+				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y+1].obj->bg());
+			}
+			else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y-1].obj->type() == SZT_FLOOR) {
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y-1].obj->fg());
+				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y-1].obj->bg());
+			} else {
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY, (int)pos.x, (int)pos.y);
+			}
+			brd->board[(int)pos.x][(int)pos.y].obj->create();
+		} else {
+			brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
+		}
+	} else {
+		brd->board[(int)pos.x][(int)pos.y].obj=NULL;
+	}
+	brd->board[(int)pos.x][(int)pos.y].under=me;
 }
 
 struct board_info_node *get_board_list() {
@@ -776,6 +784,7 @@ void decompress(board_info_node *board, bool silent) {
 			curobj=NULL;
 		}
 		if(curobj!=NULL) {
+			board->objects.push_back(curobj);
 			curobj->setStep(Vector((*param_iter).xstep,(*param_iter).ystep,0));
 			curobj->setCycle((*param_iter).cycle);
 			curobj->setParam(1,(*param_iter).data[0]);
@@ -1312,7 +1321,8 @@ void update_brd() {
 	ZZTObject *p=NULL;
 	ZZTObject *t=NULL;
 	struct board_info_node *current=currentbrd;
-	int x,y,i=0;
+	int x,y,i=0,cnt=0, evenodd = 0;
+	std::list<ZZTObject *>::iterator obj_iter;
 
 	if(current->num>0) {
 		if(world.torch_cycle>0) {
@@ -1363,46 +1373,69 @@ void update_brd() {
 		if(world_sec==0) world_sec=10;
 	}
 	
-	//for(j=0; j<2; j++) {
-		//i=0;
-		for(y=0;y<BOARD_Y;y++) {
-			for(x=BOARD_X-1;x>=0;x--) {
-				o=current->board[x][y].obj;
-				if(o!=NULL && o->isValid() && o->updated()==0) { 
+	for(evenodd=0; evenodd < 2; evenodd++) {
+		cnt=0;
+		obj_iter = currentbrd->objects.end();
+		do {
+			if(cnt++%2 == evenodd) {
+				o=*obj_iter;
+				if(o!=NULL && o->isValid() && o->cycle() > 0 && !o->flag(F_DELETED)) {
 					o->setTick(o->tick()-1);
-					if((o->tick()<=0 && o->cycle() != 0) || world.health<=0/* && i%2==j*/) {
+					if(o->tick()<=0) {
 						o->update();
-						if(o->flags()&F_DELETED) {
-							if(current->board[x][y].obj == o) remove_from_board(current,o);
-							if(current->board[x][y].under == o) current->board[x][y].under = NULL;
-							delete o;
+						if(o->flag(F_DELETED)) {
+							if(currentbrd->board[(int)o->position().x][(int)o->position().y].obj == o) {
+								remove_from_board(currentbrd,o);
+							}
 						} else {
 							o->setUpdated(true);
 							o->setTick(o->cycle());
 						}
-						if(current->board[x][y].under != NULL && current->board[x][y].under->flags() & F_DELETED) {
-							delete current->board[x][y].under;
-							current->board[x][y].under = NULL;
-						}
 					}
 				}
 			}
-			/*if(o!=NULL) {
-				i++; i%=2;
-			}*/							
+			if(obj_iter == currentbrd->objects.begin()) 
+				break;
+			else
+				obj_iter--;
+		} while(1);
+	}
+
+	/*for(y=0;y<BOARD_Y;y++) {
+		for(x=BOARD_X-1;x>=0;x--) {
+			o=current->board[x][y].obj;
+			if(o!=NULL && o->isValid() && o->updated()==0 && o->cycle() != 0) { 
+				o->setTick(o->tick()-1);
+				if((cnt % 2 == evenodd) && ((o->tick()<=0) || world.health<=0)) {
+					o->update();
+					if(o->flags()&F_DELETED) {
+						if(current->board[x][y].obj == o) remove_from_board(current,o);
+						if(current->board[x][y].under == o) current->board[x][y].under = NULL;
+						delete o;
+					} else {
+						o->setUpdated(true);
+						o->setTick(o->cycle());
+					}
+					if(current->board[x][y].under != NULL && current->board[x][y].under->flags() & F_DELETED) {
+						delete current->board[x][y].under;
+						current->board[x][y].under = NULL;
+					}
+				}
+				cnt++;
+			}
 		}
-	//}
+	}*/
 	
 	for(y=0;y<BOARD_Y;y++) {
 		for(x=0;x<BOARD_X;x++) {
-			o=current->board[x][y].obj;
-			if(o==NULL) {
-				ct->locate(x,y);
-				ct->color(15,4);
-				ct->printf("X");
-			} else {
-				o->setUpdated(false);
-				o->setPushed(false);
+			if(currentbrd->board[x][y].obj != NULL) {
+				currentbrd->board[x][y].obj->setUpdated(false);
+				currentbrd->board[x][y].obj->setPushed(false);
+			}
+			if(currentbrd->board[x][y].under != NULL && currentbrd->board[x][y].under->flags() & F_DELETED) {
+				currentbrd->objects.remove(currentbrd->board[x][y].under);
+				delete currentbrd->board[x][y].under;
+				currentbrd->board[x][y].under = NULL;
 			}
 		}
 	}

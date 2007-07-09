@@ -301,6 +301,7 @@ void ZZTOOP::exec(std::string text) {
 	std::string args;
 	ZZTObject *theirobj;
 	struct board_data *b;
+	ZZTObject *o;
 	static int textfg=1,textbg=0;
 	int i,j,went=0,color,color2,neg,res;
 	
@@ -354,75 +355,42 @@ void ZZTOOP::exec(std::string text) {
 			words.erase(words.begin() + 2);
 			if(words.size() < 3) words.push_back(std::string("empty"));
 		}
-		if(words[1].find("w") == 0) {
-			i=(int)m_position.x-1; j=(int)m_position.y;
-		} else if(words[1].find("e") == 0) {
-			i=(int)m_position.x+1; j=(int)m_position.y;
-		} else if(words[1].find("n") == 0) {
-			i=(int)m_position.x; j=(int)m_position.y-1;
-		} else if(words[1].find("s") == 0) {
-			i=(int)m_position.x; j=(int)m_position.y+1;
-		}
-		if(i>=0 && i<BOARD_X && j>=0 && j<BOARD_Y) {
-			b=&currentbrd->board[i][j];
-			if(str_to_obj(words[2])==-1) {
-				set_msg("ERR: undefined item");
-				return;
-			} else {
-				if(b->obj->flags() & F_PUSHABLE) b->obj->move(str_to_direction(words[1]),true);				
-				b->under=b->obj;
-				b->obj=::create_object(str_to_obj(words[2]),i,j);
-				if(b->under->type() != ZZT_EMPTY) {
-					b->obj->setParam(1,b->under->param(1));
-					b->obj->setParam(2,b->under->param(2));
-					b->obj->setParam(3,b->under->param(3));
-					b->obj->setParam(4,b->under->param(4));
-					b->obj->setFg(b->under->fg());
-					b->obj->setBg(b->under->bg());
-					b->obj->setCycle(b->under->cycle());								
-					b->obj->setColor(b->under->color());
-				}
-				if(b->obj->type()==ZZT_OBJECT) {
-					b->obj->setShape(b->under->shape());
-					b->obj->setProg(b->under->prog(),b->under->progLen(),b->under->progPos());
-				}
-				b->obj->create();
-				if(color!=-1) b->obj->setColor(color);
-				if(b->obj->bg()>7) b->obj->setBg(b->obj->bg() - 8);
-				draw_block(i,j);
-				delete b->under;
-				b->under= NULL;
-			}
+		if(str_to_obj(words[2])==-1) {
+			set_msg("ERR: undefined item");
+			return;
+		} else {
+			o=get(str_to_direction(words[1]));
+			if(o!=NULL && o->flags() & F_PUSHABLE) o->move(str_to_direction(words[1]),true);
+			o=create_object(str_to_obj(words[2]),str_to_direction(words[1]));
+			o->inherit(get(str_to_direction(words[1])));
+			if(color!=-1) o->setColor(color);
+			if(o->bg()>7) o->setBg(o->bg() - 8);
+			remove_from_board(currentbrd,get(str_to_direction(words[1])));
+			put(o);
 		}
 		goagain=1;
 	}
 	else if(words[0] == "become") {
 		color=str_to_color(words[1]);
 		if(color!=-1) words.erase(words.begin() + 1);
-		b=&currentbrd->board[(int)m_position.x][(int)m_position.y];
 		if(str_to_obj(words[1])==-1) {
 			set_msg("ERR: undefined item");
 		} else {
-			b->under=b->obj;
-			b->obj=::create_object(str_to_obj(words[1]),(int)m_position.x,(int)m_position.y);
-			/*b->obj->setParam(1,b->under->param(1));
-			b->obj->setParam(2,b->under->param(2));
-			b->obj->setParam(3,b->under->param(3));
-			b->obj->setParam(4,b->under->param(4));*/
-			b->obj->setFg(b->under->fg());
-			b->obj->setBg(b->under->bg());
-			b->obj->setCycle(b->under->cycle());								
-			if(b->obj->type()==ZZT_OBJECT || b->obj->type()==ZZT_LUA) {
-				b->obj->setShape(b->under->shape());
-				b->obj->setProg(b->under->prog(),b->under->progLen(),b->under->progPos());
+			o=::create_object(str_to_obj(words[1]),(int)m_position.x,(int)m_position.y);
+			o->setFg(m_fg);
+			o->setBg(m_bg);
+			o->setCycle(m_cycle);								
+			if(o->type()==ZZT_OBJECT || o->type()==ZZT_LUA) {
+				o->setShape(m_shape);
+				o->setProg(m_prog,m_proglen,m_progpos);
 			}
-			b->obj->setColor(b->under->color());
-			if(color!=-1) b->obj->setColor(color);
-			b->obj->create();
-			draw_block((int)m_position.x, (int)m_position.y);
+			if(color!=-1) o->setColor(color);
+			else o->setColor(*m_color);
 			m_progpos = -1;
-			b->under->setFlags(F_DELETED);
 			task_kill(this);
+			remove_from_board(currentbrd, this, true);
+			put(o,true);
+			goagain=0;
 			return;
 		}
 	}
@@ -446,25 +414,10 @@ void ZZTOOP::exec(std::string text) {
 									set_msg("ERR: undefined item");
 									return;
 								} else {
-									b->obj->setFlag(F_DELETED);
-									b->under=b->obj;
-									b->obj=::create_object(str_to_obj(words[2]),i,j);
-									b->obj->setParam(1,b->under->param(1));
-									b->obj->setParam(2,b->under->param(2));
-									b->obj->setParam(3,b->under->param(3));
-									b->obj->setParam(4,b->under->param(4));
-									b->obj->setFg(b->under->fg());
-									b->obj->setBg(b->under->bg());									
-									if(b->obj->type()==ZZT_OBJECT) {
-										b->obj->setShape(b->under->shape());
-										b->obj->setProg(b->under->prog(),b->under->progLen(),b->under->progPos());
-									}
-									b->obj->setColor(b->under->color());
-									b->obj->create();
-									if(color!=-1) b->obj->setColor(color); 
-									if(color2!=-1) b->obj->setColor(color2);
-									if(b->obj->bg()>=8) b->obj->setBg(b->obj->bg() - 8);
-									draw_block(i,j);
+									o=::create_object(str_to_obj(words[2]),i,j);
+									o->inherit(b->obj);
+									remove_from_board(currentbrd, b->obj);
+									put(o);
 								}
 							}
 						}

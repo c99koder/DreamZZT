@@ -313,7 +313,7 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 		suc = 1;
 	} else {
 		them=board->board[x][y].obj;
-		if(them!=NULL && them!=this) {
+		if(them!=NULL && them!=this && them->isValid() == 1) {
 			if(them->flags()&F_ITEM && m_type==ZZT_PLAYER){
 				them->message(this,"get");
 				if(is_empty(dir)) {
@@ -424,7 +424,7 @@ ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string n
 	m_fg=15;
 	m_bg=0;
 	m_name=name;
-	m_updated=1;
+	m_updated=0;
 	m_pushed=0;
 	m_progpos=0;
 	m_prog="";
@@ -434,6 +434,23 @@ ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string n
 	m_height=0;
 	m_board=currentbrd;
 	m_isValid = true;
+}
+
+void ZZTObject::inherit(ZZTObject *o) {
+	if(o->type() != ZZT_EMPTY) {
+		setParam(1,o->param(1));
+		setParam(2,o->param(2));
+		setParam(3,o->param(3));
+		setParam(4,o->param(4));
+		setFg(o->fg());
+		setBg(o->bg());
+		setCycle(o->cycle());								
+		setColor(o->color());
+	}
+	if(o->type()==ZZT_OBJECT) {
+		setShape(o->shape());
+		setProg(o->prog(),o->progLen(),o->progPos());
+	}
 }
 
 extern bool debug_show_objects;

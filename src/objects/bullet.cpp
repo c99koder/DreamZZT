@@ -63,7 +63,7 @@ void Bullet::update() {
 
 void Bullet::message(ZZTObject *them, std::string message) {
 	if(message == "thud") {
-		 them->message(this,"shot");
+		them->message(this,"shot");
 		if(them->type()==ZZT_BREAKABLE) {
 			remove_from_board(currentbrd,them);
 			if(zm!=NULL) zm->setTune("t-c");
@@ -90,7 +90,7 @@ void Bullet::message(ZZTObject *them, std::string message) {
 				return;
 			}
 		}
-		if(them->type()==ZZT_BULLET) remove_from_board(currentbrd, them);
+		if(them->type()==ZZT_BULLET && them != this) remove_from_board(currentbrd, them);
 		remove_from_board(currentbrd,this);
 	}
 }
@@ -147,7 +147,7 @@ void ZZTObject::shoot(enum direction dir) {
 		if(o!=NULL) {
 			if(o->type()==ZZT_BREAKABLE) {
 				remove_from_board(currentbrd,o);
-			} else {
+			} else if(o->type()!=ZZT_BULLET) {
 				o->message(this,"shot");
 			} 
 			if(is_empty(dir)) {

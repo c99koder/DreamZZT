@@ -256,6 +256,7 @@ void Player::update() {
 		st->color(15,1);
 		st->printf("          ");
 		draw();
+		return;
 	}
 
 	if(world.energizer_cycle > 0) {
@@ -289,7 +290,7 @@ void Player::update() {
 				switchbrd=board_up();
 				m_move=IDLE;
 			}
-			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
 				m_move=IDLE;
 			break;
 		case DOWN:
@@ -305,7 +306,7 @@ void Player::update() {
 				switchbrd=board_down();
 				m_move=IDLE;
 			}
-			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_N)
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_N)
 				m_move=IDLE;
 			break;
 		case LEFT:
@@ -321,7 +322,7 @@ void Player::update() {
 				switchbrd=board_left();
 				m_move=IDLE;
 			}
-			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
 				m_move=IDLE;
 			break;
 		case RIGHT:
@@ -337,7 +338,7 @@ void Player::update() {
 				switchbrd=board_right();
 				m_move=IDLE;
 			}
-			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
 				m_move=IDLE;
 			break;
 	}
@@ -349,11 +350,14 @@ void Player::update() {
 		//m_model->position = m_position;
 	}
 	
-	if(m_shoot!=IDLE) {
+	if(m_shoot!=IDLE && !m_shot) {
 		shoot(m_shoot);
+		m_shot = true;
+	} else {
+		m_shot = false;
 	}
 
-	if(world.magic == 65534) {
+	if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL) {
 		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_N) {
 			move(UP);
 		}

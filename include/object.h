@@ -35,7 +35,7 @@ public:
 		m_isValid = false; 
 		//if(m_model) { delete m_model; m_model = NULL }
 	}
-	
+	void inherit(ZZTObject *o);
 	
 	direction opposite(enum direction dir);
 	direction toward(ZZTObject *them);

@@ -74,6 +74,7 @@ struct board_info_node {
 	bool compressed;
 	std::list<rle_block> rle_data;
 	std::list<zzt_param> params;
+	std::list<ZZTObject *> objects;
 	struct board_info_node *next;
 };
 
@@ -109,14 +110,14 @@ void update_brd();
 void free_world();
 void new_world();
 int new_board(char *title);
-void put(ZZTObject *o);
+void put(ZZTObject *o, bool ignoreUnder=false);
 int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer=false);
 int block_bg(int x, int y);
 void draw_block(int x, int y);
 void draw_board();
 struct world_header *get_world();
 unsigned char block_code(int x, int y);
-void remove_from_board(struct board_info_node *brd, ZZTObject *me);
+void remove_from_board(struct board_info_node *brd, ZZTObject *me, bool ignoreUnder=false);
 struct board_info_node *get_board(int num);
 struct board_info_node *get_board_list();
 struct board_data *get_block_by_type(int type, int &x, int &y);

@@ -299,6 +299,7 @@ public:
 		m_cycle = 1;
 		m_height = 1;
 		m_modelName = "player.amf";
+		m_shot = false;
 	}
 	~Player();
 	void create();
@@ -312,6 +313,7 @@ public:
 	}
 private:
 	direction m_move, m_shoot;
+	bool m_shot;
 };
 
 #if TIKI_PLAT != TIKI_NDS
