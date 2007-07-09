@@ -97,9 +97,7 @@ void Blink::update() {
 				tmp->setFg(m_fg);
 				tmp->setBg(m_bg);
 				tmp->setCycle(m_cycle);
-				currentbrd->board[x][y].under=currentbrd->board[x][y].obj;
-				currentbrd->board[x][y].obj=tmp;
-				draw_block(x,y);
+				put(tmp);
 			} else {
 				if(currentbrd->board[x][y].obj!=NULL) {
 					currentbrd->board[x][y].obj->message(this,"shot");
