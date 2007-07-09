@@ -257,6 +257,7 @@ void Player::update() {
 		st->color(15,1);
 		st->printf("          ");
 		draw();
+		return;
 	}
 
 	if(world.energizer_cycle > 0) {
