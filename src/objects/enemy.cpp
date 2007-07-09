@@ -195,7 +195,7 @@ void Slime::message(ZZTObject *them, std::string message) {
 		if(zm!=NULL) zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
 		currentbrd->board[(int)m_position.x][(int)m_position.y].under=this;
-		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE, m_position.x, m_position.y);
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE, (int)m_position.x, (int)m_position.y);
 		currentbrd->board[(int)m_position.x][(int)m_position.y].obj->setColor(m_fg, m_bg);
 		setFlag(F_DELETED);
 	}
@@ -209,9 +209,9 @@ void Slime::update() {
 	ZZTObject *s;
 	
 	if(m_counter == 0) {
-		for(direction d = LEFT; d <= DOWN; (int(d))++) {
-			if(is_empty(d)) {
-				s=create_object(ZZT_SLIME, d);
+		for(int d = (int)LEFT; d <= (int)DOWN; d++) {
+			if(is_empty((direction)d)) {
+				s=create_object(ZZT_SLIME, (direction)d);
 				s->setParam(2,m_rate);
 				s->setCycle(m_cycle);
 				s->setColor(m_fg,m_bg);
@@ -219,7 +219,7 @@ void Slime::update() {
 			}
 		}
 		currentbrd->board[(int)m_position.x][(int)m_position.y].under=this;
-		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE, m_position.x, m_position.y);
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE, (int)m_position.x, (int)m_position.y);
 		currentbrd->board[(int)m_position.x][(int)m_position.y].obj->setColor(m_fg, m_bg);
 		setFlag(F_DELETED);
 	}

@@ -40,11 +40,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;include;C:\libcurl\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;lua;&quot;src\libtolua++&quot;;lua\lib;include;C:\libcurl\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;DEBUG;NET;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				DefaultCharIsUnsigned="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -186,6 +186,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\src\AMFModel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\AMFModelInstance.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\board.cpp"
 				>
 			</File>
@@ -210,11 +218,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\GraphicsLayer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\http.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\src\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ModelManager.cpp"
 				>
 			</File>
 			<File
@@ -273,6 +289,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\objects\lua.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\objects\passage.cpp"
 					>
 				</File>
@@ -290,6 +310,238 @@
 				</File>
 				<File
 					RelativePath=".\src\objects\zztoop.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="lua"
+				>
+				<File
+					RelativePath=".\lua\lapi.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lapi.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lib\lauxlib.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lauxlib.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lib\lbaselib.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lcode.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lcode.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lib\ldblib.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ldebug.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ldebug.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ldo.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ldo.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ldump.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lfunc.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lfunc.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lgc.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lgc.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lib\liolib.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\llex.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\llex.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\llimits.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lib\lmathlib.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lmem.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lmem.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lib\loadlib.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lobject.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lobject.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lopcodes.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lopcodes.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lparser.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lparser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lstate.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lstate.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lstring.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lstring.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lib\lstrlib.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ltable.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ltable.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lib\ltablib.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ltests.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ltm.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\ltm.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lua.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lualib.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lundump.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lundump.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lvm.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lvm.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lzio.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lua\lzio.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\pluto.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\libtolua++\tolua_event.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\libtolua++\tolua_event.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\libtolua++\tolua_is.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\libtolua++\tolua_map.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\libtolua++\tolua_push.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\libtolua++\tolua_to.c"
 					>
 				</File>
 			</Filter>

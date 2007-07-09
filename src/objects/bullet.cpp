@@ -77,8 +77,8 @@ void Bullet::message(ZZTObject *them, std::string message) {
 			}
 			return;
 		}
-		for(direction d = LEFT; d <= DOWN; (int(d))++) {
-			ZZTObject *o=get(d);
+		for(int d = (int)LEFT; d <= (int)DOWN; d++) {
+			ZZTObject *o=get((direction)d);
 			if(o!=NULL && o->type() == ZZT_RICOCHET) {
 				if(zm!=NULL && !zm->isPlaying()) {
 					zm->setTune("t9");

@@ -912,7 +912,7 @@ void play_zzt(const char *filename, bool tempFile) {
 		#endif
 	}
 	
-#ifdef NET
+#ifdef NET0
 	if(world.title != "") {
 		std::list<TracBug> bugs = search_tickets("status!=closed&amp;game~=" + world.title);
 		if(bugs.size() > 0) {

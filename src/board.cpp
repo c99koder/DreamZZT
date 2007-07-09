@@ -235,7 +235,7 @@ void *spinner_thd(void *text) {
 }
 	
 void spinner(char *text) {
-#if TIKI_PLAT != TIKI_NDS
+#if 0 && TIKI_PLAT != TIKI_NDS
 	if(spinner_active) spinner_clear();
 	spinner_active = true;
 	spinner_thread = new Thread::Thread(spinner_thd,text);
@@ -736,7 +736,7 @@ void compress(board_info_node *board, bool silent) {
 		board->rle_data.push_back(rle);
 		board->size+=3;
 	}		
-	while(!board->objects.empty()) board->objects.pop_front();
+	board->objects.clear();
 	board->compressed=true;
 	if(!silent) spinner_clear();
 #ifdef DEBUG
@@ -762,7 +762,7 @@ void decompress(board_info_node *board, bool silent) {
 	
 	for(rle_iter=board->rle_data.begin(); rle_iter != board->rle_data.end(); rle_iter++) {
 		for(z=0; z<(*rle_iter).len; z++) {
-			if(x>BOARD_X-1) { x=0; y++; }
+			if(x==BOARD_X) { x=0; y++; }
 			board->board[x][y].obj=NULL;
 			board->board[x][y].under=NULL;
 			curobj=board->board[x][y].obj=create_object((*rle_iter).cod,x,y);
@@ -770,7 +770,7 @@ void decompress(board_info_node *board, bool silent) {
 				curobj->setFg((*rle_iter).col%16);
 				curobj->setBg((*rle_iter).col/16);
 			} else {
-				printf("Unknown type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
+				Debug::printf("Unknown type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
 				board->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
 			}
 			x++;
@@ -797,7 +797,7 @@ void decompress(board_info_node *board, bool silent) {
 				board->board[(*param_iter).x][(*param_iter).y].under->setFg((*param_iter).uc%16);
 				board->board[(*param_iter).x][(*param_iter).y].under->setBg((*param_iter).uc/16);
 			} else {
-				board->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
+				board->board[(*param_iter).x][(*param_iter).y].under=create_object(ZZT_EMPTY,x,y);
 			}
 		} else {
 			Debug::printf("Invalid object at: (%i,%i)\n",x,y);
@@ -1377,6 +1377,7 @@ void update_brd() {
 	for(evenodd=0; evenodd < 2; evenodd++) {
 		cnt=0;
 		obj_iter = currentbrd->objects.end();
+		obj_iter--;
 		do {
 			if(cnt++%2 == evenodd) {
 				o=*obj_iter;
