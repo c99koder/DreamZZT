@@ -736,6 +736,7 @@ void compress(board_info_node *board, bool silent) {
 		board->rle_data.push_back(rle);
 		board->size+=3;
 	}		
+	while(!board->objects.empty()) board->objects.pop_front();
 	board->compressed=true;
 	if(!silent) spinner_clear();
 #ifdef DEBUG
@@ -1379,7 +1380,7 @@ void update_brd() {
 		do {
 			if(cnt++%2 == evenodd) {
 				o=*obj_iter;
-				if(o!=NULL && o->isValid() && o->cycle() > 0 && !o->flag(F_DELETED)) {
+				if(o!=NULL && o->isValid() && o->cycle() > 0 && !o->flag(F_DELETED) && !o->updated()) {
 					o->setTick(o->tick()-1);
 					if(o->tick()<=0) {
 						o->update();
