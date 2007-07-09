@@ -167,6 +167,7 @@ void Player::create() {
 	m_fg=15;
 	m_bg=1;
 	m_shoot = m_move = IDLE;
+	m_shot = false;
 
 	//if(!m_model) {
 	//	m_model = new AMFModelInstance("block.amf", m_position, Vector(0.0f, 1.0f, 0.0f));
@@ -349,24 +350,21 @@ void Player::update() {
 		//m_model->position = m_position;
 	}
 	
-	if(m_shoot!=IDLE && !m_shot) {
+	if(m_shoot!=IDLE) {
 		shoot(m_shoot);
-		m_shot = true;
-	} else {
-		m_shot = false;
 	}
 
 	if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL) {
 		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_N) {
 			move(UP);
 		}
-		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S) {
+		else if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S) {
 			move(DOWN);
 		}
-		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_E) {
+		else if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_E) {
 			move(RIGHT);
 		}
-		if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_W) {
+		else if(currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_W) {
 			move(LEFT);
 		}
 	}
