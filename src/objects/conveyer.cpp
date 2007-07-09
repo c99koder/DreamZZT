@@ -39,7 +39,7 @@ int Conveyer::cw(ZZTObject *them) {
 	if(!(them->flags()&F_PUSHABLE) || them->pushed()) return 0;
 
 	if((int)them->position().y==(int)m_position.y-1 && ((int)them->position().x==(int)m_position.x-1||(int)them->position().x==(int)m_position.x)) {
-		if(::is_empty(currentbrd,(int)them->position().x+1,(int)them->position().y)) {
+		if(currentbrd->board[(int)them->position().x+1][(int)them->position().y].obj->type() == ZZT_EMPTY) {
 			them->move(RIGHT);
 			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
@@ -51,7 +51,7 @@ int Conveyer::cw(ZZTObject *them) {
 			}
 		}
 	} else if((int)them->position().x==(int)m_position.x+1 && ((int)them->position().y==(int)m_position.y-1 || (int)them->position().y==(int)m_position.y)) {
-		if(::is_empty(currentbrd,(int)them->position().x,(int)them->position().y+1)) {
+		if(currentbrd->board[(int)them->position().x][(int)them->position().y+1].obj->type() == ZZT_EMPTY) {
 			them->move(DOWN);
 			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
@@ -63,7 +63,7 @@ int Conveyer::cw(ZZTObject *them) {
 			}
 		}
 	} else if((int)them->position().y==(int)m_position.y+1 && ((int)them->position().x==(int)m_position.x+1 || (int)them->position().x==(int)m_position.x)) {
-		if(::is_empty(currentbrd,(int)them->position().x-1,(int)them->position().y)) {
+		if(currentbrd->board[(int)them->position().x-1][(int)them->position().y].obj->type() == ZZT_EMPTY) {
 			them->move(LEFT);
 			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
@@ -75,7 +75,7 @@ int Conveyer::cw(ZZTObject *them) {
 			}
 		}
 	} else if((int)them->position().x==(int)m_position.x-1 && ((int)them->position().y==(int)m_position.y+1 || (int)them->position().y==(int)m_position.y)) {
-		if(::is_empty(currentbrd,(int)them->position().x,(int)them->position().y-1)) {
+		if(currentbrd->board[(int)them->position().x][(int)them->position().y-1].obj->type() == ZZT_EMPTY) {
 			them->move(UP);
 			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
@@ -94,7 +94,7 @@ int Conveyer::ccw(ZZTObject *them) {
 	if(!(them->flags()&F_PUSHABLE) || them->pushed()) return 0;
 
 	if((int)them->position().y==(int)m_position.y-1 && ((int)them->position().x==(int)m_position.x+1||(int)them->position().x==(int)m_position.x)) {
-		if(::is_empty(currentbrd,(int)them->position().x-1,(int)them->position().y)) {
+		if(currentbrd->board[(int)them->position().x-1][(int)them->position().y].obj->type() == ZZT_EMPTY) {
 			them->move(LEFT);
 			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
@@ -106,7 +106,7 @@ int Conveyer::ccw(ZZTObject *them) {
 			}
 		}
 	} else if((int)them->position().x==(int)m_position.x+1 && ((int)them->position().y==(int)m_position.y+1 || (int)them->position().y==(int)m_position.y)) {
-		if(::is_empty(currentbrd,(int)them->position().x,(int)them->position().y-1)) {
+		if(currentbrd->board[(int)them->position().x][(int)them->position().y-1].obj->type() == ZZT_EMPTY) {
 			them->move(UP);
 			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
@@ -118,7 +118,7 @@ int Conveyer::ccw(ZZTObject *them) {
 			}
 		}
 	} else if((int)them->position().y==(int)m_position.y+1 && ((int)them->position().x==(int)m_position.x-1 || (int)them->position().x==(int)m_position.x)) {
-		if(::is_empty(currentbrd,(int)them->position().x+1,(int)them->position().y)) {
+		if(currentbrd->board[(int)them->position().x+1][(int)them->position().y].obj->type() == ZZT_EMPTY) {
 			them->move(RIGHT);
 			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
@@ -130,7 +130,7 @@ int Conveyer::ccw(ZZTObject *them) {
 			}
 		}
 	} else if((int)them->position().x==(int)m_position.x-1 && ((int)them->position().y==(int)m_position.y-1 || (int)them->position().y==(int)m_position.y)) {
-		if(::is_empty(currentbrd,(int)them->position().x,(int)them->position().y+1)) {
+		if(currentbrd->board[(int)them->position().x][(int)them->position().y+1].obj->type() == ZZT_EMPTY) {
 			them->move(DOWN);
 			moved[((int)them->position().x-(int)m_position.x)+1][((int)them->position().y-(int)m_position.y)+1]=1;
 			return 1;
