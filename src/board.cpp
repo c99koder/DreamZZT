@@ -1322,7 +1322,8 @@ void update_brd() {
 	ZZTObject *p=NULL;
 	ZZTObject *t=NULL;
 	struct board_info_node *current=currentbrd;
-	int x,y,i=0,cnt=0, evenodd = 0;
+	int x,y,i=0,cnt=0;
+	static unsigned int cycle = 0;
 	std::list<ZZTObject *>::iterator obj_iter;
 
 	if(current->num>0) {
@@ -1374,60 +1375,23 @@ void update_brd() {
 		if(world_sec==0) world_sec=10;
 	}
 	
-	for(evenodd=0; evenodd < 2; evenodd++) {
-		cnt=0;
-		obj_iter = currentbrd->objects.end();
-		obj_iter--;
-		do {
-			if(cnt++%2 == evenodd) {
-				o=*obj_iter;
-				if(o!=NULL && o->isValid() && o->cycle() > 0 && !o->flag(F_DELETED) && !o->updated()) {
-					o->setTick(o->tick()-1);
-					if(o->tick()<=0) {
-						o->update();
-						if(o->flag(F_DELETED)) {
-							if(currentbrd->board[(int)o->position().x][(int)o->position().y].obj == o) {
-								remove_from_board(currentbrd,o);
-							}
-						} else {
-							o->setUpdated(true);
-							o->setTick(o->cycle());
-						}
-					}
+	for(obj_iter = currentbrd->objects.begin(); obj_iter != currentbrd->objects.end(); obj_iter++) {
+		o=*obj_iter;
+		if(o->cycle() > 0 && ((cnt + cycle) % o->cycle() == 0) && !o->flag(F_DELETED) && !o->updated()) {
+			o->update();
+			if(o->flag(F_DELETED)) {
+				if(currentbrd->board[(int)o->position().x][(int)o->position().y].obj == o) {
+					remove_from_board(currentbrd,o);
 				}
-			}
-			if(obj_iter == currentbrd->objects.begin()) 
-				break;
-			else
-				obj_iter--;
-		} while(1);
-	}
-
-	/*for(y=0;y<BOARD_Y;y++) {
-		for(x=BOARD_X-1;x>=0;x--) {
-			o=current->board[x][y].obj;
-			if(o!=NULL && o->isValid() && o->updated()==0 && o->cycle() != 0) { 
-				o->setTick(o->tick()-1);
-				if((cnt % 2 == evenodd) && ((o->tick()<=0) || world.health<=0)) {
-					o->update();
-					if(o->flags()&F_DELETED) {
-						if(current->board[x][y].obj == o) remove_from_board(current,o);
-						if(current->board[x][y].under == o) current->board[x][y].under = NULL;
-						delete o;
-					} else {
-						o->setUpdated(true);
-						o->setTick(o->cycle());
-					}
-					if(current->board[x][y].under != NULL && current->board[x][y].under->flags() & F_DELETED) {
-						delete current->board[x][y].under;
-						current->board[x][y].under = NULL;
-					}
-				}
-				cnt++;
+			} else {
+				o->setUpdated(true);
 			}
 		}
-	}*/
-	
+		cnt++;
+	}
+
+	cycle++;
+
 	for(y=0;y<BOARD_Y;y++) {
 		for(x=0;x<BOARD_X;x++) {
 			if(currentbrd->board[x][y].obj != NULL) {
