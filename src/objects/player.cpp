@@ -93,7 +93,7 @@ void Player::processEvent(const Event & evt) {
 			m_shoot = IDLE;
 		}
 	} else if ((evt.type == Hid::Event::EvtKeypress || evt.type == Hid::Event::EvtBtnPress) && world.health > 0) {
-		m_flags&=~F_SLEEPING;
+		clearFlag(F_SLEEPING);
 
 		if(evt.key == 32 || evt.btn == Event::BtnA) {
 			if(m_move != IDLE) {
@@ -256,7 +256,6 @@ void Player::update() {
 		st->color(15,1);
 		st->printf("          ");
 		draw();
-		return;
 	}
 
 	if(world.energizer_cycle > 0) {
@@ -322,7 +321,7 @@ void Player::update() {
 				switchbrd=board_left();
 				m_move=IDLE;
 			}
-			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_E)
 				m_move=IDLE;
 			break;
 		case RIGHT:
@@ -338,7 +337,7 @@ void Player::update() {
 				switchbrd=board_right();
 				m_move=IDLE;
 			}
-			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
+			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_W)
 				m_move=IDLE;
 			break;
 	}

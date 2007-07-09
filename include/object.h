@@ -91,6 +91,7 @@ public:
 	int flag(int f) { return m_flags & f; }
 	void setFlag(int flag) { m_flags |= flag; }
 	void setFlags(int flags) { m_flags = flags; }
+	void clearFlag(int flag) { m_flags&=~flag; }
 	void setProg(std::string prog, int len, int pos) { m_prog=prog; m_proglen = len; m_progpos = pos; }
 	void setHeading(direction h) { m_heading = h; }
 	direction heading() { return m_heading; }
