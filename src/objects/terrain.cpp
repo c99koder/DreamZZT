@@ -136,6 +136,7 @@ void Terrain::create() {
 		//m_bg=1;
 		//m_fg=15;
 		m_cycle=1;
+		currentbrd->objects.push_back(this);
 		break;
 	}
 }

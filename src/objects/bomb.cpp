@@ -52,7 +52,7 @@ void Bomb::message(ZZTObject *them, std::string message) {
 void Bomb::update() {
 	int x,y;
 	double a,b;
-	ZZTObject *them;
+	ZZTObject *them, *o;
 
 	if(m_shape <= '9' && m_shape >= '1') {
 		m_shape--;
@@ -83,9 +83,8 @@ void Bomb::update() {
 					if(x>=0 && y >= 0 && x<BOARD_X && y<BOARD_Y) {
 						them=currentbrd->board[x][y].obj;
 						if(them->type()==ZZT_BREAKABLE || ::is_empty(currentbrd,x,y)) {
-							currentbrd->board[x][y].obj=::create_object(ZZT_EXPLOSION,x,y);
-							currentbrd->board[x][y].obj->create();
-							draw_block(x,y);
+							o=::create_object(ZZT_EXPLOSION,x,y);
+							put(o);
 						} else if(them!=NULL) {
 							them->message(this,"bombed");
 						}
@@ -113,6 +112,7 @@ void Explosion::create() {
 	m_fg=7;
 	m_bg=0;
 	m_cycle=1;
+	currentbrd->objects.push_back(this);
 }
 
 void Explosion::update() {
