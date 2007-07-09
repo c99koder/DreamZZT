@@ -27,7 +27,7 @@ $(TARGET).ds.gba	: $(TARGET).nds
 
 #---------------------------------------------------------------------------------
 $(TARGET).nds	:	$(TARGET).arm7 $(TARGET).arm9
-	ndstool	-c $(TARGET).nds -g DCSQ SS "DreamZZT" 308 -b dreamzzt.bmp "DreamZZT 3.0.8;(C) 2007 Sam Steele; http://www.c99.org/" -7 $(TARGET).arm7 -9 $(TARGET).arm9
+	ndstool	-c $(TARGET).nds -g DCSQ SS "DreamZZT" 308 -b dreamzzt.bmp "DreamZZT 3.1.0;(C) 2007 Sam Steele; http://www.c99.org/" -7 $(TARGET).arm7 -9 $(TARGET).arm9
 
 #---------------------------------------------------------------------------------
 $(TARGET).arm7	: arm7/$(TARGET).elf
