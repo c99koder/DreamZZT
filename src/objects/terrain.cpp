@@ -182,12 +182,18 @@ void Terrain::message(ZZTObject *them, std::string message) {
 		switch(m_type) {
 		case ZZT_FOREST:
 			if(forestmsg==0) {
-				set_msg("A path is cleared through the forest.");
+				if(world.magic == 65534) set_msg("A path is cleared\rthrough the forest.");
+				else set_msg("A path is cleared through the forest.");
 				forestmsg=1;
 			}
 			if(zm!=NULL) zm->setTune("ta");
 			if(zm!=NULL) zm->start();
-			remove_from_board(currentbrd,this);
+			remove_from_board(currentbrd,this,(world.magic==65534)?true:false);
+			if(world.magic == 65534) {
+				ZZTObject *o = ::create_object(SZT_FLOOR, (int)m_position.x, (int)m_position.y);
+				o->setColor(GREEN, BLACK);
+				put(o,true);
+			}
 			them->move(them->toward(this));			
 			break;
 		case ZZT_INVISIBLE:
