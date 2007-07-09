@@ -202,7 +202,7 @@ void Slime::message(ZZTObject *them, std::string message) {
 }
 
 void Slime::create() {
-	m_counter = m_rate;
+	m_counter = m_rate * 2;
 }
 
 void Slime::update() {
