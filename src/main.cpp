@@ -456,6 +456,44 @@ void MixSound(void)
 }
 void InterruptHandler(void)
 {
+	static u32 oldkeys = 0;
+	scanKeys();
+	u32 keys = keysHeld();
+	
+	if( keys & KEY_R) {
+		if(keys & KEY_LEFT) {
+			disp_off_x--;
+		}
+		if(keys & KEY_RIGHT) {
+			disp_off_x++;
+		}
+		if(keys & KEY_UP) {
+			disp_off_y--;
+		}
+		if(keys & KEY_DOWN) {
+			disp_off_y++;
+		}
+	} else {
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_UP, Event::BtnUp);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_DOWN, Event::BtnDown);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_LEFT, Event::BtnLeft);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_RIGHT, Event::BtnRight);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_A, Event::BtnA);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_B, Event::BtnB);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_X, Event::BtnX);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_Y, Event::BtnY);
+		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_START, Event::BtnStart);
+		
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_UP, Event::KeyUp);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_DOWN, Event::KeyDown);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_LEFT, Event::KeyLeft);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_RIGHT, Event::KeyRight);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_START, 13);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_A, 32);
+		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_B, Event::KeyEsc);
+	}
+	
+	oldkeys = keys;
 	framecounter++;
 }
 void FiFoHandler(void)
@@ -509,46 +547,7 @@ void render() {
 	frameTime = Time::gettime();
 	
 #ifdef DZZT_LITE
-#if TIKI_PLAT == TIKI_NDS
-	scanKeys();
-	u32 keys = keysHeld();
-	static u32 oldkeys = 0;
-	
-	if( keys & KEY_R) {
-		if(keys & KEY_LEFT) {
-			disp_off_x--;
-		}
-		if(keys & KEY_RIGHT) {
-			disp_off_x++;
-		}
-		if(keys & KEY_UP) {
-			disp_off_y--;
-		}
-		if(keys & KEY_DOWN) {
-			disp_off_y++;
-		}
-	} else {
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_UP, Event::BtnUp);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_DOWN, Event::BtnDown);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_LEFT, Event::BtnLeft);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_RIGHT, Event::BtnRight);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_A, Event::BtnA);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_B, Event::BtnB);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_X, Event::BtnX);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_Y, Event::BtnY);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_START, Event::BtnStart);
-		
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_UP, Event::KeyUp);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_DOWN, Event::KeyDown);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_LEFT, Event::KeyLeft);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_RIGHT, Event::KeyRight);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_START, 13);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_A, 32);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_B, Event::KeyEsc);
-	}
-	
-	oldkeys = keys;
-#else
+#if TIKI_PLAT != TIKI_NDS
 // Poll for events, and handle the ones we care about.
     SDL_Event event;
 	int mod = 0;
