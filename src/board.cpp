@@ -1346,6 +1346,7 @@ void update_brd() {
 				if(zm!=NULL) zm->setTune("s.-cd#g+c-ga#+dgfg#+cf----q.c");
 				if(zm!=NULL) zm->lock();
 				if(zm!=NULL) zm->start();
+				player->send("all:EndGame");
 			}
 #if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS			
 			set_msg("Game Over - Press B");

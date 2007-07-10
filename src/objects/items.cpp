@@ -127,6 +127,7 @@ void Inventory::message(ZZTObject *them, std::string message) {
 			if(zm!=NULL) zm->setTune("s.-cd#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#ef+f-fd#c+c-d#e@s.-f+f-fd#c+c-d#e");
 			if(zm!=NULL) zm->lock();
 			if(zm!=NULL) zm->start();
+			((ZZTOOP *)them)->send("all:energize");
 			break;
 		case ZZT_GEM:
 			give_gems(1);
