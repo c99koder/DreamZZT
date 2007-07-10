@@ -65,12 +65,9 @@ void Duplicator::update() {
 			if(m_step.y==1) currentbrd->board[x][y].obj->move(UP);
 		}
 		if(::is_empty(currentbrd,x,y)) {
-			currentbrd->board[x][y].under=currentbrd->board[x][y].obj;
-			currentbrd->board[x][y].obj=create_copy(obj);
-			obj2=currentbrd->board[x][y].obj;
+			obj2=create_copy(obj);
 			obj2->setPosition(Vector((float)x,(float)y,0));
-			obj2->create();
-			draw_block(x,y);
+			put(obj2);
 			if(zm!=NULL) zm->setTune("scdefg");
 			if(zm!=NULL) zm->start();			
 		} else {
