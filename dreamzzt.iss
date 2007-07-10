@@ -45,7 +45,7 @@ Source: Release\DreamZZT.exe; DestDir: {app}; Flags: ignoreversion
 Source: resources\town.zzt; DestDir: {app}; Flags: ignoreversion
 Source: resources\tutorial.zzt; DestDir: {app}; Flags: ignoreversion
 Source: resources\enigma.zzt; DestDir: {app}; Flags: ignoreversion
-Source: resources\zzt-ascii.bmp; DestDir: {app}; Flags: ignoreversion
+Source: resources\zzt-ascii.png; DestDir: {app}; Flags: ignoreversion
 Source: win32\alut.dll; DestDir: {app}; Flags: ignoreversion
 Source: win32\OpenAL32.dll; DestDir: {app}; Flags: ignoreversion
 Source: win32\wrap_oal.dll; DestDir: {app}; Flags: ignoreversion

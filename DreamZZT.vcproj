@@ -121,9 +121,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;include;C:\libcurl\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;&quot;src\libtolua++&quot;;lua\lib;lua;include;C:\libcurl\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NET;_CRT_SECURE_NO_DEPRECATE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				DefaultCharIsUnsigned="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -141,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib"
+				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib shfolder.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib"
 				OutputFile="$(OutDir)/DreamZZT.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="C:\libcurl;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;..\tiki\win32\Release&quot;"
@@ -584,6 +584,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\version.h.in"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h"
+						Outputs="include\version.h"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\include\window.h"
 				>
 			</File>
@@ -624,6 +637,19 @@
 			<File
 				RelativePath=".\dreamzzt.rc"
 				>
+			</File>
+			<File
+				RelativePath=".\dreamzzt.rc.in"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc"
+						Outputs="dreamzzt.rc"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>
