@@ -235,6 +235,17 @@ void Player::update() {
 		st->locate(4,6);
 		st->color(15,1);
 		st->printf("Pausing...");
+
+		if(BOARD_X > ct->getCols() || BOARD_Y > ct->getRows()) {
+			disp_off_x = (m_position.x - (ct->getCols() - ((world.magic == 65534) ? 6 : 0)) / 2);
+			disp_off_y = (m_position.y - (ct->getRows() - ((world.magic == 65534) ? 5 : 0)) / 2);
+		}
+
+		if(disp_off_x < 0) disp_off_x = 0;
+		if(disp_off_x > (BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0))) disp_off_x = BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0);
+		if(disp_off_y < 0) disp_off_y = 0;
+		if(disp_off_y > (BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0))) disp_off_y = BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0);
+		
 		do {
 			draw_board();
 			if(s==0) {
