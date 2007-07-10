@@ -37,6 +37,7 @@ using namespace Tiki::Thread;
 #include "status.h"
 #include "sound.h"
 #include "window.h"
+#include "version.h"
 
 extern struct board_info_node *currentbrd;
 extern struct board_info_node *board_list;
@@ -327,7 +328,7 @@ void debug_init() {
 	dt->setANSI(true);
 	dt->color(GREY, BLACK);
 	dt->clear();
-	debug("\n\nDreamZZT 3.1.0\n(C) 2000 - 2007 Sam Steele\nAll Rights Reserved.\n\nREADY.\n");
+	debug("\n\nDreamZZT %s\n(C) 2000 - 2007 Sam Steele\nAll Rights Reserved.\n\nREADY.\n", VERSION);
 	debug_input = new TUITextInput("> ", &debug_cmdline);
 	debug_input->setBg(BLACK);
 	debug_quitting=false;

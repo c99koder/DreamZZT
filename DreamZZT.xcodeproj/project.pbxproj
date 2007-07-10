@@ -132,6 +132,7 @@
 		229DC8160B2E2F86004C0FF9 /* task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229DC8150B2E2F86004C0FF9 /* task.cpp */; };
 		22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22ABAB4D0A31145600B9C077 /* centipede.cpp */; };
 		22AD22CC0A13FAD8003E828E /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
+		22BF8A750C430B340025DD48 /* version.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BF8A740C430B340025DD48 /* version.h */; };
 		22C84B670C1399F1004F5B6D /* Tiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C84B230C1399F1004F5B6D /* Tiki.framework */; };
 		22C84B7C0C139A02004F5B6D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C84B680C139A02004F5B6D /* Sparkle.framework */; };
 		22C84B910C139AD3004F5B6D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22C84B680C139A02004F5B6D /* Sparkle.framework */; };
@@ -191,6 +192,7 @@
 				2210BFE60C28434700F393B1 /* Sparkle.framework in CopyFiles */,
 				2210BFE70C28434700F393B1 /* Tiki.framework in CopyFiles */,
 				2210C05D0C2848D800F393B1 /* SDLMain.h in CopyFiles */,
+				22BF8A750C430B340025DD48 /* version.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +277,7 @@
 		229DC8170B2E2F9B004C0FF9 /* task.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = task.h; path = include/task.h; sourceTree = "<group>"; };
 		22ABAB4D0A31145600B9C077 /* centipede.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = centipede.cpp; path = src/objects/centipede.cpp; sourceTree = "<group>"; };
 		22AD22CB0A13FAD8003E828E /* http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = http.cpp; path = src/http.cpp; sourceTree = "<group>"; };
+		22BF8A740C430B340025DD48 /* version.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = version.h; path = include/version.h; sourceTree = "<group>"; };
 		22C84B230C1399F1004F5B6D /* Tiki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tiki.framework; path = ../tiki/osx/build/Deployment/Tiki.framework; sourceTree = SOURCE_ROOT; };
 		22C84B680C139A02004F5B6D /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		22C84C3F0C13AB21004F5B6D /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lapi.c; sourceTree = "<group>"; };
@@ -414,6 +417,7 @@
 		2242FBC70A0C106500F4BDF2 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				22BF8A740C430B340025DD48 /* version.h */,
 				228ED2020C1E29CC006D6823 /* console.h */,
 				223A59B50C13738A008370C5 /* pluto.h */,
 				2242FBC90A0C109000F4BDF2 /* objects */,
@@ -608,6 +612,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 64FBB927092EA33F00427AD0 /* Build configuration list for PBXNativeTarget "DreamZZT" */;
 			buildPhases = (
+				22BF8A590C430A150025DD48 /* ShellScript */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
@@ -698,6 +703,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# rm -rfv ${EXECUTABLE_FOLDER_PATH}/PrivateHeaders\n";
+		};
+		22BF8A590C430A150025DD48 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/include/version.h.in",
+			);
+			outputPaths = (
+				"$(SRCROOT)/include/version.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sed \"s/\\$WCREV\\\\$/`/usr/local/bin/svnversion .`/\" < $SRCROOT/include/version.h.in > $SRCROOT/include/version.h";
 		};
 		C4332EE0079B242E0025BF39 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

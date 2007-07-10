@@ -12,7 +12,10 @@ OBJS = ../src/DreamZZT.o ../src/main.o ../src/console_nds.o ../src/debug.o ../sr
 	@$(OBJCOPY) -O binary $< $@
 	@echo built ... $(notdir $@)
 
-$(TARGET).elf: ../resources/zztascii.bin.o $(OBJS)
+../include/version.h: ../include/version.h.in
+	sed "s/\$WCREV\\$/`svnversion .`/" < ../include/version.h.in > ../include/version.h
+
+$(TARGET).elf: ../resources/zztascii.bin.o ../include/version.h $(OBJS)
 	$(CXX) $(LDFLAGS) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) ../resources/zztascii.bin.o -lfat $(TIKI_BASE_LIBS) -o $(TARGET).elf
 
 clean:

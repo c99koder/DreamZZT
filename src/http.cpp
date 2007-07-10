@@ -29,18 +29,19 @@ using namespace Tiki;
 using namespace Tiki::GL;
 
 #include "http.h"
+#include "version.h"
 
 #ifdef DREAMCAST
-#define USER_AGENT "DreamZZT/3.1.0 (Dreamcast)"
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Dreamcast)")).c_str()
 #endif
 #if TIKI_PLAT == TIKI_SDL
-#define USER_AGENT "DreamZZT/3.1.0 (Linux)"
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Linux)")).c_str()
 #endif
 #if TIKI_PLAT == TIKI_WIN32
-#define USER_AGENT "DreamZZT/3.1.0 (Windows)"
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Windows)")).c_str()
 #endif
 #if TIKI_PLAT == TIKI_OSX
-#define USER_AGENT "DreamZZT/3.1.0 (Macintosh)"
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Macintosh)")).c_str()
 #endif
 
 int hex_to_int(char c) {

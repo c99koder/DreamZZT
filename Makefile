@@ -15,7 +15,10 @@ src/objects/conveyer.o src/objects/player.o src/objects/centipede.o
 
 all: dreamzzt
 
-dreamzzt: $(OBJS)
+include/version.h: include/version.h.in
+        sed "s/\$WCREV\\$/`svnversion .`/" < include/version.h.in > include/version.h
+
+dreamzzt: include/version.h $(OBJS)
 	$(CXX) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -lalut -lqt-mt `curl-config --libs` -o dreamzzt
 	
 clean:
