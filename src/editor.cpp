@@ -52,7 +52,7 @@ extern struct board_info_node *board_list;
 extern struct board_info_node *currentbrd;
 
 extern int switchbrd;
-extern bool debug_visible;
+extern int debug_visible;
 
 void draw_main() {
 	ct->color(15,1);

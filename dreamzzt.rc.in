@@ -65,8 +65,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,0,8,0
- PRODUCTVERSION 3,0,8,0
+ FILEVERSION 3,1,$WCREV$,0
+ PRODUCTVERSION 3,1,$WCREV$,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -82,13 +82,13 @@ BEGIN
 				BLOCK "040904b0"
 				BEGIN
 						VALUE "CompanyName", "Sam Steele"
-						VALUE "FileDescription", "DreamZZT 3.0.8"
-						VALUE "FileVersion", "3, 0, 8, 0"
+						VALUE "FileDescription", "DreamZZT 3.1.$WCREV$"
+						VALUE "FileVersion", "3, 1, $WCREV$, 0"
 						VALUE "InternalName", "dreamzzt"
 						VALUE "LegalCopyright", "Copyright (C) 2000 - 2007 Sam Steele, All Rights Reserved."
 						VALUE "OriginalFilename", "dreamzzt.rc"
-						VALUE "ProductName", " DreamZZT 3.0.8"
-						VALUE "ProductVersion", "3, 0, 8, 0"
+						VALUE "ProductName", " DreamZZT 3.1.$WCREV$"
+						VALUE "ProductVersion", "3, 1, $WCREV$, 0"
 				END
 		END
 		BLOCK "VarFileInfo"

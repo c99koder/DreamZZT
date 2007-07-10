@@ -12,6 +12,9 @@
 		/>
 	</Platforms>
 	<ToolFiles>
+		<ToolFile
+			RelativePath=".\RULES.rules"
+		/>
 	</ToolFiles>
 	<Configurations>
 		<Configuration
@@ -27,6 +30,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="SubWCRev"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -110,6 +116,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="SubWCRev"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -573,6 +582,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\version.h.in"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h"
+						Outputs="include\version.h"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\include\window.h"
 				>
 			</File>
@@ -613,6 +635,19 @@
 			<File
 				RelativePath=".\dreamzzt.rc"
 				>
+			</File>
+			<File
+				RelativePath=".\dreamzzt.rc.in"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc"
+						Outputs="dreamzzt.rc"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>
