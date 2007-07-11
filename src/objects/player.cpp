@@ -245,7 +245,12 @@ void Player::update() {
 		if(disp_off_x > (BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0))) disp_off_x = BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0);
 		if(disp_off_y < 0) disp_off_y = 0;
 		if(disp_off_y > (BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0))) disp_off_y = BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0);
-		
+
+		if(world.magic == 65534) {
+			disp_off_x -= 3;
+			disp_off_y -= 2;
+		}		
+
 		do {
 			draw_board();
 			if(s==0) {
