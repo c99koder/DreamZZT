@@ -582,8 +582,6 @@ void boardTransition(direction d, board_info_node *newbrd) {
 }
 
 void switch_board(int num) {
-	st->clear();
-	render();
 	int oldbrd = world.start;
 	direction h = (player==NULL)?IDLE:player->heading();
 #if TIKI_PLAT == TIKI_NDS

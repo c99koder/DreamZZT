@@ -51,7 +51,6 @@ Source: win32\OpenAL32.dll; DestDir: {app}; Flags: ignoreversion
 Source: win32\wrap_oal.dll; DestDir: {app}; Flags: ignoreversion
 Source: win32\libcurl.dll; DestDir: {app}; Flags: ignoreversion; Tasks: 
 Source: win32\vcredist80_x86.exe; DestDir: {tmp}; Flags: deleteafterinstall
-Source: win32\SDL.dll; DestDir: {app}; Flags: ignoreversion
 Source: resources\monster.szt; DestDir: {app}; Flags: ignoreversion
 
 [INI]

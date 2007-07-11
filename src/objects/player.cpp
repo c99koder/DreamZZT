@@ -366,7 +366,9 @@ void Player::update() {
 		//gl->insert(m_model);
 		//m_model->position = m_position;
 	}
-	
+
+	if(switchbrd!=-1) return;
+
 	if(m_shoot!=IDLE) {
 		shoot(m_shoot);
 	}
