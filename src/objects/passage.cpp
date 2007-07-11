@@ -33,8 +33,9 @@ using namespace Tiki::Audio;
 #include "sound.h"
 
 extern int switchbrd;
-
+extern board_info_node *currentbrd;
 extern ZZTMusicStream *zm;
+extern Player *player;
 
 void Passage::setParam(int arg, unsigned char val) {
 	if(arg==3) m_dest = val;
@@ -50,12 +51,14 @@ void Passage::message(ZZTObject *them, std::string message) {
 	ZZTObject *obj2;
 	board_info_node *brd=get_board(m_dest);
 	Vector pos;
+	int fg=m_fg, bg=m_bg; //need to cache these because our object gets deleted
 	
 	if(message == "touch" && them->type()==ZZT_PLAYER && brd!=NULL) {
+		switchbrd=m_dest;
+		compress(currentbrd);
 		decompress(brd);
 		obj=get_obj_by_type(brd,ZZT_PLAYER);
-		
-		obj2=get_obj_by_color(brd,ZZT_PASSAGE,m_fg,m_bg);
+		obj2=get_obj_by_color(brd,ZZT_PASSAGE,fg,bg);
 		pos = obj->position();
 		
 		if(obj2!=NULL) {
@@ -64,12 +67,11 @@ void Passage::message(ZZTObject *them, std::string message) {
 			pos = obj2->position();
 			obj->setPosition(pos);
 			obj->setHeading(IDLE);
-			them->setHeading(IDLE);
 			brd->board[(int)pos.x][(int)pos.y].under=obj2;
 			brd->board[(int)pos.x][(int)pos.y].obj=obj;
 		}
 
-		if(brd!=NULL) switchbrd=m_dest;
+		player=NULL;
 		obj->setFlag(F_SLEEPING);
 		if(zm!=NULL) zm->setTune("tceg tc#fg# tdf#a td#ga# teg#+c");
 		if(zm!=NULL) zm->start();

@@ -86,6 +86,8 @@ char spin_anim[4]={'|','/','-','\\'};
 int disp_off_x = 0;
 int disp_off_y = 0;
 
+extern int switchbrd;
+
 void free_world() {
 	struct board_info_node *current=board_list;
 	struct board_info_node *prev=NULL;
@@ -580,11 +582,13 @@ void boardTransition(direction d, board_info_node *newbrd) {
 }
 
 void switch_board(int num) {
+	st->clear();
+	render();
 	int oldbrd = world.start;
 	direction h = (player==NULL)?IDLE:player->heading();
 #if TIKI_PLAT == TIKI_NDS
 	if(world.magic == 65534) { //SuperZZT boards are too big to fit 2 in RAM on the DS
-		if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
+		if(currentbrd != NULL) compress(currentbrd);
 		h=IDLE;
 	}
 #endif
@@ -592,7 +596,9 @@ void switch_board(int num) {
 	world.start=num;
 	player=(Player *)get_obj_by_type(get_board(num),ZZT_PLAYER);
 	connect_lines(get_board(num));
-	if(player!=NULL && currentbrd!=NULL && !world.editing) boardTransition(h,get_board(num));
+	if(player!=NULL && currentbrd!=NULL && !world.editing) {
+		boardTransition(h,get_board(num));
+	}
 	if(currentbrd != NULL && oldbrd != num) compress(currentbrd);
 	
 	currentbrd=get_board(num);
@@ -1380,6 +1386,7 @@ void update_brd() {
 		o=*obj_iter;
 		if(o->cycle() > 0 && ((cnt + cycle) % o->cycle() == 0) && !o->flag(F_DELETED) && !o->updated()) {
 			o->update();
+			if(switchbrd != -1) return;
 			if(o->flag(F_DELETED)) {
 				if(currentbrd->board[(int)o->position().x][(int)o->position().y].obj == o) {
 					remove_from_board(currentbrd,o);
@@ -1415,6 +1422,8 @@ void draw_block(int x, int y) {
 
 void draw_board() {
 	int x,y;
+	
+	if(currentbrd->compressed) return;
 	
 	for(y=0;y<ct->getRows();y++) {
 		for(x=0;x<ct->getCols();x++) {
