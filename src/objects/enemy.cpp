@@ -166,7 +166,7 @@ void Enemy::message(ZZTObject *them, std::string message) {
 		if(message == "touch" || message == "thud") {
 			them->message(this,"shot");
 		} else {
-			give_score(2);
+			give_score((m_type==ZZT_BEAR)?1:2);
 			draw_score();
 		}
 		if(zm!=NULL) zm->setTune("t+c---c++++c--c");
