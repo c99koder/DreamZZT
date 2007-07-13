@@ -52,6 +52,16 @@ extern Texture *zzt_font;
 #endif
 #endif
 
+#ifdef DZZT_LITE
+#define SCREEN_Y 400
+#else
+#if TIKI_PLAT == TIKI_DC
+#define SCREEN_Y 424
+#else
+#define SCREEN_Y 480
+#endif
+#endif
+
 ConsoleText *dt=NULL;
 extern ConsoleText *ct;
 extern ConsoleText *st;
@@ -249,6 +259,12 @@ void *process_debug(void *) {
 		} else if(debug_cmdline == "-reveal") {
 			debug_show_objects=false;
 			debug("Returning objects to normal.\n");
+		} else if(debug_cmdline.find("viewport ") == 0) {
+			std::vector<std::string> args = wordify(debug_cmdline,' ');
+			delete ct;
+			ct = new ConsoleText(atoi(args[1].c_str()), atoi(args[2].c_str()), zzt_font);
+			ct->setSize(30 * 16, SCREEN_Y / 2);
+			ct->translate(Vector(30 * 8, SCREEN_Y / 2 * 3,0));			
 		} else {
 			if(player==NULL) continue;
 			player->exec(debug_cmdline);
