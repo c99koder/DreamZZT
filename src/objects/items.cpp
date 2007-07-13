@@ -131,7 +131,7 @@ void Inventory::message(ZZTObject *them, std::string message) {
 			break;
 		case ZZT_GEM:
 			give_gems(1);
-			give_health(1);
+			give_health((world.magic == 65534)? 10 : 1);
 			give_score(10);
 			if(gemmsg==0) {
 				gemmsg=1;
