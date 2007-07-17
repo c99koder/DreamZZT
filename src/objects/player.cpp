@@ -184,7 +184,7 @@ void Player::message(ZZTObject *them, std::string message) {
 	if(message == "shot" || message == "bombed" || message == "time") {
 		if(world.energizer_cycle==0 || message == "time") {
 			take_health(10);
-			if(message != "time" && world.health > 0) {
+			if(world.health > 0) {
 				set_msg("Ouch!");
 				if(zm!=NULL) zm->setTune("t--c+c---c+d#");
 				if(zm!=NULL) zm->start();
