@@ -19,10 +19,10 @@ lua/lfunc.o lua/lib/loadlib.o lua/lparser.o lua/lvm.o lua/lgc.o lua/lib/lstrlib.
 
 all: dreamzzt
 
-include/version.h: include/version.h.in
-	sed "s/\\$WCREV\\$/`svnversion .`/" < include/version.h.in > include/version.h
+VERSION:
+	sed "s/\$$WCREV\\$$/`svnversion .`/" < include/version.h.in > include/version.h
 
-dreamzzt: include/version.h $(OBJS)
+dreamzzt: VERSION $(OBJS)
 	$(CXX) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -lalut -lqt-mt `curl-config --libs` -o dreamzzt
 	
 clean:

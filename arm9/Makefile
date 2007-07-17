@@ -12,11 +12,11 @@ OBJS = ../src/DreamZZT.o ../src/main.o ../src/console_nds.o ../src/debug.o ../sr
 	@$(OBJCOPY) -O binary $< $@
 	@echo built ... $(notdir $@)
 
-../include/version.h: ../include/version.h.in
-	sed "s/\$WCREV\\$/`svnversion .`/" < ../include/version.h.in > ../include/version.h
+VERSION:
+	sed "s/\$$WCREV\\$$/`svnversion .`/" < ../include/version.h.in > ../include/version.h
 
-$(TARGET).arm9.elf: ../resources/zztascii.bin.o ../resources/zztascii_pal.bin.o ../include/version.h $(OBJS)
-	$(CXX) $(LDFLAGS) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) ../resources/zztascii.bin.o ../resources/zztascii_pal.bin.o -lfat $(TIKI_BASE_LIBS) -o $(TARGET).arm9.elf
+$(TARGET).arm9.elf: ../resources/zztascii.bin.o VERSION $(OBJS)
+	$(CXX) $(LDFLAGS) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) ../resources/zztascii.bin.o -lfat $(TIKI_BASE_LIBS) -o $(TARGET).arm9.elf
 
 clean:
 	rm -f $(OBJS) dreamzzt.arm9.elf
