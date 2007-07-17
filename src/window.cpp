@@ -628,8 +628,8 @@ void TUIWindow::doMenu() {
 	}
 
 #if TIKI_PLAT == TIKI_NDS
-	disp_off_x = (m_x+1) * 8;
-	disp_off_y = m_y * 8;
+	BG0_X0 = 8;
+	BG1_X0 = 8;
 #endif
 	zoom = 1;
 	
@@ -673,7 +673,7 @@ void TUIWindow::doMenu() {
 #if TIKI_PLAT == TIKI_NDS
 				mt->locate(0,3+i);
 #endif
-					*mt << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? "A " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? " B  " : "ESC ") << "\x1b[36mto close.    ";
+					*mt << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? "A " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? "B" : "ESC ") << "\x1b[36m to close.    ";
 				}
 				if(m_h/2-2 - m_offset - i == 1) {
 					mt->color(YELLOW|HIGH_INTENSITY,BLUE);
@@ -708,4 +708,8 @@ void TUIWindow::doMenu() {
 	delete mt;
 	mt=NULL;
 	if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
+#if TIKI_PLAT == TIKI_NDS
+	BG0_X0 = 0;
+	BG1_X0 = 0;
+#endif
 }
