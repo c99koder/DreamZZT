@@ -1043,6 +1043,8 @@ int load_szt(const char *filename, int titleonly) {
 #endif
 	ct->setSize(30 * 16, SCREEN_Y);
 	ct->translate(Vector(30 * 8, SCREEN_Y / 2,0));
+	ct->color(15,1);
+	ct->clear();
 	return 1;
 }
 
@@ -1375,7 +1377,10 @@ void update_brd() {
 				if(zm!=NULL) zm->setTune("i.+cfc-f+cfq.c");
 				if(zm!=NULL) zm->start();
 			}
-			if(world.time==0) player->message(player,"time");
+			if(world.time==0) {
+				player->message(player,"time");
+				world.time = currentbrd->time;
+			}
 		}
 		if(world_sec==0) world_sec=10;
 	}
