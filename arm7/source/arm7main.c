@@ -34,6 +34,35 @@ void VcountHandler() {
 
 	but = REG_KEYXY;
 
+	// Check if the lid has been closed.
+	if(but & BIT(7)) {
+		// Pause the game
+		SendCommandToArm9(999);
+		
+		// Save the current interrupt sate.
+		u32 ie_save = REG_IE;
+		// Turn the speaker down.
+		swiChangeSoundBias(0,0x400);
+		// Save current power state.
+		int power = readPowerManagement(PM_CONTROL_REG);
+		// Set sleep LED.
+		writePowerManagement(PM_CONTROL_REG, PM_LED_CONTROL(1));
+		// Register for the lid interrupt.
+		REG_IE = IRQ_LID;
+
+		// Power down till we get our interrupt.
+		swiSleep(); //waits for PM (lid open) interrupt
+
+		REG_IF = ~0;
+		// Restore the interrupt state.
+		REG_IE = ie_save;
+		// Restore power state.
+		writePowerManagement(PM_CONTROL_REG, power);
+
+		// Turn the speaker up.
+		swiChangeSoundBias(1,0x400);
+	}
+
 	if (!( (but ^ lastbut) & (1<<6))) {
  
 		tempPos = touchReadXY();

@@ -160,23 +160,30 @@ http://www.epicgames.com/\r\r\
 $ZZT file format specs\r\r\
 Kev Vance\r\
 http://www.kvance.com/\r\r\
+$SuperZZT Information\r\r\
+Saxxon\r\
+http://saxxonpike.myftp.org/\r\r\
+Interactive Fantasies\r\
+http://if.digitalmzx.net/\r\r\
 $Tiki\r\r\
 Cryptic Allusion, LLC\r\
 http://www.cadcdev.com/\r\r\
-$Testing, Special Thanks and Shoutouts\r\r\
-Jason Costa - Necrocosm Software\r\
+$Testing, Special Thanks,\r\
+$and Shoutouts\r\r\
+Jason Costa\r\
 http://www.necrocosm.com/\r\r\
 Chris 'Kilokahn' Haslage\r\
 http://www.kkwow.net/\r\r\
 $cURL File Transfer Library\r\
-Copyright (c) 1996 - 2006, Daniel Stenberg\r\
-<daniel@haxx.se>. All Rights Reserved.\r\r\
+Copyright (c) 1996 - 2006\r\
+Daniel Stenberg\r\
+All Rights Reserved.\r\r\
 $Simple DirectMedia Layer\r\
-This software may be dynamically linked\r\
-to libSDL, an LGPL licensed library.\r\
+This software may be linked\r\
+with libSDL, an LGPL licensed\r\
+library.\r\
 http://www.libsdl.org/\r\r\
-$DreamZZT is (C) 2000 - 2007 Sam Steele\r\
-$For more information, please visit\r\
+$DreamZZT is (C) 2000 - 2007\r\r\
 $http://dev.c99.org/DreamZZT/\r"
 
 void play_zzt(const char *filename, bool tempFile=false);
@@ -509,6 +516,9 @@ void FiFoHandler(void)
 			MixSound();
 			REG_IME = 1;
 			SendCommandToArm7(MIXCOMPLETE_ONARM9);
+			break;
+		case 999:
+			if(player!=NULL) player->setFlag(F_SLEEPING);
 			break;
 		}
 	}

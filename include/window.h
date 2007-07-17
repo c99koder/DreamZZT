@@ -214,7 +214,10 @@ public:
 	
 	void draw(ConsoleText *ct) {
 		ct->color(MAGENTA|HIGH_INTENSITY,m_bg);
-		*ct << " \x10   ";
+		*ct << " \x10 ";
+#if TIKI_PLAT != TIKI_NDS
+		*ct << "   ";
+#endif
 		ct->color(WHITE|HIGH_INTENSITY,m_bg);
 		*ct << m_text;
 	}
@@ -236,7 +239,7 @@ private:
 class TUIWindow {
 public:
 #if TIKI_PLAT == TIKI_NDS
-	TUIWindow(std::string title,int x=6, int y=1, int w=32, int h=21);
+	TUIWindow(std::string title,int x=0, int y=0, int w=32, int h=22);
 #else
 #ifdef DZZT_LITE
 	TUIWindow(std::string title,int x=6, int y=3, int w=45, int h=17);
