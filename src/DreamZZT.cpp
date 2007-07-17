@@ -31,9 +31,8 @@ using namespace Tiki::Thread;
 #include <stdarg.h>
 #include <string.h>
 
-#include "window.h"
-
 #if TIKI_PLAT == TIKI_SDL
+#include <iostream>
 #include <qt3/qapplication.h>
 #include <qt3/qfiledialog.h>
 #include <sys/stat.h>
@@ -59,12 +58,17 @@ using namespace Tiki::Hid;
 extern ConsoleText *ct;
 extern world_header world;
 #endif
+
+#if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
+#include "window.h"
+#endif
+
 #if TIKI_PLAT == TIKI_WIN32
 #include <windows.h>
 #include "pch.h"
 #endif
 
-#ifndef DZZT_LITE
+#if TIKI_PLAT != TIKI_NDS
 
 #if TIKI_PLAT == TIKI_WIN32
 static char szAppName[] = "DreamZZT";

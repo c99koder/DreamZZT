@@ -685,6 +685,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 	TUIWindow *t, *c;
 	srand((unsigned int)time(NULL));
 		
+	// Init Tiki
+#if TIKI_PLAT != TIKI_NDS	
+	Tiki::init(argc, argv);
+	Tiki::setName("DreamZZT", NULL);
+#endif
+
 #ifdef DZZT_LITE	
 #if TIKI_PLAT != TIKI_NDS
 	/* initialize SDL */
@@ -697,11 +703,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 	SDL_WM_SetCaption("DreamZZT Lite", NULL);
 	screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, 32, SDL_HWSURFACE);
 #endif
-#endif
-	// Init Tiki
-#if TIKI_PLAT != TIKI_NDS	
-	Tiki::init(argc, argv);
-	Tiki::setName("DreamZZT", NULL);
 #endif
 	//Hid::callbackReg(tkCallback, NULL);
 	
@@ -878,12 +879,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 	exit(0); //Win32 wont quit when this thread ends
 	return 0;
 }
-
-#ifdef DZZT_LITE
-extern "C" int SDL_main(int argc, char **argv) {
-	return tiki_main(argc, argv);
-}
-#endif
 
 void play_zzt(const char *filename, bool tempFile) {
 	int start,tasktype,complete;
