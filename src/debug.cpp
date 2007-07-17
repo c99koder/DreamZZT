@@ -82,6 +82,7 @@ bool debug_quitting;
 void debug_hidCallback(const Event & evt, void * data);
 
 void *process_debug(void *) {
+#if TIKI_PLAT != TIKI_NDS
 	while(!debug_quitting) {
 		debug_cmdline = "";
 		debug("");
@@ -264,7 +265,8 @@ void *process_debug(void *) {
 			delete ct;
 			ct = new ConsoleText(atoi(args[1].c_str()), atoi(args[2].c_str()), zzt_font);
 			ct->setSize(30 * 16, SCREEN_Y / 2);
-			ct->translate(Vector(30 * 8, SCREEN_Y / 2 * 3,0));			
+			ct->translate(Vector(30 * 8, SCREEN_Y / 2 * 3,0));
+			draw_board();
 		} else {
 			if(player==NULL) continue;
 			player->exec(debug_cmdline);
@@ -275,11 +277,12 @@ void *process_debug(void *) {
 			if(zm!=NULL) zm->start();
 		}
 	}
-
+#endif
 	return 0;
 }
 
 void debug_hidCallback(const Event & evt, void * data) {
+#if TIKI_PLAT != TIKI_NDS
 	if (evt.type == Hid::Event::EvtKeyDown) {
 		if(debugSelectMode != NONE) {
 			if(evt.key == Event::KeyUp) {
@@ -334,6 +337,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 		st->locate(5,23);
 		*st << "X: " << (int)player->position().x << " Y: " << (int)player->position().y << "    ";
 	}
+#endif
 }
 
 void debug_init() {
