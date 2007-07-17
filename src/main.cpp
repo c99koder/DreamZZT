@@ -383,40 +383,6 @@ extern int disp_off_y;
 #include <nds.h>
 #include "soundcommon.h"
 
-#define CONTROLLER_BUTTON_MAP(OLDSTATE, NEWSTATE, BUTTON, EVENT) \
-                        if((NEWSTATE & BUTTON) && !(OLDSTATE & BUTTON)) { \
-                                Event evt(Event::EvtBtnPress); \
-                                evt.btn = EVENT; \
-                                evt.port = 1; \
-                                sendEvent(evt); \
-                        } \
-                        if(!(NEWSTATE & BUTTON) && (OLDSTATE & BUTTON)) { \
-                                Event evt(Event::EvtBtnRelease); \
-                                evt.btn = EVENT; \
-                                evt.port = 1; \
-                                sendEvent(evt); \
-                        } 
-
-#define CONTROLLER_KEY_MAP(OLDSTATE, NEWSTATE, BUTTON, EVENT) \
-                        if((NEWSTATE & BUTTON) && !(OLDSTATE & BUTTON)) { \
-                                Event evtPress(Event::EvtKeypress); \
-                                evtPress.key = EVENT; \
-                                evtPress.port = 1; \
-                                sendEvent(evtPress); \
-                                \
-                                Event evt(Event::EvtKeyDown); \
-                                evt.key = EVENT; \
-                                evt.port = 1; \
-                                sendEvent(evt); \
-                        } \
-                        if(!(NEWSTATE & BUTTON) && (OLDSTATE & BUTTON)) { \
-                                Event evt(Event::EvtKeyUp); \
-                                evt.key = EVENT; \
-                                evt.port = 1; \
-                                sendEvent(evt); \
-                        } 
-
-u32 framecounter = 0,soundoffset = 0;
 void SoundMixCallback(void *stream,u32 len)
 {
 	int samples = len;
@@ -458,49 +424,7 @@ void MixSound(void)
 		}
 	}
 }
-void InterruptHandler(void)
-{
-	static u32 oldkeys = 0;
-	scanKeys();
-	u32 keys = keysHeld();
-	
-	if( keys & KEY_R) {
-		if(keys & KEY_LEFT) {
-			disp_off_x--;
-		}
-		if(keys & KEY_RIGHT) {
-			disp_off_x++;
-		}
-		if(keys & KEY_UP) {
-			disp_off_y--;
-		}
-		if(keys & KEY_DOWN) {
-			disp_off_y++;
-		}
-	} else {
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_UP, Event::BtnUp);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_DOWN, Event::BtnDown);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_LEFT, Event::BtnLeft);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_RIGHT, Event::BtnRight);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_A, Event::BtnA);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_B, Event::BtnB);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_X, Event::BtnX);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_Y, Event::BtnY);
-		CONTROLLER_BUTTON_MAP(oldkeys, keys, KEY_START, Event::BtnStart);
-		
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_UP, Event::KeyUp);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_DOWN, Event::KeyDown);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_LEFT, Event::KeyLeft);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_RIGHT, Event::KeyRight);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_START, 13);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_A, 32);
-		CONTROLLER_KEY_MAP(oldkeys, keys, KEY_B, Event::KeyEsc);
-	}
-	
-	oldkeys = keys;
-	framecounter++;
-}
-void FiFoHandler(void)
+void FiFoHandler(void) 
 {
 	u32 command,remain;
 	while ( !(REG_IPC_FIFO_CR & (IPC_FIFO_RECV_EMPTY)) ) 
@@ -523,9 +447,6 @@ void FiFoHandler(void)
 		}
 	}
 }
-
-
-
 #endif
 
 void render() {
@@ -686,10 +607,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	srand((unsigned int)time(NULL));
 		
 	// Init Tiki
-#if TIKI_PLAT != TIKI_NDS	
 	Tiki::init(argc, argv);
 	Tiki::setName("DreamZZT", NULL);
-#endif
 
 #ifdef DZZT_LITE	
 #if TIKI_PLAT != TIKI_NDS
@@ -745,7 +664,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 
 #if TIKI_PLAT == TIKI_NDS
 	//Start the sound system
-	irqSet(IRQ_VBLANK,&InterruptHandler);
 	irqSet(IRQ_FIFO_NOT_EMPTY,&FiFoHandler);
 	irqEnable(IRQ_FIFO_NOT_EMPTY);
 	

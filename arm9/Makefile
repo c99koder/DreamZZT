@@ -16,7 +16,7 @@ VERSION:
 	sed "s/\$$WCREV\\$$/`svnversion .`/" < ../include/version.h.in > ../include/version.h
 
 $(TARGET).arm9.elf: ../resources/zztascii.bin.o VERSION $(OBJS)
-	$(CXX) $(LDFLAGS) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) ../resources/zztascii.bin.o -lfat $(TIKI_BASE_LIBS) -o $(TARGET).arm9.elf
+	$(CXX) $(LDFLAGS) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) ../resources/zztascii.bin.o $(TIKI_BASE_LIBS) -o $(TARGET).arm9.elf
 
 clean:
 	rm -f $(OBJS) dreamzzt.arm9.elf

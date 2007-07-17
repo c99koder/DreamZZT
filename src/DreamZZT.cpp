@@ -417,13 +417,6 @@ extern struct world_header world;
 extern "C" int tiki_main(int argc, char *argv[]);
 
 int main(int argc, char *argv[]) {
-	REG_POWERCNT = POWER_ALL_2D;
-
-	irqInit();
-	irqEnable(IRQ_VBLANK);
-	
-	fatInitDefault();
-
 	return tiki_main(argc, argv);
 }
 
