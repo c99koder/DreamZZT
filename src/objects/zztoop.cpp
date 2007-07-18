@@ -450,6 +450,7 @@ void ZZTOOP::exec(std::string text) {
 		goagain=1;
 	}
 	else if(words[0] == "if") {
+		int oop=-1;
 		res=0;
 		if(words[1] == "not") {
 			neg=1;
@@ -463,7 +464,7 @@ void ZZTOOP::exec(std::string text) {
 		
 		if(words[1] == "alligned" || words[1] == "aligned") {
 			if(player != NULL && (player->position().x==m_position.x || player->position().y == m_position.y)) res=1;
-			lbl = words[2];
+			oop = 2;
 		} else if(words[1] == "any") {
 			color=str_to_color(words[2]);
 			if(color!=-1) words.erase(words.begin() + 2);
@@ -478,9 +479,9 @@ void ZZTOOP::exec(std::string text) {
 				i--;
 			} while(b!=NULL && (color!=-1 && b->obj->color()!=color));
 			if(b!=NULL) res=1;
-			lbl = words[3];
+			oop = 3;
 		} else if(words[1] == "contact") {
-			lbl = words[2];
+			oop = 2;
 			if(m_position.y > 0 && currentbrd->board[(int)m_position.x][(int)m_position.y-1].obj!=NULL) {
 				if(currentbrd->board[(int)m_position.x][(int)m_position.y-1].obj->type()==ZZT_PLAYER) {
 					res=1;
@@ -524,9 +525,9 @@ void ZZTOOP::exec(std::string text) {
 					}
 					break;
 			}
-			lbl = words[3];
+			oop = 3;
 		} else {
-			lbl = words[2];
+			oop = 2;
 			if(words[1] == "dreamcast") {
 #ifdef DREAMCAST
 				res=1;
@@ -553,7 +554,12 @@ void ZZTOOP::exec(std::string text) {
 		if(neg==1) res=!res;
 		goagain=1;
 		if(res==1) {
-			send(lbl);
+			lbl = "";
+			for(int i=oop; i < words.size(); i++) {
+				lbl += words[i];
+				if(i != words.size() -1) lbl += " ";
+			}
+			exec(lbl);
 		}
 	}
 	else if(words[0] == "bind") {
