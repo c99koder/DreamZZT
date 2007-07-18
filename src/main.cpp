@@ -798,6 +798,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 	return 0;
 }
 
+extern "C" int SDL_main(int argc, char **argv) {
+	return tiki_main(argc, argv);
+}
+
 void play_zzt(const char *filename, bool tempFile) {
 	int start,tasktype,complete;
 	std::string tmp;

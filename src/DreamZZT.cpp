@@ -68,7 +68,7 @@ extern world_header world;
 #include "pch.h"
 #endif
 
-#if TIKI_PLAT != TIKI_NDS
+#if TIKI_PLAT != TIKI_NDS && !(defined(DZZT_LITE) && TIKI_PLAT == TIKI_WIN32)
 
 #if TIKI_PLAT == TIKI_WIN32
 static char szAppName[] = "DreamZZT";
@@ -126,17 +126,7 @@ chdir(DATA_PATH);
 
 	return tiki_main(argc, argv);
 #else
-/*	WORD sockVersion;
-	WSADATA wsaData;
-	int nret;
-
-	sockVersion = MAKEWORD(1, 1);			// We'd like Winsock version 1.1
-
-
-	// We begin by initializing Winsock
-	WSAStartup(sockVersion, &wsaData);*/
-
-	return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
+return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
 #endif
 }
 #endif
