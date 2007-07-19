@@ -414,28 +414,73 @@ std::string os_select_file(std::string title, std::string filter) {
 	struct stat st;
 	char name[256]; // to hold a full filename and string terminator
 	DIR_ITER* dir;
-	TUIWindow t(title);
-	std::string tmp = title + std::string(":\n");
-	dir = diropen ("/"); 
+	std::string selection;
+	std::string cur_path = "/";
+	std::string tmp;
+	int ndx;
 
-	if (dir == NULL) {
-		return "";
-	}
-	
-	while (dirnext(dir, name, &st) == 0) {
-		if((name[strlen(name)-3]==filter[0] || name[strlen(name)-3]==(filter[0] - 32)) &&
-			 (name[strlen(name)-2]==filter[1] || name[strlen(name)-2]==(filter[1] - 32)) &&
-			 (name[strlen(name)-1]==filter[2] || name[strlen(name)-1]==(filter[2] - 32))) {
-				tmp += std::string("!") + std::string(name) + std::string(";") + std::string(name) + std::string("\n");
-				/*
-					TODO: Parse file header and display Dreamcast-style save selector
-				*/
+	while(true) {
+		TUIWindow t(title);
+
+   		tmp = title + std::string(":\n");
+		tmp += std::string("[ ") + cur_path + std::string(" ]\n");
+
+		dir = diropen(cur_path.c_str()); 
+		if(dir == NULL) {
+			return "";
+		}
+
+		// if we're not in the root, make the first thing in the list a link to ".."
+		if(cur_path != std::string("/"))
+			tmp += std::string("!/..;-- UP A LEVEL --\n");
+
+		while (dirnext(dir, name, &st) == 0) {
+			if(st.st_mode & S_IFDIR && std::string(name) != std::string(".") && std::string(name) != std::string("..")) {
+				// this is a directory (other than "." or "..")
+				tmp += std::string("!/") + std::string(name) + std::string(";-- ") + std::string(name) + std::string(" --\n");
+			} else if((name[strlen(name)-3]==filter[0] || name[strlen(name)-3]==(filter[0] - 32)) &&
+				 (name[strlen(name)-2]==filter[1] || name[strlen(name)-2]==(filter[1] - 32)) &&
+				 (name[strlen(name)-1]==filter[2] || name[strlen(name)-1]==(filter[2] - 32))) {
+				// this is a regular file matching our desired extension
+					tmp += std::string("!") + std::string(name) + std::string(";") + std::string(name) + std::string("\n");
+					/*
+						TODO: Parse file header and display Dreamcast-style save selector
+					*/
+			}
+		}
+
+		dirclose(dir);
+
+		t.buildFromString(tmp,true);
+		t.doMenu();
+		selection = t.getLabel();
+
+		if(selection == std::string("")) {
+			// they hit escape; bail out
+			return selection;
+		} else if(selection == std::string("/..")) {
+			// trim the last dir off our path
+			ndx = cur_path.rfind('/', cur_path.length() - 1);
+			if(ndx)
+				cur_path = cur_path.substr(0, cur_path.rfind('/', cur_path.length() - 1));
+			else
+				cur_path = std::string("/");
+		} else if(selection.at(0) == '/') {
+			// add the selected dir to our path
+			// if the dir is in the root, avoid adding an extra slash
+			if(cur_path == std::string("/"))
+				cur_path = selection;
+			else
+				cur_path += selection;
+		} else {
+			// this is a file; return the full path to it.
+			// if the file is in the root, avoid adding an extra slash
+			if(cur_path == std::string("/"))
+				return cur_path + selection;
+			else
+				return cur_path + std::string("/") + selection;
 		}
 	}
-	dirclose(dir);
-	t.buildFromString(tmp,true);
-	t.doMenu();
-	return t.getLabel();
 }
 std::string os_save_file(std::string title, std::string filename, std::string filter) {
 	return world.title + ".sav";
