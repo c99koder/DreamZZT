@@ -299,12 +299,28 @@ void Player::update() {
 				brd=get_board(board_up());
 				decompress(brd);
 				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
-				brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
-				obj->setPosition(Vector(m_position.x, BOARD_Y-1,0));
-				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
-				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
-				switchbrd=board_up();
+				if(!::is_empty(brd, m_position.x, BOARD_Y-1, true)) {
+					if(brd->board[(int)m_position.x][(int)BOARD_Y-1].obj->flag(F_ITEM)) {
+						brd->board[(int)m_position.x][(int)BOARD_Y-1].obj->message(obj, "get");
+					} else {
+						if(brd->board[(int)m_position.x][(int)BOARD_Y-1].obj->flag(F_PUSHABLE)) {
+							brd->board[(int)m_position.x][(int)BOARD_Y-1].obj->move(UP);
+						} else if(brd == currentbrd) {
+							brd->board[(int)m_position.x][(int)BOARD_Y-1].obj->message(obj, "touch");
+						}
+					}
+				}	
+				if(::is_empty(brd, m_position.x, BOARD_Y-1, true)) {
+					brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+					brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
+					obj->setPosition(Vector(m_position.x, BOARD_Y-1,0));
+					if(brd->board[(int)obj->position().x][(int)obj->position().y].under != NULL) delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
+					brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+					brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
+					switchbrd=board_up();
+				} else {
+					if(brd != currentbrd) compress(brd);
+				}
 				m_move=IDLE;
 			}
 			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_S)
@@ -315,12 +331,28 @@ void Player::update() {
 				brd=get_board(board_down());
 				decompress(brd);
 				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
-				brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
-				obj->setPosition(Vector(m_position.x,0,0));
-				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
-				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
-				switchbrd=board_down();
+				if(!::is_empty(brd, m_position.x, 0, true)) {
+					if(brd->board[(int)m_position.x][0].obj->flag(F_ITEM)) {
+						brd->board[(int)m_position.x][0].obj->message(obj, "get");
+					} else {
+						if(brd->board[(int)m_position.x][0].obj->flag(F_PUSHABLE)) {
+							brd->board[(int)m_position.x][0].obj->move(DOWN,false,false);
+						} else if(brd == currentbrd) {
+							brd->board[(int)m_position.x][0].obj->message(obj, "touch");
+						}
+					}
+				}	
+				if(::is_empty(brd, m_position.x, 0, true)) {
+					brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+					brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
+					obj->setPosition(Vector(m_position.x,0,0));
+					if(brd->board[(int)obj->position().x][(int)obj->position().y].under != NULL) delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
+					brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+					brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
+					switchbrd=board_down();
+				} else {
+					if(brd != currentbrd) compress(brd);
+				}
 				m_move=IDLE;
 			}
 			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_N)
@@ -331,12 +363,28 @@ void Player::update() {
 				brd=get_board(board_left());
 				decompress(brd);
 				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
-				brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
-				obj->setPosition(Vector(BOARD_X-1, m_position.y,0));
-				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
-				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
-				switchbrd=board_left();
+				if(!::is_empty(brd, BOARD_X-1, m_position.y, true)) {
+					if(brd->board[BOARD_X-1][(int)m_position.y].obj->flag(F_ITEM)) {
+						brd->board[(int)BOARD_X-1][(int)m_position.y].obj->message(obj, "get");
+					} else {
+						if(brd->board[BOARD_X-1][(int)m_position.y].obj->flag(F_PUSHABLE)) {
+							brd->board[(int)BOARD_X-1][(int)m_position.y].obj->move(LEFT,false,false);
+						} else if(currentbrd == brd) {
+							brd->board[(int)BOARD_X-1][(int)m_position.y].obj->message(obj, "touch");
+						}
+					}
+				}
+				if(::is_empty(brd, BOARD_X-1, m_position.y, true)) {
+					brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+					brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
+					obj->setPosition(Vector(BOARD_X-1, m_position.y,0));
+					if(brd->board[(int)obj->position().x][(int)obj->position().y].under != NULL) delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
+					brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+					brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
+					switchbrd=board_left();
+				} else {
+					if(brd != currentbrd) compress(brd);
+				}
 				m_move=IDLE;
 			}
 			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_E)
@@ -347,12 +395,28 @@ void Player::update() {
 				brd=get_board(board_right());
 				decompress(brd);
 				obj=get_obj_by_type(brd,ZZT_PLAYER);
-				brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
-				brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
-				obj->setPosition(Vector(0,m_position.y,0));
-				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
-				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
-				switchbrd=board_right();
+				if(!::is_empty(brd, 0, m_position.y, true)) {
+					if(brd->board[0][(int)m_position.y].obj->flag(F_ITEM)) {
+						brd->board[0][(int)m_position.y].obj->message(obj, "get");
+					} else {
+						if(brd->board[0][(int)m_position.y].obj->flag(F_PUSHABLE)) {
+							brd->board[0][(int)m_position.y].obj->move(RIGHT,false,false);
+						} else if(brd == currentbrd) {
+							brd->board[0][(int)m_position.y].obj->message(obj, "touch");
+						}
+					}
+				}
+				if(::is_empty(brd, 0, m_position.y, true)) {
+					brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+					brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
+					obj->setPosition(Vector(0,m_position.y,0));
+					if(brd->board[(int)obj->position().x][(int)obj->position().y].under != NULL) delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
+					brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+					brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
+					switchbrd=board_right();
+				} else {
+					if(brd != currentbrd) compress(brd);
+				}
 				m_move=IDLE;
 			}
 			if(world.magic == 65534 && currentbrd->board[(int)m_position.x][(int)m_position.y].under!=NULL && currentbrd->board[(int)m_position.x][(int)m_position.y].under->type() == ZZT_WATER_W)

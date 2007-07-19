@@ -96,6 +96,7 @@ void Scroll::message(ZZTObject *them, std::string message) {
 		if(zm!=NULL) zm->setTune("tc-c+d-d+e-e+f-f+g-g");
 		if(zm!=NULL) zm->start();
 		m_progpos = 0;
+		update();
 	}
 }
 
@@ -208,7 +209,7 @@ void Inventory::message(ZZTObject *them, std::string message) {
 		//}
 	}
 	if(ok) {
-		remove_from_board(currentbrd,this);
+		remove();
 	}
 }
 

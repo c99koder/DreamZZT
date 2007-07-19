@@ -254,10 +254,13 @@ ZZTObject *ZZTObject::get(direction d) {
 	return NULL;
 }
 
+void ZZTObject::remove() {
+	remove_from_board(m_board, this);
+}
+
 bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	//move in the specified direction
 	ZZTObject *them=NULL;
-	struct board_info_node *board=currentbrd;
 	int x,y,oldx,oldy,suc=0;
 
 	if(m_type==ZZT_SLIDER_NS&&(dir==LEFT||dir==RIGHT)) {
@@ -293,26 +296,26 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	if(y<0) { y=0; }
 	if(x>=BOARD_X) { x=BOARD_X-1; }
 	if(y>=BOARD_Y) { y=BOARD_Y-1; }
-	if((m_type != ZZT_SHARK && is_empty(dir)) || ((m_type==ZZT_BULLET || m_type==ZZT_SHARK) && board->board[x][y].obj->type()==ZZT_WATER)) {
+	if((m_type != ZZT_SHARK && is_empty(dir)) || ((m_type==ZZT_BULLET || m_type==ZZT_SHARK) && m_board->board[x][y].obj->type()==ZZT_WATER)) {
 		m_position.x = (float)x;
 		m_position.y = (float)y;
 		m_heading = dir;
-		if(!board->board[x][y].obj->isValid()) printf("Warning: putting invalid object under %i,%i\n",x,y);
-		board->board[x][y].under=board->board[x][y].obj;
-		board->board[x][y].obj=this;
-		m_bg=board->board[x][y].under->bg();
-		board->board[oldx][oldy].obj=board->board[oldx][oldy].under;
-		if(board->board[oldx][oldy].obj != NULL && !board->board[oldx][oldy].obj->isValid()) {
+		if(!m_board->board[x][y].obj->isValid()) printf("Warning: putting invalid object under %i,%i\n",x,y);
+		m_board->board[x][y].under=m_board->board[x][y].obj;
+		m_board->board[x][y].obj=this;
+		m_bg=m_board->board[x][y].under->bg();
+		m_board->board[oldx][oldy].obj=m_board->board[oldx][oldy].under;
+		if(m_board->board[oldx][oldy].obj != NULL && !m_board->board[oldx][oldy].obj->isValid()) {
 			printf("Warning: putting invalid object at %i,%i\n",oldx,oldy);
-			board->board[oldx][oldy].obj = NULL;
+			m_board->board[oldx][oldy].obj = NULL;
 		}
-		board->board[oldx][oldy].under=NULL;
-		if(board->board[oldx][oldy].obj==NULL || !board->board[oldx][oldy].obj->isValid()) {
-			board->board[oldx][oldy].obj=::create_object(ZZT_EMPTY,oldx,oldy);
+		m_board->board[oldx][oldy].under=NULL;
+		if(m_board->board[oldx][oldy].obj==NULL || !m_board->board[oldx][oldy].obj->isValid()) {
+			m_board->board[oldx][oldy].obj=::create_object(ZZT_EMPTY,oldx,oldy);
 		}
 		suc = 1;
 	} else {
-		them=board->board[x][y].obj;
+		them=m_board->board[x][y].obj;
 		if(them!=NULL && them!=this && them->isValid() == 1) {
 			if(them->flags()&F_ITEM && m_type==ZZT_PLAYER){
 				them->message(this,"get");
