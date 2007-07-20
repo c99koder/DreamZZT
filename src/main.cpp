@@ -540,6 +540,7 @@ void render() {
 	st->draw();
 	if(mt!=NULL) mt->draw();
 	else ct->draw();
+	swiWaitForVBlank();
 #else
 	ct->draw(screen);
 	st->draw(screen);
@@ -1173,7 +1174,9 @@ std::string("!bugreport;Report a bug\r") +
 		}
 	}
 #endif
-
+	zm->unlock();
+	zm->setTune("xxxx");
+	zm->start();
 	free_world();
 }
 
