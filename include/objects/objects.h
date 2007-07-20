@@ -17,11 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */ 
 
-#if TIKI_PLAT != TIKI_NDS
 extern "C" {
 #include "lua.h"
 }
-#endif
 
 //TRANSPORTER
 #define ZZT_TRANSPORTER_SHAPE '<'
@@ -316,7 +314,6 @@ private:
 	bool m_shot;
 };
 
-#if TIKI_PLAT != TIKI_NDS
 //LUA Script
 #define ZZT_LUA_SHAPE 0x01
 #define ZZT_LUA_NAME "lua"
@@ -360,4 +357,3 @@ private:
 	lua_State* m_luaVM;
 	bool m_serialized;
 };
-#endif

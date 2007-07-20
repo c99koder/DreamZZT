@@ -187,6 +187,8 @@ int base64_decode(const char *src, unsigned char **outptr)
   return rawlen;
 }
 
+#ifdef NET
+
 TracBug::TracBug() {
 	m_num = -1;
 }
@@ -303,3 +305,4 @@ std::list<TracBug> search_tickets(std::string query) {
 	
 	return bugs;
 }
+#endif
