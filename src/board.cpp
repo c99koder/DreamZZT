@@ -30,6 +30,7 @@
 #include <math.h>
 #include <machine/endian.h>
 #include <algorithm>
+#include <exception>
 
 using namespace Tiki;
 using namespace Tiki::GL;
@@ -113,6 +114,10 @@ void free_world() {
 				}
 			}
 		}
+		current->rle_data.clear();
+		current->params.clear();
+		current->objects.clear();
+		current->board.clear();
 		prev=current;
 		current=current->next;
 		delete prev;		
@@ -741,6 +746,7 @@ void compress(board_info_node *board, bool silent) {
 		board->size+=3;
 	}		
 	board->objects.clear();
+	board->board.clear();
 	board->compressed=true;
 	if(!silent) spinner_clear();
 #ifdef DEBUG
@@ -762,6 +768,7 @@ void decompress(board_info_node *board, bool silent) {
 	Debug::printf("Decompressing board...\n");
 #endif
 	
+	board->board.resize(BOARD_X, std::vector<board_data>::vector(BOARD_Y));
 	currentbrd = board;
 	
 	for(rle_iter=board->rle_data.begin(); rle_iter != board->rle_data.end(); rle_iter++) {
@@ -1115,9 +1122,12 @@ int load_zzt(const char *filename, int titleonly) {
 #endif
 	fd.seek(0x200,SEEK_SET); //seek to the first board
 	current=new board_info_node;
+	if(current==NULL) return -1;
 	board_list=current;
 	if(titleonly==1) world.board_count=1;
+	try {
 	for(q=0;q<=world.board_count;q++) {
+		current->compressed=true;
 		fd.readle16(&current->size, 1);
 		fd.read(&len,1);
 		fd.read(current->title,50);
@@ -1141,7 +1151,6 @@ int load_zzt(const char *filename, int titleonly) {
 		}
 
 		current->num=q;
-		current->compressed=true;
 		fd.read(&current->maxshots,1);
 		fd.read(&current->dark,1);
 		fd.read(&current->board_up,1);
@@ -1185,19 +1194,30 @@ int load_zzt(const char *filename, int titleonly) {
 			param.prog="";
 			if(param.proglen>0) {
 				prog=(char *)malloc(param.proglen+1);
+				if(prog == NULL) return -1;
 				fd.read(prog,param.proglen);
 				prog[param.proglen]='\0';
 				param.prog = prog;
-				free(prog);
 			}
 			current->params.push_back(param);
 		}
 		if(q<world.board_count) {
 			current->next=new board_info_node;
 			current=current->next;
+			if(current == NULL) return -1;
 		} else {
 			current->next=NULL;
 		}
+	}
+	}
+	catch (...) {
+		ct->color(15,0);
+		ct->clear();
+		*ct << "Out of memory!" << endl;
+		render();
+		fd.close();
+		free_world();
+		return -1;
 	}
 	fd.close();
 	spinner_clear();
@@ -1387,7 +1407,7 @@ void update_brd() {
 	
 	for(obj_iter = currentbrd->objects.begin(); obj_iter != currentbrd->objects.end(); obj_iter++) {
 		o=*obj_iter;
-		if(o->cycle() > 0 && ((cnt + cycle) % o->cycle() == 0) && !o->flag(F_DELETED) && !o->updated()) {
+		if(o->isValid() && o->cycle() > 0 && ((cnt + cycle) % o->cycle() == 0) && !o->flag(F_DELETED) && !o->updated()) {
 			o->update();
 			if(switchbrd != -1) return;
 			if(o->flag(F_DELETED)) {

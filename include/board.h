@@ -70,7 +70,8 @@ struct board_info_node {
 	unsigned char animatedWater;
 	char message[60];
 	int msgcount;
-	struct board_data board[MAX_BOARD_X][MAX_BOARD_Y];
+	//struct board_data **board;
+	std::vector< std::vector<board_data> > board;
 	bool compressed;
 	std::list<rle_block> rle_data;
 	std::list<zzt_param> params;
