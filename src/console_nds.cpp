@@ -1,4 +1,4 @@
-/* console_sdl.cpp - SDL version of Tiki's console object
+/* console_nds.cpp - Nintendo DS version of Tiki's console object
  * Copyright (C) 2000 - 2007 Sam Steele
  * Portions (C) Atani Software
  *
@@ -52,7 +52,7 @@ ConsoleText::ConsoleText(int cols, int rows, bool sub) {
 		BG_PALETTE_SUB[(16*5)+1] = RGB15(15,0,15);
 		BG_PALETTE_SUB[(16*6)+1] = RGB15(15,15,0);
 		BG_PALETTE_SUB[(16*7)+1] = RGB15(15,15,15);
-		BG_PALETTE_SUB[(16*8)+1] = RGB15(0,0,0);
+		BG_PALETTE_SUB[(16*8)+1] = RGB15(6,6,6);
 		BG_PALETTE_SUB[(16*9)+1] = RGB15(0,0,31);
 		BG_PALETTE_SUB[(16*10)+1] = RGB15(0,31,0);
 		BG_PALETTE_SUB[(16*11)+1] = RGB15(0,31,31);
@@ -75,7 +75,7 @@ ConsoleText::ConsoleText(int cols, int rows, bool sub) {
 		BG_PALETTE[(16*5)+1] = RGB15(15,0,15);
 		BG_PALETTE[(16*6)+1] = RGB15(15,15,0);
 		BG_PALETTE[(16*7)+1] = RGB15(15,15,15);
-		BG_PALETTE[(16*8)+1] = RGB15(0,0,0);
+		BG_PALETTE[(16*8)+1] = RGB15(6,6,6);
 		BG_PALETTE[(16*9)+1] = RGB15(0,0,31);
 		BG_PALETTE[(16*10)+1] = RGB15(0,31,0);
 		BG_PALETTE[(16*11)+1] = RGB15(0,31,31);
