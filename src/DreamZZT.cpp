@@ -416,33 +416,34 @@ std::string os_select_file(std::string title, std::string filter) {
 	DIR_ITER* dir;
 	std::string selection;
 	std::string cur_path = "/";
-	std::string tmp;
+	std::string dirs;
+	std::string files;
 	int ndx;
 
 	while(true) {
 		TUIWindow t(title);
 
-   		tmp = title + std::string(":\n");
-		tmp += std::string("[ ") + cur_path + std::string(" ]\n");
-
 		dir = diropen(cur_path.c_str()); 
 		if(dir == NULL) {
 			return "";
 		}
+		
+		dirs = "";
+		files = "";
 
 		// if we're not in the root, make the first thing in the list a link to ".."
 		if(cur_path != std::string("/"))
-			tmp += std::string("!/..;-- UP A LEVEL --\n");
+			dirs += std::string("!/..;[..]\n");
 
 		while (dirnext(dir, name, &st) == 0) {
 			if(st.st_mode & S_IFDIR && std::string(name) != std::string(".") && std::string(name) != std::string("..")) {
 				// this is a directory (other than "." or "..")
-				tmp += std::string("!/") + std::string(name) + std::string(";-- ") + std::string(name) + std::string(" --\n");
+				dirs += std::string("!/") + std::string(name) + std::string(";[") + std::string(name) + std::string("]\n");
 			} else if((name[strlen(name)-3]==filter[0] || name[strlen(name)-3]==(filter[0] - 32)) &&
 				 (name[strlen(name)-2]==filter[1] || name[strlen(name)-2]==(filter[1] - 32)) &&
 				 (name[strlen(name)-1]==filter[2] || name[strlen(name)-1]==(filter[2] - 32))) {
 				// this is a regular file matching our desired extension
-					tmp += std::string("!") + std::string(name) + std::string(";") + std::string(name) + std::string("\n");
+					files += std::string("!") + std::string(name) + std::string(";") + std::string(name) + std::string("\n");
 					/*
 						TODO: Parse file header and display Dreamcast-style save selector
 					*/
@@ -451,7 +452,7 @@ std::string os_select_file(std::string title, std::string filter) {
 
 		dirclose(dir);
 
-		t.buildFromString(tmp,true);
+		t.buildFromString(title + std::string(":\n[") + cur_path + std::string("]\n") + dirs + files,true);
 		t.doMenu();
 		selection = t.getLabel();
 
