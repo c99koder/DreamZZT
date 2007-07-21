@@ -536,7 +536,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				2210BE810C2840C400F393B1 /* DreamZZT-lite-Info.plist */,
 			);
 			name = DreamZZT;
 			sourceTree = "<group>";
@@ -559,6 +558,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2210BE810C2840C400F393B1 /* DreamZZT-lite-Info.plist */,
 				2210C1110C28544800F393B1 /* zzt-ascii.bmp */,
 				228ED27B0C1E2EE2006D6823 /* models */,
 				22243F800BF3D480000D3055 /* dreamzzt.png */,
@@ -711,13 +711,15 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/include/version.h.in",
+				"$(SRCROOT)/Info.plist.in",
 			);
 			outputPaths = (
 				"$(SRCROOT)/include/version.h",
+				"$(SRCROOT)/Info.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sed \"s/\\$WCREV\\\\$/`/usr/local/bin/svnversion .`/\" < $SRCROOT/include/version.h.in > $SRCROOT/include/version.h";
+			shellScript = "sed \"s/\\$WCREV\\\\$/`/usr/local/bin/svnversion .`/\" < $SRCROOT/include/version.h.in > $SRCROOT/include/version.h\nsed \"s/\\$WCREV\\\\$/`/usr/local/bin/svnversion .`/\" < $SRCROOT/Info.plist.in > $SRCROOT/Info.plist";
 		};
 		C4332EE0079B242E0025BF39 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
