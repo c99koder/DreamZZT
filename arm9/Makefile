@@ -6,7 +6,7 @@ OBJS = ../src/DreamZZT.o ../src/main.o ../src/console_nds.o ../src/debug.o ../sr
 ../src/window.o ../src/board.o ../src/status.o ../src/object.o ../src/editor.o \
 ../src/objects/passage.o ../src/objects/terrain.o ../src/objects/bullet.o ../src/objects/enemy.o \
 ../src/objects/dup.o ../src/objects/zztoop.o ../src/objects/pusher.o ../src/objects/bomb.o ../src/objects/items.o \
-../src/objects/conveyer.o ../src/objects/player.o ../src/objects/centipede.o ../src/objects/lua.o  sound9.o \
+../src/objects/conveyer.o ../src/objects/player.o ../src/objects/centipede.o ../src/objects/lua.o \
 ../src/libtolua++/tolua_event.o ../src/libtolua++/tolua_push.o ../src/libtolua++/tolua_is.o ../src/libtolua++/tolua_to.o ../src/libtolua++/tolua_map.o ../src/pluto.o \
 ../lua/lapi.o ../lua/lib/lauxlib.o ../lua/lib/ltablib.o ../lua/lstring.o ../lua/lcode.o ../lua/lib/lbaselib.o ../lua/llex.o ../lua/ltable.o \
 ../lua/ldebug.o ../lua/lib/ldblib.o ../lua/lmem.o ../lua/ltests.o ../lua/ldo.o ../lua/lib/liolib.o ../lua/lobject.o ../lua/ltm.o ../lua/ldump.o ../lua/lib/lmathlib.o ../lua/lopcodes.o ../lua/lundump.o \

@@ -66,6 +66,8 @@ using namespace Tiki::Thread;
 #endif
 
 #if TIKI_PLAT == TIKI_NDS
+#include <nds.h>
+
 std::string os_select_file(std::string title, std::string filter);
 std::string os_save_file(std::string title, std::string filename, std::string filter);
 #endif
@@ -379,76 +381,6 @@ static int translateSym(SDLKey key)
 extern int disp_off_x;
 extern int disp_off_y;
 
-#if TIKI_PLAT == TIKI_NDS
-#include <nds.h>
-#include "soundcommon.h"
-
-void SoundMixCallback(void *stream,u32 len)
-{
-	int samples = len;
-	memset(stream,0,len);
-	if(zm->isPlaying()) {
-		if(zm->getData((uint16*)stream,&samples) != Stream::GDSuccess) {
-			zm->stop();
-		}
-	}
-}
-void MixSound(void)
-{
-	int remain;
-
-	if(soundsystem->format == 8)
-	{
-		if((soundsystem->soundcursor + soundsystem->numsamples) > soundsystem->buffersize)
-		{
-			SoundMixCallback(&soundsystem->mixbuffer[soundsystem->soundcursor],soundsystem->buffersize - soundsystem->soundcursor);
-			remain = soundsystem->numsamples - (soundsystem->buffersize - soundsystem->soundcursor);
-			SoundMixCallback(soundsystem->mixbuffer,remain);
-		}
-		else
-		{
-			SoundMixCallback(&soundsystem->mixbuffer[soundsystem->soundcursor],soundsystem->numsamples);
-		}
-	}
-	else
-	{
-		if((soundsystem->soundcursor + soundsystem->numsamples) > (soundsystem->buffersize >> 1))
-		{
-			SoundMixCallback(&soundsystem->mixbuffer[soundsystem->soundcursor << 1],(soundsystem->buffersize >> 1) - soundsystem->soundcursor);
-			remain = soundsystem->numsamples - ((soundsystem->buffersize >> 1) - soundsystem->soundcursor);
-			SoundMixCallback(soundsystem->mixbuffer,remain);
-		}
-		else
-		{
-			SoundMixCallback(&soundsystem->mixbuffer[soundsystem->soundcursor << 1],soundsystem->numsamples);
-		}
-	}
-}
-void FiFoHandler(void) 
-{
-	u32 command,remain;
-	while ( !(REG_IPC_FIFO_CR & (IPC_FIFO_RECV_EMPTY)) ) 
-	{
-		command = REG_IPC_FIFO_RX;
-
-		switch(command)
-		{
-		case FIFO_NONE:
-			break;
-		case UPDATEON_ARM9:
-			REG_IME = 0;
-			MixSound();
-			REG_IME = 1;
-			SendCommandToArm7(MIXCOMPLETE_ONARM9);
-			break;
-		case 999:
-			if(player!=NULL) player->setFlag(F_SLEEPING);
-			break;
-		}
-	}
-}
-#endif
-
 void render() {
 	static long int fpsTimer = 1000000;
 	static long int avgFpsTimer = 1000000 * FPS_SAMPLE_RATE;
@@ -663,17 +595,6 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zm = new ZZTMusicStream;
 	if(zm!=NULL) zm->setVolume(0.4f);
 
-#if TIKI_PLAT == TIKI_NDS
-	//Start the sound system
-	irqSet(IRQ_FIFO_NOT_EMPTY,&FiFoHandler);
-	irqEnable(IRQ_FIFO_NOT_EMPTY);
-	
-	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
-
-	SoundSystemInit(44100,16384,0,16);
-	SoundStartMixer();
-#endif
-
 	//initialize the screen
 #ifdef DZZT_LITE
 #if TIKI_PLAT != TIKI_NDS
@@ -685,6 +606,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zzt_font = new Texture("zzt-ascii.png", true);
 #endif
 #if TIKI_PLAT == TIKI_NDS
+	//Power off the 3D hardware, we're not using it
+	powerOFF(POWER_3D_CORE);
+	powerOFF(POWER_MATRIX);
+	
 	ct = new ConsoleText(32, 24, false);
 #else
 	ct = new ConsoleText(60, 25, zzt_font);
