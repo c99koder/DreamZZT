@@ -116,7 +116,7 @@ extern std::list<Task*> taskList;
 #endif
 #endif
 
-#define GAMESPEED_ALIVE 160000
+#define GAMESPEED_ALIVE 100000
 #define GAMESPEED_DEAD 10000
 
 #ifdef BETA_VERSION

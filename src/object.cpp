@@ -548,11 +548,19 @@ void ZZTObject::edit() {
 	addEditWidgets(&w);
 	w.addWidget(new TUINumericInput("Cycle                ",&m_cycle,0,255));
 	w.addWidget(new TUILabel(""));
+	w.addWidget(new TUIHyperLink("editprog","Edit Program"));
+	w.addWidget(new TUILabel(""));
 	w.addWidget(new TUILabel("             Advanced Tweaking",true));
 	w.addWidget(new TUINumericInput("X Step  ",&m_step.x,-128,127));
 	w.addWidget(new TUINumericInput("Y Step  ",&m_step.y,-128,127));
 	
 	w.doMenu();
+	if(w.getLabel() == "editprog") {
+		TUIWindow e("Edit Program");
+		e.addWidget(new TUITextInput("",&m_prog,false,true));
+		e.doMenu();
+		m_proglen = m_prog.length();
+	}
 	create();
 }
 

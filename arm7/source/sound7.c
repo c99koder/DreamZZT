@@ -1,6 +1,15 @@
+/*
+   Tiki
+
+   sound7.c
+
+   Based on the ARM9/ARM7 streaming code from
+   http://forum.gbadev.org/viewtopic.php?t=10739
+*/
+
 #include <nds.h>
 #include <arm7/serial.h>
-#include "soundcommon.h"
+#include "dssoundstream.h"
 
 void SoundVBlankIrq(void)
 {

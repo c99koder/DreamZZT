@@ -37,6 +37,7 @@ using namespace Tiki::Thread;
 #include "window.h"
 #include "object.h"
 #include "board.h"
+#include "word.h"
 
 void render();
 extern EventCollector *playerEventCollector;
@@ -55,6 +56,8 @@ extern Texture *zzt_font;
 #ifndef DZZT_LITE
 extern GraphicsLayer *gl;
 #endif
+
+TUIWindow *activeWindow;
 
 void TUIWidget::focus(bool f) {
 	m_focus = f;
@@ -106,7 +109,7 @@ TUIRadioGroup::TUIRadioGroup(std::string text, unsigned char *selected) {
 	m_selectedc=selected;
 }
 
-void TUIRadioGroup::draw(ConsoleText *ct) {
+void TUIRadioGroup::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
 	std::list<std::string>::iterator options_iter;
 	int i=0;
 	if(m_selectedi!=NULL) m_val = (*m_selectedi);
@@ -240,7 +243,7 @@ TUINumericInput::TUINumericInput(std::string text, unsigned char *num, int min, 
 	m_numc=num;
 }	
 
-void TUINumericInput::draw(ConsoleText *ct) {
+void TUINumericInput::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
 	int i=0;
 	if(m_numi!=NULL) m_val=(*m_numi);
 	if(m_nums!=NULL) m_val=(*m_nums);
@@ -275,19 +278,53 @@ void TUINumericInput::processHidEvent(const Hid::Event &evt) {
 	if(m_numc!=NULL) (*m_numc)=m_val;
 }
 
-void TUITextInput::draw(ConsoleText *ct) {
-	if(m_center && (m_text->length() + m_label.length() < 40)) {
-		for(size_t i=0; i< 20 - ((m_text->length() + m_label.length()) / 2); i++) {
-			*ct << " ";
-		}
-	}
-	ct->color(YELLOW|HIGH_INTENSITY,m_bg);
-	*ct << m_label;
+int TUITextInput::YtoX(int y) {
+	size_t pos=0,oldpos=0;
 	
-	ct->color(WHITE|HIGH_INTENSITY,m_bg);
-	*ct << *m_text;
-	if(m_blink && getFocus()) *ct << "_";
-	if(Time::gettime() - m_blinkTimer > 800000) {
+	while((pos = m_text->find('\r', oldpos)) != std::string::npos && --y >= 0) {
+		oldpos = pos+1;
+	}
+
+	return oldpos;
+}
+
+void TUITextInput::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
+	int i=0;
+	std::vector<std::string> lines = wordify(*m_text, '\r', true);
+	
+	m_cursor_y = y_pos;
+	if(y_pos >=0 && y_pos < getHeight() && m_cursor_x > lines[y_pos].length()) m_cursor_x = lines[y_pos].length();
+	
+	for(std::vector<std::string>::iterator line = lines.begin() + top; line != lines.end() && i < bottom; line++) {
+		ct->setANSI(true);
+		*ct << "\x1b[s"; //Save cursor position
+		if(i > 0) *ct << "\x1b[" << i << "B"; //Move i rows down
+		ct->setANSI(false);
+		if(m_center && ((*line).length() + m_label.length() < 40)) {
+			for(size_t i=0; i< 20 - (((*line).length() + m_label.length()) / 2); i++) {
+				*ct << " ";
+			}
+		}
+		ct->color(YELLOW|HIGH_INTENSITY,m_bg);
+		*ct << m_label;
+		
+		ct->color(WHITE|HIGH_INTENSITY,m_bg);
+		*ct << *line;
+		ct->setANSI(true);
+		*ct << "\x1b[K\x1b[u"; //Clear EOL, restore cursor position
+		ct->setANSI(false);
+		i++;
+	}	
+	if(m_blink && getFocus()) {
+		ct->setANSI(true);
+		*ct << "\x1b[s"; //Save cursor position
+		if(m_cursor_y - top > 0) *ct << "\x1b[" << m_cursor_y - top << "B"; //Move i rows down
+		if(m_cursor_x > 0) *ct << "\x1b[" << m_cursor_x << "C"; //Move i cols right
+		*ct << (char)0xDB;
+		*ct << "\x1b[u"; //restore cursor position
+		ct->setANSI(false);
+	}
+	if(Time::gettime() - m_blinkTimer > 400000) {
 		m_blink = !m_blink;
 		m_blinkTimer = Time::gettime();
 	}
@@ -301,7 +338,9 @@ void TUITextInput::processHidEvent(const Hid::Event &evt) {
 	char key = evt.key;
 	
 	if(evt.type == Event::EvtKeypress) {
-		if(key >= 32 && key < 127 && (m_text->length() + m_label.length() <= 40)) {
+		m_blink = true;
+		m_blinkTimer = Time::gettime();
+		if(key >= 32 && key < 127 && (m_text->length() + m_label.length() <= 40 || m_multiline)) {
 			if(evt.mod & Event::KeyShift) {
 				if(key >= 'a' && key <= 'z') {
 					key -= 32;
@@ -373,15 +412,27 @@ void TUITextInput::processHidEvent(const Hid::Event &evt) {
 					}
 				}
 			}
-			*m_text += key;
-		}
-		if((key == 8 || key == 127) && m_text->length() > 0) {
-			m_text->erase(m_text->end() - 1);
+			std::string tmp;
+			tmp += key;
+			m_text->insert(YtoX(m_cursor_y) + m_cursor_x, tmp);
+			m_cursor_x++;
+		} else if((key == 8 || key == 127) && m_text->length() > 0) {
+			m_text->erase(YtoX(m_cursor_y) + m_cursor_x - 1);
+		} else if(m_multiline && key == 13) {
+			m_text->insert(YtoX(m_cursor_y) + m_cursor_x, "\r");
+			m_cursor_y++;
+			m_cursor_x=0;
+			if(activeWindow != NULL) activeWindow->scroll(1);
+		} else if(evt.key == Event::KeyLeft) {
+			m_cursor_x--;
+			if(m_cursor_x < 0) m_cursor_x=0;
+		} else if(evt.key == Event::KeyRight) {
+			m_cursor_x++;
 		}
 	}
 }
 
-void TUIPasswordInput::draw(ConsoleText *ct) {
+void TUIPasswordInput::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
 	ct->color(YELLOW|HIGH_INTENSITY,m_bg);
 	*ct << m_label;
 	
@@ -401,7 +452,7 @@ void TUIPasswordInput::draw(ConsoleText *ct) {
 	}
 }
 
-void TUISlider::draw(ConsoleText *ct) {
+void TUISlider::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
 	int i=0;
 	if(m_numi!=NULL) m_val=(*m_numi);
 	if(m_nums!=NULL) m_val=(*m_nums);
@@ -453,6 +504,8 @@ TUIWindow::TUIWindow(std::string title,int x, int y, int w, int h) {
 	m_label="\0";
 	m_offset=0;
 	m_dirty=0;
+	m_delta=0;
+	m_repeatTimer=0;
 }
 
 void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
@@ -465,35 +518,34 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 	if(evt.type == Event::EvtQuit) {
 		m_loop = false;
 		switchbrd = -2;
-	} else if(evt.type == Event::EvtKeypress || evt.type == Event::EvtBtnPress) {
+	} else if(evt.type == Event::EvtKeyDown || evt.type == Event::EvtBtnPress) {
 		switch(evt.key) {
 			case Event::KeyUp:
-				m_widgets[m_offset]->focus(false);
-				m_offset--;
-				if(m_offset < 0) m_offset = 0;
-				m_widgets[m_offset]->focus(true);
+				m_delta = -1;
+				m_repeatTimer = Time::gettime() + 1000000;
 				break;
 			case Event::KeyDown:
-				m_widgets[m_offset]->focus(false);
-				m_offset++;
-				if(m_offset >= (int)m_widgets.size()) m_offset = (int)m_widgets.size() - 1;
-					m_widgets[m_offset]->focus(true);
+				m_delta = 1;
+				m_repeatTimer = Time::gettime() + 1000000;
 				break;
 		} 
 		if(evt.key == 13 || evt.btn == Event::BtnA) {
-			if(m_widgets[m_offset]->getCloseOnEnter()) {
+			if(widgetAtOffset(m_offset)->getCloseOnEnter()) {
 				m_loop = false;
-				m_label = m_widgets[m_offset]->getReturnValue();
+				m_label = widgetAtOffset(m_offset)->getReturnValue();
 			}
 		}
-#if TIKI_PLAT == TIKI_DC
-		if(evt.btn == Event::BtnY) {
-			vid_screen_shot("sshot.ppm");
+	} else if(evt.type == Event::EvtKeyUp || evt.type == Event::EvtBtnRelease) {
+		switch(evt.key) {
+			case Event::KeyEsc:
+				m_loop = false;
+				m_label = "";
+				break;
+			case Event::KeyUp:
+			case Event::KeyDown:
+				m_delta = 0;
+				break;
 		}
-#endif
-	} else if(evt.type == Event::EvtKeyUp && evt.key == Event::KeyEsc) {
-			m_loop = false;
-			m_label = "";
 	}
 }
 
@@ -614,6 +666,27 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 extern int disp_off_x,disp_off_y;
 #endif
 
+TUIWidget *TUIWindow::widgetAtOffset(int offset) {
+	std::vector<TUIWidget *>::iterator widget_iter = m_widgets.begin();
+	int i = 0;
+	do {
+		i += (*widget_iter)->getHeight();
+	} while(offset >= i && widget_iter++ != m_widgets.end());
+	return (*widget_iter);
+}
+
+int TUIWindow::widgetY(TUIWidget *widget) {
+	int i = 0;
+	std::vector<TUIWidget *>::iterator widget_iter = m_widgets.begin();
+	while(widget_iter != m_widgets.end() && widget != (*widget_iter)) { 
+		i += (*widget_iter)->getHeight();
+		widget_iter++;
+	}
+	return i;
+}
+
+extern ConsoleText *st;
+
 void TUIWindow::doMenu() {
 	EventCollector ec;
 	Event evt;
@@ -621,12 +694,12 @@ void TUIWindow::doMenu() {
 	int i=0;
 	m_dirty = 1;
 	m_loop = true;
-	m_widgets[m_offset]->focus(true);
+	widgetAtOffset(m_offset)->focus(true);
 	if(playerEventCollector != NULL && playerEventCollector->listening()) {
 		playerEventCollector->stop();
 		if(player != NULL) player->setHeading(player->heading());
 	}
-
+	activeWindow = this;
 #if TIKI_PLAT == TIKI_NDS
 	BG0_X0 = 8;
 	BG1_X0 = 8;
@@ -639,9 +712,9 @@ void TUIWindow::doMenu() {
 		i=0;
 		draw_box(mt, 0, 0, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE, false);
 		mt->color(YELLOW | HIGH_INTENSITY, BLUE);
-		if(m_widgets[m_offset]->getHelpText() != "\0") {
-			mt->locate(((int)(m_w-m_widgets[m_offset]->getHelpText().length())-1)/2,1);
-			*mt << "\xae " << m_widgets[m_offset]->getHelpText() << " \xaf";
+		if(widgetAtOffset(m_offset)->getHelpText() != "\0") {
+			mt->locate(((int)(m_w-widgetAtOffset(m_offset)->getHelpText().length())-1)/2,1);
+			*mt << "\xae " << widgetAtOffset(m_offset)->getHelpText() << " \xaf";
 		} else {
 			mt->locate((m_w-(int)m_title.length()+2)/2,1);
 			*mt << m_title;
@@ -685,13 +758,20 @@ void TUIWindow::doMenu() {
 		}		
 
 		mt->setANSI(false);
-		
-		for(widget_iter = m_widgets.begin() + ((m_offset <=	m_h/2-2)?0:(m_offset -	m_h/2 + 2)); widget_iter != m_widgets.end() && i < m_h-2; widget_iter++) {
-			mt->locate(3,3+i++);
+
+		for(widget_iter = find(m_widgets.begin(),m_widgets.end(),widgetAtOffset(m_offset-(m_h/2-2))); widget_iter != m_widgets.end() && i < m_h-2; widget_iter++) {
+			mt->locate(3,3+i);
 			(*widget_iter)->update();
-			(*widget_iter)->draw(mt);
+			(*widget_iter)->draw(mt,  m_offset + i - widgetY(*widget_iter) - (m_h/2-2), m_h-2-i, m_offset-widgetY(*widget_iter));
+			i += (*widget_iter)->getHeight() - (m_offset + i - widgetY(*widget_iter) - (m_h/2-2));
 		}
 
+		mt->color(RED|HIGH_INTENSITY,BLUE);
+		mt->locate(1,m_h/2+1);
+		mt->printf("%c",175);
+		mt->locate(m_w,m_h/2+1);
+		mt->printf("%c",174);
+		
 		if(i < m_h-2) {
 			mt->locate(2,3+i++);
 			mt->color(YELLOW|HIGH_INTENSITY,BLUE);
@@ -703,10 +783,19 @@ void TUIWindow::doMenu() {
 		while (ec.getEvent(evt)) {
 			processHidEvent(evt);
 		}
+		if(m_delta != 0 && Time::gettime() - m_repeatTimer > 200000) {
+			widgetAtOffset(m_offset)->focus(false);
+			m_offset+=m_delta;
+			m_repeatTimer = Time::gettime();
+		}
+		if(m_offset < 0) m_offset = 0;
+		if(m_offset >= widgetsHeight()) m_offset = widgetsHeight() - 1;
+			widgetAtOffset(m_offset)->focus(true);
 	} while(m_loop);
 
 	delete mt;
 	mt=NULL;
+	activeWindow = NULL;
 	if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 #if TIKI_PLAT == TIKI_NDS
 	BG0_X0 = 0;

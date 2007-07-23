@@ -34,7 +34,7 @@ public:
 	virtual ~TUIWidget() {
 	}
 	
-	virtual void draw(ConsoleText *ct) {};
+	virtual void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {};
 	void focus(bool f);	
 	void update();	
 	bool getFocus() { return m_focus; }
@@ -43,7 +43,7 @@ public:
 	virtual const std::string getHelpText() { return "\0"; }
 	virtual const std::string getReturnValue() { return "\0"; }
 	virtual const bool getCloseOnEnter() { return true; }
-	
+	virtual int getHeight() { return 1; }
 private:
 	bool m_focus;
 	RefPtr<Hid::EventCollector> m_ec;
@@ -61,7 +61,7 @@ public:
 	
 	~TUILabel() {}
 	
-	void draw(ConsoleText *ct) {
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {
 		ct->color((m_bold?WHITE:YELLOW)|HIGH_INTENSITY,m_bg);
 		if(m_ansi) ct->setANSI(true);
 		*ct << m_text;
@@ -74,30 +74,36 @@ private:
 
 class TUITextInput : public TUIWidget {
 public:
-	TUITextInput(std::string label, std::string *text, bool centered=false) {
+	TUITextInput(std::string label, std::string *text, bool centered=false, bool multiline=false) {
 		m_label=label;
 		m_text=text;
 		m_blink=false;
 		m_blinkTimer=1;
 		m_center = centered;
+		m_multiline = multiline;
+		m_cursor_x = m_cursor_y = 0;
 	}
 	
-	void draw(ConsoleText *ct);	
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);	
 	const std::string getHelpText() { return "Use keyboard to edit text"; }
 	const bool getCloseOnEnter() { return false; }
-	
+	int getHeight() {
+		return count(m_text->begin(), m_text->end(), '\r') + 1;
+	}
 	void processHidEvent(const Hid::Event &evt);
 protected:
+	int YtoX(int y);
 	std::string m_label;
 	std::string *m_text;
-	bool m_blink,m_center;
+	bool m_blink,m_center,m_multiline;
 	uint64 m_blinkTimer;
+	int m_cursor_x, m_cursor_y;
 };
 
 class TUIPasswordInput : public TUITextInput {
 public:
 	TUIPasswordInput(std::string label, std::string *text) : TUITextInput(label,text) { }	
-	void draw(ConsoleText *ct);	
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);	
 };
 
 class TUICheckBox : public TUIWidget {
@@ -114,7 +120,7 @@ public:
 		m_checked_uc=checked;
 	}
 	
-	void draw(ConsoleText *ct) {
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {
 		ct->color(WHITE|HIGH_INTENSITY,m_bg);
 		if(m_checked_b != NULL) *ct << "  [" << ((*m_checked_b)?"\xfb":" ") << "] " << m_text;
 		if(m_checked_uc != NULL) *ct << "  [" << ((*m_checked_uc)?"\xfb":" ") << "] " << m_text;
@@ -145,7 +151,7 @@ public:
 		m_options.push_back(text);
 	}
 	
-	void draw(ConsoleText *ct);	
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);	
 	const std::string getHelpText() { return "Press LEFT or RIGHT to change this"; }
 
 	void processHidEvent(const Hid::Event &evt);
@@ -179,7 +185,7 @@ public:
 	TUINumericInput(std::string text, unsigned short int *num, int min, int max, int step=1);	
 	TUINumericInput(std::string text, float *num, int min, int max, int step=1);	
 	TUINumericInput(std::string text, unsigned char *num, int min, int max, int step=1);	
-	void draw(ConsoleText *ct);	
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);	
 	const std::string getHelpText() { return "Press LEFT or RIGHT to change this"; }
 	void processHidEvent(const Hid::Event &evt);	
 protected:
@@ -199,7 +205,7 @@ public:
 		m_blink = false;
 	}
 	
-	void draw(ConsoleText *ct);
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
 private:
 	bool m_blink;
 	int m_blinkTimer;
@@ -212,7 +218,7 @@ public:
 		m_label=label;
 	}
 	
-	void draw(ConsoleText *ct) {
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {
 		ct->color(MAGENTA|HIGH_INTENSITY,m_bg);
 		*ct << " \x10 ";
 #if TIKI_PLAT != TIKI_NDS
@@ -244,7 +250,8 @@ public:
 #ifdef DZZT_LITE
 	TUIWindow(std::string title,int x=6, int y=3, int w=45, int h=17);
 #else
-	TUIWindow(std::string title,int x=6, int y=6, int w=45, int h=17);
+	TUIWindow(std::string title,int x=0, int y=0, int w=32, int h=22);
+	//TUIWindow(std::string title,int x=6, int y=6, int w=45, int h=17);
 #endif
 #endif
 	
@@ -264,13 +271,24 @@ public:
 	void addWidget(TUIWidget *w) {
 		m_widgets.push_back(w);
 	}
+	TUIWidget *widgetAtOffset(int offset);
+	int widgetsHeight() {
+		std::vector<TUIWidget *>::iterator widget_iter;
+		int height = 0;
+		for(widget_iter = m_widgets.begin() ; widget_iter != m_widgets.end(); widget_iter++) {
+			height += (*widget_iter)->getHeight();
+		}
+		return height;
+	}
+	int widgetY(TUIWidget *widget);
 	void processHidEvent(const Hid::Event &evt);
-	
+	void scroll(int delta) { m_offset += delta; }
 	std::string getLabel() { return m_label; }
 	
 private:
 	std::string m_title,m_label;
-	int m_x, m_y, m_w, m_h, m_offset;
+	int m_x, m_y, m_w, m_h, m_offset, m_delta;
+	uint64 m_repeatTimer;
 	std::vector<TUIWidget *> m_widgets;
 	bool m_loop;
 	bool m_dirty;

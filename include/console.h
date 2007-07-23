@@ -128,6 +128,30 @@ public:
 				return *this;
 			}			
 
+			ConsoleText& operator <<(double input) {
+				printf("%d",input);
+				
+				return *this;
+			}
+
+			ConsoleText& operator <<(long long input) {
+				printf("%lld",input);
+				
+				return *this;
+			}
+
+			ConsoleText& operator <<(unsigned long long input) {
+				printf("%llu",input);
+				
+				return *this;
+			}
+
+			ConsoleText& operator <<(long input) {
+				printf("%l",input);
+				
+				return *this;
+			}
+
 			ConsoleText& operator <<(char input) {
 				printf("%c",input);
 				

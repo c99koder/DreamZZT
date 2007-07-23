@@ -1,6 +1,15 @@
+/*
+   Tiki
+
+   arm7main.c
+
+   Based on the libnds arm7 template and the ARM9/ARM7 streaming code from
+   http://forum.gbadev.org/viewtopic.php?t=10739
+*/
+
 #include <nds.h>
 #include <stdlib.h>
-#include "soundcommon.h"
+#include "dssoundstream.h"
 
 //---------------------------------------------------------------------------------
 void startSound(int sampleRate, const void* data, u32 bytes, u8 channel, u8 vol,  u8 pan, u8 format) {
@@ -23,6 +32,7 @@ s32 getFreeSoundChannel() {
 }
 
 int vcount;
+uint16 ms=0;
 touchPosition first,tempPos;
 
 //---------------------------------------------------------------------------------
@@ -36,9 +46,6 @@ void VcountHandler() {
 
 	// Check if the lid has been closed.
 	if(but & BIT(7)) {
-		// Pause the game
-		SendCommandToArm9(999);
-		
 		// Save the current interrupt sate.
 		u32 ie_save = REG_IE;
 		// Turn the speaker down.
@@ -132,7 +139,6 @@ void VblankHandler(void) {
 			}
 		}
 	}
-
 }
 void FiFoHandler(void) 
 //---------------------------------------------------------------------------------
@@ -142,6 +148,11 @@ void FiFoHandler(void)
 		SoundFifoHandler();
 	}
 }
+
+void Timer2(void) {
+	IPC->aux=ms++;
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char ** argv) {
 //---------------------------------------------------------------------------------
@@ -161,7 +172,11 @@ int main(int argc, char ** argv) {
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
 	irqSet(IRQ_FIFO_NOT_EMPTY, FiFoHandler);
-	irqEnable(IRQ_VBLANK | IRQ_VCOUNT|IRQ_FIFO_NOT_EMPTY);
+	TIMER2_CR &= ~TIMER_ENABLE;
+	TIMER2_DATA = TIMER_FREQ_256(1000);
+	TIMER2_CR = TIMER_ENABLE | TIMER_DIV_256 | TIMER_IRQ_REQ;
+	irqSet(IRQ_TIMER2, Timer2);
+	irqEnable(IRQ_VBLANK | IRQ_VCOUNT | IRQ_FIFO_NOT_EMPTY | IRQ_TIMER2);
 
 	SoundSetTimer(0);
 

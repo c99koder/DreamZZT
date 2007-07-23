@@ -174,6 +174,8 @@ int new_board(char *title) {
 	current->next=NULL;
 	current->compressed=false;
 	
+	current->board.resize(BOARD_X, std::vector<board_data>::vector(BOARD_Y));
+	
 	for(int y=0; y<BOARD_Y; y++) {
 		for(int x=0; x<BOARD_X; x++) {
 			if(x == BOARD_X/2 && y == BOARD_Y/2) {
