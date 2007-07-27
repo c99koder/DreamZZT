@@ -115,7 +115,7 @@ void put(ZZTObject *o, bool ignoreUnder=false);
 int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer=false);
 int block_bg(int x, int y);
 void draw_block(int x, int y);
-void draw_board();
+void draw_board(bool all=true);
 struct world_header *get_world();
 unsigned char block_code(int x, int y);
 void remove_from_board(struct board_info_node *brd, ZZTObject *me, bool ignoreUnder=false);

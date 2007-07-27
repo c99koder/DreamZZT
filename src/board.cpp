@@ -137,6 +137,7 @@ void put(ZZTObject *o, bool ignoreUnder) {
 	}
 	currentbrd->board[(int)o->position().x][(int)o->position().y].obj = o;
 	o->create();
+	o->draw();
 	if(o->flag(F_OBJECT)) currentbrd->objects.push_back(o);
 }
 
@@ -388,6 +389,7 @@ void remove_from_board(struct board_info_node *brd, ZZTObject *me, bool ignoreUn
 		} else {
 			brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
 		}
+		brd->board[(int)pos.x][(int)pos.y].obj->draw();
 	} else {
 		brd->board[(int)pos.x][(int)pos.y].obj=NULL;
 	}
@@ -1409,7 +1411,7 @@ void update_brd() {
 	
 	for(obj_iter = currentbrd->objects.begin(); obj_iter != currentbrd->objects.end(); obj_iter++) {
 		o=*obj_iter;
-		if(o->isValid() && o->cycle() > 0 && ((cnt + cycle) % o->cycle() == 0) && !o->flag(F_DELETED) && !o->updated()) {
+		if(o->isValid() && o->cycle() > 0 && ((cnt + cycle) % o->cycle() == 0) && !o->flag(F_DELETED)/* && !o->updated()*/) {
 			o->update();
 			if(switchbrd != -1) return;
 			if(o->flag(F_DELETED)) {
@@ -1425,16 +1427,16 @@ void update_brd() {
 
 	cycle++;
 
-	for(y=0;y<BOARD_Y;y++) {
-		for(x=0;x<BOARD_X;x++) {
-			if(currentbrd->board[x][y].obj != NULL) {
-				currentbrd->board[x][y].obj->setUpdated(false);
-				currentbrd->board[x][y].obj->setPushed(false);
+	for(std::vector< std::vector<board_data> >::iterator y = currentbrd->board.begin(); y != currentbrd->board.end(); y++) {
+		for(std::vector<board_data>::iterator x = (*y).begin(); x != (*y).end() ; x++) {
+			if((*x).obj != NULL) {
+				(*x).obj->setUpdated(false);
+				(*x).obj->setPushed(false);
 			}
-			if(currentbrd->board[x][y].under != NULL && currentbrd->board[x][y].under->flags() & F_DELETED) {
-				currentbrd->objects.remove(currentbrd->board[x][y].under);
-				delete currentbrd->board[x][y].under;
-				currentbrd->board[x][y].under = NULL;
+			if((*x).under != NULL && (*x).under->flags() & F_DELETED) {
+				currentbrd->objects.remove((*x).under);
+				delete (*x).under;
+				(*x).under = NULL;
 			}
 		}
 	}
@@ -1445,14 +1447,12 @@ void draw_block(int x, int y) {
 	currentbrd->board[x][y].obj->draw();
 }
 
-void draw_board() {
-	int x,y;
-	
+void draw_board(bool all) {
 	if(currentbrd->compressed) return;
 	
-	for(y=0;y<ct->getRows();y++) {
-		for(x=0;x<ct->getCols();x++) {
-			draw_block(x+disp_off_x,y+disp_off_y);
+	for(std::vector< std::vector<board_data> >::iterator y = currentbrd->board.begin(); y != currentbrd->board.end(); y++) {
+		for(std::vector<board_data>::iterator x = (*y).begin(); x != (*y).end() ; x++) {
+			(*x).obj->draw();
 		}
 	}
 	

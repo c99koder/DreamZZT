@@ -843,7 +843,7 @@ complete this game.\r\
 #if TIKI_PLAT != TIKI_NDS
 				if(zm!=NULL) zm->setVolume((float)volmod / 16.0f);
 #endif
-				draw_board();
+				draw_board(false);
 				draw_msg();
 				st->locate(2,19);
 				st->color(0,3);
@@ -963,7 +963,7 @@ complete this game.\r\
 		if(!gameFrozen && (Time::gettime() - ticker) > ((world.health>0)?gamespeed:GAMESPEED_DEAD)) {
 			check_tasks();
 			update_brd();
-			draw_board();
+			draw_board(false);
 			draw_msg();
 			ticker = Time::gettime();
 		}

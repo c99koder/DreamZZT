@@ -313,6 +313,8 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 		if(m_board->board[oldx][oldy].obj==NULL || !m_board->board[oldx][oldy].obj->isValid()) {
 			m_board->board[oldx][oldy].obj=::create_object(ZZT_EMPTY,oldx,oldy);
 		}
+		m_board->board[x][y].obj->draw();
+		m_board->board[oldx][oldy].obj->draw();
 		suc = 1;
 	} else {
 		them=m_board->board[x][y].obj;

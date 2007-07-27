@@ -21,12 +21,12 @@ VERSION:
 
 $(TARGET).arm9.elf: ../resources/zztascii.bin.o VERSION $(OBJS)
 	$(CXX) $(LDFLAGS) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) ../resources/zztascii.bin.o $(TIKI_BASE_LIBS) -o $(TARGET).arm9.elf
-
+	arm-eabi-strip $(TARGET).arm9.elf
 clean:
 	rm -f $(OBJS) dreamzzt.arm9.elf
 
 include $(TIKI_DIR)/$(TIKI_PLAT)/Makefile.rules
-CXXFLAGS+=-I../include -I. -I../lua -I../src/libtolua++ -DDZZT_LITE
+CXXFLAGS+=-I../include -I. -I../lua -I../src/libtolua++ -DDZZT_LITE -O2
 
 #---------------------------------------------------------------------------------
 %.bin.o :       %.bin
