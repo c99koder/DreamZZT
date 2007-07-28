@@ -802,6 +802,7 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 		}
 	} else if(evt.type == Event::EvtKeyUp || evt.type == Event::EvtBtnRelease) {
 		if(evt.btn == Event::MouseLeftBtn) {
+#if TIKI_PLAT == TIKI_NDS	
 			static bool shift = false;
 			static bool caps = false;
 			
@@ -879,6 +880,7 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 			
 			st->clear();
 			*st << (const char *)((shift||caps)?uppercasekbd:lowercasekbd);
+#endif
 		} else {
 			switch(evt.key) {
 				case Event::KeyEsc:

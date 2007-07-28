@@ -996,21 +996,17 @@ std::string("!bugreport;Report a bug\r") +
 				TUIWindow bugReport("Bug Report");
 				std::string email;
 				std::string summary;
-				std::string description1;
-				std::string description2;
-				std::string description3;
+				std::string description;
 				bugReport.addWidget(new TUITextInput("Email: ", &email));
 				bugReport.addWidget(new TUITextInput("Summary: ", &summary));
 				bugReport.addWidget(new TUILabel("Description:"));
-				bugReport.addWidget(new TUITextInput("",&description1));
-				bugReport.addWidget(new TUITextInput("",&description2));
-				bugReport.addWidget(new TUITextInput("",&description3));
+				bugReport.addWidget(new TUITextInput("",&description,false,true));
 				bugReport.addWidget(new TUILabel(""));
 				bugReport.addWidget(new TUIHyperLink("submit","Submit bug report"));
 				bugReport.doMenu();
 				
 				if(bugReport.getLabel() == "submit") {
-					submit_bug(email, summary, description1 + std::string("\n") + description2 + std::string("\n") + description3);
+					submit_bug(email, summary, description);
 				}
 			} else if(t.getLabel() == "restore") {
 				std::string s = os_select_file("Select a saved game","sav");
