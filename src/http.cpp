@@ -129,13 +129,15 @@ CURL *http_begin(std::string URL) {
 	CURL *curl_handle;
 	static char url[256];
 	static char auth[256];
-
-	strncpy(url,URL.c_str(),256); //Windows... sigh.
-	strncpy(auth,curl_auth_string.c_str(),256); //Windows... sigh.
+	static char UA[256];
+	
+	strncpy(UA, USER_AGENT,256);
+	strncpy(url,URL.c_str(),256);
+	strncpy(auth,curl_auth_string.c_str(),256);
 
 	ct->locate(0,24);
 	ct->color(0,7);
-	for(int i=0; i<60; i++) {
+	for(int i=0; i<ct->getCols(); i++) {
 		*ct << " ";
 	}
 	ct->locate(0,24);
@@ -150,7 +152,7 @@ CURL *http_begin(std::string URL) {
 
 	/* some servers don't like requests that are made without a user-agent
 		field, so we provide one */
-	curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, USER_AGENT);
+	curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, UA);
 	
 	/* DreamZZT Online authentication */
 	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, auth);
@@ -171,7 +173,7 @@ void http_finish(CURL *curl_handle) {
 	
 	ct->locate(0,24);
 	ct->color(0,7);
-	for(int i=0; i<60; i++) {
+	for(int i=0; i<ct->getCols(); i++) {
 		*ct << " ";
 	}
 	ct->locate(0,24);
