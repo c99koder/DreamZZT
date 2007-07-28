@@ -61,14 +61,13 @@ int base64_encode(const void *inp, int insize, char **outptr)
 
   while(insize > 0) {
     for (i = inputparts = 0; i < 3; i++) { 
-      //if(*indata) {
+      if(insize > 0) {
         inputparts++;
         ibuf[i] = *indata;
         indata++;
         insize--;
-      /*}
-      else
-        ibuf[i] = 0;*/
+      } else
+        ibuf[i] = 0;
     }
                        
     obuf [0] = (ibuf [0] & 0xFC) >> 2;

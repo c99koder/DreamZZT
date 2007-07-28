@@ -9,6 +9,7 @@
 
 #include <nds.h>
 #include <stdlib.h>
+#include <dswifi7.h>
 #include "dssoundstream.h"
 
 //---------------------------------------------------------------------------------
@@ -32,7 +33,6 @@ s32 getFreeSoundChannel() {
 }
 
 int vcount;
-uint16 ms=0;
 touchPosition first,tempPos;
 
 //---------------------------------------------------------------------------------
@@ -139,24 +139,26 @@ void VblankHandler(void) {
 			}
 		}
 	}
+	Wifi_Update();
 }
 void FiFoHandler(void) 
 //---------------------------------------------------------------------------------
 {
 	while ( !(REG_IPC_FIFO_CR & (IPC_FIFO_RECV_EMPTY)) )
 	{
+		Wifi_Sync();		
 		SoundFifoHandler();
 	}
 }
 
-void Timer2(void) {
-	IPC->aux=ms++;
+void arm7_synctoarm9() { // send fifo message
 }
 
 //---------------------------------------------------------------------------------
 int main(int argc, char ** argv) {
 //---------------------------------------------------------------------------------
-
+	u32 fifo_temp;
+	
 	// Reset the clock if needed
 	rtcReset();
 
@@ -164,20 +166,33 @@ int main(int argc, char ** argv) {
 	powerON(POWER_SOUND);
 	SOUND_CR = SOUND_ENABLE | SOUND_VOL(0x7F);
 	IPC->soundData = 0;
+	IPC->mailBusy = 0;
 
 	irqInit();
 	irqSet(IRQ_VBLANK, VblankHandler);
 	SetYtrigger(80);
 	vcount = 80;
 	irqSet(IRQ_VCOUNT, VcountHandler);
-	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
-	irqSet(IRQ_FIFO_NOT_EMPTY, FiFoHandler);
-	TIMER2_CR &= ~TIMER_ENABLE;
-	TIMER2_DATA = TIMER_FREQ_256(1000);
-	TIMER2_CR = TIMER_ENABLE | TIMER_DIV_256 | TIMER_IRQ_REQ;
-	irqSet(IRQ_TIMER2, Timer2);
-	irqEnable(IRQ_VBLANK | IRQ_VCOUNT | IRQ_FIFO_NOT_EMPTY | IRQ_TIMER2);
+	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
+	irqEnable(IRQ_VBLANK | IRQ_VCOUNT);
+	irqSet(IRQ_WIFI, Wifi_Interrupt);
+	irqEnable(IRQ_WIFI);
+		
+	// trade some mail, to get a pointer from arm9
+	while(1) {
+		while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
+		fifo_temp=REG_IPC_FIFO_RX;
+		if(fifo_temp==0x12345678) break;
+	}
+	while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
+	fifo_temp=REG_IPC_FIFO_RX;
+	Wifi_Init(fifo_temp);
 
+	irqSet(IRQ_FIFO_NOT_EMPTY,FiFoHandler);
+	irqEnable(IRQ_FIFO_NOT_EMPTY);
+	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;
+
+	Wifi_SetSyncHandler(arm7_synctoarm9);
 	SoundSetTimer(0);
 
 	// Keep the ARM7 idle

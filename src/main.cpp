@@ -67,7 +67,10 @@ using namespace Tiki::Thread;
 
 #if TIKI_PLAT == TIKI_NDS
 #include <nds.h>
-
+#include <dswifi9.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 std::string os_select_file(std::string title, std::string filter);
 std::string os_save_file(std::string title, std::string filename, std::string filter);
 #endif
@@ -119,7 +122,7 @@ extern std::list<Task*> taskList;
 #define GAMESPEED_ALIVE 100000
 #define GAMESPEED_DEAD 10000
 
-#ifdef BETA_VERSION
+#if defined(BETA_VERSION)
 #define DZZTNET_HOST std::string("http://internal.forums.c99.org")
 #define DZZTNET_HOME std::string("/extensions/DreamZZTOnline/dzztnet.php")
 #else
@@ -558,7 +561,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 	//Hid::callbackReg(tkCallback, NULL);
 	
-#ifdef NET
+#if defined(NET) && TIKI_PLAT != TIKI_NDS
 	curl_global_init(CURL_GLOBAL_ALL);
 	
 	char authtmp[256];
@@ -623,10 +626,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 	
 #if TIKI_PLAT == TIKI_NDS
-	st = new ConsoleText(64, 25, true);
+	st = new ConsoleText(32/*64*/, 25, true);
 	
-	SUB_BG0_X0 = -48;
-	SUB_BG1_X0 = -48;
+	//SUB_BG0_X0 = -48;
+	//SUB_BG1_X0 = -48;
 #else
 	st = new ConsoleText(20, 25, zzt_font);
 #endif
@@ -704,7 +707,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	arch_exit(0);
 #endif
 	
-#ifdef NET
+#if defined(NET) && TIKI_PLAT != TIKI_NDS
 #if TIKI_PLAT == TIKI_WIN32
 	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
 	filename = std::string(szPath) + std::string("\\dzztauth.dat");
@@ -1284,6 +1287,9 @@ C99.ORG Forums account.\n\
 						url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=" + url;
 					}
 				}
+			} else {
+			while(1);
+				break;
 			}
 		}
 	} while(url != "" && switchbrd != -2);

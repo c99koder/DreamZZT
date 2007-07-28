@@ -783,7 +783,7 @@ void TUIWindow::doMenu() {
 		while (ec.getEvent(evt)) {
 			processHidEvent(evt);
 		}
-		if(m_delta != 0 && Time::gettime() - m_repeatTimer > 200000) {
+		if(m_delta != 0 && Time::gettime() - m_repeatTimer > 150000) {
 			widgetAtOffset(m_offset)->focus(false);
 			m_offset+=m_delta;
 			m_repeatTimer = Time::gettime();
