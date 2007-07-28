@@ -626,10 +626,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 	
 #if TIKI_PLAT == TIKI_NDS
-	st = new ConsoleText(32/*64*/, 25, true);
+	st = new ConsoleText(64, 24, true);
 	
-	//SUB_BG0_X0 = -48;
-	//SUB_BG1_X0 = -48;
+	SUB_BG0_X0 = -48;
+	SUB_BG1_X0 = -48;
 #else
 	st = new ConsoleText(20, 25, zzt_font);
 #endif
@@ -1123,11 +1123,15 @@ void net_menu() {
 	if(curl_auth_string == "") {
 		TUIWindow *t;
 		t = new TUIWindow("DreamZZT Online");
-		t->buildFromString("DreamZZT Online allows you to compete\n\
-against players around the world to\n\
-get the highest score.	Before you can\n\
-access DreamZZT Online, you'll need a\n\
-C99.ORG Forums account.\n\
+		t->buildFromString(
+"DreamZZT Online allows you\n\
+to compete against players\n\
+around the world for the\n\
+highest score.\n\
+\n\
+You'll need a C99.ORG forums\n\
+account to access DreamZZT\n\
+Online.\n\
 \n\
 !Create;Create new account\n\
 !Existing;Use existing acount\n");
@@ -1139,10 +1143,11 @@ C99.ORG Forums account.\n\
 				std::string user="",pass="";
 				delete t;
 				t = new TUIWindow("DreamZZT Online");
-				t->addWidget(new TUILabel("Please enter your C99.ORG details:"));
+				t->addWidget(new TUILabel("Please enter your C99.ORG"));
+				t->addWidget(new TUILabel("username and password."));
 				t->addWidget(new TUIWidget());
-				t->addWidget(new TUITextInput("      Username: ",&user));
-				t->addWidget(new TUIPasswordInput("      Password: ",&pass));
+				t->addWidget(new TUITextInput("  Username: ",&user));
+				t->addWidget(new TUIPasswordInput("  Password: ",&pass));
 				t->addWidget(new TUIWidget());
 				t->addWidget(new TUIHyperLink("login","Login to C99.ORG"));
 				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
@@ -1172,26 +1177,29 @@ C99.ORG Forums account.\n\
 			do {
 				delete t;
 				t = new TUIWindow("DreamZZT Online");
-				t->addWidget(new TUILabel("Please enter your information:"));
-				t->addWidget(new TUIWidget());
-				t->addWidget(new TUITextInput    ("         * Username: ",&user));
-				t->addWidget(new TUIPasswordInput("         * Password: ",&pass1));
-				t->addWidget(new TUIPasswordInput(" * Confirm Password: ",&pass2));
-				t->addWidget(new TUITextInput    ("    * Email Address: ",&email));
-				t->addWidget(new TUITextInput    ("         First Name: ",&first));
-				t->addWidget(new TUITextInput    ("          Last Name: ",&last));
-				t->addWidget(new TUIWidget());
-				t->addWidget(new TUICheckBox		 ("Display full name",&useName));
-				t->addWidget(new TUICheckBox		 ("Display email address",&useEmail));
-				t->addWidget(new TUICheckBox		 ("I accept the terms of service",&acceptTOS));
+				t->addWidget(new TUILabel        ("Desired username:"));
+				t->addWidget(new TUITextInput    ("",&user));
+				t->addWidget(new TUILabel        ("Desired password:"));
+				t->addWidget(new TUIPasswordInput("",&pass1));
+				t->addWidget(new TUILabel        ("Confirm password:"));
+				t->addWidget(new TUIPasswordInput("",&pass2));
+				t->addWidget(new TUILabel        ("Email address:"));
+				t->addWidget(new TUITextInput    ("",&email));
+				t->addWidget(new TUILabel        ("First name: (optional)"));
+				t->addWidget(new TUITextInput    ("",&first));
+				t->addWidget(new TUILabel        ("Last name: (optional)"));
+				t->addWidget(new TUITextInput    ("",&last));
+				t->addWidget(new TUICheckBox	 ("Display full name",&useName));
+				t->addWidget(new TUICheckBox	 ("Display email address",&useEmail));
+				t->addWidget(new TUICheckBox	 ("I accept the terms",&acceptTOS));
+				t->addWidget(new TUILabel        ("      of service",true,true));
 				t->addWidget(new TUIWidget());
 				t->addWidget(new TUIHyperLink("register","Register account"));
 				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
 				t->addWidget(new TUIWidget());
-				t->addWidget(new TUILabel("* Indicates a required field",true));
-				t->addWidget(new TUIWidget());
-				t->addWidget(new TUILabel("The terms of service can be viewed at",true));
-				t->addWidget(new TUILabel("http://forums.c99.org/",true));
+				t->addWidget(new TUILabel(" The terms of service can be",true));
+				t->addWidget(new TUILabel("          viewed at",true));
+				t->addWidget(new TUILabel("    http://forums.c99.org/",true,true));
 				t->doMenu();
 				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "") return;
 				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=Register";

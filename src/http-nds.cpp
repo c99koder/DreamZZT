@@ -42,7 +42,7 @@ using namespace std;
 
 #define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Nintendo DS)")).c_str()
 
-std::string curl_auth_string = "sam:027325";
+std::string curl_auth_string = "";
 bool networkEnabled = false;
 extern ConsoleText *st;
 

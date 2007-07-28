@@ -35,7 +35,7 @@ public:
 	}
 	
 	virtual void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {};
-	void focus(bool f);	
+	virtual void focus(bool f);	
 	void update();	
 	bool getFocus() { return m_focus; }
 	void setBg(unsigned char bg) { m_bg = bg; }
@@ -77,13 +77,12 @@ public:
 	TUITextInput(std::string label, std::string *text, bool centered=false, bool multiline=false) {
 		m_label=label;
 		m_text=text;
-		m_blink=false;
-		m_blinkTimer=1;
 		m_center = centered;
 		m_multiline = multiline;
 		m_cursor_x = m_cursor_y = 0;
+		focus(false);
 	}
-	
+	void focus(bool f);
 	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);	
 	const std::string getHelpText() { return "Use keyboard to edit text"; }
 	const bool getCloseOnEnter() { return false; }
