@@ -138,7 +138,7 @@ void put(ZZTObject *o, bool ignoreUnder) {
 	currentbrd->board[(int)o->position().x][(int)o->position().y].obj = o;
 	o->create();
 	o->draw();
-	if(o->flag(F_OBJECT)) currentbrd->objects.push_back(o);
+	if(o->flag(F_OBJECT) && find(currentbrd->objects.begin(), currentbrd->objects.end(), o) == currentbrd->objects.end()) currentbrd->objects.push_back(o);
 }
 
 int new_board(char *title) {
