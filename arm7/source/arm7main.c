@@ -152,6 +152,7 @@ void FiFoHandler(void)
 }
 
 void arm7_synctoarm9() { // send fifo message
+	SendCommandToArm9(0x87654321);
 }
 
 //---------------------------------------------------------------------------------

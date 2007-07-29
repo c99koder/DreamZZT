@@ -561,9 +561,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 #endif
 	//Hid::callbackReg(tkCallback, NULL);
 	
-#if defined(NET) && TIKI_PLAT != TIKI_NDS
+#if defined(NET)
+#if TIKI_PLAT != TIKI_NDS
 	curl_global_init(CURL_GLOBAL_ALL);
-	
+#endif
 	char authtmp[256];
 	std::string filename;
 	File f;
@@ -571,6 +572,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	TCHAR szPath[MAX_PATH];
 	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
 	filename = std::string(szPath) + std::string("\\dzztauth.dat");
+#elif TIKI_PLAT == TIKI_NDS
+	filename = ".dzztauth";
 #else
 	char *path = getenv("HOME");
 	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
@@ -707,10 +710,12 @@ extern "C" int tiki_main(int argc, char **argv) {
 	arch_exit(0);
 #endif
 	
-#if defined(NET) && TIKI_PLAT != TIKI_NDS
+#if defined(NET)
 #if TIKI_PLAT == TIKI_WIN32
 	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
 	filename = std::string(szPath) + std::string("\\dzztauth.dat");
+#elif TIKI_PLAT == TIKI_NDS
+	filename = ".dzztauth";
 #else
 	path = getenv("HOME");
 	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
@@ -1106,6 +1111,7 @@ std::string("!bugreport;Report a bug\r") +
 
 void net_menu() {
 #ifdef NET
+	File f;
 	std::string url = DZZTNET_HOST + DZZTNET_HOME;
 	std::string tmp,filename;
 	
@@ -1230,6 +1236,21 @@ Online.\n\
 			return; 
 		}
 	}
+
+#if TIKI_PLAT == TIKI_WIN32
+	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
+	filename = std::string(szPath) + std::string("\\dzztauth.dat");
+#elif TIKI_PLAT == TIKI_NDS
+	filename = ".dzztauth";
+#else
+	path = getenv("HOME");
+	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
+#endif
+	f.open(filename.c_str(),"wb");
+	if(f.isValid()) {
+		f.write(curl_auth_string.c_str(),(int)curl_auth_string.length()+1);
+		f.close();
+	}
 	
 	url = DZZTNET_HOST + DZZTNET_HOME;
 	
@@ -1247,6 +1268,8 @@ Online.\n\
 			char path[128];
 			GetTempPath(128,path);
 			filename = path + std::string("dzzthttp");
+#elif TIKI_PLAT == TIKI_NDS
+	filename = ".dzzthttp";
 #else 
 			filename = "/tmp/dzzthttp";
 #endif

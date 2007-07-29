@@ -249,14 +249,7 @@ public:
 	TUIWindow(std::string title,int x=6, int y=3, int w=45, int h=17);
 #endif
 	
-	~TUIWindow() {
-		TUIWidget *t;
-		while(!m_widgets.empty()) {
-			t = m_widgets[m_widgets.size()-1];
-			m_widgets.pop_back();
-			delete t;
-		}
-	}
+	~TUIWindow();
 
 	void draw_shadow(ConsoleText *console, int x, int y);
 	void draw_box(ConsoleText *console, int x, int y, int w, int h, int fg, int bg, bool shadow=true);

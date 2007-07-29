@@ -33,7 +33,7 @@ using namespace Tiki::Thread;
 
 #include "console.h"
 #include "GraphicsLayer.h"
-
+#include "status.h"
 #include "window.h"
 #include "object.h"
 #include "board.h"
@@ -763,6 +763,17 @@ TUIWindow::TUIWindow(std::string title,int x, int y, int w, int h) {
 	m_repeatTimer=0;
 }
 
+TUIWindow::~TUIWindow() {
+	TUIWidget *t;
+	while(!m_widgets.empty()) {
+		t = m_widgets[m_widgets.size()-1];
+		m_widgets.pop_back();
+		delete t;
+	}
+	delete mt;
+	mt = NULL;
+}
+
 void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
 	//int fg=(console->color(x,y)/16)-8;
 	//if(fg<0) fg=8;
@@ -1146,10 +1157,7 @@ void TUIWindow::doMenu() {
 			widgetAtOffset(m_offset)->focus(true);
 	} while(m_loop);
 
-	delete mt;
-	mt=NULL;
 	activeWindow = NULL;
-	if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
 #if TIKI_PLAT == TIKI_NDS
 	BG0_X0 = 0;
 	BG1_X0 = 0;
@@ -1158,6 +1166,13 @@ void TUIWindow::doMenu() {
 	SUB_BG1_X0 = -48;
 	
 	lcdMainOnBottom();
+	st->color(15,1);
 	st->clear();
+	st->draw();
+	dzzt_logo();
 #endif
+	if(playerEventCollector != NULL && !playerEventCollector->listening()) {
+		playerEventCollector->start();
+		draw_hud_ingame();
+	}
 }

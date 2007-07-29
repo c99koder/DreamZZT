@@ -111,16 +111,16 @@ long unsigned int resolve(char *name) {
   return *( (unsigned long *)h->h_addr_list[0]);
 }
 
-std::string http_recieve_chunked(int s) {
-  int x,z,y,chunksize;
+char *http_recieve_chunked(int s) {
+  int x,z,y,chunksize,total=0;
   char *tmp;
-  std::string output = "";
+  char *output = (char *)malloc(100);
 
   y=0;
   do {
     tmp=(char *)malloc(100);
 	do { //sometimes apache sends us blank lines, so keep looping until we reach another chunk
-		if(net_readline(s,tmp,255)==-1) return ""; //chunk size
+		if(net_readline(s,tmp,255)==-1) return NULL; //chunk size
 	} while(strlen(tmp)<1);
     for(z=0;z<strlen(tmp);z++) { //eliminate whitespace
       if(hex_to_int(tmp[z])==-1) {
@@ -135,25 +135,24 @@ std::string http_recieve_chunked(int s) {
         chunksize+=hex_to_int(tmp[z])*x;
       }
     }
-    //printf("Chunksize: %i bytes (%s)\n",chunksize,tmp);
+    st->printf("Chunksize: %i bytes\n",chunksize,tmp);
+	st->draw();
     free(tmp);
 
-    tmp=(char *)malloc(chunksize+1);
-		z=0;
+	z=0;
     if(chunksize>0) {
-			while(z<chunksize) {
-				x=recv(s,tmp,chunksize,0);
-				output.append(tmp,chunksize);
-				z+=x;
-			}
+		output = (char *)realloc(output, y + chunksize + 1);
+		while(z<chunksize) {
+			z+=recv(s, output + y + z,chunksize,0);
+		}
     }
-    free(tmp);
     y+=chunksize;
   } while(chunksize>0);
+output[y] = '\0';
   return output;
 }
 
-std::string http_get_string(std::string URL) {
+char *http_get(std::string URL, int *length) {
   int s;
   struct sockaddr_in sinRemote;
   char *tmp;
@@ -162,14 +161,14 @@ std::string http_get_string(std::string URL) {
   int x,y=0,z=0;
   int mode=0,len=0;
   char msg[300];
-  std::string output;
+char *output=NULL;
 char *auth;
 
 base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
 
   if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED)
 	{ // simple WFC connect:
-		st->printf("Connecting via WFC data\n");
+		st->printf("\nConnecting via WFC data\n");
 		st->draw();
 		int i;
 		Wifi_AutoConnect(); // request connect
@@ -184,7 +183,7 @@ base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
 			if(i==ASSOCSTATUS_CANNOTCONNECT) {
 				st->printf("Could not connect!\n");
 				st->draw();
-                return "";
+                return NULL;
 				break;
 			}
 		}
@@ -198,24 +197,14 @@ base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
   std::string host = URL.substr(0, URL.find("/"));
   std::string path = URL.substr(URL.find("/"));
 
-st->printf("Host: %s\nPath: %s\n",host.c_str(),path.c_str());
-	st->draw();
-
   s = socket(AF_INET, SOCK_STREAM, 0);
 
   sinRemote.sin_family = AF_INET;
-st->printf("Looking up hostname...\n");
-st->draw();
-  sinRemote.sin_addr.s_addr = resolve((char *)"192.168.11.2"/*host.c_str()*/);
-st->printf("Got an IP!\n");
-st->draw();
+  sinRemote.sin_addr.s_addr = resolve((char *)host.c_str());
   if(sinRemote.sin_addr.s_addr==0) return "";
   sinRemote.sin_port = htons(80);
   
   connect(s, (struct sockaddr*)&sinRemote, sizeof(struct sockaddr_in));
-
-st->printf("Connected to server!\n");
-st->draw();
 
   tmp=(char *)malloc(1024);
   sprintf(tmp,"GET %s HTTP/1.1\r\n\
@@ -224,16 +213,9 @@ User-Agent: %s\r\n\
 Connection: keep-alive\r\n\
 Authorization: Basic %s\r\n\
 \r\n",path.c_str(),host.c_str(),80,USER_AGENT,auth);
-st->printf("Sending: %s\n", tmp);
-st->draw();
   if(net_writeline(s,tmp)<0) return "";
 
-st->printf("Sent our request!\n");
-st->draw();
-
   net_readline(s,tmp,255);
-st->printf("Received: %s\n", tmp);
-	st->draw();
   strtok(tmp," "); //HTTP/1.1
 
   do {
@@ -255,6 +237,7 @@ st->printf("Received: %s\n", tmp);
         }
         if(!strcmp("content-length",name)) {
           len=atoi(value);
+		*length = len;
         }
         if(!strcmp("content-type",name)) {
           //strcpy(content_type,strtok(value,";"));
@@ -263,7 +246,7 @@ st->printf("Received: %s\n", tmp);
 		  shutdown(s,1);
 		  closesocket(s);
 		free(tmp);	
-			return http_get_string(value);
+			return http_get(value,length);
         }
       }
     }
@@ -275,24 +258,49 @@ st->printf("Received: %s\n", tmp);
   if(mode==1) {
     output = http_recieve_chunked(s);
   } else if(len>0) {
-    tmp=(char *)malloc(2048);
-	output = "";
+    output=(char *)malloc(len+1);
     while(y<len) {
 	  do {
-      x=recv(s,tmp,2048,0);
-	  tmp[x]='\0';
+      x=recv(s,output+y,len,0);
+	  output[x]='\0';
 	  } while (x<1);
-      output.append(tmp);
       y+=x;
     }
-    free(tmp);
   }
   shutdown(s,1);
   closesocket(s);
   return output;
 }
 
+std::string http_get_string(std::string URL) {
+	int len;
+	char *data = http_get(URL, &len);
+	if(data != NULL) {
+		st->printf("Received %i bytes\n",len);
+		st->draw();
+		std::string output = data;
+		free(data);
+		st->printf("String length: %i\n",output.length());
+		st->draw();
+		return output;
+	} else {
+		return "";
+	}
+}
+
 bool http_get_file(std::string filename, std::string URL) {
+	File f;
+	int len;
+	char *data = http_get(URL, &len);
+	if(data != NULL) {
+		f.open(filename, "wb");
+		f.write(data,len);
+		f.close();
+		free(data);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 std::string http_post_file(std::string filename, std::string contentType, std::string URL) {
