@@ -770,8 +770,10 @@ TUIWindow::~TUIWindow() {
 		m_widgets.pop_back();
 		delete t;
 	}
-	delete mt;
-	mt = NULL;
+	if(mt != NULL) {
+		delete mt;
+		mt = NULL;
+	}
 }
 
 void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
@@ -1175,4 +1177,6 @@ void TUIWindow::doMenu() {
 		playerEventCollector->start();
 		draw_hud_ingame();
 	}
+	delete mt;
+	mt = NULL;
 }

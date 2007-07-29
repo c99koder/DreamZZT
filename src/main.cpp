@@ -119,7 +119,7 @@ extern std::list<Task*> taskList;
 #endif
 #endif
 
-#define GAMESPEED_ALIVE 100000
+#define GAMESPEED_ALIVE 160000
 #define GAMESPEED_DEAD 10000
 
 #if defined(BETA_VERSION)
@@ -1243,7 +1243,7 @@ Online.\n\
 #elif TIKI_PLAT == TIKI_NDS
 	filename = ".dzztauth";
 #else
-	path = getenv("HOME");
+	char *path = getenv("HOME");
 	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
 #endif
 	f.open(filename.c_str(),"wb");

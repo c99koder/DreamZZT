@@ -470,11 +470,13 @@ void boardTransition(direction d, board_info_node *newbrd) {
 	
 	switch(d) {
 		case IDLE:
-			for(i=0; i<14; i++) {
-				for(j=0; j<int(ct->getCols() * ct->getRows())/15; j++) {
+			for(i=0; i<30; i++) {
+				for(j=0; j<int(ct->getCols() * ct->getRows())/30; j++) {
+					int k=0;
 					do {
 						x=(rand()%ct->getCols());
 						y=(rand()%ct->getRows());
+						if(k++ > 20) break;
 					} while(changed[x][y]);
 					changed[x][y]=true;
 					x+=disp_off_x;
@@ -486,7 +488,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 				if(world.magic == 65534) 
 					draw_szt_frame();
 				render();
-				Time::sleep(8000);
+				Time::sleep(20000);
 			}
 			break;
 		case UP:
@@ -635,6 +637,9 @@ void switch_board(int num) {
 	if(currentbrd->dark && world.torch_cycle<1) {
 		set_msg("Room is dark - you need to light a torch!");
 	}
+	zm->unlock();
+	zm->setTune("xxxx");
+	zm->start();
 }
 
 struct world_header *get_world() {
