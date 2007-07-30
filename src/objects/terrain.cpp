@@ -177,7 +177,7 @@ void Water::update() {
 }
 
 void Terrain::message(ZZTObject *them, std::string message) {
-	if(message == "touch" && them->type()==ZZT_PLAYER) {
+	if((message == "touch" || message == "get") && them->type()==ZZT_PLAYER) {
 		switch(m_type) {
 		case ZZT_FOREST:
 			if(forestmsg==0) {
@@ -187,13 +187,14 @@ void Terrain::message(ZZTObject *them, std::string message) {
 			}
 			if(zm!=NULL) zm->setTune("ta");
 			if(zm!=NULL) zm->start();
-			remove_from_board(currentbrd,this,(world.magic==65534)?true:false);
-			if(world.magic == 65534) {
+			//remove_from_board(m_board,this,(world.magic==65534)?true:false);
+			remove();
+			if(world.magic == 65534 && currentbrd == m_board) {
 				ZZTObject *o = ::create_object(SZT_FLOOR, (int)m_position.x, (int)m_position.y);
 				o->setColor(GREEN, BLACK);
 				put(o,true);
 			}
-			them->move(them->toward(this));			
+			//them->move(them->toward(this));			
 			break;
 		case ZZT_INVISIBLE:
 			if(invismsg==0) {

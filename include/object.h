@@ -135,13 +135,12 @@ protected:
 	bool m_pushed;
 	bool m_highlighted;
 	int m_flash;
-	
+	struct board_info_node *m_board;
 	string m_modelName;
 	unsigned char m_height;
 
 private:
 	bool m_isValid;
-	struct board_info_node *m_board;
 };
 
 #define ZZT_TYPE_COUNT 0x40

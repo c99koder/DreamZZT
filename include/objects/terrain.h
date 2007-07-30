@@ -68,7 +68,7 @@
 //FOREST
 #define ZZT_FOREST_SHAPE 0xb0
 #define ZZT_FOREST_NAME "forest"
-#define ZZT_FOREST_FLAGS F_NONE
+#define ZZT_FOREST_FLAGS F_ITEM
 #define ZZT_FOREST_CLASS Terrain
 
 //WATER
