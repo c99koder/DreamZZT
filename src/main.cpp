@@ -1041,7 +1041,9 @@ std::string("!bugreport;Report a bug\r") +
 				char path[128];
 				GetTempPath(128,path);
 				filename = path + std::string("saved.sav");
-#else 
+#elif TIKI_PLAT == TIKI_NDS
+				filename = "/dzzthttp.sav";
+#else
 				filename = "/tmp/saved.sav";
 #endif
 				save_game(filename.c_str());

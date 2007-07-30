@@ -36,7 +36,6 @@
 		2210BFAA0C28434700F393B1 /* bomb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200BF0A0C569300F4BDF2 /* bomb.cpp */; };
 		2210BFAB0C28434700F393B1 /* items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200C00A0C569300F4BDF2 /* items.cpp */; };
 		2210BFAC0C28434700F393B1 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200C20A0C569300F4BDF2 /* player.cpp */; };
-		2210BFAD0C28434700F393B1 /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
 		2210BFAE0C28434700F393B1 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223229BC0A16C63C0035025E /* sound.cpp */; };
 		2210BFAF0C28434700F393B1 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22907D660A1A947800B9BB6D /* debug.cpp */; };
 		2210BFB00C28434700F393B1 /* conveyer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */; };
@@ -97,6 +96,8 @@
 		22243F810BF3D480000D3055 /* dreamzzt.png in Resources */ = {isa = PBXBuildFile; fileRef = 22243F800BF3D480000D3055 /* dreamzzt.png */; };
 		2224417A0BF65406000D3055 /* bugreport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222441790BF65406000D3055 /* bugreport.cpp */; };
 		223229BE0A16C63C0035025E /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223229BC0A16C63C0035025E /* sound.cpp */; };
+		2237A5B80C5D5EBD00A00085 /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2237A5B60C5D5EBC00A00085 /* http.cpp */; };
+		2237A6B00C5D7B2100A00085 /* http-nds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2237A59B0C5D5B7900A00085 /* http-nds.cpp */; };
 		223A59B40C137375008370C5 /* pluto.c in Sources */ = {isa = PBXBuildFile; fileRef = 223A59B30C137375008370C5 /* pluto.c */; };
 		224200C30A0C569300F4BDF2 /* passage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B80A0C569300F4BDF2 /* passage.cpp */; };
 		224200C40A0C569300F4BDF2 /* terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B90A0C569300F4BDF2 /* terrain.cpp */; };
@@ -131,7 +132,6 @@
 		229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */; };
 		229DC8160B2E2F86004C0FF9 /* task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229DC8150B2E2F86004C0FF9 /* task.cpp */; };
 		22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22ABAB4D0A31145600B9C077 /* centipede.cpp */; };
-		22AD22CC0A13FAD8003E828E /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AD22CB0A13FAD8003E828E /* http.cpp */; };
 		22BF8A750C430B340025DD48 /* version.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BF8A740C430B340025DD48 /* version.h */; };
 		22C84B670C1399F1004F5B6D /* Tiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C84B230C1399F1004F5B6D /* Tiki.framework */; };
 		22C84B7C0C139A02004F5B6D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C84B680C139A02004F5B6D /* Sparkle.framework */; };
@@ -226,6 +226,8 @@
 		2224417D0BF65458000D3055 /* bugreport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bugreport.h; path = include/bugreport.h; sourceTree = "<group>"; };
 		223229BB0A16C63C0035025E /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sound.h; path = include/sound.h; sourceTree = "<group>"; };
 		223229BC0A16C63C0035025E /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sound.cpp; path = src/sound.cpp; sourceTree = "<group>"; };
+		2237A59B0C5D5B7900A00085 /* http-nds.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "http-nds.cpp"; path = "src/http-nds.cpp"; sourceTree = "<group>"; };
+		2237A5B60C5D5EBC00A00085 /* http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = http.cpp; path = src/http.cpp; sourceTree = "<group>"; };
 		223A59B30C137375008370C5 /* pluto.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = pluto.c; path = src/pluto.c; sourceTree = "<group>"; };
 		223A59B50C13738A008370C5 /* pluto.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pluto.h; path = include/pluto.h; sourceTree = "<group>"; };
 		224200B80A0C569300F4BDF2 /* passage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = passage.cpp; path = src/objects/passage.cpp; sourceTree = "<group>"; };
@@ -275,7 +277,6 @@
 		229DC8150B2E2F86004C0FF9 /* task.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = task.cpp; path = src/task.cpp; sourceTree = "<group>"; };
 		229DC8170B2E2F9B004C0FF9 /* task.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = task.h; path = include/task.h; sourceTree = "<group>"; };
 		22ABAB4D0A31145600B9C077 /* centipede.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = centipede.cpp; path = src/objects/centipede.cpp; sourceTree = "<group>"; };
-		22AD22CB0A13FAD8003E828E /* http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = http.cpp; path = src/http.cpp; sourceTree = "<group>"; };
 		22BF8A740C430B340025DD48 /* version.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = version.h; path = include/version.h; sourceTree = "<group>"; };
 		22C84B230C1399F1004F5B6D /* Tiki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tiki.framework; path = ../tiki/osx/build/Deployment/Tiki.framework; sourceTree = SOURCE_ROOT; };
 		22C84B680C139A02004F5B6D /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
@@ -357,6 +358,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2237A5B60C5D5EBC00A00085 /* http.cpp */,
+				2237A59B0C5D5B7900A00085 /* http-nds.cpp */,
 				2210C0BD0C284D0800F393B1 /* console_sdl.cpp */,
 				228ED1B90C1E28C3006D6823 /* AMFModel.cpp */,
 				228ED1BA0C1E28C3006D6823 /* AMFModelInstance.cpp */,
@@ -369,7 +372,6 @@
 				2260B7170B3EABB1003AE79A /* console.cpp */,
 				22907D660A1A947800B9BB6D /* debug.cpp */,
 				22D2E46B0A55EAB100319F32 /* editor.cpp */,
-				22AD22CB0A13FAD8003E828E /* http.cpp */,
 				2242FBDF0A0C11DF00F4BDF2 /* main.cpp */,
 				2242FDE90A0C31F100F4BDF2 /* object.cpp */,
 				223229BC0A16C63C0035025E /* sound.cpp */,
@@ -753,7 +755,6 @@
 				2210BFAA0C28434700F393B1 /* bomb.cpp in Sources */,
 				2210BFAB0C28434700F393B1 /* items.cpp in Sources */,
 				2210BFAC0C28434700F393B1 /* player.cpp in Sources */,
-				2210BFAD0C28434700F393B1 /* http.cpp in Sources */,
 				2210BFAE0C28434700F393B1 /* sound.cpp in Sources */,
 				2210BFAF0C28434700F393B1 /* debug.cpp in Sources */,
 				2210BFB00C28434700F393B1 /* conveyer.cpp in Sources */,
@@ -799,6 +800,7 @@
 				2210BFD90C28434700F393B1 /* lundump.c in Sources */,
 				2210BFDA0C28434700F393B1 /* lvm.c in Sources */,
 				2210BFDB0C28434700F393B1 /* lzio.c in Sources */,
+				2237A5B80C5D5EBD00A00085 /* http.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -822,7 +824,6 @@
 				224200CA0A0C569300F4BDF2 /* bomb.cpp in Sources */,
 				224200CB0A0C569300F4BDF2 /* items.cpp in Sources */,
 				224200CD0A0C569300F4BDF2 /* player.cpp in Sources */,
-				22AD22CC0A13FAD8003E828E /* http.cpp in Sources */,
 				223229BE0A16C63C0035025E /* sound.cpp in Sources */,
 				22907D680A1A947800B9BB6D /* debug.cpp in Sources */,
 				229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */,
@@ -873,6 +874,7 @@
 				228ED1BE0C1E28C3006D6823 /* AMFModelInstance.cpp in Sources */,
 				228ED1BF0C1E28C3006D6823 /* GraphicsLayer.cpp in Sources */,
 				228ED1C00C1E28C3006D6823 /* ModelManager.cpp in Sources */,
+				2237A6B00C5D7B2100A00085 /* http-nds.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

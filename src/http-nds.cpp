@@ -32,8 +32,12 @@ using namespace Tiki::GL;
 #include <math.h>
 #include <stdio.h>
 #include <fstream>
+#if TIKI_PLAT == TIKI_NDS
 #include <nds.h>
 #include <dswifi9.h>
+#else
+#define closesocket close
+#endif
 using namespace std;
 
 #include "console.h"
@@ -45,6 +49,8 @@ using namespace std;
 std::string curl_auth_string = "";
 bool networkEnabled = false;
 extern ConsoleText *st;
+
+void render();
 
 int base64_encode(const void *inp, int insize, char **outptr);
 
@@ -136,7 +142,7 @@ char *http_recieve_chunked(int s) {
       }
     }
     st->printf("Chunksize: %i bytes\n",chunksize,tmp);
-	st->draw();
+	render();
     free(tmp);
 
 	z=0;
@@ -165,11 +171,11 @@ char *output=NULL;
 char *auth;
 
 base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
-
+#if TIKI_PLAT == TIKI_NDS
   if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED)
 	{ // simple WFC connect:
 		st->printf("\nConnecting via WFC data\n");
-		st->draw();
+		render();
 		int i;
 		Wifi_AutoConnect(); // request connect
 		while(1) {
@@ -177,18 +183,18 @@ base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
 			if(i==ASSOCSTATUS_ASSOCIATED) {
 				networkEnabled = true;
 				st->printf("Connected successfully!\n");
-				st->draw();
+				render();
 				break;
 			}
 			if(i==ASSOCSTATUS_CANNOTCONNECT) {
 				st->printf("Could not connect!\n");
-				st->draw();
+				render();
                 return NULL;
 				break;
 			}
 		}
 	} // if connected, you can now use the berkley sockets interface to connect to the internet!
-
+#endif
 
   if(URL.find("http://") == 0) {
 	URL = URL.substr(7);	
@@ -201,7 +207,7 @@ base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
 
   sinRemote.sin_family = AF_INET;
   sinRemote.sin_addr.s_addr = resolve((char *)host.c_str());
-  if(sinRemote.sin_addr.s_addr==0) return "";
+  if(sinRemote.sin_addr.s_addr==0) return NULL;
   sinRemote.sin_port = htons(80);
   
   connect(s, (struct sockaddr*)&sinRemote, sizeof(struct sockaddr_in));
@@ -213,7 +219,7 @@ User-Agent: %s\r\n\
 Connection: keep-alive\r\n\
 Authorization: Basic %s\r\n\
 \r\n",path.c_str(),host.c_str(),80,USER_AGENT,auth);
-  if(net_writeline(s,tmp)<0) return "";
+  if(net_writeline(s,tmp)<0) return NULL;
 
   net_readline(s,tmp,255);
   strtok(tmp," "); //HTTP/1.1
@@ -223,7 +229,7 @@ Authorization: Basic %s\r\n\
     if(net_readline(s,tmp,255)==-1) break;
     if(tmp[0]!='\0') {
       //st->printf("Header: %s (%i)\n",tmp,strlen(tmp));
-	//st->draw();
+	//render();
       strcpy(name,strtolower(strtok(tmp,":")));
       strcpy(value,strtolower(strtok(NULL," ")));
       if(value[0]==' ') {
@@ -277,11 +283,11 @@ std::string http_get_string(std::string URL) {
 	char *data = http_get(URL, &len);
 	if(data != NULL) {
 		st->printf("Received %i bytes\n",len);
-		st->draw();
+		render();
 		std::string output = data;
 		free(data);
 		st->printf("String length: %i\n",output.length());
-		st->draw();
+		render();
 		return output;
 	} else {
 		return "";
@@ -304,7 +310,269 @@ bool http_get_file(std::string filename, std::string URL) {
 }
 
 std::string http_post_file(std::string filename, std::string contentType, std::string URL) {
+	  int s;
+	  struct sockaddr_in sinRemote;
+	  char *tmp;
+	  char name[256];
+	  char value[256];
+	  int x,y=0,z=0;
+	  int mode=0,len=0;
+	  char msg[300];
+	char *output=NULL;
+	char *auth;
+	File f(filename,"rb");
+	st->clear();
+	*st << "HTTP POST FILE: " << filename << endl;
+	render();
+	base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
+#if TIKI_PLAT == TIKI_NDS
+	  if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED)
+		{ // simple WFC connect:
+			st->printf("\nConnecting via WFC data\n");
+			render();
+			int i;
+			Wifi_AutoConnect(); // request connect
+			while(1) {
+				i=Wifi_AssocStatus(); // check status
+				if(i==ASSOCSTATUS_ASSOCIATED) {
+					networkEnabled = true;
+					st->printf("Connected successfully!\n");
+					render();
+					break;
+				}
+				if(i==ASSOCSTATUS_CANNOTCONNECT) {
+					st->printf("Could not connect!\n");
+					render();
+	                return "";
+					break;
+				}
+			}
+		} // if connected, you can now use the berkley sockets interface to connect to the internet!
+#endif
+
+	  if(URL.find("http://") == 0) {
+		URL = URL.substr(7);	
+	  }
+
+	  std::string host = URL.substr(0, URL.find("/"));
+	  std::string path = URL.substr(URL.find("/"));
+	  s = socket(AF_INET, SOCK_STREAM, 0);
+	*st << "Resolving host..." << endl;
+	render();
+	  sinRemote.sin_family = AF_INET;
+	  sinRemote.sin_addr.s_addr = resolve((char *)host.c_str());
+	  if(sinRemote.sin_addr.s_addr==0) return "";
+	  sinRemote.sin_port = htons(80);
+	*st << "Connecting..." << endl;
+	render();
+
+	  connect(s, (struct sockaddr*)&sinRemote, sizeof(struct sockaddr_in));
+
+	std::string multipart_header = "------------------------------537a746a2d15\r\n\
+Content-Disposition: form-data; name=\"File\"; filename=\""+filename.substr(filename.find_last_of("/\\")+1)+"\"\r\n\
+Content-Type: "+contentType+"\r\n\r\n";
+
+	  tmp=(char *)malloc(f.total()+strlen("\r\n------------------------------537a746a2d15--\r\n"+1));
+	  sprintf(tmp,"POST %s HTTP/1.1\r\n\
+Host: %s:%i\r\n\
+User-Agent: %s\r\n\
+Pragma: no-cache\r\n\
+Accept: */*\r\n\
+Authorization: Basic %s\r\n\
+Content-Length: %i\r\n\
+Expect: 100-continue\r\n\
+Content-Type: multipart/form-data; boundary=----------------------------537a746a2d15\
+\r\n\r\n",path.c_str(),host.c_str(),80,USER_AGENT,auth,f.total()+multipart_header.length()+strlen("\r\n------------------------------537a746a2d15--\r\n"));
+*st << "Sending request..." << endl;
+render();
+
+	  if(net_writeline(s,tmp)<0) return "";
+
+	  net_readline(s,tmp,255);
+	*st << "Got: " << tmp << endl;
+	render();
+
+net_writeline(s,(char *)multipart_header.c_str());
+*st << "Sending file data (" << f.total() << " bytes" << endl;
+render();
+for(y=0; y<f.total(); y+=512) {
+	x=f.read(tmp,512);
+	send(s,tmp,x,0);
+	*st << ".";
+	render();
+}
+/*f.read(tmp,f.total());
+strcpy(tmp+f.total(),"\r\n------------------------------537a746a2d15--\r\n");
+send(s,tmp,f.total()+strlen("\r\n------------------------------537a746a2d15--\r\n"),0);
+f.close();*/
+net_writeline(s,"\r\n------------------------------537a746a2d15--\r\n");
+net_readline(s,tmp,255);
+net_readline(s,tmp,255);
+*st << "Received: " << tmp << endl;
+render();
+do {
+	tmp[0]='\0';
+  if(net_readline(s,tmp,255)==-1) break;
+  if(tmp[0]!='\0') {
+    st->printf("Header: %s (%i)\n",tmp,strlen(tmp));
+	render();
+    strcpy(name,strtolower(strtok(tmp,":")));
+    strcpy(value,strtolower(strtok(NULL," ")));
+    if(value[0]==' ') {
+      for(x=0;x<strlen(value)-1;x++) {
+        value[x]=value[x+1];
+      }
+    }
+    if(name!=NULL) {
+      if(!strcmp("transfer-encoding",name) && !strcmp("chunked",value)) {
+        mode=1;
+      }
+      if(!strcmp("content-length",name)) {
+        len=atoi(value);
+      }
+      if(!strcmp("content-type",name)) {
+        //strcpy(content_type,strtok(value,";"));
+      }
+    }
+  }
+} while(tmp[0]!='\0');
+
+z=0; y=0;
+free(tmp);
+
+if(mode==1) {
+  output = http_recieve_chunked(s);
+} else if(len>0) {
+  output=(char *)malloc(len+1);
+  while(y<len) {
+	  do {
+    x=recv(s,output+y,len,0);
+	  output[x]='\0';
+	  } while (x<1);
+    y+=x;
+  }
+}
+shutdown(s,1);
+closesocket(s);
+std::string out = output;
+free(output);
+return out;
 }
 
 std::string http_post_data(std::string data, std::string contentType, std::string URL) {
+	  int s;
+	  struct sockaddr_in sinRemote;
+	  char *tmp;
+	  char name[256];
+	  char value[256];
+	  int x,y=0,z=0;
+	  int mode=0,len=0;
+	  char msg[300];
+	char *output=NULL;
+	char *auth;
+
+	base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
+#if TIKI_PLAT == TIKI_NDS
+	  if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED)
+		{ // simple WFC connect:
+			st->printf("\nConnecting via WFC data\n");
+			render();
+			int i;
+			Wifi_AutoConnect(); // request connect
+			while(1) {
+				i=Wifi_AssocStatus(); // check status
+				if(i==ASSOCSTATUS_ASSOCIATED) {
+					networkEnabled = true;
+					st->printf("Connected successfully!\n");
+					render();
+					break;
+				}
+				if(i==ASSOCSTATUS_CANNOTCONNECT) {
+					st->printf("Could not connect!\n");
+					render();
+	                return NULL;
+					break;
+				}
+			}
+		} // if connected, you can now use the berkley sockets interface to connect to the internet!
+#endif
+
+	  if(URL.find("http://") == 0) {
+		URL = URL.substr(7);	
+	  }
+
+	  std::string host = URL.substr(0, URL.find("/"));
+	  std::string path = URL.substr(URL.find("/"));
+
+	  s = socket(AF_INET, SOCK_STREAM, 0);
+
+	  sinRemote.sin_family = AF_INET;
+	  sinRemote.sin_addr.s_addr = resolve((char *)host.c_str());
+	  if(sinRemote.sin_addr.s_addr==0) return NULL;
+	  sinRemote.sin_port = htons(80);
+
+	  connect(s, (struct sockaddr*)&sinRemote, sizeof(struct sockaddr_in));
+
+	  tmp=(char *)malloc(1024);
+	  sprintf(tmp,"POST %s HTTP/1.1\r\n\
+Host: %s:%i\r\n\
+User-Agent: %s\r\n\
+Connection: keep-alive\r\n\
+Authorization: Basic %s\r\n\
+Content-Type: %s\r\n\
+Content-length: %i\r\n\
+\r\n\
+%s",path.c_str(),host.c_str(),80,USER_AGENT,auth,contentType.c_str(),data.length(),data.c_str());
+	  if(net_writeline(s,tmp)<0) return NULL;
+
+	  net_readline(s,tmp,255);
+	  strtok(tmp," "); //HTTP/1.1
+
+	  do {
+		tmp[0]='\0';
+	    if(net_readline(s,tmp,255)==-1) break;
+	    if(tmp[0]!='\0') {
+	      //st->printf("Header: %s (%i)\n",tmp,strlen(tmp));
+		//render();
+	      strcpy(name,strtolower(strtok(tmp,":")));
+	      strcpy(value,strtolower(strtok(NULL," ")));
+	      if(value[0]==' ') {
+	        for(x=0;x<strlen(value)-1;x++) {
+	          value[x]=value[x+1];
+	        }
+	      }
+	      if(name!=NULL) {
+	        if(!strcmp("transfer-encoding",name) && !strcmp("chunked",value)) {
+	          mode=1;
+	        }
+	        if(!strcmp("content-length",name)) {
+	          len=atoi(value);
+	        }
+	        if(!strcmp("content-type",name)) {
+	          //strcpy(content_type,strtok(value,";"));
+	        }
+	      }
+	    }
+	  } while(tmp[0]!='\0');
+
+	  z=0;
+	  free(tmp);
+
+	  if(mode==1) {
+	    output = http_recieve_chunked(s);
+	  } else if(len>0) {
+	    output=(char *)malloc(len+1);
+	    while(y<len) {
+		  do {
+	      x=recv(s,output+y,len,0);
+		  output[x]='\0';
+		  } while (x<1);
+	      y+=x;
+	    }
+	  }
+	  shutdown(s,1);
+	  closesocket(s);
+	std::string out = output;
+	free(output);
+	  return out;	
 }

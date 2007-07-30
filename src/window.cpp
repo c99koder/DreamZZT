@@ -744,13 +744,6 @@ void TUISlider::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
 }
 
 TUIWindow::TUIWindow(std::string title,int x, int y, int w, int h) {
-#if TIKI_PLAT == TIKI_NDS
-	mt = new ConsoleText(w+2, h+2, false);
-#else
-	mt = new ConsoleText(w+2, h+2, zzt_font);
-#endif
-	mt->setSize((w+2) * 8, (h+2) * 16);
-	mt->translate(Vector(x*8,y*16,0.8) + Vector((w+2)*4 , (h+2)*8, 0));
 	m_x=x;
 	m_y=y;
 	m_w=w;
@@ -1069,7 +1062,12 @@ void TUIWindow::doMenu() {
 	st->setANSI(true);
 	st->clear();
 	*st << (const char *)lowercasekbd;
+	mt = new ConsoleText(m_w+2, m_h+2, false);
+#else
+	mt = new ConsoleText(m_w+2, m_h+2, zzt_font);
 #endif
+	mt->setSize((m_w+2) * 8, (m_h+2) * 16);
+	mt->translate(Vector(m_x*8,m_y*16,0.8) + Vector((m_w+2)*4 , (m_h+2)*8, 0));
 	zoom = 1;
 	
 	//draw_box(mt, 0, 0, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
