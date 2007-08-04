@@ -398,32 +398,33 @@ void ZZTOOP::exec(std::string text) {
 		goagain=1;
 		color=str_to_color(words[1]);
 		if(color!=-1) words.erase(words.begin() + 1);
-				color2=str_to_color(words[2]);
-				if(color2!=-1) words.erase(words.begin() + 2);
-				i=BOARD_X-1; j=BOARD_Y-1;
-				do {
-					res=0;
-					b=get_block_by_type(str_to_obj(words[1]),i,j);
-					if(b!=NULL) {
-						//Debug::printf("Type: %s\nColor: (%i) (%i)\n",b->obj->name().c_str(),b->obj->color(),color);
-						if(color==-1 || b->obj->color()==color || b->obj->color() == (color - 8)) {
-							if(words[1] == words[2]) {
-								b->obj->setColor(color2);
-							} else {
-								if(str_to_obj(words[2])==-1) {
-									set_msg("ERR: undefined item");
-									return;
-								} else {
-									o=::create_object(str_to_obj(words[2]),i,j);
-									o->inherit(b->obj);
-									remove_from_board(currentbrd, b->obj);
-									put(o);
-								}
-							}
+		color2=str_to_color(words[2]);
+		if(color2!=-1) words.erase(words.begin() + 2);
+		i=BOARD_X-1; j=BOARD_Y-1;
+		do {
+			res=0;
+			b=get_block_by_type(str_to_obj(words[1]),i,j);
+			if(b!=NULL) {
+				//Debug::printf("Type: %s\nColor: (%i) (%i)\n",b->obj->name().c_str(),b->obj->color(),color);
+				if(color==-1 || b->obj->color()==color || b->obj->color() == (color - 8)) {
+					if(words[1] == words[2]) {
+						b->obj->setColor(color2);
+					} else {
+						if(str_to_obj(words[2])==-1) {
+							set_msg("ERR: undefined item");
+							return;
+						} else {
+							o=::create_object(str_to_obj(words[2]),i,j);
+							o->inherit(b->obj);
+							remove_from_board(currentbrd, b->obj);
+							if(color2 != -1) o->setColor(color2);
+							put(o);
 						}
 					}
-					i--;
-				} while(b!=NULL);
+				}
+			}
+			i--;
+		} while(b!=NULL);
 	}
 	else if(words[0] == "__dark") {
 				currentbrd->dark=atoi(words[1].c_str());
