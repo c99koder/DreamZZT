@@ -76,12 +76,13 @@ void draw_msg() {
 		
 		strcpy(message,currentbrd->message);
 		for(i=0; i<strlen(message); i++) {
-			if(message[i] == '\r') {
+			if(message[i] == '\r' || (TIKI_PLAT == TIKI_NDS && world.magic != 65534 && i > 28)) {
 				left = (ct->getCols() / 2) - ((i+2)/2);
 				message[i] = '\0';
 				ct->color((currentbrd->msgcount%6)+9,0);
 				ct->locate(left,ct->getRows() - 2);
 				ct->printf(" %s ",message);
+				if(message[i] != '\r') i--;
 				break;
 			}
 		}
@@ -189,7 +190,8 @@ void give_health(int count) {
 }
 
 void draw_torch() {
-	int x;
+	unsigned int t = world.torch_cycle;
+	TUIMeter m(&t, 200, 4);
 	
 	st->putColor(2,10, YELLOW | (BLUE << 8));
 	st->putChar(2,10,0x9d);
@@ -200,14 +202,8 @@ void draw_torch() {
 	st->locate(15,10);
 
 	if(world.torch_cycle>0) {
-		st->color(6,6);
-		for(x=0;x<world.torch_cycle/50;x++) {
-			st->printf("%c",177);
-		}
-		st->color(0,0);		
-		for(x=0;x<4-(world.torch_cycle/50);x++) {
-			st->printf("%c",176);
-		}
+		st->color(6,0);
+		m.draw(st);
 	} else {
 		st->printf("    ");
 	}
@@ -299,6 +295,7 @@ void draw_hud_ingame() {
 	draw_gems();
 	draw_score();
 	draw_keys();
+	st->setANSI(false);
 #if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
 	st->locate(9,15);
 	st->color(0,7);
@@ -362,4 +359,5 @@ void draw_hud_ingame() {
 	st->color(15,1);
 	st->printf(" Shoot");
 #endif
+	st->setANSI(true);
 }

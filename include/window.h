@@ -210,6 +210,20 @@ private:
 	int m_blinkTimer;
 };
 
+class TUIMeter : public TUIWidget {
+public:
+	TUIMeter(unsigned int *value, int max, int width) {
+		m_val = value;
+		m_max = max;
+		m_width = width;
+	}
+	
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+private:
+	unsigned int *m_val;
+	int m_max, m_width;
+};
+
 class TUIHyperLink : public TUIWidget {
 public:
 	TUIHyperLink(std::string label, std::string text) {
@@ -246,15 +260,13 @@ public:
 #if TIKI_PLAT == TIKI_NDS
 	TUIWindow(std::string title,int x=0, int y=0, int w=32, int h=22);
 #else
-	TUIWindow(std::string title,int x=6, int y=3, int w=45, int h=17);
+	TUIWindow(std::string title,int x=6, int y=2, int w=45, int h=17);
 #endif
 	
 	~TUIWindow();
 
-	void draw_shadow(ConsoleText *console, int x, int y);
-	void draw_box(ConsoleText *console, int x, int y, int w, int h, int fg, int bg, bool shadow=true);
 	void buildFromString(std::string s, bool ANSI=false);
-	void doMenu();
+	void doMenu(bool canClose=true);
 	void addWidget(TUIWidget *w) {
 		m_widgets.push_back(w);
 	}
@@ -268,7 +280,7 @@ public:
 		return height;
 	}
 	int widgetY(TUIWidget *widget);
-	void processHidEvent(const Hid::Event &evt);
+	void processHidEvent(const Hid::Event &evt, bool canClose);
 	void scroll(int delta) { m_offset += delta; }
 	std::string getLabel() { return m_label; }
 	
@@ -280,5 +292,8 @@ private:
 	bool m_loop;
 	bool m_dirty;
 };
+
+void draw_shadow(ConsoleText *console, int x, int y);
+void draw_box(ConsoleText *console, int x, int y, int w, int h, int fg, int bg, bool shadow=true);
 
 #endif

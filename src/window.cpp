@@ -743,6 +743,18 @@ void TUISlider::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
 	}
 }
 
+void TUIMeter::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
+	int x;
+	int val = (*m_val > m_max) ? m_max : (*m_val);
+	
+	for(x=0;x<val / (m_max / m_width);x++) {
+		ct->printf("%c",177);
+	}
+	for(x=0;x<m_width-(val / (m_max / m_width));x++) {
+		ct->printf(" ");
+	}
+}
+
 TUIWindow::TUIWindow(std::string title,int x, int y, int w, int h) {
 	m_x=x;
 	m_y=y;
@@ -769,12 +781,6 @@ TUIWindow::~TUIWindow() {
 	}
 }
 
-void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
-	//int fg=(console->color(x,y)/16)-8;
-	//if(fg<0) fg=8;
-	console->putColor(x,y, BLACK|HIGH_INTENSITY);
-}
-
 #define CHECK_TOUCHKEY(X,Y,W,H,BUTTON) \
 	if(evt.x >= X && evt.x < X+W && evt.y >= Y && evt.y < Y+H) { \
 		evtPress.key = BUTTON; \
@@ -783,7 +789,7 @@ void TUIWindow::draw_shadow(ConsoleText *console, int x, int y) {
 		shift = false; \
 	}
 
-void TUIWindow::processHidEvent(const Hid::Event &evt) {
+void TUIWindow::processHidEvent(const Hid::Event &evt, bool canClose) {
     Event evtPress(Event::EvtKeypress);
 
 	if(evt.type == Event::EvtQuit) {
@@ -890,8 +896,10 @@ void TUIWindow::processHidEvent(const Hid::Event &evt) {
 		} else {
 			switch(evt.key) {
 				case Event::KeyEsc:
-					m_loop = false;
-					m_label = "";
+					if(canClose) {
+						m_loop = false;
+						m_label = "";
+					}
 					break;
 				case Event::KeyUp:
 				case Event::KeyDown:
@@ -950,7 +958,11 @@ void TUIWindow::buildFromString(std::string s, bool ANSI) {
 	} while (i < (int)s.length());
 }
 
-void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,int bg, bool shadow) {
+void draw_shadow(ConsoleText *console, int x, int y) {
+	console->putColor(x,y, BLACK|HIGH_INTENSITY);
+}
+
+void draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,int bg, bool shadow) {
 	int i,j;
 	//draw a box using IBM extended ASCII
 	console->putColor(x,y,fg | (bg << 8));
@@ -974,6 +986,8 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 #endif
 	
 	for(i=0;i<h;i++) {
+		if(shadow) draw_shadow(console,x+w+2,y+i+1);
+		if(shadow) draw_shadow(console,x+w+3,y+i+1);
 		console->putColor(x,y+i+1,fg | (bg << 8));
 		console->putChar(x,y+i+1,179);
 #ifndef DZZT_LITE
@@ -993,8 +1007,6 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 #ifndef DZZT_LITE
 		gl->clear(x+j+1,y+i+1);
 #endif		
-		//if(shadow) draw_shadow(console,x+w+2,y+i+1);
-		//if(shadow) draw_shadow(console,x+w+3,y+i+1);
 		console->color(fg,bg);
 	}
 	
@@ -1008,11 +1020,13 @@ void TUIWindow::draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,i
 	}
 
 	console->printf("%c",217);
-	//draw_shadow(console,x+w+2,y+h+1);
-	//draw_shadow(console,x+w+3,y+h+1);
-	
-	//for(i=0;i<w+2;i++)
-	//	if (shadow) draw_shadow(console,x+2+i,y+h+2);
+	if(shadow) {
+		draw_shadow(console,x+w+2,y+h+1);
+		draw_shadow(console,x+w+3,y+h+1);
+		
+		for(i=0;i<w+2;i++)
+			draw_shadow(console,x+2+i,y+h+2);
+	}
 }
 
 #if TIKI_PLAT == TIKI_NDS
@@ -1038,7 +1052,7 @@ int TUIWindow::widgetY(TUIWidget *widget) {
 	return i;
 }
 
-void TUIWindow::doMenu() {
+void TUIWindow::doMenu(bool canClose) {
 	EventCollector ec;
 	Event evt;
 	std::vector<TUIWidget *>::iterator widget_iter;
@@ -1066,8 +1080,13 @@ void TUIWindow::doMenu() {
 #else
 	mt = new ConsoleText(m_w+2, m_h+2, zzt_font);
 #endif
+#ifdef DZZT_LITE
 	mt->setSize((m_w+2) * 8, (m_h+2) * 16);
 	mt->translate(Vector(m_x*8,m_y*16,0.8) + Vector((m_w+2)*4 , (m_h+2)*8, 0));
+#else
+	mt->setSize((m_w+2) * 8, (m_h+2) * 20);
+	mt->translate(Vector(m_x*8,m_y*20,0.8) + Vector((m_w+2)*4 , (m_h+2)*10, 0));
+#endif
 	zoom = 1;
 	
 	//draw_box(mt, 0, 0, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
@@ -1110,7 +1129,8 @@ void TUIWindow::doMenu() {
 #if TIKI_PLAT == TIKI_NDS
 				mt->locate(0,3+i);
 #endif
-					*mt << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? "A " : "Space ") << "\x1b[36mto select.  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? "B" : "ESC ") << "\x1b[36m to close.    ";
+					*mt << " \x1b[1;37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? "A " : "Space ") << "\x1b[36mto select.";
+					if(canClose) *mt << "  Press \x1b[37m" << ((TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS) ? "B" : "ESC ") << "\x1b[36m to close.    ";
 				}
 				if(m_h/2-2 - m_offset - i == 1) {
 					mt->color(YELLOW|HIGH_INTENSITY,BLUE);
@@ -1145,7 +1165,7 @@ void TUIWindow::doMenu() {
 		}
 		render();
 		while (ec.getEvent(evt)) {
-			processHidEvent(evt);
+			processHidEvent(evt,canClose);
 		}
 		if(m_delta != 0 && Time::gettime() - m_repeatTimer > 150000) {
 			widgetAtOffset(m_offset)->focus(false);
@@ -1177,4 +1197,5 @@ void TUIWindow::doMenu() {
 	}
 	delete mt;
 	mt = NULL;
+	render();
 }
