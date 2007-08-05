@@ -455,19 +455,19 @@
 		2242FE330A0C349300F4BDF2 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
-				22F3FABB0C11062700B3F65F /* lua.cpp */,
 				224200BF0A0C569300F4BDF2 /* bomb.cpp */,
 				224200BA0A0C569300F4BDF2 /* bullet.cpp */,
+				22ABAB4D0A31145600B9C077 /* centipede.cpp */,
 				229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */,
 				224200BC0A0C569300F4BDF2 /* dup.cpp */,
 				224200BB0A0C569300F4BDF2 /* enemy.cpp */,
 				224200C00A0C569300F4BDF2 /* items.cpp */,
+				22F3FABB0C11062700B3F65F /* lua.cpp */,
 				224200B80A0C569300F4BDF2 /* passage.cpp */,
 				224200C20A0C569300F4BDF2 /* player.cpp */,
 				224200BE0A0C569300F4BDF2 /* pusher.cpp */,
 				224200B90A0C569300F4BDF2 /* terrain.cpp */,
 				224200BD0A0C569300F4BDF2 /* zztoop.cpp */,
-				22ABAB4D0A31145600B9C077 /* centipede.cpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -924,9 +924,10 @@
 					NET,
 					MACOSX,
 					"LUA_NUM_TYPE=float",
-					DZZT_LITE,
+					USE_SDL,
+					USE_CURL,
 				);
-				INFOPLIST_FILE = "/Users/sam/Projects/DreamZZT/Info copy.plist";
+				INFOPLIST_FILE = /Users/sam/Projects/DreamZZT/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-lcurl",
@@ -966,9 +967,10 @@
 					NET,
 					MACOSX,
 					"LUA_NUM_TYPE=float",
-					DZZT_LITE,
+					USE_SDL,
+					USE_CURL,
 				);
-				INFOPLIST_FILE = "/Users/sam/Projects/DreamZZT/Info copy.plist";
+				INFOPLIST_FILE = /Users/sam/Projects/DreamZZT/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-lcurl",
@@ -981,89 +983,6 @@
 				ZERO_LINK = NO;
 			};
 			name = Deployment;
-		};
-		2210BFEC0C28434700F393B1 /* Profile */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_4)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../Lua-5.0.2/build/Deployment\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../tiki/osx/build/Deployment\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/..\"";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = DreamZZT_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = NET;
-				INFOPLIST_FILE = "/Users/sam/Projects/DreamZZT/Info copy.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-lcurl",
-					"-lssl",
-					"-lcrypto",
-					"-lz",
-				);
-				PRODUCT_NAME = DreamZZT;
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
-			};
-			name = Profile;
-		};
-		2255DF790B52C285006EA3FE /* Profile */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../Lua-5.0.2/build/Deployment\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../tiki/osx/build/Deployment\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)\"";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = DreamZZT_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = NET;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-lcurl",
-					"-lssl",
-					"-lcrypto",
-					"-lz",
-				);
-				PRODUCT_NAME = DreamZZT;
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
-			};
-			name = Profile;
-		};
-		2255DF7A0B52C285006EA3FE /* Profile */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = MACOSX;
-				HEADER_SEARCH_PATHS = include;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-			};
-			name = Profile;
 		};
 		64FBB928092EA33F00427AD0 /* Development */ = {
 			isa = XCBuildConfiguration;
@@ -1087,6 +1006,8 @@
 					NET,
 					MACOSX,
 					"LUA_NUM_TYPE=float",
+					USE_OPENGL,
+					USE_CURL,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -1126,6 +1047,8 @@
 					NET,
 					MACOSX,
 					"LUA_NUM_TYPE=float",
+					USE_OPENGL,
+					USE_CURL,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -1172,7 +1095,6 @@
 			buildConfigurations = (
 				2210BFEA0C28434700F393B1 /* Development */,
 				2210BFEB0C28434700F393B1 /* Deployment */,
-				2210BFEC0C28434700F393B1 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Deployment;
@@ -1182,7 +1104,6 @@
 			buildConfigurations = (
 				64FBB928092EA33F00427AD0 /* Development */,
 				64FBB929092EA33F00427AD0 /* Deployment */,
-				2255DF790B52C285006EA3FE /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Deployment;
@@ -1192,7 +1113,6 @@
 			buildConfigurations = (
 				64FBB92C092EA33F00427AD0 /* Development */,
 				64FBB92D092EA33F00427AD0 /* Deployment */,
-				2255DF7A0B52C285006EA3FE /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Deployment;

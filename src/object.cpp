@@ -37,8 +37,10 @@ using namespace std;
 #include "sound.h"
 #include "task.h"
 
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 #include "GraphicsLayer.h"
+
+extern GraphicsLayer *gl;
 #endif
 
 extern int zztascii[];
@@ -47,9 +49,6 @@ extern ZZTMusicStream *zm;
 extern struct world_header world;
 extern ConsoleText *ct;
 extern ConsoleText *st;
-#ifndef DZZT_LITE
-extern GraphicsLayer *gl;
-#endif
 extern struct board_info_node *currentbrd;
 
 int dir_to_delta[5] = { 0,-1,1,-1,1 };
@@ -489,27 +488,27 @@ void ZZTObject::draw() {
 		int color = (HIGH_INTENSITY | BLACK);
 		ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
 		ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, 177);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		gl->clear((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y);
 #endif
 	} else if(m_board->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
 		int color = (HIGH_INTENSITY | BLACK);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
 #endif
 			ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
 			ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, m_shape);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		}
 #endif
 	} else if(m_board->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
 		int color = m_fg%8;
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
 #endif
 			ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
 			ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, m_shape);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		}
 #endif
 	} else {
@@ -517,12 +516,12 @@ void ZZTObject::draw() {
 			int color = ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8);
 			st->putColor((int)m_position.x - BOARD_X, (int)m_position.y, color);
 			if(world.editing==1 && m_type == ZZT_INVISIBLE) {
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted && (m_flash < 30)))
 #endif
 					st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, 0xB0);
 			} else {
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted && (m_flash < 30)))
 #endif
 					st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, m_shape);
@@ -533,7 +532,7 @@ void ZZTObject::draw() {
 			if(world.editing==1 && m_type == ZZT_INVISIBLE) {
 				ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, 0xB0);
 			} else {
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 				if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30)))
 #endif
 					ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, m_shape);

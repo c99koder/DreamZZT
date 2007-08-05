@@ -32,7 +32,7 @@ std::string os_select_file(std::string title, std::string filter) {
 	} else {
 		output = "";
 	}
-	
+	[panel release];
 	return output;
 }
 
@@ -47,6 +47,6 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 	} else {
 		output = "";
 	}
-	
+	[panel release];
 	return output;
 }

@@ -32,12 +32,17 @@ using namespace Tiki::Hid;
 using namespace Tiki::Thread;
 
 #include "console.h"
-#include "GraphicsLayer.h"
 #include "status.h"
 #include "window.h"
 #include "object.h"
 #include "board.h"
 #include "word.h"
+
+#ifdef USE_3DMODEL
+#include "GraphicsLayer.h"
+
+extern GraphicsLayer *gl;
+#endif
 
 extern ConsoleText *st;
 const unsigned char lowercasekbd[946] ={
@@ -291,15 +296,10 @@ extern int switchbrd;
 extern struct board_info_node *board_list;
 extern float zoom;
 ConsoleText *mt = NULL;
-#if TIKI_PLAT != TIKI_NDS
-#ifdef DZZT_LITE
+#if defined(USE_SDL)
 extern SDL_Surface *zzt_font;
-#else
+#elif defined(USE_OPENGL)
 extern Texture *zzt_font;
-#endif
-#endif
-#ifndef DZZT_LITE
-extern GraphicsLayer *gl;
 #endif
 
 TUIWindow *activeWindow;
@@ -967,21 +967,21 @@ void draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,int bg, bool
 	//draw a box using IBM extended ASCII
 	console->putColor(x,y,fg | (bg << 8));
 	console->putChar(x,y,218);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 	gl->clear(x,y);
 #endif
 	
 	for(i=0;i<w;i++) {
 		console->putColor(x+i+1,y,fg | (bg << 8));
 		console->putChar(x+i+1,y,196);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		gl->clear(x+i+1,y);
 #endif
 	}
 	
 	console->putColor(x+w+1,y,fg | (bg << 8));
 	console->putChar(x+w+1,y,191);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 	gl->clear(x+w+1,y);
 #endif
 	
@@ -990,21 +990,21 @@ void draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,int bg, bool
 		if(shadow) draw_shadow(console,x+w+3,y+i+1);
 		console->putColor(x,y+i+1,fg | (bg << 8));
 		console->putChar(x,y+i+1,179);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		gl->clear(x,y+i+1);
 #endif
 		
 		for(j=0;j<w;j++) {
 			console->putColor(x+j+1,y+i+1,fg | (bg << 8));
 			console->putChar(x+j+1,y+i+1,' ');
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 			gl->clear(x+j+1, y+i+1);
 #endif
 		}
 		
 		console->putColor(x+j+1,y+i+1,fg | (bg << 8));
 		console->putChar(x+j+1,y+i+1,179);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		gl->clear(x+j+1,y+i+1);
 #endif		
 		console->color(fg,bg);
@@ -1014,7 +1014,7 @@ void draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,int bg, bool
 	console->printf("%c",192);
 	for(i=0;i<w;i++) {
 		console->printf("%c",196);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		gl->clear(x+i,y+h+1);
 #endif
 	}
@@ -1080,7 +1080,7 @@ void TUIWindow::doMenu(bool canClose) {
 #else
 	mt = new ConsoleText(m_w+2, m_h+2, zzt_font);
 #endif
-#ifdef DZZT_LITE
+#if defined(USE_SDL)
 	mt->setSize((m_w+2) * 8, (m_h+2) * 16);
 	mt->translate(Vector(m_x*8,m_y*16,0.8) + Vector((m_w+2)*4 , (m_h+2)*8, 0));
 #else
@@ -1088,8 +1088,6 @@ void TUIWindow::doMenu(bool canClose) {
 	mt->translate(Vector(m_x*8,m_y*20,0.8) + Vector((m_w+2)*4 , (m_h+2)*10, 0));
 #endif
 	zoom = 1;
-	
-	//draw_box(mt, 0, 0, m_w, m_h, WHITE|HIGH_INTENSITY, BLUE);
 	
 	do {
 		i=0;

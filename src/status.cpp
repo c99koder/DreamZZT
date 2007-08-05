@@ -34,14 +34,13 @@ using namespace Tiki::Hid;
 #include "console.h"
 #include "board.h"
 #include "object.h"
+#ifdef USE_3DMODEL
 #include "GraphicsLayer.h"
 
-ConsoleText *st;
-extern ConsoleText *ct;
-#ifndef DZZT_LITE
 extern GraphicsLayer *gl;
 #endif
-
+ConsoleText *st;
+extern ConsoleText *ct;
 extern struct board_info_node *currentbrd;
 extern unsigned char zztascii[55];
 extern struct world_header world;
@@ -100,7 +99,7 @@ void draw_msg() {
 		ct->color((currentbrd->msgcount%6)+9,0);
 		ct->locate(left,ct->getRows() - 1);
 		ct->printf(" %s ",message);
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 		for(int x=left; x<=left+length; x++) {
 			gl->clear(x,BOARD_Y-1);
 		}

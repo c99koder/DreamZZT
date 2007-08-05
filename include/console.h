@@ -14,7 +14,7 @@
 #include "Tiki/texture.h"
 #include "Tiki/color.h"
 
-#if defined(DZZT_LITE) && TIKI_PLAT != TIKI_NDS
+#ifdef USE_SDL
 #if TIKI_PLAT == TIKI_OSX
 #include <SDL/SDL.h>
 #else
@@ -51,13 +51,11 @@ namespace Tiki {
 		/** ConsoleText -- ConsoleText displays an array of fixed width characters. */
 		class ConsoleText : public Drawable {
 public:
-#ifdef DZZT_LITE
 #if TIKI_PLAT == TIKI_NDS
 			ConsoleText(int cols, int rows, bool sub);
-#else
+#elif defined(USE_SDL)
 			ConsoleText(int cols, int rows, SDL_Surface * font);
-#endif
-#else
+#elif defined(USE_OPENGL)
 			ConsoleText(int cols, int rows, Texture * texture);
 #endif
 			virtual ~ConsoleText();
@@ -163,13 +161,11 @@ public:
 				
 				return *this;
 			}
-#ifdef DZZT_LITE
 #if TIKI_PLAT == TIKI_NDS
 			virtual void draw();
-#else
+#elif defined(USE_SDL)
 			virtual void draw(SDL_Surface *screen);
-#endif
-#else
+#elif defined(USE_OPENGL)
 			virtual void draw(ObjType t);
 			void renderCharacter(float x, float y, float w, float h, unsigned char c, int color);
 			void renderBackground(float x, float y, float w, float h, int color);
@@ -177,13 +173,11 @@ public:
 			Tiki::Math::Vector getSize() const;
 			Color getConsoleColor(const int colorNumber) const;
 protected:
-#ifdef DZZT_LITE
 #if TIKI_PLAT == TIKI_NDS
 			bool m_sub;
-#else
+#elif defined(USE_SDL)
 			SDL_Surface *m_font;
-#endif
-#else
+#elif defined(USE_OPENGL)
 			RefPtr<Texture>		m_texture;
 #endif
 			int m_rows, m_cols;

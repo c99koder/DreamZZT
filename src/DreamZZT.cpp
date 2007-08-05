@@ -325,7 +325,7 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 	printf("%i blocks required (%i blocks free)\n",blocks,rv.size);
 
 	if(blocks < rv.size) {
-		strcpy(name,(const char *)world.title.string);
+		strcpy(name,(const char *)world.title.c_str());
 		name[6] = '\0';
 		strcat(name,strslot);
 		strcat(name,".sav");
@@ -335,7 +335,7 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 			fs_close(fd);
 			slot++;
 			sprintf(strslot,"%i",slot);
-			strcpy(name,(const char *)world.title.string);
+			strcpy(name,(const char *)world.title.c_str());
 			name[6] = '\0';
 			strcat(name,strslot);
 			strcat(name,".sav");
@@ -361,7 +361,7 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 				fs_seek(fd,128 + (pkg.icon_cnt * 512), SEEK_SET);
 				fs_read(fd,&hdr,sizeof(dzzt_vmu_hdr));
 				fs_close(fd);
-				if(std::string(pkg.app_id) == "DZZT3" && std::string(hdr.world) == std::string((const char *)world.title.string)) {
+				if(std::string(pkg.app_id) == "DZZT3" && std::string(hdr.world) == std::string((const char *)world.title.c_str())) {
 					time = localtime(&hdr.time);
 					sprintf(name,"%s: %s",hdr.world,hdr.board);
 					name[38] = '\0';

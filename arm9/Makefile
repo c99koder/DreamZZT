@@ -26,7 +26,7 @@ clean:
 	rm -f $(OBJS) dreamzzt.arm9.elf
 
 include $(TIKI_DIR)/$(TIKI_PLAT)/Makefile.rules
-CXXFLAGS+=-I../include -I. -I../lua -I../src/libtolua++ -DDZZT_LITE -DNET -O2
+CXXFLAGS+=-I../include -I. -I../lua -I../src/libtolua++ -DNET -O2
 
 #---------------------------------------------------------------------------------
 %.bin.o :       %.bin

@@ -58,25 +58,20 @@ struct board_info_node *board_list=NULL;
 struct board_info_node *currentbrd=NULL;
 extern Player *player;
 extern EventCollector *playerEventCollector;
-#if TIKI_PLAT != TIKI_NDS
-#ifdef DZZT_LITE
+#if defined(USE_SDL)
 extern SDL_Surface *zzt_font;
-#else
+#elif defined(USE_OPENGL)
 extern Texture *zzt_font;
-#endif
 #endif
 
 #define SCREEN_X 640
-#ifdef DZZT_LITE
+#if defined(USE_SDL)
 #define SCREEN_Y 400
-#else
-#if TIKI_PLAT == TIKI_DC
+#elif TIKI_PLAT == TIKI_DC
 #define SCREEN_Y 424
 #else
 #define SCREEN_Y 480
 #endif
-#endif
-
 
 struct board_info_node *get_current_board() { return currentbrd; }
 int world_sec=10;
@@ -844,8 +839,8 @@ void decompress(board_info_node *board, bool silent) {
 }	
 	
 void connect_lines(board_info_node *current) {
-	for(int x=0;x<BOARD_X;x++) {
-		for(int y=0;y<BOARD_Y;y++) {
+	for(unsigned int x=0;x<BOARD_X;x++) {
+		for(unsigned int y=0;y<BOARD_Y;y++) {
 			if(current->board[x][y].obj->type()==ZZT_LINE) {
 				if(x>0&&current->board[x-1][y].obj->type()==ZZT_LINE && //left is a line
 					 x<BOARD_X-1 && current->board[x+1][y].obj->type()==ZZT_LINE) { //right is a line
@@ -899,7 +894,7 @@ void connect_lines(board_info_node *current) {
 }
 
 int load_szt(const char *filename, int titleonly) {
-	unsigned short int c,x,y,z,sum=0,q;
+	unsigned short int c,x,y,z,q;
 	char pad[128];
 	unsigned char len;
 	rle_block rle;
@@ -1065,7 +1060,7 @@ int load_szt(const char *filename, int titleonly) {
 }
 
 int load_zzt(const char *filename, int titleonly) {
-	unsigned short int c,x,y,z,sum=0,q;
+	unsigned short int c,x,y,z,q;
 	char pad[128];
 	unsigned char len;
 	rle_block rle;
@@ -1207,6 +1202,7 @@ int load_zzt(const char *filename, int titleonly) {
 				fd.read(prog,param.proglen);
 				prog[param.proglen]='\0';
 				param.prog = prog;
+				free(prog);
 			}
 			current->params.push_back(param);
 		}
@@ -1354,10 +1350,8 @@ void save_game(const char *filename) {
 
 void update_brd() {
 	ZZTObject *o=NULL;
-	ZZTObject *p=NULL;
-	ZZTObject *t=NULL;
 	struct board_info_node *current=currentbrd;
-	int x,y,i=0,cnt=0;
+	int cnt=0;
 	static unsigned int cycle = 0;
 	std::list<ZZTObject *>::iterator obj_iter;
 

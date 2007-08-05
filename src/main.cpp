@@ -59,7 +59,11 @@ using namespace Tiki::Thread;
 #include "word.h"
 #include "bugreport.h"
 #include "version.h"
+#ifdef USE_3DMODEL
 #include "GraphicsLayer.h"
+
+GraphicsLayer *gl;
+#endif
 
 #if TIKI_PLAT == TIKI_DC
 #include "vmu.h"
@@ -84,9 +88,6 @@ extern struct board_info_node *currentbrd;
 bool gameFrozen;
 extern int debug_visible;
 ConsoleText *ct;
-#ifndef DZZT_LITE
-GraphicsLayer *gl;
-#endif
 
 extern ConsoleText *dt;
 extern ConsoleText *st;
@@ -98,31 +99,27 @@ extern EventCollector *playerEventCollector;
 extern std::string curl_auth_string;
 ZZTMusicStream *zm = NULL;
 Tiki::Thread::Thread *render_thread;
-#if TIKI_PLAT != TIKI_NDS
-#ifdef DZZT_LITE
+#if defined(USE_SDL)
 SDL_Surface *screen;
 SDL_Surface *zzt_font;
-#else
+#elif defined(USE_OPENGL)
 Texture *zzt_font;
-#endif
 #endif
 extern std::list<Task*> taskList;
 
 #define SCREEN_X 640
-#ifdef DZZT_LITE
+#if defined(USE_SDL)
 #define SCREEN_Y 400
-#else
-#if TIKI_PLAT == TIKI_DC
+#elif TIKI_PLAT == TIKI_DC
 #define SCREEN_Y 424
 #else
 #define SCREEN_Y 480
-#endif
 #endif
 
 #define GAMESPEED_ALIVE 160000
 #define GAMESPEED_DEAD 10000
 
-#if defined(BETA_VERSION)
+#if defined(BETA_VERSION) && 0
 #define DZZTNET_HOST std::string("http://internal.forums.c99.org")
 #define DZZTNET_HOME std::string("/extensions/DreamZZTOnline/dzztnet.php")
 #else
@@ -252,7 +249,9 @@ bool submit_bug(std::string email, std::string summary, std::string description)
 #elif TIKI_PLAT == TIKI_SDL
 	std::string plat = "Linux";
 #elif TIKI_PLAT == TIKI_DC
-	std::string plat = "Dreamcast"; //How did you get here, anyway?
+	std::string plat = "Dreamcast";
+#elif TIKI_PLAT == TIKI_NDS
+	std::string plat = "Nintendo DS";
 #else
 	std::string plat = "Other";
 #endif	
@@ -277,6 +276,8 @@ bool submit_bug(std::string email, std::string summary, std::string description)
 			char path[128];
 			GetTempPath(128,path);
 			filename = path + std::string("bugreport.sav");
+#elif TIKI_PLAT == TIKI_NDS
+			filename = "/bugreport.sav";
 #else 
 			filename = "/tmp/bugreport.sav";
 #endif
@@ -310,7 +311,7 @@ void menu_background() {
 //How often to display average frame rate (in seconds)
 #define FPS_SAMPLE_RATE 10
 
-#if defined(DZZT_LITE) && TIKI_PLAT != TIKI_NDS
+#if defined(USE_SDL)
 /* Borrowed from the Tiki SDL port */
 
 class KbDevice : public Tiki::Hid::Device {
@@ -409,8 +410,7 @@ void render() {
 #endif
 	frameTime = Time::gettime();
 	
-#ifdef DZZT_LITE
-#if TIKI_PLAT != TIKI_NDS
+#ifdef USE_SDL
 // Poll for events, and handle the ones we care about.
     SDL_Event event;
 	int mod = 0;
@@ -470,33 +470,18 @@ void render() {
 			break;
 		}
 	}
-#endif
-#if TIKI_PLAT == TIKI_NDS
-	st->draw();
-	if(mt!=NULL) mt->draw();
-	else ct->draw();
-	swiWaitForVBlank();
-#else
 	ct->draw(screen);
 	st->draw(screen);
 	if(mt!=NULL) mt->draw(screen);
 	if(debug_visible) dt->draw(screen);
 	SDL_UpdateRect(screen, 0, 0, SCREEN_X, SCREEN_Y);
-#endif
-#else	
+#elif TIKI_PLAT == TIKI_NDS
+	st->draw();
+	if(mt!=NULL) mt->draw();
+	else ct->draw();
+	swiWaitForVBlank();
+#elif defined(USE_OPENGL)
 	Frame::begin();
-#if 0
-	if(player!=NULL) {
-		zzt_font->select();
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-		glViewport(x,y,w,h);
-		ct->drawAll(Drawable::Opaque);
-		ct->drawAll(Drawable::Trans);
-	}		
-	zzt_font->select();
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glViewport(0,192,256/*+74*/,192);
-#endif
 	ct->drawAll(Drawable::Opaque);
 	if(debug_visible) dt->drawAll(Drawable::Opaque);
 	st->drawAll(Drawable::Opaque);
@@ -546,8 +531,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	Tiki::init(argc, argv);
 	Tiki::setName("DreamZZT", NULL);
 
-#ifdef DZZT_LITE	
-#if TIKI_PLAT != TIKI_NDS
+#ifdef USE_SDL
 	/* initialize SDL */
 	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -558,11 +542,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 	SDL_WM_SetCaption("DreamZZT Lite", NULL);
 	screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, 32, SDL_HWSURFACE);
 #endif
-#endif
 	//Hid::callbackReg(tkCallback, NULL);
 	
-#if defined(NET)
-#if TIKI_PLAT != TIKI_NDS
+#ifdef NET
+#ifdef USE_CURL
 	curl_global_init(CURL_GLOBAL_ALL);
 #endif
 	char authtmp[256];
@@ -602,13 +585,11 @@ extern "C" int tiki_main(int argc, char **argv) {
 	if(zm!=NULL) zm->setVolume(0.4f);
 
 	//initialize the screen
-#ifdef DZZT_LITE
-#if TIKI_PLAT != TIKI_NDS
+#if defined(USE_SDL)
 	SDL_Surface *temp = SDL_LoadBMP("zzt-ascii.bmp");
 	zzt_font = SDL_ConvertSurface(temp, screen->format, SDL_SWSURFACE);
 	SDL_FreeSurface(temp);
-#endif
-#else	
+#elif defined(USE_OPENGL)
 	zzt_font = new Texture("zzt-ascii.png", true);
 #endif
 #if TIKI_PLAT == TIKI_NDS
@@ -623,7 +604,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	ct->setSize(60 * 8, SCREEN_Y);
 	ct->translate(Vector(60 * 4, SCREEN_Y / 2,0));
 
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 	gl = new GraphicsLayer();
 	ct->subAdd(gl);
 #endif
@@ -665,7 +646,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 
 		t = new TUIWindow("Main Menu");
 		t->buildFromString(MAIN_MENU);
-		t->doMenu();
+		t->doMenu(TIKI_PLAT!=TIKI_NDS && TIKI_PLAT!=TIKI_DC);
 		
 		if(t->getLabel() == "quit" || t->getLabel() =="\0") {
 			break;
@@ -760,16 +741,14 @@ void play_zzt(const char *filename, bool tempFile) {
 	}
 	
 	if(tempFile) {
-		#if TIKI_PLAT == TIKI_WIN32
+#if TIKI_PLAT == TIKI_WIN32
 			 _unlink(filename);
-		#else
-#if TIKI_PLAT != TIKI_NDS
+#elif TIKI_PLAT != TIKI_NDS
 			 unlink(filename);
 #endif
-		#endif
 	}
 	
-#ifdef NET0
+#ifdef NET
 	if(world.title != "") {
 		std::list<TracBug> bugs = search_tickets("status!=closed&amp;game~=" + world.title);
 		if(bugs.size() > 0) {
@@ -848,9 +827,7 @@ complete this game.\r\
 				sm.update();				
 				gamespeed = (uint64)(GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f));
 				vm.update();
-#if TIKI_PLAT != TIKI_NDS
 				if(zm!=NULL) zm->setVolume((float)volmod / 16.0f);
-#endif
 				draw_board(false);
 				draw_msg();
 				st->locate(2,19);
@@ -1117,13 +1094,13 @@ void net_menu() {
 	std::string url = DZZTNET_HOST + DZZTNET_HOME;
 	std::string tmp,filename;
 	
-	/*if(curl_auth_string != "") {
+	if(curl_auth_string != "") {
 		url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
 		tmp = http_get_string(url);
 		if(tmp!="OK") {
 			curl_auth_string = "";
 		}
-	}*/
+	}
 	if(curl_auth_string == "") {
 		TUIWindow *t;
 		t = new TUIWindow("DreamZZT Online");
@@ -1280,13 +1257,11 @@ Online.\n\
 			play_zzt(filename.c_str());
 			world.online=0;
 
-			#if TIKI_PLAT == TIKI_WIN32
+#if TIKI_PLAT == TIKI_WIN32
 				 _unlink(filename.c_str());
-			#else
-#if TIKI_PLAT != TIKI_NDS
+#elif TIKI_PLAT != TIKI_NDS
 				 unlink(filename.c_str());
 #endif
-			#endif
 
 			url = DZZTNET_HOST + DZZTNET_HOME;
 		} else {
@@ -1322,7 +1297,6 @@ Online.\n\
 			}
 		}
 	} while(url != "" && switchbrd != -2);
-
 #endif
 }
 

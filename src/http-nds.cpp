@@ -599,5 +599,5 @@ for(y=0; y<strlen(tmp); y+=255) {
 	  closesocket(s);
 	std::string out = output;
 	free(output);
-	  return out;	
+	  return out;
 }

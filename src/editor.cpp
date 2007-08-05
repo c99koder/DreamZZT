@@ -518,7 +518,7 @@ void edit_zzt() {
 							t.addWidget(new TUINumericInput("              Score: ", &world.score, 0, 65535));
 							t.addWidget(new TUILabel(""));
 							t.addWidget(new TUICheckBox    ("Saved Game", &world.saved));
-#ifndef DZZT_LITE
+#ifdef USE_3DMODEL
 							t.addWidget(new TUICheckBox    ("Use 3D Models", &world.use_3d));
 #endif
 							t.addWidget(new TUILabel(""));

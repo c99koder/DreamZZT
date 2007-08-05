@@ -44,22 +44,19 @@ extern struct board_info_node *board_list;
 extern struct world_header world;
 extern int switchbrd;
 extern ZZTMusicStream *zm;
-#if TIKI_PLAT != TIKI_NDS
-#ifdef DZZT_LITE
+#if defined(USE_SDL)
 extern SDL_Surface *zzt_font;
-#else
+#elif defined(USE_OPENGL)
 extern Texture *zzt_font;
 #endif
-#endif
 
-#ifdef DZZT_LITE
+#define SCREEN_X 640
+#if defined(USE_SDL)
 #define SCREEN_Y 400
-#else
-#if TIKI_PLAT == TIKI_DC
+#elif TIKI_PLAT == TIKI_DC
 #define SCREEN_Y 424
 #else
 #define SCREEN_Y 480
-#endif
 #endif
 
 ConsoleText *dt=NULL;

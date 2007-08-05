@@ -78,9 +78,11 @@ bool GraphicsLayer::put(const int x, const int y, const int color, const unsigne
 void GraphicsLayer::draw(ObjType t) {
 	if(!world.use_3d) return;
 
+#if TIKI_PLAT != TIKI_DC
 	glEnable(GL_LIGHTING);
 	glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat *)&Vector(-.5,0.5,1,0));
 	glEnable(GL_LIGHT0);
+#endif
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

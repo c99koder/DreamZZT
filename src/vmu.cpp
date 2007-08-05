@@ -161,7 +161,7 @@ void vmuify(const char *filename_in, const char *filename_out, const char *short
   fs_close(fd);
   printf("Closing source file\n");
 	hdr.datalen = sourceLen;
-	strcpy(hdr.world,(const char *)world.title.string);
+	strcpy(hdr.world,(const char *)world.title.c_str());
 	strcpy(hdr.board,(const char *)currentbrd->title);
 	hdr.time = time(NULL);
 	hdr.score = world.score;
