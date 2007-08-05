@@ -98,8 +98,7 @@ void *process_debug(void *) {
 				*dt << "\x1b[s"; // Save cursor position
 				dt->locate(0,24);
 				debug_input->draw(dt);
-				//dt->color(GREY | HIGH_INTENSITY, BLACK);
-				//*dt << "> \x1b[1;32m" << debug_cmdline.c_str() 
+				dt->setANSI(true);
 				*dt << "\x1b[k"; //clear EOL
 				*dt << "\x1b[u"; // Restore cursor position			
 				debug_input->update();
@@ -367,7 +366,7 @@ void debug(const char *fmt, ...) {
 	va_start(args,fmt);
 	vsprintf(txt,fmt,args);
 	va_end(args);
-	
+
 	dt->color(YELLOW | HIGH_INTENSITY, BLACK);
 	*dt << txt;
 	*dt << "\x1b[s"; // Save cursor position
