@@ -785,8 +785,17 @@ TUIWindow::~TUIWindow() {
 	if(evt.x >= X && evt.x < X+W && evt.y >= Y && evt.y < Y+H) { \
 		evtPress.key = BUTTON; \
 		evtPress.port = 1; \
-		sendEvent(evtPress); \
 		shift = false; \
+		for(int ctk = ((X)/8)+1; ctk < (((X)+(W))/8); ctk++) { \
+			st->putColor(ctk, ((Y)/8) + 1, BLUE | (WHITE << 8)); \
+		} \
+		st->draw(); \
+		swiWaitForVBlank(); \
+		swiWaitForVBlank(); \
+		swiWaitForVBlank(); \
+		swiWaitForVBlank(); \
+		swiWaitForVBlank(); \
+		sendEvent(evtPress); \
 	}
 
 void TUIWindow::processHidEvent(const Hid::Event &evt, bool canClose) {
@@ -820,65 +829,65 @@ void TUIWindow::processHidEvent(const Hid::Event &evt, bool canClose) {
 			
 			if(caps) shift = true;
 			
-			CHECK_TOUCHKEY(2*8-4,5*8-4,14,14,shift?'~':'`');
-			CHECK_TOUCHKEY(4*8-4,5*8-4,14,14,shift?'!':'1');
-			CHECK_TOUCHKEY(6*8-4,5*8-4,14,14,shift?'@':'2');
-			CHECK_TOUCHKEY(8*8-4,5*8-4,14,14,shift?'#':'3');
-			CHECK_TOUCHKEY(10*8-4,5*8-4,14,14,shift?'$':'4');
-			CHECK_TOUCHKEY(12*8-4,5*8-4,14,14,shift?'%':'5');
-			CHECK_TOUCHKEY(14*8-4,5*8-4,14,14,shift?'^':'6');
-			CHECK_TOUCHKEY(16*8-4,5*8-4,14,14,shift?'&':'7');
-			CHECK_TOUCHKEY(18*8-4,5*8-4,14,14,shift?'*':'8');
-			CHECK_TOUCHKEY(20*8-4,5*8-4,14,14,shift?'(':'9');
-			CHECK_TOUCHKEY(22*8-4,5*8-4,14,14,shift?')':'0');
-			CHECK_TOUCHKEY(24*8-4,5*8-4,14,14,shift?'_':'-');
-			CHECK_TOUCHKEY(26*8-4,5*8-4,14,14,shift?'+':'=');
-			CHECK_TOUCHKEY(28*8-4,5*8-4,8*3 + 6,14,0x08);
+			CHECK_TOUCHKEY(2*8-4,5*8-4,16,16,shift?'~':'`');
+			CHECK_TOUCHKEY(4*8-4,5*8-4,16,16,shift?'!':'1');
+			CHECK_TOUCHKEY(6*8-4,5*8-4,16,16,shift?'@':'2');
+			CHECK_TOUCHKEY(8*8-4,5*8-4,16,16,shift?'#':'3');
+			CHECK_TOUCHKEY(10*8-4,5*8-4,16,16,shift?'$':'4');
+			CHECK_TOUCHKEY(12*8-4,5*8-4,16,16,shift?'%':'5');
+			CHECK_TOUCHKEY(14*8-4,5*8-4,16,16,shift?'^':'6');
+			CHECK_TOUCHKEY(16*8-4,5*8-4,16,16,shift?'&':'7');
+			CHECK_TOUCHKEY(18*8-4,5*8-4,16,16,shift?'*':'8');
+			CHECK_TOUCHKEY(20*8-4,5*8-4,16,16,shift?'(':'9');
+			CHECK_TOUCHKEY(22*8-4,5*8-4,16,16,shift?')':'0');
+			CHECK_TOUCHKEY(24*8-4,5*8-4,16,16,shift?'_':'-');
+			CHECK_TOUCHKEY(26*8-4,5*8-4,16,16,shift?'+':'=');
+			CHECK_TOUCHKEY(28*8-4,5*8-4,8*3 + 8,16,0x08);
 			
-			CHECK_TOUCHKEY(2*8-4,7*8-4,8*3 + 6,14,'\t');
-			CHECK_TOUCHKEY(6*8-4,7*8-4,14,14,shift?'Q':'q');
-			CHECK_TOUCHKEY(8*8-4,7*8-4,14,14,shift?'W':'w');
-			CHECK_TOUCHKEY(10*8-4,7*8-4,14,14,shift?'E':'e');
-			CHECK_TOUCHKEY(12*8-4,7*8-4,14,14,shift?'R':'r');
-			CHECK_TOUCHKEY(14*8-4,7*8-4,14,14,shift?'T':'t');
-			CHECK_TOUCHKEY(16*8-4,7*8-4,14,14,shift?'Y':'y');
-			CHECK_TOUCHKEY(18*8-4,7*8-4,14,14,shift?'U':'u');
-			CHECK_TOUCHKEY(20*8-4,7*8-4,14,14,shift?'I':'i');
-			CHECK_TOUCHKEY(22*8-4,7*8-4,14,14,shift?'O':'o');
-			CHECK_TOUCHKEY(24*8-4,7*8-4,14,14,shift?'P':'p');
-			CHECK_TOUCHKEY(26*8-4,7*8-4,14,14,shift?'{':'[');
-			CHECK_TOUCHKEY(28*8-4,7*8-4,14,14,shift?'}':']');
-			CHECK_TOUCHKEY(30*8-4,7*8-4,14,14,shift?'|':'\\');
+			CHECK_TOUCHKEY(2*8-4,7*8-4,8*3 + 8,16,'\t');
+			CHECK_TOUCHKEY(6*8-4,7*8-4,16,16,shift?'Q':'q');
+			CHECK_TOUCHKEY(8*8-4,7*8-4,16,16,shift?'W':'w');
+			CHECK_TOUCHKEY(10*8-4,7*8-4,16,16,shift?'E':'e');
+			CHECK_TOUCHKEY(12*8-4,7*8-4,16,16,shift?'R':'r');
+			CHECK_TOUCHKEY(14*8-4,7*8-4,16,16,shift?'T':'t');
+			CHECK_TOUCHKEY(16*8-4,7*8-4,16,16,shift?'Y':'y');
+			CHECK_TOUCHKEY(18*8-4,7*8-4,16,16,shift?'U':'u');
+			CHECK_TOUCHKEY(20*8-4,7*8-4,16,16,shift?'I':'i');
+			CHECK_TOUCHKEY(22*8-4,7*8-4,16,16,shift?'O':'o');
+			CHECK_TOUCHKEY(24*8-4,7*8-4,16,16,shift?'P':'p');
+			CHECK_TOUCHKEY(26*8-4,7*8-4,16,16,shift?'{':'[');
+			CHECK_TOUCHKEY(28*8-4,7*8-4,16,16,shift?'}':']');
+			CHECK_TOUCHKEY(30*8-4,7*8-4,16,16,shift?'|':'\\');
 
-			CHECK_TOUCHKEY(7*8-4,9*8-4,14,14,shift?'A':'a');
-			CHECK_TOUCHKEY(9*8-4,9*8-4,14,14,shift?'S':'s');
-			CHECK_TOUCHKEY(11*8-4,9*8-4,14,14,shift?'D':'d');
-			CHECK_TOUCHKEY(13*8-4,9*8-4,14,14,shift?'F':'f');
-			CHECK_TOUCHKEY(15*8-4,9*8-4,14,14,shift?'G':'g');
-			CHECK_TOUCHKEY(17*8-4,9*8-4,14,14,shift?'H':'h');
-			CHECK_TOUCHKEY(19*8-4,9*8-4,14,14,shift?'J':'j');
-			CHECK_TOUCHKEY(21*8-4,9*8-4,14,14,shift?'K':'k');
-			CHECK_TOUCHKEY(23*8-4,9*8-4,14,14,shift?'L':'l');
-			CHECK_TOUCHKEY(25*8-4,9*8-4,14,14,shift?':':';');
-			CHECK_TOUCHKEY(27*8-4,9*8-4,14,14,shift?'\"':'\'');
-			CHECK_TOUCHKEY(29*8-4,9*8-4,8*2 + 6,14,13);
+			CHECK_TOUCHKEY(7*8-4,9*8-4,16,16,shift?'A':'a');
+			CHECK_TOUCHKEY(9*8-4,9*8-4,16,16,shift?'S':'s');
+			CHECK_TOUCHKEY(11*8-4,9*8-4,16,16,shift?'D':'d');
+			CHECK_TOUCHKEY(13*8-4,9*8-4,16,16,shift?'F':'f');
+			CHECK_TOUCHKEY(15*8-4,9*8-4,16,16,shift?'G':'g');
+			CHECK_TOUCHKEY(17*8-4,9*8-4,16,16,shift?'H':'h');
+			CHECK_TOUCHKEY(19*8-4,9*8-4,16,16,shift?'J':'j');
+			CHECK_TOUCHKEY(21*8-4,9*8-4,16,16,shift?'K':'k');
+			CHECK_TOUCHKEY(23*8-4,9*8-4,16,16,shift?'L':'l');
+			CHECK_TOUCHKEY(25*8-4,9*8-4,16,16,shift?':':';');
+			CHECK_TOUCHKEY(27*8-4,9*8-4,16,16,shift?'\"':'\'');
+			CHECK_TOUCHKEY(29*8-4,9*8-4,8*2 + 8,16,13);
 
-			CHECK_TOUCHKEY(8*8-4,11*8-4,14,14,shift?'Z':'z');
-			CHECK_TOUCHKEY(10*8-4,11*8-4,14,14,shift?'X':'x');
-			CHECK_TOUCHKEY(12*8-4,11*8-4,14,14,shift?'C':'c');
-			CHECK_TOUCHKEY(14*8-4,11*8-4,14,14,shift?'V':'v');
-			CHECK_TOUCHKEY(16*8-4,11*8-4,14,14,shift?'B':'b');
-			CHECK_TOUCHKEY(18*8-4,11*8-4,14,14,shift?'N':'n');
-			CHECK_TOUCHKEY(20*8-4,11*8-4,14,14,shift?'M':'m');
-			CHECK_TOUCHKEY(22*8-4,11*8-4,14,14,shift?'<':',');
-			CHECK_TOUCHKEY(24*8-4,11*8-4,14,14,shift?'>':'.');
-			CHECK_TOUCHKEY(26*8-4,11*8-4,14,14,shift?'?':'/');
+			CHECK_TOUCHKEY(8*8-4,11*8-4,16,16,shift?'Z':'z');
+			CHECK_TOUCHKEY(10*8-4,11*8-4,16,16,shift?'X':'x');
+			CHECK_TOUCHKEY(12*8-4,11*8-4,16,16,shift?'C':'c');
+			CHECK_TOUCHKEY(14*8-4,11*8-4,16,16,shift?'V':'v');
+			CHECK_TOUCHKEY(16*8-4,11*8-4,16,16,shift?'B':'b');
+			CHECK_TOUCHKEY(18*8-4,11*8-4,16,16,shift?'N':'n');
+			CHECK_TOUCHKEY(20*8-4,11*8-4,16,16,shift?'M':'m');
+			CHECK_TOUCHKEY(22*8-4,11*8-4,16,16,shift?'<':',');
+			CHECK_TOUCHKEY(24*8-4,11*8-4,16,16,shift?'>':'.');
+			CHECK_TOUCHKEY(26*8-4,11*8-4,16,16,shift?'?':'/');
 			
-			CHECK_TOUCHKEY(3*8-4,13*8-4,14,14,Event::KeyUp);
-			CHECK_TOUCHKEY(5*8-4,13*8-4,14,14,Event::KeyDown);
-			CHECK_TOUCHKEY(7*8-4,13*8-4,8*2 + 6,14,Event::KeyLeft);
-			CHECK_TOUCHKEY(10*8-4,13*8-4,8*2 + 6,14,Event::KeyRight);
-			CHECK_TOUCHKEY(13*8-4,13*8-4,8*7 + 6,14,' ');
+			CHECK_TOUCHKEY(3*8-4,13*8-4,16,16,Event::KeyUp);
+			CHECK_TOUCHKEY(5*8-4,13*8-4,16,16,Event::KeyDown);
+			CHECK_TOUCHKEY(7*8-4,13*8-4,8*2 + 8,14,Event::KeyLeft);
+			CHECK_TOUCHKEY(10*8-4,13*8-4,8*2 + 8,14,Event::KeyRight);
+			CHECK_TOUCHKEY(13*8-4,13*8-4,8*7 + 8,14,' ');
 					
 			if(evt.x >= 2*8-4 && evt.x < 2*8-4 + 8*4 + 6 && evt.y >= 9*8 -4 && evt.y < 9*8 - 4 + 14) {
 				caps = !caps;
