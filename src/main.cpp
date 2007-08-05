@@ -748,7 +748,7 @@ void play_zzt(const char *filename, bool tempFile) {
 #endif
 	}
 	
-#ifdef NET
+#if defined(NET) && TIKI_PLAT != TIKI_NDS
 	if(world.title != "") {
 		std::list<TracBug> bugs = search_tickets("status!=closed&amp;game~=" + world.title);
 		if(bugs.size() > 0) {
@@ -828,6 +828,9 @@ complete this game.\r\
 				gamespeed = (uint64)(GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f));
 				vm.update();
 				if(zm!=NULL) zm->setVolume((float)volmod / 16.0f);
+				if(world.magic != 65534 && ct->getCols() < BOARD_X) {
+					disp_off_x = (BOARD_X - ct->getCols()) / 2;
+				}
 				draw_board(false);
 				draw_msg();
 				st->locate(2,19);
@@ -965,7 +968,7 @@ complete this game.\r\
 		} else if(switchbrd==-3) {
 			TUIWindow t("Game Menu");
 			t.buildFromString(
-#ifdef NET
+#if defined(NET) && TIKI_PLAT != TIKI_NDS
 std::string("!bugreport;Report a bug\r") +
 #endif
 "!restore;Restore Game\r\
