@@ -1,6 +1,37 @@
 = DreamZZT ChangeLog =
 Below is a list of highlights of each DreamZZT release.  For a complete list of changes, see [http://dev.c99.org/DreamZZT/timeline].
 
+== DreamZZT 3.2.0 (in progress) ==
+=== New Features ===
+ * LUA Interpreter
+ * Nintendo DS support
+ * Windows 98 support
+ * Alternate SDL-based display
+ * World properties editor
+ * SuperZZT support
+ * Implement ricochets, slime, floors, and rivers
+ * New debug console command: viewport <x> <y> resizes the visible board size
+ * Reduce memory usage
+ * Multi-line text input widget
+ * ZZT-OOP and LUA script editor
+
+=== Bug Fixes ===
+ * Enemy attacks shouldn't give points (#53)
+ * Delete both bullets when bullets collide
+ * Properly handle quit events inside editor (#52)
+ * Fix board corruption caused by using a transporter
+ * Change object update order to better match ZZT
+ * Broadcast ENERGIZE and EndGame messages (#57)
+ * Prevent conveyers from moving player onto fakes and floors
+ * Disable keyboard events in editor while debug console visible (#54)
+ * Shooting a bear is now only worth 1 point
+ * Gems give you 10 health points in SuperZZT
+ * Play 'Ouch!' sound effect / message when time runs out
+ * Reset the timer when time runs out
+ * Properly execute ZZT-OOP following an #if condition
+ * Check for obstacles before traveling between boards
+ * Stop sound playback when ending a game
+
 == DreamZZT 3.0.8 ==
 === New Features ===
  * Sound support for Dreamcast
