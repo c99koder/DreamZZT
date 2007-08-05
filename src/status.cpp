@@ -175,7 +175,7 @@ void draw_health() {
 		*st << "  Health:";
 		m.draw(st);
 	} else {
-		*st << "  Health: " << world.health << "   ";
+		*st << "  Health:" << world.health << "   ";
 	}
 }
 

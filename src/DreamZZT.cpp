@@ -484,6 +484,11 @@ std::string os_select_file(std::string title, std::string filter) {
 	}
 }
 std::string os_save_file(std::string title, std::string filename, std::string filter) {
-	return world.title + ".sav";
+	TUIWindow t(title);
+	t.addWidget(new TUILabel("Enter a filename:",false,false));
+	t.addWidget(new TUITextInput("",&filename,false,false));
+	t.addWidget(new TUIHyperLink("Save","Save Game"));
+	t.doMenu();
+	return filename;
 }
 #endif
