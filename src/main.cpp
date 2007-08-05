@@ -723,7 +723,7 @@ void play_zzt(const char *filename, bool tempFile) {
 	std::vector<std::string> tasks;
 	std::vector<std::string> params;
 	std::vector<std::string>::iterator tasks_iter;
-	Player *titlePlayer;
+	Player *titlePlayer=NULL;
 	uint64 ticker=Time::gettime(), gamespeed = GAMESPEED_ALIVE;
 	gameFrozen = false;
 	int speedmod = 4;
@@ -739,6 +739,9 @@ void play_zzt(const char *filename, bool tempFile) {
 		t.doMenu();
 		return;
 	}
+	
+	gamespeed = (uint64)(GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f));
+	if(zm!=NULL) zm->setVolume((float)volmod / 16.0f);
 	
 	if(tempFile) {
 #if TIKI_PLAT == TIKI_WIN32
@@ -882,10 +885,11 @@ complete this game.\r\
 	}
 	switchbrd=-1;
 
-	titlePlayer->setShape(ZZT_PLAYER_SHAPE);
-	titlePlayer->setColor(15,1);
-	titlePlayer->setHeading(IDLE);
-
+	if(titlePlayer != NULL) {
+		titlePlayer->setShape(ZZT_PLAYER_SHAPE);
+		titlePlayer->setColor(15,1);
+		titlePlayer->setHeading(IDLE);
+	}
 #ifdef NET
 	if(world.online==1) {
 		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + world.title);
@@ -1034,7 +1038,7 @@ std::string("!bugreport;Report a bug\r") +
 				}
 #endif
 			} else {
-				std::string s = os_save_file("Save a game","saved.sav","sav");
+				std::string s = os_save_file("Save a game",world.title + ".sav","sav");
 				if(s!="") {
 #if TIKI_PLAT == TIKI_DC
 					save_game("/ram/tmp.sav");

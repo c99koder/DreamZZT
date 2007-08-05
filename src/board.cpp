@@ -1248,30 +1248,37 @@ void save_game(const char *filename) {
 	fd.write(world.keys,7);
 	fd.writele16(&world.health,1);
 	fd.writele16(&world.start,1);
-	fd.writele16(&world.torches,1);
-	fd.writele16(&world.torch_cycle,1);
-	fd.writele16(&world.energizer_cycle,1);
+	if(world.magic != 65534) {
+		fd.writele16(&world.torches,1);
+		fd.writele16(&world.torch_cycle,1);
+		fd.writele16(&world.energizer_cycle,1);
+	}
 	fd.writele16(&world.pad1,1);
 	fd.writele16(&world.score,1);
+	if(world.magic == 65534) {
+		fd.writele16(&world.pad1,1);
+		fd.writele16(&world.energizer_cycle,1);
+	}
 	x=world.title.length();
 	fd.write(&x,1);
-	world.title.resize(20);
-	fd.write(world.title.c_str(),20);
+	world.title.resize((world.magic==65534)?21:20);
+	fd.write(world.title.c_str(),(world.magic==65534)?21:20);
 	world.title.resize(x);
-	for(int i=0; i<10; i++) {
+	for(int i=0; i<((world.magic==65534)?16:10); i++) {
 		x=world.flags[i].length();
 		fd.write(&x,1);
-		world.flags[i].resize(20);
-		fd.write(world.flags[i].c_str(),20);
+		world.flags[i].resize((world.magic==65534)?21:20);
+		fd.write(world.flags[i].c_str(),(world.magic==65534)?21:20);
 		world.flags[i].resize(x);
 	}
 	fd.writele16(&world.time,1); //FIXME: This should be total game time, not current board time remaining
+	if(world.magic == 65534) fd.writele16(&world.pad1,1);
 	fd.write(&world.saved,1);
 	
-	//fd.seek(0x200,SEEK_SET);
-	for(i=0; i<249; i++) {
+	fd.seek((world.magic==65534)?0x400:0x200,SEEK_SET);
+	/*for(i=0; i<249; i++) {
 		fd.write(&x,1);
-	}
+	}*/
 	
 	while(curbrd!=NULL) {
 		if(curbrd->size==0) decompress(curbrd,true); //Calculate board size for older DreamZZT files
@@ -1283,7 +1290,7 @@ void save_game(const char *filename) {
 		x = (unsigned char)strlen(curbrd->title);
 		fd.write(&x,1);
 		fd.write(curbrd->title,34);	
-		for(x=0;x<16;x++) {
+		for(x=0;x<((world.magic==65534)?26:16);x++) {
 			fd.write("\0",1);
 		}
 
@@ -1303,14 +1310,20 @@ void save_game(const char *filename) {
 		fd.write(&curbrd->board_left,1);
 		fd.write(&curbrd->board_right,1);
 		fd.write(&curbrd->reenter,1);
-		x = (unsigned char)strlen(curbrd->message);
-		fd.write(&x,1);
-		fd.write(curbrd->message,58);
-		fd.write(&curbrd->reenter_x,1);
-		fd.write(&curbrd->reenter_y,1);
+		if(world.magic == 65534) {
+			for(x=0;x<5;x++) {
+				fd.write("\0",1);
+			}
+		} else {
+			x = (unsigned char)strlen(curbrd->message);
+			fd.write(&x,1);
+			fd.write(curbrd->message,58);
+			fd.write(&curbrd->reenter_x,1);
+			fd.write(&curbrd->reenter_y,1);
+		}
 		fd.writele16(&curbrd->time,1);
 		fd.write(&curbrd->animatedWater,1);
-		for(x=0;x<15;x++) fd.write("\0",1);
+		for(x=0;x<((world.magic==65534)?13:15);x++) fd.write("\0",1);
 
 		i = (unsigned char)curbrd->params.size() - 1;
 		fd.writele16(&i,1);
@@ -1333,7 +1346,7 @@ void save_game(const char *filename) {
 			fd.write("\0\0\0\0",4);
 			fd.writele16(&(*params_iter).progpos,1);
 			fd.writele16((uint16 *)&(*params_iter).proglen,1);
-			fd.write("\0\0\0\0\0\0\0\0",8);
+			if(world.magic != 65534) fd.write("\0\0\0\0\0\0\0\0",8);
 			if((*params_iter).proglen>0) fd.write((*params_iter).prog.c_str(),(*params_iter).proglen);
 			i++;
 		}
