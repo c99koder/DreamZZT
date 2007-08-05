@@ -958,7 +958,6 @@ complete this game.\r\
 			switch_board(switchbrd);
 			debug("\x1b[0;37mWarping to \x1b[1;37m%s\n",currentbrd->title);
 			draw_board();
-			redraw_status();
 			if(player->flags()&F_SLEEPING) player->update();
 			switchbrd=-1;
 		} else if(switchbrd==-2) {

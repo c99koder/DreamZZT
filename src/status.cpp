@@ -48,21 +48,11 @@ extern Player *player;
 
 int msgcount=0;
 int msgoff=0;
-void redraw_status();
 
 void set_msg(char *text) {
-	redraw_status();
 	strcpy(currentbrd->message,text);
 	currentbrd->msgcount=24;
 	msgoff=0;
-}
-
-void redraw_status() {
-	int x;
-
-	for(x=0;x<BOARD_X;x++) {
-		draw_block(x,BOARD_Y-1);
-	}
 }
 
 extern int disp_off_x, disp_off_y;
@@ -112,7 +102,6 @@ void draw_msg() {
 #endif
 		
 		currentbrd->msgcount--;
-		if(currentbrd->msgcount==0) redraw_status();
 	}
 }
 

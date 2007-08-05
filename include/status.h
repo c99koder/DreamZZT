@@ -23,7 +23,6 @@
 #include "console.h"
 
 void set_msg(char *text);
-void redraw_status();
 void draw_msg();
 void dzzt_logo();
 void draw_ammo();
