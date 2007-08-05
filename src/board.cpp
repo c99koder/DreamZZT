@@ -995,6 +995,7 @@ int load_szt(const char *filename, int titleonly) {
 		current->message[0]='\0';
 		fd.read(pad,5);
 		fd.readle16(&current->time,1);
+#ifdef DEBUG
 		printf("maxshots: %i\n", current->maxshots);
 		printf("dark: %i\n", current->dark);
 		printf("up: %i\n", current->board_up);
@@ -1003,6 +1004,7 @@ int load_szt(const char *filename, int titleonly) {
 		printf("right: %i\n", current->board_right);
 		printf("reenter: %i\n", current->reenter);
 		printf("Time: %i\n", current->time);
+#endif
 		//fd.read(&current->animatedWater,1);
 		fd.read(pad,14);
 		

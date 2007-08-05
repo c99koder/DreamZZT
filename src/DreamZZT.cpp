@@ -243,7 +243,7 @@ std::string os_select_file(std::string title, std::string filter) {
 	if(filter == "sav") {
 		d = fs_open("/vmu/a1",O_RDONLY|O_DIR);
 	} else {
-		return "town.zzt";
+		return "monster.szt";
 		d = fs_open(fs_getwd(),O_RDONLY|O_DIR);		
 	}
 	

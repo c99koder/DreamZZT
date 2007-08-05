@@ -1,7 +1,7 @@
 TIKI_DIR = ../tiki
 TIKI_PLAT = dc
 
-CFLAGS=-I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -Iinclude -I$(KOS_BASE)/../kos-ports/lua/src -I$(KOS_BASE)/../kos-ports/lua/include -DUSE_OPENGL -DDEBUG
+CFLAGS=-I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -Iinclude -I$(KOS_BASE)/../kos-ports/lua/src -I$(KOS_BASE)/../kos-ports/lua/include -DUSE_OPENGL -O2 -DDEBUG -fno-exceptions -fno-rtti
 
 OBJS = src/DreamZZT.o src/bugreport.o src/vmu.o src/lcd.o src/debug.o src/sound.o src/task.o src/console.o src/word.o src/main.o src/window.o src/board.o src/status.o src/object.o src/editor.o \
 src/objects/passage.o src/objects/terrain.o src/objects/bullet.o src/objects/enemy.o \

@@ -602,7 +602,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	ct = new ConsoleText(60, 25, zzt_font);
 #endif
 	ct->setSize(60 * 8, SCREEN_Y);
-	ct->translate(Vector(60 * 4, SCREEN_Y / 2,0));
+	ct->translate(Vector(60 * 4, ((TIKI_PLAT==TIKI_DC)?480:SCREEN_Y) / 2,0));
 
 #ifdef USE_3DMODEL
 	gl = new GraphicsLayer();
@@ -618,7 +618,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 	st = new ConsoleText(20, 25, zzt_font);
 #endif
 	st->setSize(20 * 8, SCREEN_Y);
-	st->setTranslate(Vector(640 - 20 * 4, SCREEN_Y/2, 0.9f));
+	st->setTranslate(Vector(640 - 20 * 4,((TIKI_PLAT==TIKI_DC)?480:SCREEN_Y)/2, 0.9f));
 
 #if TIKI_PLAT != TIKI_NDS	
 	debug_init();
