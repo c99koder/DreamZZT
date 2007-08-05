@@ -323,11 +323,10 @@ void draw_color(int fg, int bg) {
 void draw_pattern(ZZTObject *pattern[5], int pat) {
 	Vector p;
 	for(int i=0; i<5; i++) {
-		p = pattern[i]->position();
-		pattern[i]->setPosition(Vector( (float)(BOARD_X+1+i), 22.0f, 0.0f));
-		if(i<4) pattern[i]->setColor(15);
-		pattern[i]->draw();
-		pattern[i]->setPosition(p);
+		st->locate(i+1, 22);
+		if(i<4) st->color(15,0);
+		else st->color(pattern[i]->fg(), pattern[i]->bg());
+		*st << pattern[i]->shape();
 		st->color(WHITE|HIGH_INTENSITY,BLUE);
 		st->locate(1+i,23);
 		*st << ((i==pat)?'\x1e':' ');
