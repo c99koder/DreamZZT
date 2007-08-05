@@ -75,8 +75,14 @@ void draw_msg() {
 		
 		strcpy(message,currentbrd->message);
 		for(i=0; i<strlen(message); i++) {
-			if(message[i] == '\r' || (TIKI_PLAT == TIKI_NDS && world.magic != 65534 && i > 28)) {
-				if(message[i] != '\r') i--;
+			if(message[i] == '\r' || ((i > ct->getCols() - 4) && world.magic != 65534)) {
+				if(message[i] != '\r') {
+					//Find a space to break on
+					while(message[i] != ' ' && i > 0) {
+						i--;
+					}
+					if(i==0) i = ct->getCols() - 4;
+				}
 				message[i] = '\0';
 				left = (ct->getCols() / 2) - ((i+2)/2);
 				ct->color((currentbrd->msgcount%6)+9,0);
