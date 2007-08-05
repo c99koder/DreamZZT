@@ -174,6 +174,7 @@ unsigned char ZZTLUA::param(int arg) {
 		}
 		return m_serialized;
 	}
+	return 0;
 }
 
 void ZZTLUA::update() {

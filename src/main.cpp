@@ -1217,6 +1217,7 @@ Online.\n\
 	}
 
 #if TIKI_PLAT == TIKI_WIN32
+	TCHAR szPath[MAX_PATH];
 	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
 	filename = std::string(szPath) + std::string("\\dzztauth.dat");
 #elif TIKI_PLAT == TIKI_NDS

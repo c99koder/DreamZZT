@@ -68,7 +68,7 @@ extern world_header world;
 #include "pch.h"
 #endif
 
-#if TIKI_PLAT != TIKI_NDS && !(defined(DZZT_LITE) && TIKI_PLAT == TIKI_WIN32)
+#if TIKI_PLAT != TIKI_NDS && !(defined(USE_SDL) && TIKI_PLAT == TIKI_WIN32)
 
 #if TIKI_PLAT == TIKI_WIN32
 static char szAppName[] = "DreamZZT";
@@ -131,7 +131,7 @@ return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
 }
 #endif
 
-#ifdef WIN32
+#if TIKI_PLAT == TIKI_WIN32
 std::string os_select_file(std::string title, std::string filter) {
 	OPENFILENAME ofn;			 // common dialog box structure
 	char szFile[260];			 // buffer for file name

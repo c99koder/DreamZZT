@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;lua;&quot;src\libtolua++&quot;;lua\lib;include;C:\libcurl\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;DEBUG;NET;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;DEBUG;NET;_CRT_SECURE_NO_DEPRECATE;USE_OPENGL;USE_CURL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -122,7 +122,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;&quot;src\libtolua++&quot;;lua\lib;lua;include;C:\libcurl\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NET;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NET;_CRT_SECURE_NO_DEPRECATE;USE_OPENGL;USE_CURL"
 				RuntimeLibrary="2"
 				DefaultCharIsUnsigned="true"
 				UsePrecompiledHeader="0"
@@ -591,7 +591,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h&#x0D;&#x0A;"
 						Outputs="include\version.h"
 					/>
 				</FileConfiguration>
@@ -646,7 +646,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc&#x0D;&#x0A;"
 						Outputs="dreamzzt.rc"
 					/>
 				</FileConfiguration>

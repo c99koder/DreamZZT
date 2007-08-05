@@ -87,7 +87,7 @@ public:
 	const std::string getHelpText() { return "Use keyboard to edit text"; }
 	const bool getCloseOnEnter() { return false; }
 	int getHeight() {
-		return count(m_text->begin(), m_text->end(), '\r') + 1;
+		return (int)count(m_text->begin(), m_text->end(), '\r') + 1;
 	}
 	void processHidEvent(const Hid::Event &evt);
 protected:
