@@ -68,17 +68,21 @@ void Player::processEvent(const Event & evt) {
 	}
 	if (evt.type == Hid::Event::EvtKeyUp || evt.type == Hid::Event::EvtBtnRelease) {
 		if(evt.key == 's' || evt.btn == Event::BtnY) {
-				switchbrd=-4;
-		}	else if(evt.key == 't' || evt.btn == Event::BtnX) {
-			if(world.torches>0) {
-				if(currentbrd->dark==1) {
-					world.torch_cycle=200;
-					take_torch(1);
-				} else {
-					set_msg("Don't need torch - room is not dark!");
-				}
+			switchbrd=-4;
+		} else if(evt.key == ((world.magic==65534)?'h':'t') || evt.btn == Event::BtnX) {
+			if(world.magic == 65534) {
+				send("all:hint");
 			} else {
-				set_msg("You don't have any torches!");
+				if(world.torches>0) {
+					if(currentbrd->dark==1) {
+						world.torch_cycle=200;
+						take_torch(1);
+					} else {
+						set_msg("Don't need torch - room is not dark!");
+					}
+				} else {
+					set_msg("You don't have any torches!");
+				}
 			}
 		} else if(evt.key == 'p') {
 			setFlag(F_SLEEPING);

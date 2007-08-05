@@ -76,12 +76,12 @@ void draw_msg() {
 		strcpy(message,currentbrd->message);
 		for(i=0; i<strlen(message); i++) {
 			if(message[i] == '\r' || (TIKI_PLAT == TIKI_NDS && world.magic != 65534 && i > 28)) {
-				left = (ct->getCols() / 2) - ((i+2)/2);
+				if(message[i] != '\r') i--;
 				message[i] = '\0';
+				left = (ct->getCols() / 2) - ((i+2)/2);
 				ct->color((currentbrd->msgcount%6)+9,0);
 				ct->locate(left,ct->getRows() - 2);
 				ct->printf(" %s ",message);
-				if(message[i] != '\r') i--;
 				break;
 			}
 		}
@@ -147,10 +147,10 @@ void give_time(int count) {
 }
 
 void draw_ammo() {
-	st->putColor(2,9, HIGH_INTENSITY | CYAN | (BLUE << 8));
-	st->putChar(2,9,0x84);
+	st->putColor(2,(world.magic == 65534)?10:9, HIGH_INTENSITY | CYAN | (BLUE << 8));
+	st->putChar(2,(world.magic == 65534)?10:9,0x84);
 
-	st->locate(3, 9);
+	st->locate(3, (world.magic == 65534)?10:9);
 	st->color(14,1);
 	st->printf("    Ammo:%i   ",world.ammo);
 }
@@ -168,12 +168,20 @@ void give_ammo(int count) {
 }
 
 void draw_health() {
+	unsigned int t = world.health;
+	TUIMeter m(&t, 100, 7);
+	
 	st->putColor(3,8, HIGH_INTENSITY | WHITE | (BLUE << 8));
 	st->putChar(3,8,0x02);
 
 	st->locate(3,8);
 	st->color(14,1);
-	st->printf("  Health:%i  ",world.health);
+	if(world.magic == 65534) {
+		*st << "  Health:";
+		m.draw(st);
+	} else {
+		*st << "  Health: " << world.health << "   ";
+	}
 }
 
 void take_health(int count) {
@@ -189,6 +197,7 @@ void give_health(int count) {
 }
 
 void draw_torch() {
+	if(world.magic == 65534) return;
 	unsigned int t = world.torch_cycle;
 	TUIMeter m(&t, 200, 4);
 	
@@ -300,7 +309,8 @@ void draw_hud_ingame() {
 	st->color(0,7);
 	st->printf(" X ");
 	st->color(15,1);
-	st->printf(" Torch");
+	if(world.magic == 65534) st->printf(" Hint");
+	else st->printf(" Torch");
 	st->locate(9,16);
 	st->color(0,3);
 	st->printf(" Y ");
@@ -329,9 +339,11 @@ void draw_hud_ingame() {
 #else
 	st->locate(9,15);
 	st->color(0,7);
-	st->printf(" T ");
+	if(world.magic == 65534) st->printf(" H ");
+	else st->printf(" T ");
 	st->color(15,1);
-	st->printf(" Torch");
+	if(world.magic == 65534) st->printf(" Hint");
+	else st->printf(" Torch");
 	st->locate(9,16);
 	st->color(0,3);
 	st->printf(" S ");
