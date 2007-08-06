@@ -97,7 +97,6 @@
 		2224417A0BF65406000D3055 /* bugreport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222441790BF65406000D3055 /* bugreport.cpp */; };
 		223229BE0A16C63C0035025E /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223229BC0A16C63C0035025E /* sound.cpp */; };
 		2237A5B80C5D5EBD00A00085 /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2237A5B60C5D5EBC00A00085 /* http.cpp */; };
-		2237A6B00C5D7B2100A00085 /* http-nds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2237A59B0C5D5B7900A00085 /* http-nds.cpp */; };
 		223A59B40C137375008370C5 /* pluto.c in Sources */ = {isa = PBXBuildFile; fileRef = 223A59B30C137375008370C5 /* pluto.c */; };
 		224200C30A0C569300F4BDF2 /* passage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B80A0C569300F4BDF2 /* passage.cpp */; };
 		224200C40A0C569300F4BDF2 /* terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 224200B90A0C569300F4BDF2 /* terrain.cpp */; };
@@ -174,6 +173,7 @@
 		22F3FC420C11308600B3F65F /* tolua_push.c in Sources */ = {isa = PBXBuildFile; fileRef = 22F3FC3C0C11308600B3F65F /* tolua_push.c */; };
 		22F3FC430C11308600B3F65F /* tolua_to.c in Sources */ = {isa = PBXBuildFile; fileRef = 22F3FC3D0C11308600B3F65F /* tolua_to.c */; };
 		22F3FEC30C1207F600B3F65F /* tutor.lua in Resources */ = {isa = PBXBuildFile; fileRef = 22F3FEC20C1207F600B3F65F /* tutor.lua */; };
+		22F590E00C669DD200AE4155 /* http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2237A5B60C5D5EBC00A00085 /* http.cpp */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -874,7 +874,7 @@
 				228ED1BE0C1E28C3006D6823 /* AMFModelInstance.cpp in Sources */,
 				228ED1BF0C1E28C3006D6823 /* GraphicsLayer.cpp in Sources */,
 				228ED1C00C1E28C3006D6823 /* ModelManager.cpp in Sources */,
-				2237A6B00C5D7B2100A00085 /* http-nds.cpp in Sources */,
+				22F590E00C669DD200AE4155 /* http.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
