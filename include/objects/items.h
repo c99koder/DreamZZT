@@ -53,6 +53,8 @@ public:
 		switch(type) {
 			case ZZT_TORCH:
 				m_modelName = "torch.amf";
+				m_fg = YELLOW;
+				m_bg = 0;
 				break;
 			case ZZT_GEM:
 				m_modelName = "gem.amf";

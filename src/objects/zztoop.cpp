@@ -819,7 +819,7 @@ void ZZTOOP::update() {
 		for(int q = 0; q < msg.length(); q++) {
 			if(msg[q] == '\r') num++;
 		}
-		if(num > 1 && (world.magic==65535 || num > 2)) {
+		if(num >= 1 && (world.magic==65535 || num > 2)) {
 			if(zm!=NULL && zm->hasTune()) zm->start();
 			TUIWindow *t= new TUIWindow(get_zztobj_name());
 			t->buildFromString(msg);
