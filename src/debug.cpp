@@ -99,7 +99,6 @@ void *process_debug(void *) {
 				dt->locate(0,24);
 				debug_input->draw(dt);
 				dt->setANSI(true);
-				*dt << "\x1b[k"; //clear EOL
 				*dt << "\x1b[u"; // Restore cursor position			
 				debug_input->update();
 			}
