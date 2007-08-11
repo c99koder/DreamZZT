@@ -9,10 +9,13 @@ src/objects/dup.o src/objects/zztoop.o src/objects/pusher.o src/objects/bomb.o s
 src/objects/conveyer.o src/objects/player.o src/objects/centipede.o src/objects/lua.o \
 src/libtolua++/tolua_event.o src/libtolua++/tolua_push.o src/libtolua++/tolua_is.o src/libtolua++/tolua_to.o src/libtolua++/tolua_map.o src/pluto.o #romdisk.o
 
-all: $(OBJS)
+all: VERSION $(OBJS)
 	kos-c++ -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(KOS_BASE)/../kos-ports/lua/src/*.o $(KOS_BASE)/../kos-ports/lua/src/lib/*.o $(TIKI_BASE_LIBS)  -o dreamzzt
 
 	sh-elf-strip dreamzzt
+
+VERSION:
+	sed "s/\$$WCREV\\$$/`svnversion .`/" < include/version.h.in > include/version.h
 
 clean:
 	-rm -f $(OBJS) dreamzzt
