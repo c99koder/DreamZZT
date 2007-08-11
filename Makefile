@@ -1,4 +1,4 @@
-TIKI_DIR = ../tiki
+TIKI_DIR = $(HOME)/tiki
 TIKI_PLAT = sdl
 BIN = $(DESTDIR)/usr/bin
 DATA = $(DESTDIR)/usr/share/dreamzzt
