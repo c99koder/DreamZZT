@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -42,18 +42,24 @@ extern char ammo_name[100];
 
 void bullet_sound_init() {
 #ifdef DREAMCAST
-	if(sound_id==-1) { sound_id=snd_sfx_load("/cd/fire.wav"); }
+	if(sound_id==-1) {
+		sound_id=snd_sfx_load("/cd/fire.wav");
+	}
 #endif
 }
 
 void Bullet::setParam(int arg, unsigned char val) {
-	if(arg == 1) m_owner = val;
-	if(arg == 2) m_heading = (direction)val;
+	if(arg == 1)
+		m_owner = val;
+	if(arg == 2)
+		m_heading = (direction)val;
 }
 
 unsigned char Bullet::param(int arg) {
-	if(arg == 1) return (unsigned char)m_owner;
-	if(arg == 2) return (unsigned char)m_heading;
+	if(arg == 1)
+		return (unsigned char)m_owner;
+	if(arg == 2)
+		return (unsigned char)m_heading;
 	return 0;
 }
 
@@ -66,31 +72,39 @@ void Bullet::message(ZZTObject *them, std::string message) {
 		them->message(this,"shot");
 		if(them->type()==ZZT_BREAKABLE) {
 			remove_from_board(currentbrd,them);
-			if(zm!=NULL) zm->setTune("t-c");
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL)
+				zm->setTune("t-c");
+			if(zm!=NULL)
+				zm->start();
 		}
 		if(them->type()==ZZT_RICOCHET) {
 			m_heading = opposite(m_heading);
 			if(zm!=NULL && !zm->isPlaying()) {
 				zm->setTune("t9");
-				if(zm!=NULL) zm->start();
+				if(zm!=NULL)
+					zm->start();
 			}
 			return;
 		}
 		for(int d = (int)LEFT; d <= (int)DOWN; d++) {
-			ZZTObject *o=get((direction)d);
+			ZZTObject *o=get
+			             ((direction)d);
 			if(o!=NULL && o->type() == ZZT_RICOCHET) {
 				if(zm!=NULL && !zm->isPlaying()) {
 					zm->setTune("t9");
-					if(zm!=NULL) zm->start();
+					if(zm!=NULL)
+						zm->start();
 				}
 				m_heading = opposite(toward(o));
-				if(!is_empty(m_heading)) remove_from_board(currentbrd, this);
-				else(move(m_heading));
+				if(!is_empty(m_heading))
+					remove_from_board(currentbrd, this);
+				else
+					(move(m_heading));
 				return;
 			}
 		}
-		if(them->type()==ZZT_BULLET && them != this) remove_from_board(currentbrd, them);
+		if(them->type()==ZZT_BULLET && them != this)
+			remove_from_board(currentbrd, them);
 		remove_from_board(currentbrd,this);
 	}
 }
@@ -100,23 +114,27 @@ void ZZTObject::shoot(enum direction dir) {
 	int dx=0,dy=0;
 
 	switch(dir) {
-		case UP:
-		 dx=0; dy=-1;
-		 break;
-		case DOWN:
-		 dx=0; dy=1;
-		 break;
-		case LEFT:
-		 dx=-1; dy=0;
-		 break;
-		case RIGHT:
-		 dx=1; dy=0;
-		 break;
-		case IDLE:
-		case SHOOTING:
-			return;
+	case UP:
+		dx=0;
+		dy=-1;
+		break;
+	case DOWN:
+		dx=0;
+		dy=1;
+		break;
+	case LEFT:
+		dx=-1;
+		dy=0;
+		break;
+	case RIGHT:
+		dx=1;
+		dy=0;
+		break;
+	case IDLE:
+	case SHOOTING:
+		return;
 	}
-	
+
 	if(m_type==ZZT_PLAYER) {
 		if(world.ammo<1) {
 			//sprintf(buf,"You don't have any %s",ammo_name);
@@ -136,20 +154,24 @@ void ZZTObject::shoot(enum direction dir) {
 		put(bullet);
 		if(zm != NULL && !zm->isPlaying()) {
 			if(m_type==ZZT_PLAYER) {
-				if(zm!=NULL) zm->setTune("t+c-c-c");
+				if(zm!=NULL)
+					zm->setTune("t+c-c-c");
 			} else {
-				if(zm!=NULL) zm->setTune("c-f#");
+				if(zm!=NULL)
+					zm->setTune("c-f#");
 			}
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL)
+				zm->start();
 		}
 	} else {
-		ZZTObject *o = get(dir);
+		ZZTObject *o = get
+			               (dir);
 		if(o!=NULL) {
 			if(o->type()==ZZT_BREAKABLE) {
 				remove_from_board(currentbrd,o);
 			} else if(o->type()!=ZZT_BULLET) {
 				o->message(this,"shot");
-			} 
+			}
 			if(is_empty(dir)) {
 				if(m_type==ZZT_PLAYER) {
 					world.ammo--;

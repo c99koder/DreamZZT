@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <string>
 #include <curl/curl.h>
@@ -60,7 +60,8 @@ int hex_to_int(char c) {
 char *strtolower(char *str) {
 	size_t x;
 	static char buf[256];
-	if(str==NULL) return NULL;
+	if(str==NULL)
+		return NULL;
 	strcpy(buf,str);
 	for(x=0;x<strlen(buf);x++) {
 		if(buf[x]>='A' && buf[x]<='Z') {
@@ -97,10 +98,10 @@ extern ConsoleText *ct;
 void render();
 
 int http_progress(void *clientp,
-									double dltotal,
-									double dlnow,
-									double ultotal,
-									double ulnow) {
+                  double dltotal,
+                  double dlnow,
+                  double ultotal,
+                  double ulnow) {
 	ct->locate(0,24);
 	ct->color(0,7);
 	for(int i=0; i<60; i++) {
@@ -130,7 +131,7 @@ CURL *http_begin(std::string URL) {
 	static char url[256];
 	static char auth[256];
 	static char UA[256];
-	
+
 	strncpy(UA, USER_AGENT,256);
 	strncpy(url,URL.c_str(),256);
 	strncpy(auth,curl_auth_string.c_str(),256);
@@ -143,7 +144,7 @@ CURL *http_begin(std::string URL) {
 	ct->locate(0,24);
 	*ct << "Loading...";
 	render();
-	
+
 	/* init the curl session */
 	curl_handle = curl_easy_init();
 
@@ -153,24 +154,24 @@ CURL *http_begin(std::string URL) {
 	/* some servers don't like requests that are made without a user-agent
 		field, so we provide one */
 	curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, UA);
-	
+
 	/* DreamZZT Online authentication */
 	curl_easy_setopt(curl_handle, CURLOPT_USERPWD, auth);
-	
+
 	/* Progress function */
 	curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, false);
 	curl_easy_setopt(curl_handle, CURLOPT_PROGRESSFUNCTION, http_progress);
-	
+
 	return curl_handle;
 }
 
 void http_finish(CURL *curl_handle) {
 	/* get it! */
 	curl_easy_perform(curl_handle);
-	
+
 	/* cleanup curl stuff */
 	curl_easy_cleanup(curl_handle);
-	
+
 	ct->locate(0,24);
 	ct->color(0,7);
 	for(int i=0; i<ct->getCols(); i++) {
@@ -178,26 +179,26 @@ void http_finish(CURL *curl_handle) {
 	}
 	ct->locate(0,24);
 
-	render();	
+	render();
 }
 
 std::string http_get_string(std::string URL) {
 	CURL *curl_handle = http_begin(URL);
 	struct MemoryStruct chunk;
 	std::string output;
-	
+
 	chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
 	chunk.size = 0;		/* no data at this point */
-	
-	
+
+
 	/* send all data to this function	*/
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
-	
+
 	/* we pass our 'chunk' struct to the callback function */
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
 
 	http_finish(curl_handle);
-	
+
 	if(chunk.memory != NULL) {
 		output.append((const char *)chunk.memory);
 		free(chunk.memory);
@@ -208,15 +209,15 @@ std::string http_get_string(std::string URL) {
 bool http_get_file(std::string filename, std::string URL) {
 	CURL *curl_handle = http_begin(URL);
 	static File f(filename,"wb");
-	
+
 	/* send all data to this function	*/
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteTikiFileCallback);
-	
+
 	/* we pass our 'chunk' struct to the callback function */
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&f);
-	
+
 	http_finish(curl_handle);
-	
+
 	f.close();
 	return true;
 }
@@ -227,26 +228,26 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 	struct curl_httppost* last = NULL;
 	struct MemoryStruct chunk;
 	std::string output;
-	
+
 	chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
-	chunk.size = 0;		/* no data at this point */	
-	
+	chunk.size = 0;		/* no data at this point */
+
 	/* send all data to this function	*/
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
-	
+
 	/* we pass our 'chunk' struct to the callback function */
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
-	
+
 	/* Add file/contenttype section */
 	curl_formadd(&post, &last, CURLFORM_COPYNAME, "File",
-							 CURLFORM_FILE, filename.c_str(),
-							 CURLFORM_CONTENTTYPE, contentType.c_str(), CURLFORM_END);
-	
+	             CURLFORM_FILE, filename.c_str(),
+	             CURLFORM_CONTENTTYPE, contentType.c_str(), CURLFORM_END);
+
 	/* Set the form info */
 	curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, post);
-	
+
 	http_finish(curl_handle);
-	
+
 	if(chunk.memory != NULL) {
 		output.append((const char *)chunk.memory);
 		free(chunk.memory);
@@ -259,30 +260,30 @@ std::string http_post_data(std::string data, std::string contentType, std::strin
 	struct MemoryStruct chunk;
 	struct curl_slist *slist=NULL;
 	std::string output;
-	
+
 	chunk.memory=NULL; /* we expect realloc(NULL, size) to work */
-	chunk.size = 0;		/* no data at this point */	
-	
+	chunk.size = 0;		/* no data at this point */
+
 	/* send all data to this function	*/
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
-	
+
 	/* we pass our 'chunk' struct to the callback function */
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
-	
+
 	/* Set the form info */
 	curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, data.c_str());
 
 
 	slist = curl_slist_append(slist, (std::string("Content-Type: ") + contentType).c_str());
 	curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, slist);
-	
+
 	http_finish(curl_handle);
-	
+
 	if(chunk.memory != NULL) {
 		output.append((const char *)chunk.memory);
 		free(chunk.memory);
 	}
 	curl_slist_free_all(slist);
-	
+
 	return output;
 }

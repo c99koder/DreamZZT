@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -56,14 +56,16 @@ void Bear::update() {
 }
 
 void Ruffian::setParam(int arg, unsigned char val) {
-	if(arg == 2) m_rest = val;
+	if(arg == 2)
+		m_rest = val;
 
 	Enemy::setParam(arg,val);
 }
 
 unsigned char Ruffian::param(int arg) {
-	if(arg == 2) return m_rest;
-	
+	if(arg == 2)
+		return m_rest;
+
 	return Enemy::param(arg);
 }
 
@@ -85,14 +87,16 @@ void Ruffian::update() {
 char gun[4] = {27,24,26,25};
 
 void SpinningGun::setParam(int arg, unsigned char val) {
-	if(arg == 2) m_rate = val;
-	
-	Enemy::setParam(arg,val);	
+	if(arg == 2)
+		m_rate = val;
+
+	Enemy::setParam(arg,val);
 }
 
 unsigned char SpinningGun::param(int arg) {
-	if(arg == 2) return m_rate;
-	
+	if(arg == 2)
+		return m_rate;
+
 	return Enemy::param(arg);
 }
 
@@ -101,11 +105,11 @@ void SpinningGun::update() {
 	m_animIndex%=4;
 	m_shape=gun[m_animIndex];
 	draw();
-	
+
 	if(player != NULL && rand()%10<m_rate) {
 		if(rand()%10<m_intel) {
 			if(((m_position - player->position()).x >= -2 && (m_position - player->position()).x <= 2) ||
-				((m_position - player->position()).y >= -2 && (m_position - player->position()).y <= 2)) {
+			        ((m_position - player->position()).y >= -2 && (m_position - player->position()).y <= 2)) {
 				shoot(toward(player));
 			}
 		} else {
@@ -117,14 +121,16 @@ void SpinningGun::update() {
 }
 
 void Tiger::setParam(int arg, unsigned char val) {
-	if(arg == 2) m_rate = val;
-	
+	if(arg == 2)
+		m_rate = val;
+
 	Enemy::setParam(arg,val);
 }
 
 unsigned char Tiger::param(int arg) {
-	if(arg == 2) return m_rate;
-	
+	if(arg == 2)
+		return m_rate;
+
 	return Enemy::param(arg);
 }
 
@@ -133,7 +139,7 @@ void Tiger::update() {
 
 	if(rand()%10<m_rate) {
 		if(player != NULL && (((m_position - player->position()).x >= -1 && (m_position - player->position()).x <= 1) ||
-			 ((m_position - player->position()).y >= -1 && (m_position - player->position()).y <= 1))) {
+		                      ((m_position - player->position()).y >= -1 && (m_position - player->position()).y <= 1))) {
 			shoot(toward(player));
 		}
 	}
@@ -141,36 +147,38 @@ void Tiger::update() {
 
 void Enemy::create() {
 	switch(m_type) {
-		case ZZT_LION:
-			m_fg = 12;
-			break;
-		case ZZT_TIGER:
-			m_fg = 11;
-			break;
-		case ZZT_BEAR:
-			m_fg = ((world.magic == 65535) ? 6 : 2);
-			break;
-		case ZZT_RUFFIAN:
-			m_fg = 13;
-			break;
-		case ZZT_SHARK:
-			m_fg = 7;
-			break;
+	case ZZT_LION:
+		m_fg = 12;
+		break;
+	case ZZT_TIGER:
+		m_fg = 11;
+		break;
+	case ZZT_BEAR:
+		m_fg = ((world.magic == 65535) ? 6 : 2);
+		break;
+	case ZZT_RUFFIAN:
+		m_fg = 13;
+		break;
+	case ZZT_SHARK:
+		m_fg = 7;
+		break;
 	}
 }
 
 void Enemy::message(ZZTObject *them, std::string message) {
 	if((
-			(message == "shot" && them->type() == ZZT_BULLET && them->param(1) == 0)
-			 || them->type()==ZZT_PLAYER || message == "bombed") && m_type != ZZT_SPINNING_GUN) {
+	            (message == "shot" && them->type() == ZZT_BULLET && them->param(1) == 0)
+	            || them->type()==ZZT_PLAYER || message == "bombed") && m_type != ZZT_SPINNING_GUN) {
 		if(message == "touch" || message == "thud") {
 			them->message(this,"shot");
 		} else {
 			give_score((m_type==ZZT_BEAR)?1:2);
 			draw_score();
 		}
-		if(zm!=NULL) zm->setTune("t+c---c++++c--c");
-		if(zm!=NULL) zm->start();
+		if(zm!=NULL)
+			zm->setTune("t+c---c++++c--c");
+		if(zm!=NULL)
+			zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
 		task_kill(this);
 		remove_from_board(currentbrd,this);
@@ -178,12 +186,16 @@ void Enemy::message(ZZTObject *them, std::string message) {
 	if(m_type == ZZT_BEAR && them->type() == ZZT_BREAKABLE) {
 		remove_from_board(currentbrd,them);
 		remove_from_board(currentbrd,this);
-		if(zm!=NULL) zm->setTune("t+c-c-c");
-		if(zm!=NULL) zm->start();
+		if(zm!=NULL)
+			zm->setTune("t+c-c-c");
+		if(zm!=NULL)
+			zm->start();
 	}
 	if(message == "crush") {
-		if(zm!=NULL) zm->setTune("t+c---c++++c--c");
-		if(zm!=NULL) zm->start();
+		if(zm!=NULL)
+			zm->setTune("t+c---c++++c--c");
+		if(zm!=NULL)
+			zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was crushed.\n",m_name.c_str());
 		remove_from_board(currentbrd,this);
 	}
@@ -191,8 +203,10 @@ void Enemy::message(ZZTObject *them, std::string message) {
 
 void Slime::message(ZZTObject *them, std::string message) {
 	if(message=="touch" && them->type() == ZZT_PLAYER) {
-		if(zm!=NULL) zm->setTune("t+c---c++++c--c");
-		if(zm!=NULL) zm->start();
+		if(zm!=NULL)
+			zm->setTune("t+c---c++++c--c");
+		if(zm!=NULL)
+			zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
 		currentbrd->board[(int)m_position.x][(int)m_position.y].under=this;
 		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE, (int)m_position.x, (int)m_position.y);
@@ -207,7 +221,7 @@ void Slime::create() {
 
 void Slime::update() {
 	ZZTObject *s;
-	
+
 	if(m_counter == 0) {
 		for(int d = (int)LEFT; d <= (int)DOWN; d++) {
 			if(is_empty((direction)d)) {

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <iostream>
 #include <string>
@@ -145,7 +145,7 @@ std::string("!edit;Editor\r") +
 #endif
 std::string("!credits;Credits\r") +
 #if TIKI_PLAT != TIKI_DC && TIKI_PLAT != TIKI_NDS
-std::string("!quit;Quit DreamZZT\r") + 
+std::string("!quit;Quit DreamZZT\r") +
 #endif
 std::string("\r\
 (C) 2000 - 2007 Sam Steele\r\
@@ -192,8 +192,7 @@ void play_zzt(const char *filename, bool tempFile=false);
 void net_menu();
 
 template <typename T>
-std::string ToString(T aValue)
-{
+std::string ToString(T aValue) {
 	std::stringstream ss;
 	ss << aValue;
 	return ss.str();
@@ -203,21 +202,25 @@ void check_updates() {
 #if (TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER) && !defined(BETA_VERSION))
 	std::string ver;
 #if TIKI_PLAT == TIKI_WIN32
+
 	DWORD flags;
-	if(!InternetGetConnectedState(&flags,0)) return;
+	if(!InternetGetConnectedState(&flags,0))
+		return;
 #endif
+
 	ver = http_get_string("http://dev.c99.org/DreamZZT/LATEST");
 
 	if(ver != VERSION) {
 		TUIWindow t("Update available");
 		t.buildFromString(
-			std::string("A new version of DreamZZT is available.\rPlease visit http://dev.c99.org/DreamZZT/\rfor more information.\r\r") +
+		    std::string("A new version of DreamZZT is available.\rPlease visit http://dev.c99.org/DreamZZT/\rfor more information.\r\r") +
 #if TIKI_PLAT == TIKI_WIN32
-			std::string("!install;Install update\r") +
+		    std::string("!install;Install update\r") +
 #endif
-			std::string("!ok;Ok\r"));
+		    std::string("!ok;Ok\r"));
 		t.doMenu();
 #if TIKI_PLAT == TIKI_WIN32
+
 		if(t.getLabel() == "install") {
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
@@ -235,6 +238,7 @@ void check_updates() {
 			exit(0);
 		}
 #endif
+
 	}
 #endif
 }
@@ -243,20 +247,27 @@ bool submit_bug(std::string email, std::string summary, std::string description)
 #ifdef NET
 	std::string ver = VERSION;
 #if TIKI_PLAT == TIKI_WIN32
+
 	std::string plat = "Windows";
 #elif TIKI_PLAT == TIKI_OSX
+
 	std::string plat = "Macintosh";
 #elif TIKI_PLAT == TIKI_SDL
+
 	std::string plat = "Linux";
 #elif TIKI_PLAT == TIKI_DC
+
 	std::string plat = "Dreamcast";
 #elif TIKI_PLAT == TIKI_NDS
+
 	std::string plat = "Nintendo DS";
 #else
+
 	std::string plat = "Other";
-#endif	
+#endif
+
 	TracBug bug;
-	
+
 	bug.setProperty("reporter", email, "string");
 	bug.setProperty("summary", summary, "string");
 	bug.setProperty("description", description, "string");
@@ -267,29 +278,36 @@ bool submit_bug(std::string email, std::string summary, std::string description)
 		bug.setProperty("game", world.title, "string");
 		bug.setProperty("board", ToString(currentbrd->num) + ": " + currentbrd->title, "string");
 	}
-	
-	
+
+
 	if(bug.create()) {
 		if(currentbrd != NULL) {
 			std::string filename;
 #if TIKI_PLAT == TIKI_WIN32
+
 			char path[128];
 			GetTempPath(128,path);
 			filename = path + std::string("bugreport.sav");
 #elif TIKI_PLAT == TIKI_NDS
+
 			filename = "/bugreport.sav";
-#else 
+#else
+
 			filename = "/tmp/bugreport.sav";
 #endif
+
 			save_game(filename.c_str());
 			bug.attach(filename, "Current game state");
 #if TIKI_PLAT == TIKI_WIN32
-			 _unlink(filename.c_str());
+
+			_unlink(filename.c_str());
 #else
 #if TIKI_PLAT != TIKI_NDS
-			 unlink(filename.c_str());
+
+			unlink(filename.c_str());
 #endif
 #endif
+
 		}
 		return true;
 	}
@@ -306,7 +324,7 @@ void menu_background() {
 			ct->printf("%c",177);
 		}
 	}
-}	
+}
 
 //How often to display average frame rate (in seconds)
 #define FPS_SAMPLE_RATE 10
@@ -319,64 +337,66 @@ public:
 	KbDevice() { }
 	virtual ~KbDevice() { }
 
-	virtual Type getType() const { return TypeKeyboard; }
-	virtual string getName() const { return "SDL Keyboard"; }
+	virtual Type getType() const {
+		return TypeKeyboard;
+	}
+	virtual string getName() const {
+		return "SDL Keyboard";
+	}
 };
 
 static RefPtr<KbDevice> SDLkb;
 
-static int translateSym(SDLKey key)
-{
-	switch(key)
-	{
-		case SDLK_UP:
-			return Event::KeyUp;
-		case SDLK_DOWN:
-			return Event::KeyDown;
-		case SDLK_LEFT:
-			return Event::KeyLeft;
-		case SDLK_RIGHT:
-			return Event::KeyRight;
-		case SDLK_INSERT:
-			return Event::KeyInsert;
-		case SDLK_DELETE:
-			return Event::KeyDelete;
-		case SDLK_HOME:
-			return Event::KeyHome;
-		case SDLK_END:
-			return Event::KeyEnd;
-		case SDLK_PAGEUP:
-			return Event::KeyPgup;
-		case SDLK_PAGEDOWN:
-			return Event::KeyPgdn;
-		case SDLK_ESCAPE:
-			return Event::KeyEsc;
-		case SDLK_F1:
-			return Event::KeyF1;
-		case SDLK_F2:
-			return Event::KeyF2;
-		case SDLK_F3:
-			return Event::KeyF3;
-		case SDLK_F4:
-			return Event::KeyF4;
-		case SDLK_F5:
-			return Event::KeyF5;
-		case SDLK_F6:
-			return Event::KeyF6;
-		case SDLK_F7:
-			return Event::KeyF7;
-		case SDLK_F8:
-			return Event::KeyF8;
-		case SDLK_F9:
-			return Event::KeyF9;
-		case SDLK_F10:
-			return Event::KeyF10;
-		case SDLK_F11:
-			return Event::KeyF11;
-		case SDLK_F12:
-			return Event::KeyF12;
-		default:
-			return key;
+static int translateSym(SDLKey key) {
+	switch(key) {
+	case SDLK_UP:
+		return Event::KeyUp;
+	case SDLK_DOWN:
+		return Event::KeyDown;
+	case SDLK_LEFT:
+		return Event::KeyLeft;
+	case SDLK_RIGHT:
+		return Event::KeyRight;
+	case SDLK_INSERT:
+		return Event::KeyInsert;
+	case SDLK_DELETE:
+		return Event::KeyDelete;
+	case SDLK_HOME:
+		return Event::KeyHome;
+	case SDLK_END:
+		return Event::KeyEnd;
+	case SDLK_PAGEUP:
+		return Event::KeyPgup;
+	case SDLK_PAGEDOWN:
+		return Event::KeyPgdn;
+	case SDLK_ESCAPE:
+		return Event::KeyEsc;
+	case SDLK_F1:
+		return Event::KeyF1;
+	case SDLK_F2:
+		return Event::KeyF2;
+	case SDLK_F3:
+		return Event::KeyF3;
+	case SDLK_F4:
+		return Event::KeyF4;
+	case SDLK_F5:
+		return Event::KeyF5;
+	case SDLK_F6:
+		return Event::KeyF6;
+	case SDLK_F7:
+		return Event::KeyF7;
+	case SDLK_F8:
+		return Event::KeyF8;
+	case SDLK_F9:
+		return Event::KeyF9;
+	case SDLK_F10:
+		return Event::KeyF10;
+	case SDLK_F11:
+		return Event::KeyF11;
+	case SDLK_F12:
+		return Event::KeyF12;
+	default:
+		return key;
 	}
 	return key;
 }
@@ -393,13 +413,16 @@ void render() {
 	static float fps = 0.0f;
 
 #if 0
+
 	float x,y,w,h;
 
 	if(player!=NULL) {
 		x=((BOARD_X*4)*zoom)+((BOARD_X*4)-player->position().x*(8*zoom));
 		y=((SCREEN_Y/2*zoom)+(SCREEN_Y/2-player->position().y*((SCREEN_Y/ 25) * zoom)));
-		if(x>(BOARD_X*4*zoom)) x = (BOARD_X*4*zoom);
-		if(y>((SCREEN_Y/2)*zoom)) y = ((SCREEN_Y/2)*zoom);
+		if(x>(BOARD_X*4*zoom))
+			x = (BOARD_X*4*zoom);
+		if(y>((SCREEN_Y/2)*zoom))
+			y = ((SCREEN_Y/2)*zoom);
 		// TODO: test maximum values too
 		ct->setTranslate(Vector(x, y, 0));
 		ct->setSize((BOARD_X*8) * zoom, SCREEN_Y * zoom);
@@ -408,11 +431,12 @@ void render() {
 #if TIKI_PLAT != TIKI_NDS
 	zzt_screen_mutex.lock();
 #endif
+
 	frameTime = Time::gettime();
-	
+
 #ifdef USE_SDL
-// Poll for events, and handle the ones we care about.
-    SDL_Event event;
+	// Poll for events, and handle the ones we care about.
+	SDL_Event event;
 	int mod = 0;
 	SDL_keysym lastPressed; //Used to detect repeats
 
@@ -421,27 +445,29 @@ void render() {
 
 	/* Enable key repeat */
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
-		
-    while (SDL_PollEvent(&event)) {
-		if(event.key.keysym.mod & KMOD_SHIFT) mod |= Event::KeyShift;
-		if(event.key.keysym.mod & KMOD_CTRL) mod |= Event::KeyControl;
-		if(event.key.keysym.mod & KMOD_ALT) mod |= Event::KeyAlt;
-		
+
+	while (SDL_PollEvent(&event)) {
+		if(event.key.keysym.mod & KMOD_SHIFT)
+			mod |= Event::KeyShift;
+		if(event.key.keysym.mod & KMOD_CTRL)
+			mod |= Event::KeyControl;
+		if(event.key.keysym.mod & KMOD_ALT)
+			mod |= Event::KeyAlt;
+
 		switch (event.type) {
-			case SDL_KEYDOWN:
-			{
-			  //Only keypress, not keydown, should repeat  
-			  if(!(lastPressed.sym == event.key.keysym.sym && lastPressed.mod == event.key.keysym.mod)) {
+		case SDL_KEYDOWN: {
+				//Only keypress, not keydown, should repeat
+				if(!(lastPressed.sym == event.key.keysym.sym && lastPressed.mod == event.key.keysym.mod)) {
 					Event evt(Event::EvtKeyDown);
 					evt.dev = SDLkb;
 					evt.key = translateSym(event.key.keysym.sym);
 					evt.mod = mod;
 					sendEvent(evt);
-					
+
 					lastPressed.sym = event.key.keysym.sym;
 					lastPressed.mod = event.key.keysym.mod;
 				}
-								
+
 				Event evtPress(Event::EvtKeypress);
 				evtPress.dev = SDLkb;
 				evtPress.key = translateSym(event.key.keysym.sym);
@@ -449,9 +475,8 @@ void render() {
 				sendEvent(evtPress);
 				//Debug::printf("HID:KB: KEYDOWN: %d\n", evt.key);
 			}
-				break;
-			case SDL_KEYUP:
-			{
+			break;
+		case SDL_KEYUP: {
 				Event evt(Event::EvtKeyUp);
 				evt.dev = SDLkb;
 				evt.key = translateSym(event.key.keysym.sym);
@@ -461,9 +486,8 @@ void render() {
 				lastPressed.sym = (SDLKey)0;
 				lastPressed.mod = (SDLMod)0;
 			}
-				break;
-			case SDL_QUIT:
-			{
+			break;
+		case SDL_QUIT: {
 				Event evt(Event::EvtQuit);
 				sendEvent(evt);
 			}
@@ -472,27 +496,38 @@ void render() {
 	}
 	ct->draw(screen);
 	st->draw(screen);
-	if(mt!=NULL) mt->draw(screen);
-	if(debug_visible) dt->draw(screen);
+	if(mt!=NULL)
+		mt->draw(screen);
+	if(debug_visible)
+		dt->draw(screen);
 	SDL_UpdateRect(screen, 0, 0, SCREEN_X, SCREEN_Y);
 #elif TIKI_PLAT == TIKI_NDS
+
 	st->draw();
-	if(mt!=NULL) mt->draw();
-	else ct->draw();
+	if(mt!=NULL)
+		mt->draw();
+	else
+		ct->draw();
 	swiWaitForVBlank();
 #elif defined(USE_OPENGL)
+
 	Frame::begin();
 	ct->drawAll(Drawable::Opaque);
-	if(debug_visible) dt->drawAll(Drawable::Opaque);
+	if(debug_visible)
+		dt->drawAll(Drawable::Opaque);
 	st->drawAll(Drawable::Opaque);
-	if(mt != NULL) mt->drawAll(Drawable::Opaque);
+	if(mt != NULL)
+		mt->drawAll(Drawable::Opaque);
 	Frame::transEnable();
 	ct->drawAll(Drawable::Trans);
-	if(debug_visible) dt->drawAll(Drawable::Trans);
+	if(debug_visible)
+		dt->drawAll(Drawable::Trans);
 	st->drawAll(Drawable::Trans);
-	if(mt != NULL) mt->drawAll(Drawable::Trans);
+	if(mt != NULL)
+		mt->drawAll(Drawable::Trans);
 	Frame::finish();
 #endif
+
 	frameTime = Time::gettime() - frameTime;
 	frames++;
 	fpsTimer -= (long)frameTime;
@@ -502,23 +537,27 @@ void render() {
 		fpsTimer = 1000000;
 		frames = 0;
 #if TIKI_PLAT != TIKI_NDS
+
 		*dt << "\x1b[s"; // Save cursor position
 		dt->locate(0,0);
 		dt->color(WHITE|HIGH_INTENSITY, BLUE);
 		*dt << "FPS: " << (int)fps;
 		*dt << "\x1b[u"; // Restore cursor position
-#endif		
+#endif
+
 	}
 	if(avgFpsTimer <= 0) {
 #ifdef DEBUG
 		Debug::printf("Average FPS: %f\n",fps);
 #endif
+
 		avgFpsTimer = 1000000 * FPS_SAMPLE_RATE;
 	}
 #if TIKI_PLAT == TIKI_DC
 	update_lcds();
 #endif
 #if TIKI_PLAT != TIKI_NDS
+
 	zzt_screen_mutex.unlock();
 #endif
 }
@@ -526,41 +565,46 @@ void render() {
 extern "C" int tiki_main(int argc, char **argv) {
 	TUIWindow *t, *c;
 	srand((unsigned int)time(NULL));
-		
+
 	// Init Tiki
 	Tiki::init(argc, argv);
 	Tiki::setName("DreamZZT", NULL);
 
 #ifdef USE_SDL
 	/* initialize SDL */
-	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-	{
+	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
 		fprintf( stderr, "Video initialization failed: %s\n",
-			SDL_GetError( ) );
+		         SDL_GetError( ) );
 		exit(1);
 	}
 	SDL_WM_SetCaption("DreamZZT Lite", NULL);
 	screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, 32, SDL_HWSURFACE);
 #endif
 	//Hid::callbackReg(tkCallback, NULL);
-	
+
 #ifdef NET
 #ifdef USE_CURL
+
 	curl_global_init(CURL_GLOBAL_ALL);
 #endif
+
 	char authtmp[256];
 	std::string filename;
 	File f;
 #if TIKI_PLAT == TIKI_WIN32
+
 	TCHAR szPath[MAX_PATH];
-	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
+	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath);
 	filename = std::string(szPath) + std::string("\\dzztauth.dat");
 #elif TIKI_PLAT == TIKI_NDS
+
 	filename = ".dzztauth";
 #else
+
 	char *path = getenv("HOME");
 	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
 #endif
+
 	f.open(filename.c_str(),"rb");
 	if(f.isValid()) {
 		int len = f.read(authtmp,256);
@@ -570,59 +614,72 @@ extern "C" int tiki_main(int argc, char **argv) {
 		}
 		f.close();
 	}
-#endif	
+#endif
 
 #if TIKI_PLAT == TIKI_DC
 #ifdef DEBUG
 	fs_chdir("/pc/Users/sam/Projects/DreamZZT/resources");
 #else
+
 	fs_chdir("/cd");
 #endif
+
 	zzt_vmu_init();
 #endif
 
 	zm = new ZZTMusicStream;
-	if(zm!=NULL) zm->setVolume(0.4f);
+	if(zm!=NULL)
+		zm->setVolume(0.4f);
 
 	//initialize the screen
 #if defined(USE_SDL)
+
 	SDL_Surface *temp = SDL_LoadBMP("zzt-ascii.bmp");
 	zzt_font = SDL_ConvertSurface(temp, screen->format, SDL_SWSURFACE);
 	SDL_FreeSurface(temp);
 #elif defined(USE_OPENGL)
+
 	zzt_font = new Texture("zzt-ascii.png", true);
 #endif
 #if TIKI_PLAT == TIKI_NDS
 	//Power off the 3D hardware, we're not using it
 	powerOFF(POWER_3D_CORE);
 	powerOFF(POWER_MATRIX);
-	
+
 	ct = new ConsoleText(32, 24, false);
 #else
+
 	ct = new ConsoleText(60, 25, zzt_font);
 #endif
+
 	ct->setSize(60 * 8, SCREEN_Y);
 	ct->translate(Vector(60 * 4, ((TIKI_PLAT==TIKI_DC)?480:SCREEN_Y) / 2,0));
 
 #ifdef USE_3DMODEL
+
 	gl = new GraphicsLayer();
 	ct->subAdd(gl);
 #endif
-	
+
 #if TIKI_PLAT == TIKI_NDS
+
 	st = new ConsoleText(64, 24, true);
-	
+
 	SUB_BG0_X0 = -48;
 	SUB_BG1_X0 = -48;
 #else
+
 	st = new ConsoleText(20, 25, zzt_font);
 #endif
+
 	st->setSize(20 * 8, SCREEN_Y);
 	st->setTranslate(Vector(640 - 20 * 4,((TIKI_PLAT==TIKI_DC)?480:SCREEN_Y)/2, 0.9f));
 
-#if TIKI_PLAT != TIKI_NDS	
+#if TIKI_PLAT != TIKI_NDS
+
 	debug_init();
 #endif
+
 	ct->color(15,1);
 	ct->clear();
 	st->color(15,1);
@@ -647,15 +704,17 @@ extern "C" int tiki_main(int argc, char **argv) {
 		t = new TUIWindow("Main Menu");
 		t->buildFromString(MAIN_MENU);
 		t->doMenu(TIKI_PLAT!=TIKI_NDS && TIKI_PLAT!=TIKI_DC);
-		
+
 		if(t->getLabel() == "quit" || t->getLabel() =="\0") {
 			break;
 		} else if(t->getLabel() == "new") {
 			std::string s = os_select_file("Select a game","zzt");
-			if(s!="")  play_zzt(s.c_str());
+			if(s!="")
+				play_zzt(s.c_str());
 		} else if(t->getLabel() == "szt") {
 			std::string s = os_select_file("Select a game","szt");
-			if(s!="")  play_zzt(s.c_str());
+			if(s!="")
+				play_zzt(s.c_str());
 		} else if(t->getLabel() == "tutorial") {
 			play_zzt("tutorial.zzt");
 		} else if(t->getLabel() == "restore") {
@@ -665,8 +724,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 				unvmuify((std::string("/vmu/a1/") + s).c_str(),"/ram/tmp.sav");
 				play_zzt("/ram/tmp.sav",true);
 #else
+
 				play_zzt(s.c_str());
 #endif
+
 			}
 		} else if(t->getLabel() == "edit") {
 			new_world();
@@ -677,38 +738,44 @@ extern "C" int tiki_main(int argc, char **argv) {
 			c = new TUIWindow("Credits");
 			c->buildFromString(CREDITS);
 			c->doMenu();
-			
+
 			delete c;
 		}
-		
+
 		delete t;
 	}
 
 	debug_shutdown();
-	if(zm!=NULL && zm->isPlaying()) zm->stop();
+	if(zm!=NULL && zm->isPlaying())
+		zm->stop();
 
 #if TIKI_PLAT == TIKI_DC
+
 	arch_exit(0);
 #endif
-	
+
 #if defined(NET)
 #if TIKI_PLAT == TIKI_WIN32
-	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
+
+	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath);
 	filename = std::string(szPath) + std::string("\\dzztauth.dat");
 #elif TIKI_PLAT == TIKI_NDS
+
 	filename = ".dzztauth";
 #else
+
 	path = getenv("HOME");
 	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
 #endif
+
 	f.open(filename.c_str(),"wb");
 	if(f.isValid()) {
 		f.write(curl_auth_string.c_str(),(int)curl_auth_string.length()+1);
 		f.close();
 	}
-#endif	
+#endif
 	Tiki::shutdown();
-	
+
 	exit(0); //Win32 wont quit when this thread ends
 	return 0;
 }
@@ -731,7 +798,7 @@ void play_zzt(const char *filename, bool tempFile) {
 	Event evt;
 	TUISlider sm("", &speedmod);
 	TUISlider vm("", &volmod);
-	
+
 	switchbrd=-1;
 	if(load_zzt(filename,0)==-1) {
 		TUIWindow t("Error");
@@ -739,28 +806,31 @@ void play_zzt(const char *filename, bool tempFile) {
 		t.doMenu();
 		return;
 	}
-	
+
 	gamespeed = (uint64)(GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f));
-	if(zm!=NULL) zm->setVolume((float)volmod / 16.0f);
-	
+	if(zm!=NULL)
+		zm->setVolume((float)volmod / 16.0f);
+
 	if(tempFile) {
 #if TIKI_PLAT == TIKI_WIN32
-			 _unlink(filename);
+		_unlink(filename);
 #elif TIKI_PLAT != TIKI_NDS
-			 unlink(filename);
+
+		unlink(filename);
 #endif
+
 	}
-	
+
 #if defined(NET) && TIKI_PLAT != TIKI_NDS
 	if(world.title != "") {
 		std::list<TracBug> bugs = search_tickets("status!=closed&amp;game~=" + world.title);
 		if(bugs.size() > 0) {
 			std::string bugWarning = "The following bugs have been reported for\rthis game:\r\r";
-			
+
 			for(std::list<TracBug>::iterator bi = bugs.begin(); bi != bugs.end(); bi++) {
 				bugWarning += std::string("!") + ToString((*bi).getNum()) + std::string(";") + (*bi).getProperty("summary") + "\r";
 			}
-			
+
 			bugWarning += "\r\
 These bugs may affect your ability to\r\
 complete this game.\r\
@@ -771,7 +841,7 @@ complete this game.\r\
 			t.buildFromString(bugWarning);
 			do {
 				t.doMenu();
-				
+
 				if(t.getLabel() != "" && atoi(t.getLabel().c_str()) > 0) {
 					for(std::list<TracBug>::iterator bi = bugs.begin(); bi != bugs.end(); bi++) {
 						if((*bi).getNum() == atoi(t.getLabel().c_str())) {
@@ -779,12 +849,12 @@ complete this game.\r\
 							bug += std::string("Platform: ") + (*bi).getProperty("platform") + "\r";
 							bug += std::string("Version: ") + (*bi).getProperty("version") + "\r";
 							bug += std::string("Game: ") + (*bi).getProperty("game") + "\r";
-							bug += std::string("Board: ") + (*bi).getProperty("board") + "\r";					
+							bug += std::string("Board: ") + (*bi).getProperty("board") + "\r";
 							bug += "\r";
 							bug += (*bi).getProperty("description") + "\r";
 							bug += "\r";
 							bug += "!return;Return to bug list\r";
-							
+
 							TUIWindow bw((*bi).getProperty("summary"));
 							bw.buildFromString(bug);
 							bw.doMenu();
@@ -798,7 +868,7 @@ complete this game.\r\
 		}
 	}
 #endif
-	
+
 	start=world.start;
 	EventCollector ec;
 	if(filename[strlen(filename)-1]!='v' && filename[strlen(filename)-1]!='V') {
@@ -816,21 +886,25 @@ complete this game.\r\
 		st->color(15,1);
 		st->printf("%s",world.title.c_str());
 		st->locate(2,9);
-	#if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
+#if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
+
 		st->printf("   Press Start");
-	#else
+#else
+
 		st->printf("   Press Enter");
-	#endif
+#endif
+
 		st->locate(2,10);
 		st->printf("    to begin!");
 		draw_board();
 		do {
 			if(!gameFrozen && (Time::gettime() - ticker) > gamespeed) {
 				update_brd();
-				sm.update();				
+				sm.update();
 				gamespeed = (uint64)(GAMESPEED_DEAD + ((float)GAMESPEED_ALIVE * (8.0f - (float)speedmod) / 8.0f));
 				vm.update();
-				if(zm!=NULL) zm->setVolume((float)volmod / 16.0f);
+				if(zm!=NULL)
+					zm->setVolume((float)volmod / 16.0f);
 				if(world.magic != 65534 && ct->getCols() < BOARD_X) {
 					disp_off_x = (BOARD_X - ct->getCols()) / 2;
 				}
@@ -839,10 +913,13 @@ complete this game.\r\
 				st->locate(2,19);
 				st->color(0,3);
 #if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
+
 				st->printf(" X ");
 #else
+
 				st->printf(" S ");
 #endif
+
 				st->color(15,1);
 				st->printf(" Speed:");
 				st->locate(4,20);
@@ -851,15 +928,19 @@ complete this game.\r\
 				st->color(0,7);
 #if TIKI_PLAT != TIKI_NDS
 #if TIKI_PLAT == TIKI_DC
+
 				st->printf(" Y ");
 #else
+
 				st->printf(" V ");
 #endif
+
 				st->color(15,1);
 				st->printf(" Volume:");
 				st->locate(4,23);
 				vm.draw(st);
 #endif
+
 				ticker = Time::gettime();
 			}
 			render();
@@ -881,7 +962,8 @@ complete this game.\r\
 				}
 			}
 		} while(switchbrd==-1);
-		if(switchbrd==-2) return;
+		if(switchbrd==-2)
+			return;
 	}
 	switchbrd=-1;
 
@@ -899,41 +981,41 @@ complete this game.\r\
 			if(params.size() > 2) {
 				tasktype = atoi(params[0].c_str());
 				complete = atoi(params[1].c_str());
-				params.erase(params.begin(), params.begin() + 2);			
+				params.erase(params.begin(), params.begin() + 2);
 				switch(tasktype) {
-					case 0: //End of list
-						break;
-					case TASK_COLLECT:
-						add_task(new TaskCollect(params), !!complete);
-						break;
-					case TASK_TORCH:
-						add_task(new TaskUseTorch(params), !!complete);
-						break;
-					case TASK_KILL_ENEMY:
-						add_task(new TaskKillEnemy(params), !!complete);
-						break;
-					case TASK_KILL_OBJECT:
-						add_task(new TaskKillObject(params), !!complete);
-						break;
-					case TASK_TOUCH_OBJECT:
-						add_task(new TaskTouchObject(params), !!complete);
-						break;
-					case TASK_SHOOT_OBJECT:
-						add_task(new TaskShootObject(params), !!complete);
-						break;
-					case TASK_PLAYER_POSITION:
-						add_task(new TaskPlayerPosition(params), !!complete);
-						break;
-					case TASK_OBJECT_COUNT:
-						add_task(new TaskObjectCount(params), !!complete);
-						break;
-					default:
-						Debug::printf("Warning: unknown task type: %i\n", tasktype);
-						break;
+				case 0: //End of list
+					break;
+				case TASK_COLLECT:
+					add_task(new TaskCollect(params), !!complete);
+					break;
+				case TASK_TORCH:
+					add_task(new TaskUseTorch(params), !!complete);
+					break;
+				case TASK_KILL_ENEMY:
+					add_task(new TaskKillEnemy(params), !!complete);
+					break;
+				case TASK_KILL_OBJECT:
+					add_task(new TaskKillObject(params), !!complete);
+					break;
+				case TASK_TOUCH_OBJECT:
+					add_task(new TaskTouchObject(params), !!complete);
+					break;
+				case TASK_SHOOT_OBJECT:
+					add_task(new TaskShootObject(params), !!complete);
+					break;
+				case TASK_PLAYER_POSITION:
+					add_task(new TaskPlayerPosition(params), !!complete);
+					break;
+				case TASK_OBJECT_COUNT:
+					add_task(new TaskObjectCount(params), !!complete);
+					break;
+				default:
+					Debug::printf("Warning: unknown task type: %i\n", tasktype);
+					break;
 				}
 			}
 		}
-	}	
+	}
 #endif
 
 	ct->color(15,1);
@@ -944,13 +1026,18 @@ complete this game.\r\
 	draw_hud_ingame();
 	render();
 	switch_board(start);
-	if(!playerEventCollector->listening()) playerEventCollector->start();
-	if(currentbrd->reenter_x == 254 && player!=NULL) currentbrd->reenter_x = (unsigned char)player->position().x;
-	if(currentbrd->reenter_y == 254 && player!=NULL) currentbrd->reenter_y = (unsigned char)player->position().y;	
+	if(!playerEventCollector->listening())
+		playerEventCollector->start();
+	if(currentbrd->reenter_x == 254 && player!=NULL)
+		currentbrd->reenter_x = (unsigned char)player->position().x;
+	if(currentbrd->reenter_y == 254 && player!=NULL)
+		currentbrd->reenter_y = (unsigned char)player->position().y;
 	srand((unsigned int)time(0));
 	draw_board();
-	if(player!=NULL) player->setFlag(F_SLEEPING);
-	if(player!=NULL) player->update();
+	if(player!=NULL)
+		player->setFlag(F_SLEEPING);
+	if(player!=NULL)
+		player->update();
 	while(1) {
 		if(!gameFrozen && (Time::gettime() - ticker) > ((world.health>0)?gamespeed:GAMESPEED_DEAD)) {
 			check_tasks();
@@ -960,12 +1047,13 @@ complete this game.\r\
 			ticker = Time::gettime();
 		}
 		render();
-		
+
 		if(switchbrd>-1) {
 			switch_board(switchbrd);
 			debug("\x1b[0;37mWarping to \x1b[1;37m%s\n",currentbrd->title);
 			draw_board();
-			if(player->flags()&F_SLEEPING) player->update();
+			if(player->flags()&F_SLEEPING)
+				player->update();
 			switchbrd=-1;
 		} else if(switchbrd==-2) {
 			break;
@@ -973,7 +1061,7 @@ complete this game.\r\
 			TUIWindow t("Game Menu");
 			t.buildFromString(
 #if defined(NET) && TIKI_PLAT != TIKI_NDS
-std::string("!bugreport;Report a bug\r") +
+			    std::string("!bugreport;Report a bug\r") +
 #endif
 "!restore;Restore Game\r\
 !save;Save Game\r\
@@ -992,7 +1080,7 @@ std::string("!bugreport;Report a bug\r") +
 				bugReport.addWidget(new TUILabel(""));
 				bugReport.addWidget(new TUIHyperLink("submit","Submit bug report"));
 				bugReport.doMenu();
-				
+
 				if(bugReport.getLabel() == "submit") {
 					submit_bug(email, summary, description);
 				}
@@ -1002,11 +1090,14 @@ std::string("!bugreport;Report a bug\r") +
 					free_world();
 					player=NULL;
 #if TIKI_PLAT == TIKI_DC
+
 					unvmuify((std::string("/vmu/a1/") + s).c_str(),"/ram/tmp.sav");
 					load_zzt("/ram/tmp.sav",0);
 #else
+
 					load_zzt(s.c_str(),0);
 #endif
+
 					switch_board(world.start);
 				}
 			} else if(t.getLabel() == "save") {
@@ -1014,21 +1105,26 @@ std::string("!bugreport;Report a bug\r") +
 			} else if(t.getLabel() == "quit") {
 				break;
 			}
-			if(switchbrd == -3) switchbrd=-1;
+			if(switchbrd == -3)
+				switchbrd=-1;
 		} else if(switchbrd==-4) {
-			world.saved=1;	
+			world.saved=1;
 			if(world.online) {
 #ifdef NET
 				std::string filename;
 #if TIKI_PLAT == TIKI_WIN32
+
 				char path[128];
 				GetTempPath(128,path);
 				filename = path + std::string("saved.sav");
 #elif TIKI_PLAT == TIKI_NDS
+
 				filename = "/dzzthttp.sav";
 #else
+
 				filename = "/tmp/saved.sav";
 #endif
+
 				save_game(filename.c_str());
 				std::string s = http_post_file(filename,"application/x-zzt-save", DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=ProcessSave"));
 				if(s!="OK") {
@@ -1037,6 +1133,7 @@ std::string("!bugreport;Report a bug\r") +
 					t.doMenu();
 				}
 #endif
+
 			} else {
 				std::string s = os_save_file("Save a game",world.title + ".sav","sav");
 				if(s!="") {
@@ -1047,8 +1144,10 @@ std::string("!bugreport;Report a bug\r") +
 					fs_unlink("/ram/tmp.sav");
 					spinner_clear();
 #else
+
 					save_game(s.c_str());
 #endif
+
 				}
 			}
 			switchbrd=-1;
@@ -1068,6 +1167,7 @@ std::string("!bugreport;Report a bug\r") +
 	delete playerEventCollector;
 	playerEventCollector=NULL;
 #ifdef NET
+
 	if(world.online && switchbrd != -2) {
 		std::string url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=SubmitScore";
 		url += "&GameID=" +world.title;
@@ -1099,7 +1199,7 @@ void net_menu() {
 	File f;
 	std::string url = DZZTNET_HOST + DZZTNET_HOME;
 	std::string tmp,filename;
-	
+
 	if(curl_auth_string != "") {
 		url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
 		tmp = http_get_string(url);
@@ -1123,8 +1223,9 @@ Online.\n\
 !Create;Create new account\n\
 !Existing;Use existing acount\n");
 		t->doMenu();
-		if(switchbrd==-2 || t->getLabel() == "") return;
-		
+		if(switchbrd==-2 || t->getLabel() == "")
+			return;
+
 		if(t->getLabel() == "Existing") {
 			do {
 				std::string user="",pass="";
@@ -1139,7 +1240,8 @@ Online.\n\
 				t->addWidget(new TUIHyperLink("login","Login to C99.ORG"));
 				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
 				t->doMenu();
-				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "") return;
+				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "")
+					return;
 				curl_auth_string = user + std::string(":") + pass;
 				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
 				tmp = http_get_string(url);
@@ -1155,7 +1257,8 @@ Online.\n\
 					t = new TUIWindow(title);
 					t->buildFromString(tmp);
 					t->doMenu();
-					if(switchbrd==-2) return;
+					if(switchbrd==-2)
+						return;
 				}
 			} while(tmp != "OK" && switchbrd != -2);
 		} else if(t->getLabel() == "Create") {
@@ -1188,7 +1291,8 @@ Online.\n\
 				t->addWidget(new TUILabel("          viewed at",true));
 				t->addWidget(new TUILabel("    http://forums.c99.org/",true,true));
 				t->doMenu();
-				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "") return;
+				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "")
+					return;
 				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=Register";
 				url += "&Name=" + user;
 				url += "&NewPassword=" + pass1;
@@ -1199,7 +1303,7 @@ Online.\n\
 				url += "&ShowName=" + ToString((int)useName);
 				url += "&UtilizeEmail=" + ToString((int)useEmail);
 				url += "&AgreeToTerms=" + ToString((int)acceptTOS);
-				
+
 				tmp = http_get_string(url);
 				if(tmp!="OK") {
 					delete t;
@@ -1213,61 +1317,72 @@ Online.\n\
 					t = new TUIWindow(title);
 					t->buildFromString(tmp);
 					t->doMenu();
-					if(switchbrd==-2) return;
+					if(switchbrd==-2)
+						return;
 				}
 			} while(tmp != "OK" && switchbrd != -2);
-			if(tmp=="OK") curl_auth_string = user + ":" + pass1;
+			if(tmp=="OK")
+				curl_auth_string = user + ":" + pass1;
 		} else {
-			return; 
+			return;
 		}
 	}
 
 #if TIKI_PLAT == TIKI_WIN32
 	TCHAR szPath[MAX_PATH];
-	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath); 
+	SHGetFolderPath(NULL,CSIDL_LOCAL_APPDATA,NULL,0,szPath);
 	filename = std::string(szPath) + std::string("\\dzztauth.dat");
 #elif TIKI_PLAT == TIKI_NDS
+
 	filename = ".dzztauth";
 #else
+
 	char *path = getenv("HOME");
 	filename = ((path != NULL) ? std::string(path) : std::string("/")) + std::string("/.dzztauth");
 #endif
+
 	f.open(filename.c_str(),"wb");
 	if(f.isValid()) {
 		f.write(curl_auth_string.c_str(),(int)curl_auth_string.length()+1);
 		f.close();
 	}
-	
+
 	url = DZZTNET_HOST + DZZTNET_HOME;
-	
+
 	do {
 		ct->color(15,1);
 		ct->clear();
 		menu_background();
 		dzzt_logo();
-		
+
 		if((url.find(".zzt") != std::string::npos) || (url.find(".ZZT") != std::string::npos) || (url.find(".sav") != std::string::npos) || (url.find(".SAV") != std::string::npos)) {
 #ifdef DEBUG
 			Debug::printf("Downloading: %s\n", url.c_str());
 #endif
 #if TIKI_PLAT == TIKI_WIN32
+
 			char path[128];
 			GetTempPath(128,path);
 			filename = path + std::string("dzzthttp");
 #elif TIKI_PLAT == TIKI_NDS
-	filename = ".dzzthttp";
-#else 
+
+			filename = ".dzzthttp";
+#else
+
 			filename = "/tmp/dzzthttp";
 #endif
+
 			http_get_file(filename, url);
 			world.online=1;
 			play_zzt(filename.c_str());
 			world.online=0;
 
 #if TIKI_PLAT == TIKI_WIN32
-				 _unlink(filename.c_str());
+
+			_unlink(filename.c_str());
 #elif TIKI_PLAT != TIKI_NDS
-				 unlink(filename.c_str());
+
+			unlink(filename.c_str());
 #endif
 
 			url = DZZTNET_HOST + DZZTNET_HOME;
@@ -1275,6 +1390,7 @@ Online.\n\
 #ifdef DEBUG
 			Debug::printf("Loading: %s\n", url.c_str());
 #endif
+
 			tmp = http_get_string(url);
 			if(tmp != "") {
 				std::string title;
@@ -1299,7 +1415,8 @@ Online.\n\
 					}
 				}
 			} else {
-			while(1);
+				while(1)
+					;
 				break;
 			}
 		}
@@ -1310,7 +1427,7 @@ Online.\n\
 void check_tasks() {
 #ifdef NET
 	std::list<Task*>::iterator task_iter;
-	
+
 	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
 		if(!((*task_iter)->getComplete())) {
 			if(((*task_iter)->getBoard()==0 || (*task_iter)->getBoard()==currentbrd->num) && (*task_iter)->check()) {

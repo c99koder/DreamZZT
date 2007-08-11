@@ -27,13 +27,15 @@ int pluto_open(lua_State *L);
 typedef struct WriterInfo_t {
 	char* buf;
 	size_t buflen;
-} WriterInfo;
+}
+WriterInfo;
 
 int bufwriter (lua_State *L, const void* p, size_t sz, void* ud);
 
 typedef struct LoadInfo_t {
-  const char *buf;
-  size_t size;
-} LoadInfo;
+	const char *buf;
+	size_t size;
+}
+LoadInfo;
 
 const char *bufreader(lua_State *L, void *ud, size_t *sz);

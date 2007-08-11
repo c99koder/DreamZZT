@@ -33,10 +33,10 @@ void AMFModel::load() {
 	ifstream infile;
 	infile.open(filename.c_str());
 	if(infile.is_open()) {
-		
+
 		string buf;
 		infile >> buf;
-		
+
 		if((buf.length() == 4) && (buf.substr(0, 3) == "AMF")) {
 			version = buf[3] - '0';
 
@@ -69,20 +69,20 @@ void AMFModel::load() {
 		displayLists[0] = glGenLists(1);
 
 		glNewList(displayLists[0], GL_COMPILE);
-			for(int ii=0; ii<totalFaces; ii++) {
-				for(int jj=0; jj<3; jj++) {
-					glNormal3f(
-						animations[0].frames[0].faces[ii].vertices[jj].normal.x,
-						animations[0].frames[0].faces[ii].vertices[jj].normal.z,
-						animations[0].frames[0].faces[ii].vertices[jj].normal.y
-						);
-					glVertex3f(
-						animations[0].frames[0].faces[ii].vertices[jj].position.x*8.0f,
-						animations[0].frames[0].faces[ii].vertices[jj].position.y*8.0f - animations[0].frames[0].faces[ii].vertices[jj].position.z*14.0f,
-						animations[0].frames[0].faces[ii].vertices[jj].position.z/4.0f
-						);
-				}
+		for(int ii=0; ii<totalFaces; ii++) {
+			for(int jj=0; jj<3; jj++) {
+				glNormal3f(
+				    animations[0].frames[0].faces[ii].vertices[jj].normal.x,
+				    animations[0].frames[0].faces[ii].vertices[jj].normal.z,
+				    animations[0].frames[0].faces[ii].vertices[jj].normal.y
+				);
+				glVertex3f(
+				    animations[0].frames[0].faces[ii].vertices[jj].position.x*8.0f,
+				    animations[0].frames[0].faces[ii].vertices[jj].position.y*8.0f - animations[0].frames[0].faces[ii].vertices[jj].position.z*14.0f,
+				    animations[0].frames[0].faces[ii].vertices[jj].position.z/4.0f
+				);
 			}
+		}
 
 		glEndList();
 
@@ -102,7 +102,8 @@ int AMFModel::getAnimationIndex(const string& animationName) const {
 }
 
 void AMFModel::draw(const Vector& position, const int animation, const Vector& color, const unsigned char height) const {
-	if(!isValid) return;
+	if(!isValid)
+		return;
 
 	Vector windowSize = ct->getSize();
 	float xs = windowSize.x / 60.0f;
@@ -111,13 +112,13 @@ void AMFModel::draw(const Vector& position, const int animation, const Vector& c
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, (GLfloat *)&color);
 
 	Vector pos = ct->getPosition() - (windowSize * 0.5f);
- 
+
 	glTranslatef(position.x * xs + pos.x, (position.y + 1.0f) * ys + pos.y - (float)height, 0.1f * (float)height);
 
 	glBegin(GL_TRIANGLES);
 	glCallList(displayLists[0]);
 	glEnd();
-	
+
 }
 
 Texture *AMFModel::getSkin() const {
@@ -136,9 +137,9 @@ int AMFModel::getTotalVertices() const {
 
 void AMFModel::AMFAnimation::read(ifstream& infile, const int totalFaces) {
 	string buf;
-	
+
 	infile >> name;
-	
+
 	infile >> buf;
 	totalFrames = atoi(buf.c_str());
 
@@ -163,7 +164,7 @@ void AMFModel::AMFFrame::read(ifstream& infile, const int totalFaces) {
 	}
 
 	//SAFE_DELETE_ARRAY(frameVertexData);
-	
+
 	int totalVertices = totalFaces * 3;
 	/*frameVertexData = new CUSTOMVERTEX[totalVertices];
 

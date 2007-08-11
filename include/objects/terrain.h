@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 //BOULDER
 #define ZZT_BOULDER_SHAPE 0xFE
@@ -178,7 +178,7 @@ public:
 
 class Water : public Terrain {
 public:
-	Water(int type, int x, int y, int shape, int flags, std::string name) : Terrain(type, x, y, shape, flags, name) { 
+	Water(int type, int x, int y, int shape, int flags, std::string name) : Terrain(type, x, y, shape, flags, name) {
 		m_counter = 0;
 		m_cstep = 0;
 	}
@@ -189,7 +189,7 @@ private:
 
 class Blink : public ZZTObject {
 public:
-	Blink(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	Blink(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_step.x=0;
 		m_step.y=-1;
 		m_start = 4;
@@ -203,14 +203,14 @@ public:
 		w->addWidget(new TUIDirection("Direction            ",&m_step));
 		w->addWidget(new TUISlider	 ("Start Time           ",&m_start));
 		w->addWidget(new TUISlider	 ("Period               ",&m_fire));
-	}	
+	}
 private:
 	int m_start, m_fire, m_counter;
 };
 
 class Laser : public ZZTObject {
 public:
-	Laser(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	Laser(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_time = 0;
 	}
 	void setParam(int arg, unsigned char val);

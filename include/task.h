@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #ifndef _TASK_H
 #define _TASK_H
@@ -53,23 +53,44 @@ public:
 		m_value = atoi(params[4].c_str());
 		m_complete = false;
 	}
-	
-	virtual ~Task() { }
-	
-	virtual bool check() { return false; };
-	virtual void touch(ZZTObject *obj) { };
-	virtual void get(ZZTObject *obj) { };
-	virtual void shoot(ZZTObject *obj) { };	
-	virtual void kill(ZZTObject *obj) { };
 
-	void setComplete(bool complete) { m_complete = complete; }
-	bool getComplete() { return m_complete; }
-	std::string getTitle() { return m_title; }
-	std::string getDescription() { return m_desc; }
-	int getValue() { return m_value; }
-	int getBoard() { return m_board; }
-	int getID() { return m_id; }
-	
+	virtual ~Task() { }
+
+	virtual bool check() {
+		return false;
+	};
+	virtual void touch(ZZTObject *obj) { }
+	;
+	virtual void get
+	(ZZTObject *obj) { }
+	;
+	virtual void shoot(ZZTObject *obj) { }
+	;
+	virtual void kill(ZZTObject *obj) { }
+	;
+
+	void setComplete(bool complete) {
+		m_complete = complete;
+	}
+	bool getComplete() {
+		return m_complete;
+	}
+	std::string getTitle() {
+		return m_title;
+	}
+	std::string getDescription() {
+		return m_desc;
+	}
+	int getValue() {
+		return m_value;
+	}
+	int getBoard() {
+		return m_board;
+	}
+	int getID() {
+		return m_id;
+	}
+
 protected:
 	std::string m_title, m_desc;
 	int m_id, m_value, m_board;
@@ -83,15 +104,16 @@ public:
 		m_color = color;
 		m_count = count;
 	}
-	
+
 	TaskCollect(std::vector<std::string> params) : Task(params) {
 		m_type = atoi(params[5].c_str());
 		m_color = atoi(params[6].c_str());
 		m_count = atoi(params[7].c_str());
 	}
-	
+
 	bool check();
-	void get(ZZTObject *obj);
+	void get
+		(ZZTObject *obj);
 private:
 	int m_type, m_count, m_color;
 };
@@ -102,17 +124,17 @@ public:
 		m_type = type;
 		m_count = count;
 	}
-	
+
 	TaskKillEnemy(std::vector<std::string> params) : Task(params) {
 		m_type = atoi(params[5].c_str());
 		m_color = atoi(params[6].c_str());
 		m_count = atoi(params[7].c_str());
 	}
-	
+
 	bool check();
 	void kill(ZZTObject *obj);
 private:
-		int m_type, m_count, m_color;
+	int m_type, m_count, m_color;
 };
 
 class TaskKillObject : public Task {
@@ -122,13 +144,13 @@ public:
 		m_color = color;
 		m_count = count;
 	}
-	
+
 	TaskKillObject(std::vector<std::string> params) : Task(params) {
 		m_name = params[5];
 		m_color = atoi(params[6].c_str());
 		m_count = atoi(params[7].c_str());
 	}
-	
+
 	bool check();
 	void kill(ZZTObject *obj);
 private:
@@ -143,13 +165,13 @@ public:
 		m_color = color;
 		m_count = count;
 	}
-	
+
 	TaskTouchObject(std::vector<std::string> params) : Task(params) {
 		m_name = params[5];
 		m_color = atoi(params[6].c_str());
 		m_count = atoi(params[7].c_str());
 	}
-	
+
 	bool check();
 	void touch(ZZTObject *obj);
 private:
@@ -164,13 +186,13 @@ public:
 		m_color = color;
 		m_count = count;
 	}
-	
+
 	TaskShootObject(std::vector<std::string> params) : Task(params) {
 		m_name = params[5];
 		m_color = atoi(params[6].c_str());
 		m_count = atoi(params[7].c_str());
 	}
-	
+
 	bool check();
 	void shoot(ZZTObject *obj);
 private:
@@ -184,14 +206,14 @@ public:
 		m_min = min;
 		m_max = max;
 	}
-	
+
 	TaskPlayerPosition(std::vector<std::string> params) : Task(params) {
 		m_min.y = (float)atoi(params[5].c_str());
 		m_min.x = (float)atoi(params[6].c_str());
 		m_max.y = (float)atoi(params[7].c_str());
 		m_max.x = (float)atoi(params[8].c_str());
 	}
-	
+
 	bool check();
 private:
 	Vector m_min, m_max;
@@ -199,8 +221,10 @@ private:
 
 class TaskUseTorch : public Task {
 public:
-	TaskUseTorch(int id, int board, std::string title, std::string description, int value) : Task(id,board,title,description,value) { };
-	TaskUseTorch(std::vector<std::string> params) : Task(params) { };
+	TaskUseTorch(int id, int board, std::string title, std::string description, int value) : Task(id,board,title,description,value) { }
+	;
+	TaskUseTorch(std::vector<std::string> params) : Task(params) { }
+	;
 	bool check();
 };
 
@@ -211,13 +235,13 @@ public:
 		m_color = color;
 		m_count = count;
 	}
-	
+
 	TaskObjectCount(std::vector<std::string> params) : Task(params) {
 		m_type = atoi(params[5].c_str());
 		m_color = atoi(params[6].c_str());
 		m_count = atoi(params[7].c_str());
 	}
-	
+
 	bool check();
 private:
 	int m_type, m_color, m_count;

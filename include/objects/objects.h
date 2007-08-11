@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 extern "C" {
 #include "lua.h"
@@ -42,7 +42,7 @@ public:
 private:
 	int m_counter, m_anim;
 };
-	
+
 //BOMB
 #define ZZT_BOMB_SHAPE 0x0B
 #define ZZT_BOMB_NAME "bomb"
@@ -51,27 +51,45 @@ private:
 
 class Bomb : public ZZTObject {
 public:
-	Bomb(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	Bomb(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_counter = 0;
 		m_start = 0;
 	}
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);
-	void setParam(int arg, unsigned char val) { if(arg==1) m_start = val; }
-	unsigned char param(int arg) { if(arg==1) return (m_shape==ZZT_BOMB_SHAPE)?0:(m_shape) - '0'; else return 0; }
+	void setParam(int arg, unsigned char val) {
+		if(arg==1)
+			m_start = val;
+	}
+	unsigned char param(int arg) {
+		if(arg==1)
+			return (m_shape==ZZT_BOMB_SHAPE)?0:(m_shape) - '0';
+		else
+			return 0;
+	}
 	void addEditWidgets(TUIWindow *w) {
 		TUIRadioGroup *rg = new TUIRadioGroup("Direction            ",&m_start);
-		rg->add("Inactive");
-		rg->add("1");
-		rg->add("2");
-		rg->add("3");
-		rg->add("4");
-		rg->add("5");
-		rg->add("6");
-		rg->add("7");
-		rg->add("8");
-		rg->add("9");
+		rg->add
+		("Inactive");
+		rg->add
+		("1");
+		rg->add
+		("2");
+		rg->add
+		("3");
+		rg->add
+		("4");
+		rg->add
+		("5");
+		rg->add
+		("6");
+		rg->add
+		("7");
+		rg->add
+		("8");
+		rg->add
+		("9");
 		w->addWidget(rg);
 	}
 private:
@@ -102,7 +120,7 @@ private:
 
 class Bullet : public ZZTObject {
 public:
-	Bullet(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	Bullet(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_fg = 15;
 		m_bg = 0;
 		m_owner = 0;
@@ -113,8 +131,10 @@ public:
 	void message(ZZTObject *them, std::string msg);
 	void addEditWidgets(TUIWindow *w) {
 		TUIRadioGroup *rg = new TUIRadioGroup("Fired By             ",&m_owner);
-		rg->add("Player");
-		rg->add("Creature");
+		rg->add
+		("Player");
+		rg->add
+		("Creature");
 		w->addWidget(new TUIDirection("Direction            ",&m_step));
 	}
 private:
@@ -129,9 +149,9 @@ private:
 
 class Ricochet : public ZZTObject {
 public:
-	Ricochet(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
-	}
-};
+	Ricochet(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {}
+}
+;
 
 //PUSHER
 #define ZZT_PUSHER_SHAPE 0x10
@@ -141,7 +161,7 @@ public:
 
 class Pusher : public ZZTObject {
 public:
-	Pusher(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	Pusher(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_step.x=0;
 		m_step.y=-1;
 	}
@@ -178,14 +198,14 @@ public:
 
 class Conveyer : public ZZTObject {
 public:
-	Conveyer(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	Conveyer(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_animIndex = 0;
 	}
 	void update();
 private:
 	int cw(ZZTObject *them);
 	int ccw(ZZTObject *them);
-	
+
 	int m_animIndex;
 };
 
@@ -197,7 +217,7 @@ private:
 
 class ZZTOOP : public ZZTObject {
 public:
-	ZZTOOP(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	ZZTOOP(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_walk = IDLE;
 		m_watch = false;
 	}
@@ -206,8 +226,10 @@ public:
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);
-	
-	void watch() { m_watch = !m_watch; }
+
+	void watch() {
+		m_watch = !m_watch;
+	}
 	void zzt_goto(std::string label);
 	void send(std::string cmd);
 	void zap(std::string label);
@@ -228,14 +250,14 @@ protected:
 
 class Scroll : public ZZTOOP {
 public:
-	Scroll(int type, int x, int y, int shape, int flags, std::string name) : ZZTOOP(type, x, y, shape, flags, name) { 
+	Scroll(int type, int x, int y, int shape, int flags, std::string name) : ZZTOOP(type, x, y, shape, flags, name) {
 		m_shape=ZZT_SCROLL_SHAPE;
 	}
-	
-	void create() { 
+
+	void create() {
 		m_fg = 15;
 		m_shape = ZZT_SCROLL_SHAPE;
-		m_progpos = -1;	
+		m_progpos = -1;
 	}
 	void message(ZZTObject *them, std::string msg);
 	void update();
@@ -258,7 +280,7 @@ public:
 	void message(ZZTObject *them, std::string msg);
 	void addEditWidgets(TUIWindow *w) {
 		w->addWidget(new TUIBoardList("Destination          ",&m_dest));
-	}	
+	}
 private:
 	unsigned char m_dest;
 };
@@ -271,7 +293,7 @@ private:
 
 class Duplicator : public ZZTObject {
 public:
-	Duplicator(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	Duplicator(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_animIndex = 0;
 		m_rate = 0;
 	}
@@ -304,8 +326,8 @@ public:
 	void update();
 	void message(ZZTObject *them, std::string msg);
 	void processEvent(const Tiki::Hid::Event & evt);
-	void setHeading(direction h) { 
-		m_heading = h; 
+	void setHeading(direction h) {
+		m_heading = h;
 		m_move = IDLE;
 		m_shoot = IDLE;
 	}
@@ -322,32 +344,34 @@ private:
 
 class ZZTLUA : public ZZTObject {
 public:
-	ZZTLUA(int type, int x, int y, int shape, int flags, std::string name);	
+	ZZTLUA(int type, int x, int y, int shape, int flags, std::string name);
 	~ZZTLUA();
-	
+
 	void create();
 	void update();
-	void message(ZZTObject *from, std::string msg) { push_message(from, msg); };
+	void message(ZZTObject *from, std::string msg) {
+		push_message(from, msg);
+	};
 	void setParam(int arg, unsigned char val);
 	unsigned char param(int arg);
-	
+
 	struct message_queue_item {
 		ZZTObject *them;
 		std::string message;
 	};
-	
+
 	int message_count() {
 		return (int)message_queue.size();
 	}
-	
+
 	message_queue_item pop_message() {
 		message_queue_item i = *(message_queue.begin());
 		message_queue.pop_front();
 		return i;
-	}	
+	}
 private:
 	std::list<message_queue_item> message_queue;
-	
+
 	void push_message(ZZTObject *them, std::string message) {
 		message_queue_item i;
 		i.them = them;

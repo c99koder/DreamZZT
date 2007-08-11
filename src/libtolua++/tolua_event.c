@@ -20,72 +20,62 @@
 	* It stores, creating the corresponding table if needed,
 	* the pair key/value in the corresponding ubox table
 */
-static void storeatubox (lua_State* L, int lo)
-{
-	#ifdef LUA_VERSION_NUM
-		lua_getfenv(L, lo);
-		if (lua_rawequal(L, -1, TOLUA_NOPEER)) {
-			lua_pop(L, 1);
-			lua_newtable(L);
-			lua_pushvalue(L, -1);
-			lua_setfenv(L, lo);	/* stack: k,v,table  */
-		};
-		lua_insert(L, -3);
-		lua_settable(L, -3); /* on lua 5.1, we trade the "tolua_peers" lookup for a settable call */
+static void storeatubox (lua_State* L, int lo) {
+#ifdef LUA_VERSION_NUM
+	lua_getfenv(L, lo);
+	if (lua_rawequal(L, -1, TOLUA_NOPEER)) {
 		lua_pop(L, 1);
-	#else
-	 /* stack: key value (to be stored) */
-		lua_pushstring(L,"tolua_peers");
-		lua_rawget(L,LUA_REGISTRYINDEX);        /* stack: k v ubox */
-		lua_pushvalue(L,lo);
-		lua_rawget(L,-2);                       /* stack: k v ubox ubox[u] */
-		if (!lua_istable(L,-1))
-		{
-			lua_pop(L,1);                          /* stack: k v ubox */
-			lua_newtable(L);                       /* stack: k v ubox table */
-			lua_pushvalue(L,1);
-			lua_pushvalue(L,-2);                   /* stack: k v ubox table u table */
-			lua_rawset(L,-4);                      /* stack: k v ubox ubox[u]=table */
-		}
-		lua_insert(L,-4);                       /* put table before k */
-		lua_pop(L,1);                           /* pop ubox */
-		lua_rawset(L,-3);                       /* store at table */
-		lua_pop(L,1);                           /* pop ubox[u] */
-	#endif
+		lua_newtable(L);
+		lua_pushvalue(L, -1);
+		lua_setfenv(L, lo);	/* stack: k,v,table  */
+	};
+	lua_insert(L, -3);
+	lua_settable(L, -3); /* on lua 5.1, we trade the "tolua_peers" lookup for a settable call */
+	lua_pop(L, 1);
+#else
+	/* stack: key value (to be stored) */
+	lua_pushstring(L,"tolua_peers");
+	lua_rawget(L,LUA_REGISTRYINDEX);        /* stack: k v ubox */
+	lua_pushvalue(L,lo);
+	lua_rawget(L,-2);                       /* stack: k v ubox ubox[u] */
+	if (!lua_istable(L,-1)) {
+		lua_pop(L,1);                          /* stack: k v ubox */
+		lua_newtable(L);                       /* stack: k v ubox table */
+		lua_pushvalue(L,1);
+		lua_pushvalue(L,-2);                   /* stack: k v ubox table u table */
+		lua_rawset(L,-4);                      /* stack: k v ubox ubox[u]=table */
+	}
+	lua_insert(L,-4);                       /* put table before k */
+	lua_pop(L,1);                           /* pop ubox */
+	lua_rawset(L,-3);                       /* store at table */
+	lua_pop(L,1);                           /* pop ubox[u] */
+#endif
 }
 
 /* Module index function
 */
-static int module_index_event (lua_State* L)
-{
+static int module_index_event (lua_State* L) {
 	lua_pushstring(L,".get");
 	lua_rawget(L,-3);
-	if (lua_istable(L,-1))
-	{
+	if (lua_istable(L,-1)) {
 		lua_pushvalue(L,2);  /* key */
 		lua_rawget(L,-2);
-		if (lua_iscfunction(L,-1))
-		{
+		if (lua_iscfunction(L,-1)) {
 			lua_call(L,0,1);
 			return 1;
-		}
-		else if (lua_istable(L,-1))
+		} else if (lua_istable(L,-1))
 			return 1;
 	}
 	/* call old index meta event */
-	if (lua_getmetatable(L,1))
-	{
+	if (lua_getmetatable(L,1)) {
 		lua_pushstring(L,"__index");
 		lua_rawget(L,-2);
 		lua_pushvalue(L,1);
 		lua_pushvalue(L,2);
-		if (lua_isfunction(L,-1))
-		{
+		if (lua_isfunction(L,-1)) {
 			lua_call(L,2,1);
 			return 1;
-		}
-		else if (lua_istable(L,-1))
-		{
+		} else if (lua_istable(L,-1)) {
 			lua_gettable(L,-3);
 			return 1;
 		}
@@ -96,16 +86,13 @@ static int module_index_event (lua_State* L)
 
 /* Module newindex function
 */
-static int module_newindex_event (lua_State* L)
-{
+static int module_newindex_event (lua_State* L) {
 	lua_pushstring(L,".set");
 	lua_rawget(L,-4);
-	if (lua_istable(L,-1))
-	{
+	if (lua_istable(L,-1)) {
 		lua_pushvalue(L,2);  /* key */
 		lua_rawget(L,-2);
-		if (lua_iscfunction(L,-1))
-		{
+		if (lua_iscfunction(L,-1)) {
 			lua_pushvalue(L,1); /* only to be compatible with non-static vars */
 			lua_pushvalue(L,3); /* value */
 			lua_call(L,2,0);
@@ -113,15 +100,13 @@ static int module_newindex_event (lua_State* L)
 		}
 	}
 	/* call old newindex meta event */
-	if (lua_getmetatable(L,1) && lua_getmetatable(L,-1))
-	{
+	if (lua_getmetatable(L,1) && lua_getmetatable(L,-1)) {
 		lua_pushstring(L,"__newindex");
 		lua_rawget(L,-2);
-		if (lua_isfunction(L,-1))
-		{
-		 lua_pushvalue(L,1);
-		 lua_pushvalue(L,2);
-		 lua_pushvalue(L,3);
+		if (lua_isfunction(L,-1)) {
+			lua_pushvalue(L,1);
+			lua_pushvalue(L,2);
+			lua_pushvalue(L,3);
 			lua_call(L,3,0);
 		}
 	}
@@ -134,13 +119,11 @@ static int module_newindex_event (lua_State* L)
 	* If the object is a userdata (ie, an object), it searches the field in
 	* the alternative table stored in the corresponding "ubox" table.
 */
-static int class_index_event (lua_State* L)
-{
- int t = lua_type(L,1);
-	if (t == LUA_TUSERDATA)
-	{
+static int class_index_event (lua_State* L) {
+	int t = lua_type(L,1);
+	if (t == LUA_TUSERDATA) {
 		/* Access alternative table */
-		#ifdef LUA_VERSION_NUM /* new macro on version 5.1 */
+#ifdef LUA_VERSION_NUM /* new macro on version 5.1 */
 		lua_getfenv(L,1);
 		if (!lua_rawequal(L, -1, TOLUA_NOPEER)) {
 			lua_pushvalue(L, 2); /* key */
@@ -148,41 +131,38 @@ static int class_index_event (lua_State* L)
 			if (!lua_isnil(L, -1))
 				return 1;
 		};
-		#else
+#else
+
 		lua_pushstring(L,"tolua_peers");
 		lua_rawget(L,LUA_REGISTRYINDEX);        /* stack: obj key ubox */
 		lua_pushvalue(L,1);
 		lua_rawget(L,-2);                       /* stack: obj key ubox ubox[u] */
-		if (lua_istable(L,-1))
-		{
+		if (lua_istable(L,-1)) {
 			lua_pushvalue(L,2);  /* key */
 			lua_rawget(L,-2);                      /* stack: obj key ubox ubox[u] value */
 			if (!lua_isnil(L,-1))
 				return 1;
 		}
-		#endif
+#endif
 		lua_settop(L,2);                        /* stack: obj key */
 		/* Try metatables */
 		lua_pushvalue(L,1);                     /* stack: obj key obj */
-		while (lua_getmetatable(L,-1))
-		{                                       /* stack: obj key obj mt */
+		while (lua_getmetatable(L,-1)) {                                       /* stack: obj key obj mt */
 			lua_remove(L,-2);                      /* stack: obj key mt */
 			if (lua_isnumber(L,2))                 /* check if key is a numeric value */
 			{
 				/* try operator[] */
 				lua_pushstring(L,".geti");
 				lua_rawget(L,-2);                      /* stack: obj key mt func */
-				if (lua_isfunction(L,-1))
-				{
+				if (lua_isfunction(L,-1)) {
 					lua_pushvalue(L,1);
 					lua_pushvalue(L,2);
 					lua_call(L,2,1);
 					return 1;
 				}
 			}
-			else
-			{
-			 lua_pushvalue(L,2);                    /* stack: obj key mt key */
+			else {
+				lua_pushvalue(L,2);                    /* stack: obj key mt key */
 				lua_rawget(L,-2);                      /* stack: obj key mt value */
 				if (!lua_isnil(L,-1))
 					return 1;
@@ -191,19 +171,15 @@ static int class_index_event (lua_State* L)
 				/* try C/C++ variable */
 				lua_pushstring(L,".get");
 				lua_rawget(L,-2);                      /* stack: obj key mt tget */
-				if (lua_istable(L,-1))
-				{
+				if (lua_istable(L,-1)) {
 					lua_pushvalue(L,2);
 					lua_rawget(L,-2);                      /* stack: obj key mt value */
-					if (lua_iscfunction(L,-1))
-					{
+					if (lua_iscfunction(L,-1)) {
 						lua_pushvalue(L,1);
 						lua_pushvalue(L,2);
 						lua_call(L,2,1);
 						return 1;
-					}
-					else if (lua_istable(L,-1))
-					{
+					} else if (lua_istable(L,-1)) {
 						/* deal with array: create table to be returned and cache it in ubox */
 						void* u = *((void**)lua_touserdata(L,1));
 						lua_newtable(L);                /* stack: obj key mt value table */
@@ -224,9 +200,7 @@ static int class_index_event (lua_State* L)
 		}
 		lua_pushnil(L);
 		return 1;
-	}
-	else if (t== LUA_TTABLE)
-	{
+	} else if (t== LUA_TTABLE) {
 		module_index_event(L);
 		return 1;
 	}
@@ -239,12 +213,10 @@ static int class_index_event (lua_State* L)
 	* Then, it either stores it in the alternative ubox table (in the case it is
 	* an object) or in the own table (that represents the class or module).
 */
-static int class_newindex_event (lua_State* L)
-{
- int t = lua_type(L,1);
-	if (t == LUA_TUSERDATA)
-	{
-	 /* Try accessing a C/C++ variable to be set */
+static int class_newindex_event (lua_State* L) {
+	int t = lua_type(L,1);
+	if (t == LUA_TUSERDATA) {
+		/* Try accessing a C/C++ variable to be set */
 		lua_getmetatable(L,1);
 		while (lua_istable(L,-1))                /* stack: t k v mt */
 		{
@@ -253,8 +225,7 @@ static int class_newindex_event (lua_State* L)
 				/* try operator[] */
 				lua_pushstring(L,".seti");
 				lua_rawget(L,-2);                      /* stack: obj key mt func */
-				if (lua_isfunction(L,-1))
-				{
+				if (lua_isfunction(L,-1)) {
 					lua_pushvalue(L,1);
 					lua_pushvalue(L,2);
 					lua_pushvalue(L,3);
@@ -262,16 +233,13 @@ static int class_newindex_event (lua_State* L)
 					return 0;
 				}
 			}
-			else
-			{
+			else {
 				lua_pushstring(L,".set");
 				lua_rawget(L,-2);                      /* stack: t k v mt tset */
-				if (lua_istable(L,-1))
-				{
+				if (lua_istable(L,-1)) {
 					lua_pushvalue(L,2);
 					lua_rawget(L,-2);                     /* stack: t k v mt tset func */
-					if (lua_iscfunction(L,-1))
-					{
+					if (lua_iscfunction(L,-1)) {
 						lua_pushvalue(L,1);
 						lua_pushvalue(L,3);
 						lua_call(L,2,0);
@@ -285,13 +253,11 @@ static int class_newindex_event (lua_State* L)
 				lua_remove(L,-2);                       /* stack: t k v mt */
 			}
 		}
-	 lua_settop(L,3);                          /* stack: t k v */
+		lua_settop(L,3);                          /* stack: t k v */
 
 		/* then, store as a new field */
 		storeatubox(L,1);
-	}
-	else if (t== LUA_TTABLE)
-	{
+	} else if (t== LUA_TTABLE) {
 		module_newindex_event(L);
 	}
 	return 0;
@@ -314,19 +280,15 @@ static int class_call_event(lua_State* L) {
 	return 0;
 };
 
-static int do_operator (lua_State* L, const char* op)
-{
-	if (lua_isuserdata(L,1))
-	{
+static int do_operator (lua_State* L, const char* op) {
+	if (lua_isuserdata(L,1)) {
 		/* Try metatables */
 		lua_pushvalue(L,1);                     /* stack: op1 op2 */
-		while (lua_getmetatable(L,-1))
-		{                                       /* stack: op1 op2 op1 mt */
+		while (lua_getmetatable(L,-1)) {                                       /* stack: op1 op2 op1 mt */
 			lua_remove(L,-2);                      /* stack: op1 op2 mt */
 			lua_pushstring(L,op);                  /* stack: op1 op2 mt key */
 			lua_rawget(L,-2);                      /* stack: obj key mt func */
-			if (lua_isfunction(L,-1))
-			{
+			if (lua_isfunction(L,-1)) {
 				lua_pushvalue(L,1);
 				lua_pushvalue(L,2);
 				lua_call(L,2,1);
@@ -339,38 +301,31 @@ static int do_operator (lua_State* L, const char* op)
 	return 0;
 }
 
-static int class_add_event (lua_State* L)
-{
+static int class_add_event (lua_State* L) {
 	return do_operator(L,".add");
 }
 
-static int class_sub_event (lua_State* L)
-{
+static int class_sub_event (lua_State* L) {
 	return do_operator(L,".sub");
 }
 
-static int class_mul_event (lua_State* L)
-{
+static int class_mul_event (lua_State* L) {
 	return do_operator(L,".mul");
 }
 
-static int class_div_event (lua_State* L)
-{
+static int class_div_event (lua_State* L) {
 	return do_operator(L,".div");
 }
 
-static int class_lt_event (lua_State* L)
-{
+static int class_lt_event (lua_State* L) {
 	return do_operator(L,".lt");
 }
 
-static int class_le_event (lua_State* L)
-{
+static int class_le_event (lua_State* L) {
 	return do_operator(L,".le");
 }
 
-static int class_eq_event (lua_State* L)
-{
+static int class_eq_event (lua_State* L) {
 	return do_operator(L,".eq");
 }
 
@@ -395,8 +350,7 @@ static int class_gc_event (lua_State* L)
 	return 0;
 }
 */
-TOLUA_API int class_gc_event (lua_State* L)
-{
+TOLUA_API int class_gc_event (lua_State* L) {
 	void* u = *((void**)lua_touserdata(L,1));
 	int top;
 	/*fprintf(stderr, "collecting: looking at %p\n", u);*/
@@ -418,8 +372,7 @@ TOLUA_API int class_gc_event (lua_State* L)
 		lua_rawget(L,-2);           /* stack: gc umt mt collector */
 		if (lua_isfunction(L,-1)) {
 			/*fprintf(stderr, "Found .collector!\n");*/
-		}
-		else {
+		} else {
 			lua_pop(L,1);
 			/*fprintf(stderr, "Using default cleanup\n");*/
 			lua_pushcfunction(L,tolua_default_collect);
@@ -440,8 +393,7 @@ TOLUA_API int class_gc_event (lua_State* L)
 /* Register module events
 	* It expects the metatable on the top of the stack
 */
-TOLUA_API void tolua_moduleevents (lua_State* L)
-{
+TOLUA_API void tolua_moduleevents (lua_State* L) {
 	lua_pushstring(L,"__index");
 	lua_pushcfunction(L,module_index_event);
 	lua_rawset(L,-3);
@@ -452,11 +404,9 @@ TOLUA_API void tolua_moduleevents (lua_State* L)
 
 /* Check if the object on the top has a module metatable
 */
-TOLUA_API int tolua_ismodulemetatable (lua_State* L)
-{
+TOLUA_API int tolua_ismodulemetatable (lua_State* L) {
 	int r = 0;
-	if (lua_getmetatable(L,-1))
-	{
+	if (lua_getmetatable(L,-1)) {
 		lua_pushstring(L,"__index");
 		lua_rawget(L,-2);
 		r = (lua_tocfunction(L,-1) == module_index_event);
@@ -468,8 +418,7 @@ TOLUA_API int tolua_ismodulemetatable (lua_State* L)
 /* Register class events
 	* It expects the metatable on the top of the stack
 */
-TOLUA_API void tolua_classevents (lua_State* L)
-{
+TOLUA_API void tolua_classevents (lua_State* L) {
 	lua_pushstring(L,"__index");
 	lua_pushcfunction(L,class_index_event);
 	lua_rawset(L,-3);

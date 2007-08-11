@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -57,30 +57,46 @@ extern struct board_info_node *currentbrd;
 int id_pool=0;
 
 direction ZZTObject::opposite(direction dir) {
-	if(dir==LEFT) { return RIGHT; }
-	if(dir==RIGHT) { return LEFT; }
-	if(dir==UP) { return DOWN; }
-	if(dir==DOWN) { return UP; }
+	if(dir==LEFT) {
+		return RIGHT;
+	}
+	if(dir==RIGHT) {
+		return LEFT;
+	}
+	if(dir==UP) {
+		return DOWN;
+	}
+	if(dir==DOWN) {
+		return UP;
+	}
 	return IDLE;
 }
 
 direction ZZTObject::clockwise(direction dir) {
-	if(dir==LEFT) { return UP; }
-	if(dir==RIGHT) { return DOWN; }
-	if(dir==UP) { return RIGHT; }
-	if(dir==DOWN) { return LEFT; }
+	if(dir==LEFT) {
+		return UP;
+	}
+	if(dir==RIGHT) {
+		return DOWN;
+	}
+	if(dir==UP) {
+		return RIGHT;
+	}
+	if(dir==DOWN) {
+		return LEFT;
+	}
 	return IDLE;
 }
 
 direction ZZTObject::str_to_direction(string s) {
 	int neg=0;
 	direction res=IDLE;
-		
+
 	transform(s.begin(), s.end(), s.begin(), ::tolower);
-	
+
 	vector<string> words = wordify(s, ' ');
 	vector<string>::iterator words_iter;
-	
+
 	for(words_iter = words.begin(); words_iter != words.end(); words_iter++) {
 		if((*words_iter) == "opp") {
 			neg=1;
@@ -142,23 +158,35 @@ direction ZZTObject::toward(ZZTObject *them) {
 	direction dirx=IDLE,diry=IDLE;
 	Vector dist = m_position - them->position();
 
-	if(dist.x < 0) { dirx=RIGHT; }
-	if(dist.x > 0) { dirx=LEFT; }
-	if(dist.y < 0) { diry=DOWN; }
-	if(dist.y > 0) { diry=UP; }
-	if(dist.x<0) { dist.x*=-1; }
-	if(dist.y<0) { dist.y*=-1; }
+	if(dist.x < 0) {
+		dirx=RIGHT;
+	}
+	if(dist.x > 0) {
+		dirx=LEFT;
+	}
+	if(dist.y < 0) {
+		diry=DOWN;
+	}
+	if(dist.y > 0) {
+		diry=UP;
+	}
+	if(dist.x<0) {
+		dist.x*=-1;
+	}
+	if(dist.y<0) {
+		dist.y*=-1;
+	}
 	if(abs((int)dist.x)>abs((int)dist.y)) {
-		if(!::is_empty(currentbrd, (int)(m_position.x + dir_to_delta[dirx]), (int)m_position.y) && 
-			 (diry!=IDLE && ::is_empty(currentbrd, (int)m_position.x, (int)(m_position.y + dir_to_delta[diry]))))
+		if(!::is_empty(currentbrd, (int)(m_position.x + dir_to_delta[dirx]), (int)m_position.y) &&
+		        (diry!=IDLE && ::is_empty(currentbrd, (int)m_position.x, (int)(m_position.y + dir_to_delta[diry]))))
 			return diry;
-		else 
+		else
 			return dirx;
-	} else { 
-		if(!::is_empty(currentbrd, (int)m_position.x, (int)(m_position.y + dir_to_delta[diry])) && 
-			 (dirx!=IDLE && ::is_empty(currentbrd, (int)(m_position.x + dir_to_delta[diry]), (int)m_position.y)))
+	} else {
+		if(!::is_empty(currentbrd, (int)m_position.x, (int)(m_position.y + dir_to_delta[diry])) &&
+		        (dirx!=IDLE && ::is_empty(currentbrd, (int)(m_position.x + dir_to_delta[diry]), (int)m_position.y)))
 			return dirx;
-		else 
+		else
 			return diry;
 	}
 }
@@ -167,26 +195,38 @@ int ZZTObject::distance(ZZTObject *them) {
 	//distance between me and them
 	Vector dist = m_position - them->position();
 
-	if(dist.x<0) { dist.x*=-1; }
-	if(dist.y<0) { dist.y*=-1; }
+	if(dist.x<0) {
+		dist.x*=-1;
+	}
+	if(dist.y<0) {
+		dist.y*=-1;
+	}
 	return int(dist.x + dist.y);
 }
 
 int ZZTObject::dist_x(ZZTObject *them) {
 	//distance between me and them (x axis only)
 	Vector dist = m_position - them->position();
-	
-	if(dist.x<0) { dist.x*=-1; }
-	if(dist.y<0) { dist.y*=-1; }
+
+	if(dist.x<0) {
+		dist.x*=-1;
+	}
+	if(dist.y<0) {
+		dist.y*=-1;
+	}
 	return (int)dist.x;
 }
 
 int ZZTObject::dist_y(ZZTObject *them) {
 	//distance between me and them (x axis only)
 	Vector dist = m_position - them->position();
-	
-	if(dist.x<0) { dist.x*=-1; }
-	if(dist.y<0) { dist.y*=-1; }
+
+	if(dist.x<0) {
+		dist.x*=-1;
+	}
+	if(dist.y<0) {
+		dist.y*=-1;
+	}
 	return (int)dist.y;
 }
 
@@ -199,61 +239,67 @@ int dist(int x1, int y1, int x2, int y2) {
 
 bool ZZTObject::is_empty(direction d, bool ignorePlayer) {
 	switch(d) {
-		case UP:
-			return !!::is_empty(currentbrd, (int)m_position.x, (int)m_position.y - 1, ignorePlayer);
-		case DOWN:
-			return !!::is_empty(currentbrd, (int)m_position.x, (int)m_position.y + 1, ignorePlayer);
-		case LEFT:
-			return !!::is_empty(currentbrd, (int)m_position.x - 1, (int)m_position.y, ignorePlayer);
-		case RIGHT:
-			return !!::is_empty(currentbrd, (int)m_position.x + 1, (int)m_position.y, ignorePlayer);
+	case UP:
+		return !!::is_empty(currentbrd, (int)m_position.x, (int)m_position.y - 1, ignorePlayer);
+	case DOWN:
+		return !!::is_empty(currentbrd, (int)m_position.x, (int)m_position.y + 1, ignorePlayer);
+	case LEFT:
+		return !!::is_empty(currentbrd, (int)m_position.x - 1, (int)m_position.y, ignorePlayer);
+	case RIGHT:
+		return !!::is_empty(currentbrd, (int)m_position.x + 1, (int)m_position.y, ignorePlayer);
 	}
 	return false;
 }
 
 ZZTObject *ZZTObject::create_object(int type, direction d) {
 	switch(d) {
-		case UP:
-			return ::create_object(type, (int)m_position.x, (int)m_position.y - 1);
-		case DOWN:
-			return ::create_object(type, (int)m_position.x, (int)m_position.y + 1);
-		case LEFT:
-			return ::create_object(type, (int)m_position.x - 1, (int)m_position.y);
-		case RIGHT:
-			return ::create_object(type, (int)m_position.x + 1, (int)m_position.y);
+	case UP:
+		return ::create_object(type, (int)m_position.x, (int)m_position.y - 1);
+	case DOWN:
+		return ::create_object(type, (int)m_position.x, (int)m_position.y + 1);
+	case LEFT:
+		return ::create_object(type, (int)m_position.x - 1, (int)m_position.y);
+	case RIGHT:
+		return ::create_object(type, (int)m_position.x + 1, (int)m_position.y);
 	}
 	return false;
 }
 
-ZZTObject *ZZTObject::get(direction d) {
+ZZTObject *ZZTObject::get
+	(direction d) {
 	int dx=0,dy=0;
 
 	switch(d) {
-		case UP:
-		 dx=0; dy=-1;
-		 break;
-		case DOWN:
-		 dx=0; dy=1;
-		 break;
-		case LEFT:
-		 dx=-1; dy=0;
-		 break;
-		case RIGHT:
-		 dx=1; dy=0;
-		 break;
-		case IDLE:
-		case SHOOTING:
-			return NULL;
+	case UP:
+		dx=0;
+		dy=-1;
+		break;
+	case DOWN:
+		dx=0;
+		dy=1;
+		break;
+	case LEFT:
+		dx=-1;
+		dy=0;
+		break;
+	case RIGHT:
+		dx=1;
+		dy=0;
+		break;
+	case IDLE:
+	case SHOOTING:
+		return NULL;
 	}
-	
+
 	if(m_position.x + dx >= 0 && m_position.x + dx < BOARD_X && m_position.y + dy >= 0 && m_position.y + dy < BOARD_Y) {
 		return currentbrd->board[(int)m_position.x + dx][(int)m_position.y + dy].obj;
 	}
-	
+
 	return NULL;
 }
 
-void ZZTObject::remove() {
+void ZZTObject::remove
+	() {
 	remove_from_board(m_board, this);
 }
 
@@ -273,33 +319,42 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	x = (int)m_position.x;
 	y = (int)m_position.y;
 	switch(dir) {
-		case LEFT:
-			x = (int)m_position.x - 1;
-			break;
-		case RIGHT:
-			x = (int)m_position.x + 1;
-			break;
-		case UP:
-			y = (int)m_position.y - 1;
-			break;
-		case DOWN:
-			y = (int)m_position.y + 1;
-			break;
-		case IDLE: 
-			return true;
-		default:
-			printf("Unknown direction %i\n",dir);
-			break;
+	case LEFT:
+		x = (int)m_position.x - 1;
+		break;
+	case RIGHT:
+		x = (int)m_position.x + 1;
+		break;
+	case UP:
+		y = (int)m_position.y - 1;
+		break;
+	case DOWN:
+		y = (int)m_position.y + 1;
+		break;
+	case IDLE:
+		return true;
+	default:
+		printf("Unknown direction %i\n",dir);
+		break;
 	}
-	if(x<0) { x=0; }
-	if(y<0) { y=0; }
-	if(x>=BOARD_X) { x=BOARD_X-1; }
-	if(y>=BOARD_Y) { y=BOARD_Y-1; }
+	if(x<0) {
+		x=0;
+	}
+	if(y<0) {
+		y=0;
+	}
+	if(x>=BOARD_X) {
+		x=BOARD_X-1;
+	}
+	if(y>=BOARD_Y) {
+		y=BOARD_Y-1;
+	}
 	if((m_type != ZZT_SHARK && is_empty(dir)) || ((m_type==ZZT_BULLET || m_type==ZZT_SHARK) && m_board->board[x][y].obj->type()==ZZT_WATER)) {
 		m_position.x = (float)x;
 		m_position.y = (float)y;
 		m_heading = dir;
-		if(!m_board->board[x][y].obj->isValid()) printf("Warning: putting invalid object under %i,%i\n",x,y);
+		if(!m_board->board[x][y].obj->isValid())
+			printf("Warning: putting invalid object under %i,%i\n",x,y);
 		m_board->board[x][y].under=m_board->board[x][y].obj;
 		m_board->board[x][y].obj=this;
 		m_bg=m_board->board[x][y].under->bg();
@@ -318,26 +373,26 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	} else {
 		them=m_board->board[x][y].obj;
 		if(them!=NULL && them!=this && them->isValid() == 1) {
-			if(them->flags()&F_ITEM && m_type==ZZT_PLAYER){
+			if(them->flags()&F_ITEM && m_type==ZZT_PLAYER) {
 				them->message(this,"get");
 				if(is_empty(dir)) {
 					suc=1;
 					task_get(them);
 				}
-			}
-			else if(suc==0 && them->flags()&F_PUSHABLE && m_type!=ZZT_BULLET && (m_flags&F_PUSHER || !origin) ) {
+			} else if(suc==0 && them->flags()&F_PUSHABLE && m_type!=ZZT_BULLET && (m_flags&F_PUSHER || !origin) ) {
 				if(them->move(dir,trying,false)) {
 					suc=1;
 				} else {
 					them->message(this,"crush");
 					if(is_empty(dir)) {
 						suc=1;
-						task_get(them);	
+						task_get(them);
 					}
 				}
 			}
 			if(suc==0) {
-				if(!trying && !(m_flags & F_SLEEPING)) message(them,"thud");
+				if(!trying && !(m_flags & F_SLEEPING))
+					message(them,"thud");
 				if(!trying && !(them->flags() & F_SLEEPING) && m_type != ZZT_BULLET) {
 					them->message(this,"touch");
 					task_touch(them);
@@ -346,10 +401,11 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 				move(dir);
 			}
 		} else {
-			if(!(m_flags & F_SLEEPING)) message(this,"thud");
+			if(!(m_flags & F_SLEEPING))
+				message(this,"thud");
 		}
 	}
-	
+
 	return !!suc;
 }
 
@@ -448,7 +504,7 @@ void ZZTObject::inherit(ZZTObject *o) {
 		setParam(4,o->param(4));
 		setFg(o->fg());
 		setBg(o->bg());
-		setCycle(o->cycle());								
+		setCycle(o->cycle());
 		setColor(o->color());
 	}
 	if(o->type()==ZZT_OBJECT) {
@@ -464,53 +520,63 @@ extern int disp_off_y;
 void ZZTObject::draw() {
 	float a,b;
 	Vector dist(0,0,0);
-	
-	if(m_position.x - disp_off_x < 0 || m_position.x - disp_off_x >= ct->getCols() || m_position.y - disp_off_y < 0 || m_position.y - disp_off_y >= ct->getRows()) return;
-	
+
+	if(m_position.x - disp_off_x < 0 || m_position.x - disp_off_x >= ct->getCols() || m_position.y - disp_off_y < 0 || m_position.y - disp_off_y >= ct->getRows())
+		return;
+
 	if(m_type == ZZT_OBJECT && debug_show_objects) {
 		ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, (HIGH_INTENSITY | ((rand() % 6)+1)));
 		ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, (rand()%125) + 129);
 		return;
 	}
-	
+
 	if(m_highlighted && m_flash++ < 30) {
 		ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, WHITE);
 		ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, 0xDB);
 		return;
 	}
-	
-	if(player!=NULL) dist = position() - player->position();
-	
+
+	if(player!=NULL)
+		dist = position() - player->position();
+
 	a=(dist.x)*(dist.x)/2.0f;
 	b=(dist.y)*(dist.y);
-	
+
 	if(m_board->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(5*5) || sqrt(a+b) > 5))) {
 		int color = (HIGH_INTENSITY | BLACK);
 		ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
 		ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, 177);
 #ifdef USE_3DMODEL
+
 		gl->clear((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y);
 #endif
+
 	} else if(m_board->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(4*4) || sqrt(a+b) > 4))) {
 		int color = (HIGH_INTENSITY | BLACK);
 #ifdef USE_3DMODEL
+
 		if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
 #endif
 			ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
 			ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, m_shape);
 #ifdef USE_3DMODEL
+
 		}
 #endif
+
 	} else if(m_board->dark && world.editing == 0 && !(m_flags&F_GLOW) && (world.torch_cycle<1 || (b==(3*3) || sqrt(a+b) > 3))) {
 		int color = m_fg%8;
 #ifdef USE_3DMODEL
+
 		if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30))) {
 #endif
 			ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color);
 			ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, m_shape);
 #ifdef USE_3DMODEL
+
 		}
 #endif
+
 	} else {
 		if(m_position.x > BOARD_X) {
 			int color = ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8);
@@ -519,11 +585,13 @@ void ZZTObject::draw() {
 #ifdef USE_3DMODEL
 				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted && (m_flash < 30)))
 #endif
+
 					st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, 0xB0);
 			} else {
 #ifdef USE_3DMODEL
 				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted && (m_flash < 30)))
 #endif
+
 					st->putChar((int)m_position.x - BOARD_X, (int)m_position.y, m_shape);
 			}
 		} else {
@@ -535,17 +603,19 @@ void ZZTObject::draw() {
 #ifdef USE_3DMODEL
 				if(!gl->put((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, color, m_height, m_modelName, m_highlighted && (m_flash < 30)))
 #endif
+
 					ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, m_shape);
 			}
 		}
 	}
-	
-	if(m_flash > 40) m_flash = 0;
+
+	if(m_flash > 40)
+		m_flash = 0;
 }
 
 void ZZTObject::edit() {
 	TUIWindow w(m_name);
-	
+
 	addEditWidgets(&w);
 	w.addWidget(new TUINumericInput("Cycle                ",&m_cycle,0,255));
 	w.addWidget(new TUILabel(""));
@@ -554,7 +624,7 @@ void ZZTObject::edit() {
 	w.addWidget(new TUILabel("             Advanced Tweaking",true));
 	w.addWidget(new TUINumericInput("X Step  ",&m_step.x,-128,127));
 	w.addWidget(new TUINumericInput("Y Step  ",&m_step.y,-128,127));
-	
+
 	w.doMenu();
 	if(w.getLabel() == "editprog") {
 		TUIWindow e("Edit Program");

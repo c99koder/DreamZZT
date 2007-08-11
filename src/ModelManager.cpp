@@ -3,22 +3,17 @@
 //universal static model manager
 ModelManager modelManager;
 
-ModelManager::ModelManager(void)
-{
-}
+ModelManager::ModelManager(void) {}
 
-ModelManager::~ModelManager(void)
-{
+ModelManager::~ModelManager(void) {
 	modelList.clear();
 	modelMap.clear();
 }
 
-AMFModel *ModelManager::getModel(const string& modelName)
-{
+AMFModel *ModelManager::getModel(const string& modelName) {
 	AMFModel *model;
 
-	if(!(model = modelMap[modelName]))
-	{
+	if(!(model = modelMap[modelName])) {
 		model = new AMFModel;
 		model->setFilename(modelName);
 		model->load();

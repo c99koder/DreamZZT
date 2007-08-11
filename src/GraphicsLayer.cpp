@@ -31,7 +31,8 @@ void GraphicsLayer::clear() {
 }
 
 void GraphicsLayer::clear(const int x, const int y) {
-	if(!world.use_3d) return;
+	if(!world.use_3d)
+		return;
 
 	if(models[x][y]) {
 		delete models[x][y];
@@ -41,7 +42,8 @@ void GraphicsLayer::clear(const int x, const int y) {
 
 //returns false to indicate nothing was drawn and the console should be used
 bool GraphicsLayer::put(const int x, const int y, const int color, const unsigned char height, const string& modelName, const bool highlight) {
-	if(!world.use_3d) return false; 
+	if(!world.use_3d)
+		return false;
 
 	if(models[x][y]) {
 		delete models[x][y];
@@ -76,9 +78,11 @@ bool GraphicsLayer::put(const int x, const int y, const int color, const unsigne
 }
 
 void GraphicsLayer::draw(ObjType t) {
-	if(!world.use_3d) return;
+	if(!world.use_3d)
+		return;
 
 #if TIKI_PLAT != TIKI_DC
+
 	glEnable(GL_LIGHTING);
 	glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat *)&Vector(-.5,0.5,1,0));
 	glEnable(GL_LIGHT0);

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -41,11 +41,13 @@ extern struct world_header world;
 int forestmsg=0,invismsg=0,watermsg=0;
 
 void Laser::setParam(int arg, unsigned char val) {
-	if(arg==1) m_time = val;
+	if(arg==1)
+		m_time = val;
 }
 
 unsigned char Laser::param(int arg) {
-	if(arg == 1) return m_time;
+	if(arg == 1)
+		return m_time;
 	return 0;
 }
 
@@ -57,13 +59,17 @@ void Laser::update() {
 }
 
 void Blink::setParam(int arg, unsigned char val) {
-	if(arg==1) m_start = val;
-	if(arg==2) m_fire = val;
+	if(arg==1)
+		m_start = val;
+	if(arg==2)
+		m_fire = val;
 }
 
 unsigned char Blink::param(int arg) {
-	if(arg == 1) return m_start;
-	if(arg == 2) return m_fire;
+	if(arg == 1)
+		return m_start;
+	if(arg == 2)
+		return m_fire;
 	return 0;
 }
 
@@ -76,14 +82,15 @@ void Blink::update() {
 	int x = (int)m_position.x;
 	int y = (int)m_position.y;
 	ZZTObject *tmp;
-	
+
 	m_counter--;
 	if(m_counter<0) {
 		m_counter=(m_fire*4);
 		do {
 			x += (int)m_step.x;
 			y += (int)m_step.y;
-			if(y >= BOARD_Y || x >= BOARD_X) break;
+			if(y >= BOARD_Y || x >= BOARD_X)
+				break;
 			if(::is_empty(currentbrd,x,y) || currentbrd->board[x][y].obj->type()==ZZT_BULLET) {
 				if(currentbrd->board[x][y].obj->type()==ZZT_BULLET) {
 					remove_from_board(currentbrd,currentbrd->board[x][y].obj);
@@ -181,28 +188,35 @@ void Terrain::message(ZZTObject *them, std::string message) {
 		switch(m_type) {
 		case ZZT_FOREST:
 			if(forestmsg==0) {
-				if(world.magic == 65534) set_msg("A path is cleared\rthrough the forest.");
-				else set_msg("A path is cleared through the forest.");
+				if(world.magic == 65534)
+					set_msg("A path is cleared\rthrough the forest.");
+				else
+					set_msg("A path is cleared through the forest.");
 				forestmsg=1;
 			}
-			if(zm!=NULL) zm->setTune("ta");
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL)
+				zm->setTune("ta");
+			if(zm!=NULL)
+				zm->start();
 			//remove_from_board(m_board,this,(world.magic==65534)?true:false);
-			remove();
+			remove
+				();
 			if(world.magic == 65534 && currentbrd == m_board) {
 				ZZTObject *o = ::create_object(SZT_FLOOR, (int)m_position.x, (int)m_position.y);
 				o->setColor(GREEN, BLACK);
 				put(o,true);
 			}
-			//them->move(them->toward(this));			
+			//them->move(them->toward(this));
 			break;
 		case ZZT_INVISIBLE:
 			if(invismsg==0) {
 				set_msg("You are blocked by an invisible wall.");
 				invismsg=1;
 			}
-			if(zm!=NULL) zm->setTune("t--dc");
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL)
+				zm->setTune("t--dc");
+			if(zm!=NULL)
+				zm->start();
 			m_type=ZZT_NORMAL;
 			m_shape=ZZT_NORMAL_SHAPE;
 			draw();
@@ -212,8 +226,10 @@ void Terrain::message(ZZTObject *them, std::string message) {
 				set_msg("Your path is blocked by water.");
 				watermsg=1;
 			}
-			if(zm!=NULL) zm->setTune("t+c+c");
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL)
+				zm->setTune("t+c+c");
+			if(zm!=NULL)
+				zm->start();
 		}
 	}
 }

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -40,11 +40,13 @@ extern struct board_info_node *currentbrd;
 char dupanim[6]={'.',(char)7,(char)248,'o','O','.' };
 
 void Duplicator::setParam(int arg, unsigned char val) {
-	if(arg==2) m_rate = val;
+	if(arg==2)
+		m_rate = val;
 }
 
 unsigned char Duplicator::param(int arg) {
-	if(arg==2) return m_rate;
+	if(arg==2)
+		return m_rate;
 	return 0;
 }
 
@@ -55,29 +57,38 @@ void Duplicator::update() {
 
 	m_shape=dupanim[m_animIndex++];
 	draw();
-	
+
 	if(m_animIndex==6) {
 		obj=currentbrd->board[(int)(m_position.x + m_step.x)][(int)(m_position.y + m_step.y)].obj;
 		if(currentbrd->board[x][y].obj->flags()&F_PUSHABLE || currentbrd->board[x][y].obj->type() == obj->type()) {
-			if(m_step.x==-1) currentbrd->board[x][y].obj->move(RIGHT);
-			if(m_step.x==1) currentbrd->board[x][y].obj->move(LEFT);
-			if(m_step.y==-1) currentbrd->board[x][y].obj->move(DOWN);
-			if(m_step.y==1) currentbrd->board[x][y].obj->move(UP);
+			if(m_step.x==-1)
+				currentbrd->board[x][y].obj->move(RIGHT);
+			if(m_step.x==1)
+				currentbrd->board[x][y].obj->move(LEFT);
+			if(m_step.y==-1)
+				currentbrd->board[x][y].obj->move(DOWN);
+			if(m_step.y==1)
+				currentbrd->board[x][y].obj->move(UP);
 		}
 		if(::is_empty(currentbrd,x,y)) {
 			obj2=create_copy(obj);
 			obj2->setPosition(Vector((float)x,(float)y,0));
 			put(obj2);
-			if(zm!=NULL) zm->setTune("scdefg");
-			if(zm!=NULL) zm->start();			
+			if(zm!=NULL)
+				zm->setTune("scdefg");
+			if(zm!=NULL)
+				zm->start();
 		} else {
-			if(zm!=NULL) zm->setTune("--g#f#");
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL)
+				zm->setTune("--g#f#");
+			if(zm!=NULL)
+				zm->start();
 		}
 	}
 	m_animIndex%=6;
 }
 
 void Duplicator::create() {
-	if(m_cycle > 0) m_cycle=(9-m_rate)*2;
+	if(m_cycle > 0)
+		m_cycle=(9-m_rate)*2;
 }

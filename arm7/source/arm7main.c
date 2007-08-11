@@ -1,8 +1,8 @@
 /*
    Tiki
-
+ 
    arm7main.c
-
+ 
    Based on the libnds arm7 template and the ARM9/ARM7 streaming code from
    http://forum.gbadev.org/viewtopic.php?t=10739
 */
@@ -14,7 +14,7 @@
 
 //---------------------------------------------------------------------------------
 void startSound(int sampleRate, const void* data, u32 bytes, u8 channel, u8 vol,  u8 pan, u8 format) {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 	SCHANNEL_TIMER(channel)  = SOUND_FREQ(sampleRate);
 	SCHANNEL_SOURCE(channel) = (u32)data;
 	SCHANNEL_LENGTH(channel) = bytes >> 2 ;
@@ -24,10 +24,11 @@ void startSound(int sampleRate, const void* data, u32 bytes, u8 channel, u8 vol,
 
 //---------------------------------------------------------------------------------
 s32 getFreeSoundChannel() {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 	int i;
 	for (i=0; i<16; i++) {
-		if ( (SCHANNEL_CR(i) & SCHANNEL_ENABLE) == 0 ) return i;
+		if ( (SCHANNEL_CR(i) & SCHANNEL_ENABLE) == 0 )
+			return i;
 	}
 	return -1;
 }
@@ -37,9 +38,9 @@ touchPosition first,tempPos;
 
 //---------------------------------------------------------------------------------
 void VcountHandler() {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 	static int lastbut = -1;
-	
+
 	uint16 but=0, x=0, y=0, xpx=0, ypx=0, z1=0, z2=0;
 
 	but = REG_KEYXY;
@@ -71,7 +72,7 @@ void VcountHandler() {
 	}
 
 	if (!( (but ^ lastbut) & (1<<6))) {
- 
+
 		tempPos = touchReadXY();
 
 		if ( tempPos.x == 0 || tempPos.y == 0 ) {
@@ -85,7 +86,7 @@ void VcountHandler() {
 			z1 = tempPos.z1;
 			z2 = tempPos.z2;
 		}
-		
+
 	} else {
 		lastbut = but;
 		but |= (1 <<6);
@@ -95,12 +96,12 @@ void VcountHandler() {
 		first = tempPos;
 	} else {
 		if (	abs( xpx - first.px) > 10 || abs( ypx - first.py) > 10 ||
-				(but & ( 1<<6)) ) {
+		        (but & ( 1<<6)) ) {
 
 			but |= (1 <<6);
 			lastbut = but;
 
-		} else { 	
+		} else {
 			IPC->mailBusy = 1;
 			IPC->touchX			= x;
 			IPC->touchY			= y;
@@ -119,7 +120,7 @@ void VcountHandler() {
 
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 
 	u32 i;
 
@@ -141,12 +142,11 @@ void VblankHandler(void) {
 	}
 	Wifi_Update();
 }
-void FiFoHandler(void) 
+void FiFoHandler(void)
 //---------------------------------------------------------------------------------
 {
-	while ( !(REG_IPC_FIFO_CR & (IPC_FIFO_RECV_EMPTY)) )
-	{
-		Wifi_Sync();		
+	while ( !(REG_IPC_FIFO_CR & (IPC_FIFO_RECV_EMPTY)) ) {
+		Wifi_Sync();
 		SoundFifoHandler();
 	}
 }
@@ -157,9 +157,9 @@ void arm7_synctoarm9() { // send fifo message
 
 //---------------------------------------------------------------------------------
 int main(int argc, char ** argv) {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 	u32 fifo_temp;
-	
+
 	// Reset the clock if needed
 	rtcReset();
 
@@ -178,14 +178,17 @@ int main(int argc, char ** argv) {
 	irqEnable(IRQ_VBLANK | IRQ_VCOUNT);
 	irqSet(IRQ_WIFI, Wifi_Interrupt);
 	irqEnable(IRQ_WIFI);
-		
+
 	// trade some mail, to get a pointer from arm9
 	while(1) {
-		while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
+		while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY)
+			swiWaitForVBlank();
 		fifo_temp=REG_IPC_FIFO_RX;
-		if(fifo_temp==0x12345678) break;
+		if(fifo_temp==0x12345678)
+			break;
 	}
-	while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
+	while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY)
+		swiWaitForVBlank();
 	fifo_temp=REG_IPC_FIFO_RX;
 	Wifi_Init(fifo_temp);
 
@@ -197,7 +200,7 @@ int main(int argc, char ** argv) {
 	SoundSetTimer(0);
 
 	// Keep the ARM7 idle
-	while (1){
+	while (1) {
 		swiWaitForVBlank();
 	}
 }

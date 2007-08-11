@@ -88,16 +88,20 @@ int net_writeline(int sock, char *buf) {
 }
 
 int hex_to_int(char c) {
-	if(c>='0' && c <='9') return c-'0';
-	if(c>='a' && c <='f') return 10+(c-'a');
-	if(c>='A' && c <='F') return 10+(c-'A');
+	if(c>='0' && c <='9')
+		return c-'0';
+	if(c>='a' && c <='f')
+		return 10+(c-'a');
+	if(c>='A' && c <='F')
+		return 10+(c-'A');
 	return -1;
 }
 
 char *strtolower(char *str) {
 	int x;
 	static char buf[256];
-	if(str==NULL) return NULL;
+	if(str==NULL)
+		return NULL;
 	strcpy(buf,str);
 	for(x=0;x<strlen(buf);x++) {
 		if(buf[x]>='A' && buf[x]<='Z') {
@@ -126,7 +130,8 @@ char *http_recieve_chunked(int s, int *len) {
 	do {
 		tmp=(char *)malloc(100);
 		do { //sometimes apache sends us blank lines, so keep looping until we reach another chunk
-			if(net_readline(s,tmp,100)==-1) return NULL; //chunk size
+			if(net_readline(s,tmp,100)==-1)
+				return NULL; //chunk size
 		} while(strlen(tmp)<1);
 		for(z=0;z<strlen(tmp);z++) { //eliminate whitespace
 			if(hex_to_int(tmp[z])==-1) {
@@ -177,7 +182,8 @@ char *http_get(std::string URL, int *length) {
 
 	base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
 #if TIKI_PLAT == TIKI_NDS
-  if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED) { // simple WFC connect:
+
+	if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED) { // simple WFC connect:
 		ct->color(15,1);
 		ct->locate(0,0);
 		ct->printf("Connecting via WFC data\n");
@@ -195,7 +201,7 @@ char *http_get(std::string URL, int *length) {
 			if(i==ASSOCSTATUS_CANNOTCONNECT) {
 				ct->printf("Could not connect!\n");
 				render();
-                return NULL;
+				return NULL;
 				break;
 			}
 		}
@@ -203,7 +209,7 @@ char *http_get(std::string URL, int *length) {
 #endif
 
 	if(URL.find("http://") == 0) {
-		URL = URL.substr(7);	
+		URL = URL.substr(7);
 	}
 
 	std::string host = URL.substr(0, URL.find("/"));
@@ -213,7 +219,8 @@ char *http_get(std::string URL, int *length) {
 
 	sinRemote.sin_family = AF_INET;
 	sinRemote.sin_addr.s_addr = resolve((char *)host.c_str());
-	if(sinRemote.sin_addr.s_addr==0) return NULL;
+	if(sinRemote.sin_addr.s_addr==0)
+		return NULL;
 	sinRemote.sin_port = htons(80);
 
 	connect(s, (struct sockaddr*)&sinRemote, sizeof(struct sockaddr_in));
@@ -225,19 +232,21 @@ User-Agent: %s\r\n\
 Connection: keep-alive\r\n\
 Authorization: Basic %s\r\n\
 \r\n",path.c_str(),host.c_str(),80,USER_AGENT,auth);
-	if(net_writeline(s,tmp)<0) return NULL;
+	if(net_writeline(s,tmp)<0)
+		return NULL;
 
 	draw_box(ct, 4, 11, 24, 1, 15, 1, false);
 	ct->locate(10,11);
 	ct->color(15,1);
 	*ct << " Downloading ";
-	
+
 	net_readline(s,tmp,255);
 	strtok(tmp," "); //HTTP/1.1
 
 	do {
 		tmp[0]='\0';
-		if(net_readline(s,tmp,255)==-1) break;
+		if(net_readline(s,tmp,255)==-1)
+			break;
 		if(tmp[0]!='\0') {
 			strcpy(name,strtolower(strtok(tmp,":")));
 			strcpy(value,strtolower(strtok(NULL," ")));
@@ -260,7 +269,7 @@ Authorization: Basic %s\r\n\
 				if(!strcmp("location",name)) {
 					shutdown(s,1);
 					closesocket(s);
-					free(tmp);	
+					free(tmp);
 					return http_get(value,length);
 				}
 			}
@@ -277,7 +286,7 @@ Authorization: Basic %s\r\n\
 		output=(char *)malloc(len+1);
 		while(y<len) {
 			do {
-				x=recv(s,output+y,255,0);
+				x=recv(s,output+y,1024,0);
 			} while (x<1);
 			output[y+x]='\0';
 			y+=x;
@@ -336,6 +345,7 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 
 	base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
 #if TIKI_PLAT == TIKI_NDS
+
 	if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED) { // simple WFC connect:
 		ct->locate(0,0);
 		ct->color(15,1);
@@ -362,7 +372,7 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 #endif
 
 	if(URL.find("http://") == 0) {
-		URL = URL.substr(7);	
+		URL = URL.substr(7);
 	}
 
 	std::string host = URL.substr(0, URL.find("/"));
@@ -370,7 +380,8 @@ std::string http_post_file(std::string filename, std::string contentType, std::s
 	s = socket(AF_INET, SOCK_STREAM, 0);
 	sinRemote.sin_family = AF_INET;
 	sinRemote.sin_addr.s_addr = resolve((char *)host.c_str());
-	if(sinRemote.sin_addr.s_addr==0) return "";
+	if(sinRemote.sin_addr.s_addr==0)
+		return "";
 	sinRemote.sin_port = htons(80);
 
 	connect(s, (struct sockaddr*)&sinRemote, sizeof(struct sockaddr_in));
@@ -395,8 +406,9 @@ Content-Length: %i\r\n\
 Expect: 100-continue\r\n\
 Content-Type: multipart/form-data; boundary=----------------------------537a746a2d15\
 \r\n\r\n",path.c_str(),host.c_str(),80,USER_AGENT,auth,f.total()+multipart_header.length()+strlen("\r\n------------------------------537a746a2d15--\r\n"));
-	
-	if(net_writeline(s,tmp)<0) return "";
+
+	if(net_writeline(s,tmp)<0)
+		return "";
 
 	net_readline(s,tmp,255);
 
@@ -424,7 +436,8 @@ Content-Type: multipart/form-data; boundary=----------------------------537a746a
 
 	do {
 		tmp[0]='\0';
-		if(net_readline(s,tmp,255)==-1) break;
+		if(net_readline(s,tmp,255)==-1)
+			break;
 		if(tmp[0]!='\0') {
 			strcpy(name,strtolower(strtok(tmp,":")));
 			strcpy(value,strtolower(strtok(NULL," ")));
@@ -441,13 +454,14 @@ Content-Type: multipart/form-data; boundary=----------------------------537a746a
 					len=atoi(value);
 				}
 				if(!strcmp("content-type",name)) {
-				//strcpy(content_type,strtok(value,";"));
+					//strcpy(content_type,strtok(value,";"));
 				}
 			}
 		}
 	} while(tmp[0]!='\0');
 
-	z=0; y=0;
+	z=0;
+	y=0;
 	free(tmp);
 
 	if(mode==1) {
@@ -476,61 +490,62 @@ Content-Type: multipart/form-data; boundary=----------------------------537a746a
 }
 
 std::string http_post_data(std::string data, std::string contentType, std::string URL) {
-	  int s;
-	  struct sockaddr_in sinRemote;
-	  char *tmp;
-	  char name[256];
-	  char value[256];
-	  int x,y=0,z=0;
-	  int mode=0,len=0;
-	  char msg[300];
+	int s;
+	struct sockaddr_in sinRemote;
+	char *tmp;
+	char name[256];
+	char value[256];
+	int x,y=0,z=0;
+	int mode=0,len=0;
+	char msg[300];
 	char *output=NULL;
 	char *auth;
 
 	base64_encode(curl_auth_string.c_str(),curl_auth_string.length(),&auth);
 #if TIKI_PLAT == TIKI_NDS
-	  if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED)
-		{ // simple WFC connect:
-			st->printf("\nConnecting via WFC data\n");
-			render();
-			int i;
-			Wifi_AutoConnect(); // request connect
-			while(1) {
-				i=Wifi_AssocStatus(); // check status
-				if(i==ASSOCSTATUS_ASSOCIATED) {
-					networkEnabled = true;
-					st->printf("Connected successfully!\n");
-					render();
-					break;
-				}
-				if(i==ASSOCSTATUS_CANNOTCONNECT) {
-					st->printf("Could not connect!\n");
-					render();
-	                return NULL;
-					break;
-				}
+
+	if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED) { // simple WFC connect:
+		st->printf("\nConnecting via WFC data\n");
+		render();
+		int i;
+		Wifi_AutoConnect(); // request connect
+		while(1) {
+			i=Wifi_AssocStatus(); // check status
+			if(i==ASSOCSTATUS_ASSOCIATED) {
+				networkEnabled = true;
+				st->printf("Connected successfully!\n");
+				render();
+				break;
 			}
-		} // if connected, you can now use the berkley sockets interface to connect to the internet!
+			if(i==ASSOCSTATUS_CANNOTCONNECT) {
+				st->printf("Could not connect!\n");
+				render();
+				return NULL;
+				break;
+			}
+		}
+	} // if connected, you can now use the berkley sockets interface to connect to the internet!
 #endif
 
-	  if(URL.find("http://") == 0) {
-		URL = URL.substr(7);	
-	  }
+	if(URL.find("http://") == 0) {
+		URL = URL.substr(7);
+	}
 
-	  std::string host = URL.substr(0, URL.find("/"));
-	  std::string path = URL.substr(URL.find("/"));
+	std::string host = URL.substr(0, URL.find("/"));
+	std::string path = URL.substr(URL.find("/"));
 
-	  s = socket(AF_INET, SOCK_STREAM, 0);
+	s = socket(AF_INET, SOCK_STREAM, 0);
 
-	  sinRemote.sin_family = AF_INET;
-	  sinRemote.sin_addr.s_addr = resolve((char *)host.c_str());
-	  if(sinRemote.sin_addr.s_addr==0) return NULL;
-	  sinRemote.sin_port = htons(80);
+	sinRemote.sin_family = AF_INET;
+	sinRemote.sin_addr.s_addr = resolve((char *)host.c_str());
+	if(sinRemote.sin_addr.s_addr==0)
+		return NULL;
+	sinRemote.sin_port = htons(80);
 
-	  connect(s, (struct sockaddr*)&sinRemote, sizeof(struct sockaddr_in));
+	connect(s, (struct sockaddr*)&sinRemote, sizeof(struct sockaddr_in));
 
-	  tmp=(char *)malloc(data.length() + 1024);
-	  sprintf(tmp,"POST %s HTTP/1.1\r\n\
+	tmp=(char *)malloc(data.length() + 1024);
+	sprintf(tmp,"POST %s HTTP/1.1\r\n\
 Host: %s:%i\r\n\
 User-Agent: %s\r\n\
 Connection: keep-alive\r\n\
@@ -540,64 +555,65 @@ Content-length: %i\r\n\
 \r\n\
 %s",path.c_str(),host.c_str(),80,USER_AGENT,auth,contentType.c_str(),data.length(),data.c_str());
 
-for(y=0; y<strlen(tmp); y+=255) {
-	send(s,tmp+y,255,0);
-	*st << ".";
-	render();
-	Time::sleep(50000);
-}
-
-	  net_readline(s,tmp,255);
-	  strtok(tmp," "); //HTTP/1.1
-
-	  do {
-		tmp[0]='\0';
-	    if(net_readline(s,tmp,255)==-1) break;
-	    if(tmp[0]!='\0') {
-	      //st->printf("Header: %s (%i)\n",tmp,strlen(tmp));
-		//render();
-	      strcpy(name,strtolower(strtok(tmp,":")));
-	      strcpy(value,strtolower(strtok(NULL," ")));
-	      if(value[0]==' ') {
-	        for(x=0;x<strlen(value)-1;x++) {
-	          value[x]=value[x+1];
-	        }
-	      }
-	      if(name!=NULL) {
-	        if(!strcmp("transfer-encoding",name) && !strcmp("chunked",value)) {
-	          mode=1;
-	        }
-	        if(!strcmp("content-length",name)) {
-	          len=atoi(value);
-	        }
-	        if(!strcmp("content-type",name)) {
-	          //strcpy(content_type,strtok(value,";"));
-	        }
-	      }
-	    }
-	  } while(tmp[0]!='\0');
-
-	  z=0;
-	  free(tmp);
-
-	  if(mode==1) {
-	    output = http_recieve_chunked(s, &len);
-	  } else if(len>0) {
-	    output=(char *)malloc(len+1);
-		while(y<len) {
-		  do {
-		  x=recv(s,output+y,255,0);
-		  } while (x<1);
-		  output[y+x]='\0';
-		  y+=x;
+	for(y=0; y<strlen(tmp); y+=255) {
+		send(s,tmp+y,255,0);
 		*st << ".";
-	render();
-	Time::sleep(50000);
+		render();
+		Time::sleep(50000);
+	}
+
+	net_readline(s,tmp,255);
+	strtok(tmp," "); //HTTP/1.1
+
+	do {
+		tmp[0]='\0';
+		if(net_readline(s,tmp,255)==-1)
+			break;
+		if(tmp[0]!='\0') {
+			//st->printf("Header: %s (%i)\n",tmp,strlen(tmp));
+			//render();
+			strcpy(name,strtolower(strtok(tmp,":")));
+			strcpy(value,strtolower(strtok(NULL," ")));
+			if(value[0]==' ') {
+				for(x=0;x<strlen(value)-1;x++) {
+					value[x]=value[x+1];
+				}
+			}
+			if(name!=NULL) {
+				if(!strcmp("transfer-encoding",name) && !strcmp("chunked",value)) {
+					mode=1;
+				}
+				if(!strcmp("content-length",name)) {
+					len=atoi(value);
+				}
+				if(!strcmp("content-type",name)) {
+					//strcpy(content_type,strtok(value,";"));
+				}
+			}
 		}
-	  }
-	  shutdown(s,1);
-	  closesocket(s);
+	} while(tmp[0]!='\0');
+
+	z=0;
+	free(tmp);
+
+	if(mode==1) {
+		output = http_recieve_chunked(s, &len);
+	} else if(len>0) {
+		output=(char *)malloc(len+1);
+		while(y<len) {
+			do {
+				x=recv(s,output+y,255,0);
+			} while (x<1);
+			output[y+x]='\0';
+			y+=x;
+			*st << ".";
+			render();
+			Time::sleep(50000);
+		}
+	}
+	shutdown(s,1);
+	closesocket(s);
 	std::string out = output;
 	free(output);
-	  return out;
+	return out;
 }

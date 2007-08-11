@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -82,15 +82,16 @@ int main(int argc, char *argv[])
 #if TIKI_PLAT != TIKI_WIN32
 #if TIKI_PLAT == TIKI_SDL
 #if defined(DATA_PATH)
-chdir(DATA_PATH);
+	chdir(DATA_PATH);
 #else
-//Locate our data files by searching PATH for our binary
-//and following the symblink to our installed location
+	//Locate our data files by searching PATH for our binary
+	//and following the symblink to our installed location
 	char text[200];
 	char text2[200];
 	int len,cnt=0;
 
-	if(readlink(argv[0],text,100)==-1) strcpy(text,argv[0]);
+	if(readlink(argv[0],text,100)==-1)
+		strcpy(text,argv[0]);
 
 	if(text[0]!='/' && text[0]!='.') {
 		char *val;
@@ -121,12 +122,13 @@ chdir(DATA_PATH);
 
 	chdir(text);
 #endif
+
 	QApplication app(argc,argv); //Initialize QT
 #endif
 
 	return tiki_main(argc, argv);
 #else
-return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
+	return Tiki::DoMain(szAppName, hInst, hPrevInstance, lpCmdLine, nCmdShow);
 #endif
 }
 #endif
@@ -145,7 +147,7 @@ std::string os_select_file(std::string title, std::string filter) {
 	ofn.lStructSize = sizeof(ofn);
 	ofn.lpstrFile = szFile;
 	//
-	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not
 	// use the contents of szFile to initialize itself.
 	//
 	ofn.lpstrFile[0] = '\0';
@@ -181,7 +183,7 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 	ofn.lStructSize = sizeof(ofn);
 	ofn.lpstrFile = szFile;
 	//
-	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not
 	// use the contents of szFile to initialize itself.
 	//
 	ofn.lpstrFile[0] = '\0';
@@ -244,15 +246,15 @@ std::string os_select_file(std::string title, std::string filter) {
 		d = fs_open("/vmu/a1",O_RDONLY|O_DIR);
 	} else {
 		return "monster.szt";
-		d = fs_open(fs_getwd(),O_RDONLY|O_DIR);		
+		d = fs_open(fs_getwd(),O_RDONLY|O_DIR);
 	}
-	
+
 	spinner("Working");
-	
+
 	while ( (de=fs_readdir(d)) ) {
 		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] - 32)) &&
-			 (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] - 32)) &&
-			 (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] - 32))) {
+		        (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] - 32)) &&
+		        (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] - 32))) {
 			if(filter=="sav") {
 				char name[128];
 				char info[256];
@@ -274,7 +276,8 @@ std::string os_select_file(std::string title, std::string filter) {
 						time->tm_hour -= 12;
 						strcpy(ampm,"PM");
 					}
-					if(time->tm_hour == 0) time->tm_hour = 12;
+					if(time->tm_hour == 0)
+						time->tm_hour = 12;
 					if(time->tm_min < 10) {
 						sprintf(info,"Score: \x1b[1;37m%i    \x1b[1;33m%i/%i/%i    %i:0%i %s\n\x1b[1;31m\x03 \x1b[1;33mHealth: \x1b[1;37m%i  \x1b[0;44;36m\x84 \x1b[1;33mAmmo: \x1b[1;37m%i  \x1b[1;32m\x04 \x1b[1;33mGems: \x1b[1;37m%i",hdr.score,time->tm_mon+1,time->tm_mday,1900+time->tm_year,time->tm_hour,time->tm_min,ampm,hdr.health,hdr.ammo,hdr.gems);
 					} else {
@@ -347,14 +350,14 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 	} else {
 		tmp += std::string("\n$Not enough free blocks to create a new\n$file.  Please select an existing file\n$to overwrite.\n");
 	}
-		
+
 	d = fs_open("/vmu/a1",O_RDONLY|O_DIR);
-	
+
 	while ( (de=fs_readdir(d)) ) {
 		printf("Filename: %s\n",de->name);
 		if((de->name[strlen(de->name)-3]==filter[0] || de->name[strlen(de->name)-3]==(filter[0] - 32)) &&
-			 (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] - 32)) &&
-			 (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] - 32))) {
+		        (de->name[strlen(de->name)-2]==filter[1] || de->name[strlen(de->name)-2]==(filter[1] - 32)) &&
+		        (de->name[strlen(de->name)-1]==filter[2] || de->name[strlen(de->name)-1]==(filter[2] - 32))) {
 			if(filter=="sav") {
 				int fd = fs_open((std::string("/vmu/a1/") + std::string(de->name)).c_str(), O_RDONLY);
 				fs_read(fd,&pkg,sizeof(vmu_hdr_t));
@@ -371,7 +374,8 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 						time->tm_hour -= 12;
 						strcpy(ampm,"PM");
 					}
-					if(time->tm_hour == 0) time->tm_hour = 12;
+					if(time->tm_hour == 0)
+						time->tm_hour = 12;
 					if(time->tm_min < 10) {
 						sprintf(info,"Score: \x1b[1;37m%i    \x1b[1;33m%i/%i/%i    %i:0%i %s\n\x1b[1;31m\x03 \x1b[1;33mHealth: \x1b[1;37m%i  \x1b[0;44;36m\x84 \x1b[1;33mAmmo: \x1b[1;37m%i  \x1b[1;32m\x04 \x1b[1;33mGems: \x1b[1;37m%i",hdr.score,time->tm_mon+1,time->tm_mday,1900+time->tm_year,time->tm_hour,time->tm_min,ampm,hdr.health,hdr.ammo,hdr.gems);
 					} else {
@@ -423,11 +427,11 @@ std::string os_select_file(std::string title, std::string filter) {
 	while(true) {
 		TUIWindow t(title);
 
-		dir = diropen(cur_path.c_str()); 
+		dir = diropen(cur_path.c_str());
 		if(dir == NULL) {
 			return "";
 		}
-		
+
 		dirs = "";
 		files = "";
 
@@ -440,13 +444,13 @@ std::string os_select_file(std::string title, std::string filter) {
 				// this is a directory (other than "." or "..")
 				dirs += std::string("!/") + std::string(name) + std::string(";[") + std::string(name) + std::string("]\n");
 			} else if((name[strlen(name)-3]==filter[0] || name[strlen(name)-3]==(filter[0] - 32)) &&
-				 (name[strlen(name)-2]==filter[1] || name[strlen(name)-2]==(filter[1] - 32)) &&
-				 (name[strlen(name)-1]==filter[2] || name[strlen(name)-1]==(filter[2] - 32))) {
+			          (name[strlen(name)-2]==filter[1] || name[strlen(name)-2]==(filter[1] - 32)) &&
+			          (name[strlen(name)-1]==filter[2] || name[strlen(name)-1]==(filter[2] - 32))) {
 				// this is a regular file matching our desired extension
-					files += std::string("!") + std::string(name) + std::string(";") + std::string(name) + std::string("\n");
-					/*
-						TODO: Parse file header and display Dreamcast-style save selector
-					*/
+				files += std::string("!") + std::string(name) + std::string(";") + std::string(name) + std::string("\n");
+				/*
+					TODO: Parse file header and display Dreamcast-style save selector
+				*/
 			}
 		}
 

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <stdarg.h>
 #include <string.h>
@@ -83,9 +83,9 @@ void *process_debug(void *) {
 	while(!debug_quitting) {
 		debug_cmdline = "";
 		debug("");
-		
+
 		debug_hidCookie = Hid::callbackReg(debug_hidCallback, NULL);
-		
+
 		while(!debug_quitting && (debug_cmdline.length() == 0 || (debug_cmdline[debug_cmdline.length() - 1] != '\r'))) {
 			Time::sleep(1000);
 			if(debugSelectMode != NONE) {
@@ -93,21 +93,23 @@ void *process_debug(void *) {
 				ct->color(WHITE | HIGH_INTENSITY, BLACK);
 				ct->printf("X");
 			}
-			if(debug_cmdline == "`") debug_cmdline = "";
+			if(debug_cmdline == "`")
+				debug_cmdline = "";
 			if(debug_visible) {
 				*dt << "\x1b[s"; // Save cursor position
 				dt->locate(0,24);
 				debug_input->draw(dt);
 				dt->setANSI(true);
-				*dt << "\x1b[u"; // Restore cursor position			
+				*dt << "\x1b[u"; // Restore cursor position
 				debug_input->update();
 			}
-		}; //Wait for enter
+		} //Wait for enter
 
 		Hid::callbackUnreg(debug_hidCookie);
-		
-		if(debug_quitting) return 0;
-		
+
+		if(debug_quitting)
+			return 0;
+
 		debug_cmdline.resize(debug_cmdline.length() - 1);
 
 		if(debugSelectMode != NONE) {
@@ -132,13 +134,13 @@ void *process_debug(void *) {
 					debug("Not an object. (%s)", currentbrd->board[debugselect_x][debugselect_y].obj->name().c_str());
 				}
 			}
-				
+
 			debugSelectMode = NONE;
 			gameFrozen = false;
-			
+
 			continue;
 		}
-		
+
 		*dt << ">>> " << debug_cmdline.c_str() << endl;
 		if(debug_cmdline == "+dark") {
 			currentbrd->dark = 1;
@@ -177,11 +179,16 @@ void *process_debug(void *) {
 			take_torch(10);
 			debug("Decreased torches\n");
 		} else if(debug_cmdline == "zap") {
-			if(player==NULL) continue;
-			if(player->position().x - 1 >= 0) remove_from_board(currentbrd,currentbrd->board[(int)player->position().x-1][(int)player->position().y].obj);
-			if(player->position().y - 1 >= 0) remove_from_board(currentbrd,currentbrd->board[(int)player->position().x][(int)player->position().y-1].obj);
-			if(player->position().x + 1 < BOARD_X) remove_from_board(currentbrd,currentbrd->board[(int)player->position().x+1][(int)player->position().y].obj);
-			if(player->position().y + 1 < BOARD_Y) remove_from_board(currentbrd,currentbrd->board[(int)player->position().x][(int)player->position().y+1].obj);
+			if(player==NULL)
+				continue;
+			if(player->position().x - 1 >= 0)
+				remove_from_board(currentbrd,currentbrd->board[(int)player->position().x-1][(int)player->position().y].obj);
+			if(player->position().y - 1 >= 0)
+				remove_from_board(currentbrd,currentbrd->board[(int)player->position().x][(int)player->position().y-1].obj);
+			if(player->position().x + 1 < BOARD_X)
+				remove_from_board(currentbrd,currentbrd->board[(int)player->position().x+1][(int)player->position().y].obj);
+			if(player->position().y + 1 < BOARD_Y)
+				remove_from_board(currentbrd,currentbrd->board[(int)player->position().x][(int)player->position().y+1].obj);
 			debug("Cleared area around player.\n");
 		} else if(debug_cmdline.find("keys") == 0) {
 			for(int i=0; i<7; i++) {
@@ -190,7 +197,8 @@ void *process_debug(void *) {
 			draw_keys();
 			debug("Player now has all keys.\n");
 		} else if(debug_cmdline.find("warp ") == 0) {
-			if(player==NULL) continue;
+			if(player==NULL)
+				continue;
 			switchbrd = atoi(debug_cmdline.c_str() + 5);
 			player->setFlag(F_SLEEPING);
 		} else if(debug_cmdline == "freeze") {
@@ -247,8 +255,10 @@ void *process_debug(void *) {
 		} else if(debug_cmdline == "quit") {
 			switchbrd = -2;
 		} else if(debug_cmdline.find("play ") == 0) {
-			if(zm!=NULL) zm->setTune(debug_cmdline.c_str() + 5);
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL)
+				zm->setTune(debug_cmdline.c_str() + 5);
+			if(zm!=NULL)
+				zm->start();
 		} else if(debug_cmdline == "+reveal") {
 			debug_show_objects=true;
 			debug("Revealing objects.\n");
@@ -263,13 +273,16 @@ void *process_debug(void *) {
 			ct->translate(Vector(30 * 8, SCREEN_Y / 2 * 3,0));
 			draw_board();
 		} else {
-			if(player==NULL) continue;
+			if(player==NULL)
+				continue;
 			player->exec(debug_cmdline);
 		}
-		
+
 		if(zm!=NULL && !zm->isPlaying()) {
-			if(zm!=NULL) zm->setTune("i-g");
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL)
+				zm->setTune("i-g");
+			if(zm!=NULL)
+				zm->start();
 		}
 	}
 #endif
@@ -282,20 +295,24 @@ void debug_hidCallback(const Event & evt, void * data) {
 		if(debugSelectMode != NONE) {
 			if(evt.key == Event::KeyUp) {
 				debugselect_y--;
-				if(debugselect_y < 0) debugselect_y=0;
+				if(debugselect_y < 0)
+					debugselect_y=0;
 			} else if(evt.key == Event::KeyDown) {
 				debugselect_y++;
-				if(debugselect_y >= BOARD_Y) debugselect_y=BOARD_Y-1;
+				if(debugselect_y >= BOARD_Y)
+					debugselect_y=BOARD_Y-1;
 			} else if(evt.key == Event::KeyLeft) {
 				debugselect_x--;
-				if(debugselect_x < 0) debugselect_x=0;
+				if(debugselect_x < 0)
+					debugselect_x=0;
 			} else if(evt.key == Event::KeyRight) {
 				debugselect_x++;
-				if(debugselect_x >= BOARD_X) debugselect_x=BOARD_X-1;
+				if(debugselect_x >= BOARD_X)
+					debugselect_x=BOARD_X-1;
 			} else if(evt.key == 13) {
 				debug_cmdline += '\r';
 			}
-		} else {					
+		} else {
 			if(evt.key == '`') {
 				if(debug_visible==0 && world.online == 0) {
 					debug_visible = 1;
@@ -310,7 +327,8 @@ void debug_hidCallback(const Event & evt, void * data) {
 					ct->setSize(ct->getSize().x, ct->getSize().y * 2);
 					ct->setTranslate(Vector(ct->getSize().x/2,ct->getSize().y / 2,0));
 					dt->setTranslate(Vector(1024,360,0));
-					if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
+					if(playerEventCollector != NULL && !playerEventCollector->listening())
+						playerEventCollector->start();
 					st->color(WHITE|HIGH_INTENSITY, BLUE);
 					st->locate(5,23);
 					st->setANSI(true);
@@ -319,14 +337,16 @@ void debug_hidCallback(const Event & evt, void * data) {
 					debug_input->focus(false);
 				}
 			} else if (evt.key >= 32 && evt.key <= 128 && debug_visible && world.online == 0) {
-				if(playerEventCollector != NULL && playerEventCollector->listening()) playerEventCollector->stop();
+				if(playerEventCollector != NULL && playerEventCollector->listening())
+					playerEventCollector->stop();
 			} else if (evt.key == 13 && debug_visible && world.online == 0) {
-				if(playerEventCollector != NULL && !playerEventCollector->listening()) playerEventCollector->start();
+				if(playerEventCollector != NULL && !playerEventCollector->listening())
+					playerEventCollector->start();
 				debug_cmdline += '\r';
 			}
 		}
 	}
-	
+
 	if(debug_visible && player != NULL) {
 		st->color(WHITE|HIGH_INTENSITY, BLUE);
 		st->locate(5,23);
@@ -358,10 +378,11 @@ void debug_shutdown() {
 }
 
 void debug(const char *fmt, ...) {
-	if(dt==NULL) return;
+	if(dt==NULL)
+		return;
 	char txt[1024];
 	va_list args;
-	
+
 	va_start(args,fmt);
 	vsprintf(txt,fmt,args);
 	va_end(args);

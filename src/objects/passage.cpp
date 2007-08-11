@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -38,11 +38,13 @@ extern ZZTMusicStream *zm;
 extern Player *player;
 
 void Passage::setParam(int arg, unsigned char val) {
-	if(arg==3) m_dest = val;
+	if(arg==3)
+		m_dest = val;
 }
 
 unsigned char Passage::param(int arg) {
-	if(arg == 3) return m_dest;
+	if(arg == 3)
+		return m_dest;
 	return 0;
 }
 
@@ -52,7 +54,7 @@ void Passage::message(ZZTObject *them, std::string message) {
 	board_info_node *brd=get_board(m_dest);
 	Vector pos;
 	int fg=m_fg, bg=m_bg; //need to cache these because our object gets deleted
-	
+
 	if(message == "touch" && them->type()==ZZT_PLAYER && brd!=NULL) {
 		switchbrd=m_dest;
 		compress(currentbrd);
@@ -60,7 +62,7 @@ void Passage::message(ZZTObject *them, std::string message) {
 		obj=get_obj_by_type(brd,ZZT_PLAYER);
 		obj2=get_obj_by_color(brd,ZZT_PASSAGE,fg,bg);
 		pos = obj->position();
-		
+
 		if(obj2!=NULL) {
 			brd->board[(int)pos.x][(int)pos.y].obj=brd->board[(int)pos.x][(int)pos.y].under;
 			brd->board[(int)pos.x][(int)pos.y].under=NULL;
@@ -73,8 +75,10 @@ void Passage::message(ZZTObject *them, std::string message) {
 
 		player=NULL;
 		obj->setFlag(F_SLEEPING);
-		if(zm!=NULL) zm->setTune("tceg tc#fg# tdf#a td#ga# teg#+c");
-		if(zm!=NULL) zm->start();
+		if(zm!=NULL)
+			zm->setTune("tceg tc#fg# tdf#a td#ga# teg#+c");
+		if(zm!=NULL)
+			zm->start();
 	}
 }
 

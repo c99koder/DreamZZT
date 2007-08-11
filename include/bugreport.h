@@ -15,30 +15,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #define TRAC_XMLRPC_HOME "http://dev.c99.org/DreamZZT/xmlrpc"
 
 class TracBug {
 public:
 	TracBug();
-	TracBug(int num) { get(num); }
-	
+	TracBug(int num) {
+		get
+			(num);
+	}
+
 	void setProperty(std::string name, std::string value, std::string type);
 	std::string getProperty(std::string name);
 	void delProperty(std::string name);
-	int getNum() { return m_num; }
-	
+	int getNum() {
+		return m_num;
+	}
+
 	bool create();
-	bool get(int num);
+	bool get
+		(int num);
 	void attach(std::string filename, std::string description);
 private:
-	struct propEntry { 
+	struct propEntry {
 		std::string name;
 		std::string value;
 		std::string type;
 	};
-	
+
 	std::list<propEntry> m_props;
 	int m_num;
 };

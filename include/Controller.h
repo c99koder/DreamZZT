@@ -15,17 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #import <Cocoa/Cocoa.h>
 #import <Tiki/TikiMain.h>
 
-@interface Controller : NSObject
-{
+@interface Controller : NSObject {
     IBOutlet NSView *mainView;
     IBOutlet NSWindow *mainWindow;
-    
+
     TikiMain * tm;
-		NSString * openFileName;
+    NSString * openFileName;
 }
 @end

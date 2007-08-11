@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #define ZZT_LION_SHAPE 0xea
 #define ZZT_LION_NAME "lion"
@@ -64,22 +64,30 @@
 
 class Enemy : public ZZTObject {
 public:
-	Enemy(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	Enemy(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_intel = 4;
 		m_bg = 0;
 	}
-	
+
 	virtual ~Enemy() { }
 	void create();
-		
-	void setParam(int arg, unsigned char val) { if(arg==1) m_intel = val; }
-	unsigned char param(int arg) { if(arg==1) return m_intel; else return 0; }
+
+	void setParam(int arg, unsigned char val) {
+		if(arg==1)
+			m_intel = val;
+	}
+	unsigned char param(int arg) {
+		if(arg==1)
+			return m_intel;
+		else
+			return 0;
+	}
 	void message(ZZTObject *them, std::string msg);
-	
+
 	void addEditWidgets(TUIWindow *w) {
 		w->addWidget(new TUISlider("Intelligence         ",&m_intel));
 	}
-	
+
 protected:
 	int m_intel;
 };
@@ -92,7 +100,7 @@ public:
 
 class Bear : public Enemy {
 public:
-	Bear(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) { 
+	Bear(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) {
 		m_intel = 8;
 	}
 	void update();
@@ -104,7 +112,7 @@ public:
 
 class Ruffian : public Enemy {
 public:
-	Ruffian(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) { 
+	Ruffian(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) {
 		m_rest=4;
 		m_restCounter=0;
 		m_moveCounter=0;
@@ -115,14 +123,14 @@ public:
 	void addEditWidgets(TUIWindow *w) {
 		Enemy::addEditWidgets(w);
 		w->addWidget(new TUISlider("Rest Time            ",&m_rest));
-	}	
+	}
 private:
 	int m_rest, m_restCounter, m_moveCounter;
 };
 
 class Tiger : public Lion {
 public:
-	Tiger(int type, int x, int y, int shape, int flags, std::string name) : Lion(type, x, y, shape, flags, name) { 
+	Tiger(int type, int x, int y, int shape, int flags, std::string name) : Lion(type, x, y, shape, flags, name) {
 		m_rate = 4;
 	}
 	void setParam(int arg, unsigned char val);
@@ -138,7 +146,7 @@ private:
 
 class SpinningGun : public Enemy {
 public:
-	SpinningGun(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) { 
+	SpinningGun(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) {
 		m_rate = 4;
 		m_animIndex = 0;
 	}
@@ -163,11 +171,15 @@ public:
 	}
 
 	~Centipede() {
-		if(m_prev != NULL) m_prev->unlinkNext();
-		if(m_next != NULL) m_next->unlinkPrev();
+		if(m_prev != NULL)
+			m_prev->unlinkNext();
+		if(m_next != NULL)
+			m_next->unlinkPrev();
 	}
-	
-	bool isDiscovered() { return !(m_next==NULL && m_prev==NULL); }
+
+	bool isDiscovered() {
+		return !(m_next==NULL && m_prev==NULL);
+	}
 	void discover(Centipede *prev);
 	void doMove(direction d);
 	void create();
@@ -175,20 +187,24 @@ public:
 	void message(ZZTObject *them, std::string msg);
 	void setParam(int arg, unsigned char val);
 	unsigned char param(int arg);
-		
+
 	void reverse() {
 		Centipede *tmp = m_next;
 		m_next = m_prev;
 		m_prev = tmp;
-		
+
 		if(m_prev != NULL) {
 			m_heading=m_nextHeading=toward(m_prev);
 			m_prev->reverse();
 		}
 	}
-	
-	void unlinkPrev() { m_prev = NULL; }
-	void unlinkNext() { m_next = NULL; }
+
+	void unlinkPrev() {
+		m_prev = NULL;
+	}
+	void unlinkNext() {
+		m_next = NULL;
+	}
 private:
 	direction m_nextHeading;
 	Centipede *m_next,*m_prev;
@@ -198,22 +214,30 @@ private:
 
 class Slime : public ZZTObject {
 public:
-	Slime(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { 
+	Slime(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		m_rate = m_counter = 4;
 		m_cycle = 3;
 	}
-	
+
 	~Slime() { }
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);
-	void setParam(int arg, unsigned char val) { if(arg==2) m_rate = val; }
-	unsigned char param(int arg) { if(arg==1) return m_rate; else return 0; }
-	
+	void setParam(int arg, unsigned char val) {
+		if(arg==2)
+			m_rate = val;
+	}
+	unsigned char param(int arg) {
+		if(arg==1)
+			return m_rate;
+		else
+			return 0;
+	}
+
 	void addEditWidgets(TUIWindow *w) {
 		w->addWidget(new TUISlider("Rate                 ",&m_rate));
 	}
-	
+
 protected:
 	int m_rate, m_counter;
 };

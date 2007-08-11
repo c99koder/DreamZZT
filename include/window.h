@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #ifndef _WINDOW_H
 #define _WINDOW_H
@@ -30,20 +30,33 @@ public:
 		m_focus = false;
 		m_bg = BLUE;
 	}
-	
-	virtual ~TUIWidget() {
+
+	virtual ~TUIWidget() {}
+
+	virtual void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {}
+	;
+	virtual void focus(bool f);
+	void update();
+	bool getFocus() {
+		return m_focus;
 	}
-	
-	virtual void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {};
-	virtual void focus(bool f);	
-	void update();	
-	bool getFocus() { return m_focus; }
-	void setBg(unsigned char bg) { m_bg = bg; }
-	virtual void processHidEvent(const Hid::Event &evt) {};
-	virtual const std::string getHelpText() { return "\0"; }
-	virtual const std::string getReturnValue() { return "\0"; }
-	virtual const bool getCloseOnEnter() { return true; }
-	virtual int getHeight() { return 1; }
+	void setBg(unsigned char bg) {
+		m_bg = bg;
+	}
+	virtual void processHidEvent(const Hid::Event &evt) {}
+	;
+	virtual const std::string getHelpText() {
+		return "\0";
+	}
+	virtual const std::string getReturnValue() {
+		return "\0";
+	}
+	virtual const bool getCloseOnEnter() {
+		return true;
+	}
+	virtual int getHeight() {
+		return 1;
+	}
 private:
 	bool m_focus;
 	RefPtr<Hid::EventCollector> m_ec;
@@ -58,14 +71,16 @@ public:
 		m_bold=bold;
 		m_ansi=ANSI;
 	}
-	
+
 	~TUILabel() {}
-	
+
 	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {
 		ct->color((m_bold?WHITE:YELLOW)|HIGH_INTENSITY,m_bg);
-		if(m_ansi) ct->setANSI(true);
+		if(m_ansi)
+			ct->setANSI(true);
 		*ct << m_text;
-		if(m_ansi) ct->setANSI(false);
+		if(m_ansi)
+			ct->setANSI(false);
 	}
 private:
 	std::string m_text;
@@ -83,9 +98,13 @@ public:
 		focus(false);
 	}
 	void focus(bool f);
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);	
-	const std::string getHelpText() { return "Use keyboard to edit text"; }
-	const bool getCloseOnEnter() { return false; }
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+	const std::string getHelpText() {
+		return "Use keyboard to edit text";
+	}
+	const bool getCloseOnEnter() {
+		return false;
+	}
 	int getHeight() {
 		return (int)count(m_text->begin(), m_text->end(), '\r') + 1;
 	}
@@ -101,8 +120,8 @@ protected:
 
 class TUIPasswordInput : public TUITextInput {
 public:
-	TUIPasswordInput(std::string label, std::string *text) : TUITextInput(label,text) { }	
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);	
+	TUIPasswordInput(std::string label, std::string *text) : TUITextInput(label,text) { }
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
 };
 
 class TUICheckBox : public TUIWidget {
@@ -118,19 +137,25 @@ public:
 		m_checked_b=NULL;
 		m_checked_uc=checked;
 	}
-	
+
 	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {
 		ct->color(WHITE|HIGH_INTENSITY,m_bg);
-		if(m_checked_b != NULL) *ct << "  [" << ((*m_checked_b)?"\xfb":" ") << "] " << m_text;
-		if(m_checked_uc != NULL) *ct << "  [" << ((*m_checked_uc)?"\xfb":" ") << "] " << m_text;
+		if(m_checked_b != NULL)
+			*ct << "  [" << ((*m_checked_b)?"\xfb":" ") << "] " << m_text;
+		if(m_checked_uc != NULL)
+			*ct << "  [" << ((*m_checked_uc)?"\xfb":" ") << "] " << m_text;
 	}
-	
-	const std::string getHelpText() { return "Press SPACE to toggle this"; }
-	
+
+	const std::string getHelpText() {
+		return "Press SPACE to toggle this";
+	}
+
 	void processHidEvent(const Hid::Event &evt) {
 		if(evt.type == Event::EvtKeypress && evt.key == ' ') {
-			if(m_checked_b != NULL) (*m_checked_b) = !(*m_checked_b);
-			if(m_checked_uc != NULL) (*m_checked_uc) = !(*m_checked_uc);
+			if(m_checked_b != NULL)
+				(*m_checked_b) = !(*m_checked_b);
+			if(m_checked_uc != NULL)
+				(*m_checked_uc) = !(*m_checked_uc);
 		}
 	}
 private:
@@ -141,17 +166,20 @@ private:
 
 class TUIRadioGroup : public TUIWidget {
 public:
-	TUIRadioGroup(std::string text, int *selected);	
-	TUIRadioGroup(std::string text, unsigned short *selected);	
-	TUIRadioGroup(std::string text, float *selected);	
-	TUIRadioGroup(std::string text, unsigned char *selected);	
-	
-	void add(std::string text) {
+	TUIRadioGroup(std::string text, int *selected);
+	TUIRadioGroup(std::string text, unsigned short *selected);
+	TUIRadioGroup(std::string text, float *selected);
+	TUIRadioGroup(std::string text, unsigned char *selected);
+
+	void add
+		(std::string text) {
 		m_options.push_back(text);
 	}
-	
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);	
-	const std::string getHelpText() { return "Press LEFT or RIGHT to change this"; }
+
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+	const std::string getHelpText() {
+		return "Press LEFT or RIGHT to change this";
+	}
 
 	void processHidEvent(const Hid::Event &evt);
 protected:
@@ -171,22 +199,24 @@ public:
 
 class TUIDirection : public TUIRadioGroup {
 public:
-	TUIDirection(std::string text, Vector *direction);	
+	TUIDirection(std::string text, Vector *direction);
 	void processHidEvent(const Hid::Event &evt);
 private:
 	unsigned short int m_select;
 	Vector *m_direction;
 };
-	
+
 class TUINumericInput : public TUIWidget {
 public:
 	TUINumericInput(std::string text, int *num, int min, int max, int step=1);
-	TUINumericInput(std::string text, unsigned short int *num, int min, int max, int step=1);	
-	TUINumericInput(std::string text, float *num, int min, int max, int step=1);	
-	TUINumericInput(std::string text, unsigned char *num, int min, int max, int step=1);	
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);	
-	const std::string getHelpText() { return "Press LEFT or RIGHT to change this"; }
-	void processHidEvent(const Hid::Event &evt);	
+	TUINumericInput(std::string text, unsigned short int *num, int min, int max, int step=1);
+	TUINumericInput(std::string text, float *num, int min, int max, int step=1);
+	TUINumericInput(std::string text, unsigned char *num, int min, int max, int step=1);
+	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+	const std::string getHelpText() {
+		return "Press LEFT or RIGHT to change this";
+	}
+	void processHidEvent(const Hid::Event &evt);
 protected:
 	int *m_numi;
 	unsigned short int *m_nums;
@@ -203,7 +233,7 @@ public:
 		m_blinkTimer = 4;
 		m_blink = false;
 	}
-	
+
 	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
 private:
 	bool m_blink;
@@ -217,7 +247,7 @@ public:
 		m_max = max;
 		m_width = width;
 	}
-	
+
 	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
 private:
 	unsigned int *m_val;
@@ -230,26 +260,32 @@ public:
 		m_text=text;
 		m_label=label;
 	}
-	
+
 	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {
 		ct->color(MAGENTA|HIGH_INTENSITY,m_bg);
 		*ct << " \x10 ";
 #if TIKI_PLAT != TIKI_NDS
+
 		*ct << "   ";
 #endif
+
 		ct->color(WHITE|HIGH_INTENSITY,m_bg);
 		*ct << m_text;
 	}
-	
-	const std::string getHelpText() { 
+
+	const std::string getHelpText() {
 #if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
-		return "Press A to select this"; 
+		return "Press A to select this";
 #else
-		return "Press ENTER to select this"; 
+
+		return "Press ENTER to select this";
 #endif
+
 	}
-	const std::string getReturnValue() { return m_label; }
-	
+	const std::string getReturnValue() {
+		return m_label;
+	}
+
 private:
 	std::string m_text;
 	std::string m_label;
@@ -258,11 +294,13 @@ private:
 class TUIWindow {
 public:
 #if TIKI_PLAT == TIKI_NDS
+
 	TUIWindow(std::string title,int x=0, int y=0, int w=32, int h=22);
 #else
+
 	TUIWindow(std::string title,int x=6, int y=2, int w=45, int h=17);
 #endif
-	
+
 	~TUIWindow();
 
 	void buildFromString(std::string s, bool ANSI=false);
@@ -281,9 +319,13 @@ public:
 	}
 	int widgetY(TUIWidget *widget);
 	void processHidEvent(const Hid::Event &evt, bool canClose);
-	void scroll(int delta) { m_offset += delta; }
-	std::string getLabel() { return m_label; }
-	
+	void scroll(int delta) {
+		m_offset += delta;
+	}
+	std::string getLabel() {
+		return m_label;
+	}
+
 private:
 	std::string m_title,m_label;
 	int m_x, m_y, m_w, m_h, m_offset, m_delta;

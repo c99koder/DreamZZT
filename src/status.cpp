@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/plxcompat.h>
@@ -62,7 +62,7 @@ void draw_msg() {
 	int i, length, left, bot;
 
 	if(currentbrd->msgcount>0) {
-		
+
 		strcpy(message,currentbrd->message);
 		for(i=0; i<strlen(message); i++) {
 			if(message[i] == '\r' || ((i > ct->getCols() - 4) && world.magic != 65534)) {
@@ -71,7 +71,8 @@ void draw_msg() {
 					while(message[i] != ' ' && i > 0) {
 						i--;
 					}
-					if(i==0) i = ct->getCols() - 4;
+					if(i==0)
+						i = ct->getCols() - 4;
 				}
 				message[i] = '\0';
 				left = (ct->getCols() / 2) - ((i+2)/2);
@@ -83,24 +84,29 @@ void draw_msg() {
 		}
 		if(i < strlen(currentbrd->message)) {
 			strcpy(message,currentbrd->message + i + 1);
-		}	
+		}
 		length = (int)strlen(message);
-		if(length > ct->getCols() - 2) length = ct->getCols() - 2;
+		if(length > ct->getCols() - 2)
+			length = ct->getCols() - 2;
 		left = (ct->getCols() / 2) - ((length+2)/2);
-		if(left < 0) left=0;
+		if(left < 0)
+			left=0;
 		strcpy(message,message+msgoff);
 		message[(ct->getCols() - 2)] = '\0';
-		if(strlen(message) > (ct->getCols() - 2) && msgoff + (ct->getCols() - 2) < strlen(message) && currentbrd->msgcount < 21) msgoff+=4;
-		if(msgoff > strlen(message) - (ct->getCols() - 2)) msgoff = strlen(message) - (ct->getCols() - 2);
+		if(strlen(message) > (ct->getCols() - 2) && msgoff + (ct->getCols() - 2) < strlen(message) && currentbrd->msgcount < 21)
+			msgoff+=4;
+		if(msgoff > strlen(message) - (ct->getCols() - 2))
+			msgoff = strlen(message) - (ct->getCols() - 2);
 		ct->color((currentbrd->msgcount%6)+9,0);
 		ct->locate(left,ct->getRows() - 1);
 		ct->printf(" %s ",message);
 #ifdef USE_3DMODEL
+
 		for(int x=left; x<=left+length; x++) {
 			gl->clear(x,BOARD_Y-1);
 		}
 #endif
-		
+
 		currentbrd->msgcount--;
 	}
 }
@@ -130,9 +136,10 @@ void draw_time() {
 }
 
 void take_time(int count) {
-	if(count > world.time) 
+	if(count > world.time)
 		world.time=0;
-	else world.time-=count;
+	else
+		world.time-=count;
 	draw_time();
 }
 
@@ -153,7 +160,8 @@ void draw_ammo() {
 void take_ammo(int count) {
 	if(count > world.ammo)
 		world.ammo=0;
-	else world.ammo-=count;
+	else
+		world.ammo-=count;
 	draw_ammo();
 }
 
@@ -165,7 +173,7 @@ void give_ammo(int count) {
 void draw_health() {
 	unsigned int t = world.health;
 	TUIMeter m(&t, 100, 7);
-	
+
 	st->putColor(3,8, HIGH_INTENSITY | WHITE | (BLUE << 8));
 	st->putChar(3,8,0x02);
 
@@ -180,9 +188,10 @@ void draw_health() {
 }
 
 void take_health(int count) {
-	if(world.health<count) 
+	if(world.health<count)
 		world.health=0;
-	else world.health-=count;
+	else
+		world.health-=count;
 	draw_health();
 }
 
@@ -192,10 +201,11 @@ void give_health(int count) {
 }
 
 void draw_torch() {
-	if(world.magic == 65534) return;
+	if(world.magic == 65534)
+		return;
 	unsigned int t = world.torch_cycle;
 	TUIMeter m(&t, 200, 4);
-	
+
 	st->putColor(2,10, YELLOW | (BLUE << 8));
 	st->putChar(2,10,0x9d);
 
@@ -213,15 +223,18 @@ void draw_torch() {
 }
 
 void take_torch(int count) {
-	if(world.health<=0) return;
-	if(world.torches < count) 
+	if(world.health<=0)
+		return;
+	if(world.torches < count)
 		world.torches=0;
-	else world.torches-=count;
+	else
+		world.torches-=count;
 	draw_torch();
 }
 
 void give_torch(int count) {
-	if(world.health<=0) return;
+	if(world.health<=0)
+		return;
 	world.torches+=count;
 	draw_torch();
 }
@@ -236,15 +249,18 @@ void draw_gems() {
 }
 
 void take_gems(int count) {
-	if(world.health<=0) return;
-	if(world.gems < count) 
+	if(world.health<=0)
+		return;
+	if(world.gems < count)
 		world.gems = 0;
-	else world.gems-=count;
+	else
+		world.gems-=count;
 	draw_gems();
 }
 
 void give_gems(int count) {
-	if(world.health<=0) return;
+	if(world.health<=0)
+		return;
 	world.gems+=count;
 	draw_gems();
 }
@@ -256,15 +272,18 @@ void draw_score() {
 }
 
 void take_score(int count) {
-	if(world.health<=0) return;
+	if(world.health<=0)
+		return;
 	if(world.score < count)
 		world.score = 0;
-	else world.score-=count;
+	else
+		world.score-=count;
 	draw_score();
 }
 
 void give_score(int count) {
-	if(world.health<=0) return;
+	if(world.health<=0)
+		return;
 	world.score+=count;
 	draw_score();
 }
@@ -300,12 +319,15 @@ void draw_hud_ingame() {
 	draw_keys();
 	st->setANSI(false);
 #if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
+
 	st->locate(9,15);
 	st->color(0,7);
 	st->printf(" X ");
 	st->color(15,1);
-	if(world.magic == 65534) st->printf(" Hint");
-	else st->printf(" Torch");
+	if(world.magic == 65534)
+		st->printf(" Hint");
+	else
+		st->printf(" Torch");
 	st->locate(9,16);
 	st->color(0,3);
 	st->printf(" Y ");
@@ -332,13 +354,18 @@ void draw_hud_ingame() {
 	st->color(15,1);
 	st->printf(" Shoot");
 #else
+
 	st->locate(9,15);
 	st->color(0,7);
-	if(world.magic == 65534) st->printf(" H ");
-	else st->printf(" T ");
+	if(world.magic == 65534)
+		st->printf(" H ");
+	else
+		st->printf(" T ");
 	st->color(15,1);
-	if(world.magic == 65534) st->printf(" Hint");
-	else st->printf(" Torch");
+	if(world.magic == 65534)
+		st->printf(" Hint");
+	else
+		st->printf(" Torch");
 	st->locate(9,16);
 	st->color(0,3);
 	st->printf(" S ");
@@ -365,5 +392,6 @@ void draw_hud_ingame() {
 	st->color(15,1);
 	st->printf(" Shoot");
 #endif
+
 	st->setANSI(true);
 }

@@ -66,7 +66,7 @@ public:
 	void load();
 
 	int getAnimationIndex(const string& animationName) const;
-	
+
 	void draw(const Vector& position, const int animation, const Vector& color, const unsigned char height) const;
 
 	Texture *getSkin() const;
@@ -86,7 +86,7 @@ private:
 
 	//OpenGL display lists
 	GLuint *displayLists;
-	
+
 	int totalAnimations;
 	vector<AMFAnimation> animations;
 };

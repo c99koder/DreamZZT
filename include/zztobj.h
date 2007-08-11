@@ -75,7 +75,7 @@ struct obj {
 	char *prog;
 	struct obj *next;
 };
-
+ 
 struct obj *get_obj(int x, int y);
 void set_objlist(struct obj *list);
 */

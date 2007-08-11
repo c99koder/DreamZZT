@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -43,20 +43,18 @@ extern Player *player;
 
 extern "C" {
 #include "lualib.h"
-#include "zzt_lua.h" 
+#include "zzt_lua.h"
 #include "pluto.h"
 }
 
 #include <machine/endian.h>
 #include <algorithm>
 
-inline void ByteSwap(void * b, int n)
-{
+inline void ByteSwap(void * b, int n) {
 #if BYTE_ORDER == LITTLE_ENDIAN
 	register int i = 0;
 	register int j = n-1;
-	while (i<j)
-	{
+	while (i<j) {
 		std::swap(((unsigned char *)b)[i], ((unsigned char *)b)[j]);
 		i++, j--;
 	}
@@ -70,7 +68,7 @@ int base64_decode(const char *src, unsigned char **outptr);
 static int pop_message (lua_State *L) {
 	ZZTLUA *me = ((ZZTLUA*)  tolua_tousertype(L,1,0));
 	ZZTLUA::message_queue_item i;
-	
+
 	if(me->message_count() < 1) {
 		lua_pushnil(L);
 		return 1;
@@ -85,9 +83,11 @@ static int pop_message (lua_State *L) {
 ZZTLUA::ZZTLUA(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 	m_luaVM = lua_open();
 
-#ifdef LUA_VERSION_NUM	
+#ifdef LUA_VERSION_NUM
+
 	luaL_openlibs(m_luaVM);
 #else
+
 	luaopen_base(m_luaVM);
 	luaopen_io(m_luaVM);
 	luaopen_string(m_luaVM);
@@ -97,8 +97,8 @@ ZZTLUA::ZZTLUA(int type, int x, int y, int shape, int flags, std::string name) :
 	tolua_zzt_open(m_luaVM);
 	pluto_open(m_luaVM);
 	lua_pushcfunction(m_luaVM, ::pop_message);
-    lua_setglobal(m_luaVM, "pop_message");
-	
+	lua_setglobal(m_luaVM, "pop_message");
+
 	m_serialized = false;
 }
 
@@ -112,7 +112,7 @@ void ZZTLUA::create() {
 
 	tolua_pushusertype(m_luaVM,(void*)player,"ZZTObject");
 	lua_setglobal(m_luaVM, "player");
-	
+
 	if(m_serialized) {
 		LoadInfo li;
 		unsigned char *out;
@@ -127,9 +127,9 @@ void ZZTLUA::create() {
 		}
 
 		lua_getglobal(m_luaVM, "perms");
-		
+
 		pluto_unpersist(m_luaVM, bufreader, &li);
-		
+
 		free(out);
 		m_serialized = false;
 		lua_settop(m_luaVM, 2);
@@ -141,7 +141,8 @@ void ZZTLUA::create() {
 }
 
 void ZZTLUA::setParam(int arg, unsigned char val) {
-	if(arg==1) m_serialized = val;
+	if(arg==1)
+		m_serialized = val;
 }
 
 unsigned char ZZTLUA::param(int arg) {
@@ -163,9 +164,9 @@ unsigned char ZZTLUA::param(int arg) {
 			lua_settop(m_luaVM, 0);
 			lua_getglobal(m_luaVM, "perms");
 			lua_getglobal(m_luaVM, "savestate");
-			
+
 			pluto_persist(m_luaVM, bufwriter, &wi);
-			
+
 			base64_encode(wi.buf, wi.buflen, &out);
 			m_prog = out;
 			m_proglen = m_prog.length();

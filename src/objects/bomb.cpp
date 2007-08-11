@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -44,8 +44,10 @@ void Bomb::message(ZZTObject *them, std::string message) {
 		m_cycle=10;
 		m_flags|=F_PUSHABLE;
 		draw();
-		if(zm!=NULL) zm->setTune("tcf+cf+c");
-		if(zm!=NULL) zm->start();
+		if(zm!=NULL)
+			zm->setTune("tcf+cf+c");
+		if(zm!=NULL)
+			zm->start();
 	}
 }
 
@@ -59,21 +61,25 @@ void Bomb::update() {
 		m_cycle=10;
 		m_counter=4;
 		draw();
-		if(m_shape<'9'){
-			if(zm!=NULL) zm->setTune((m_shape%2==0)?"t5":"t8");
-			if(zm!=NULL) zm->start();
+		if(m_shape<'9') {
+			if(zm!=NULL)
+				zm->setTune((m_shape%2==0)?"t5":"t8");
+			if(zm!=NULL)
+				zm->start();
 		}
 	}
-	
+
 	if(m_shape=='0' && m_counter>0) {
 		m_counter--;
 		m_cycle=1;
 
 		if(m_counter==3) {
-			if(zm!=NULL) zm->setTune("t+++c-c-c-c-c-c");
-			if(zm!=NULL) zm->start();
+			if(zm!=NULL)
+				zm->setTune("t+++c-c-c-c-c-c");
+			if(zm!=NULL)
+				zm->start();
 		}
-		
+
 		for(y = (int)m_position.y - 4; y <= (int)m_position.y + 4; y++) {
 			for(x = (int)m_position.x - 7; x <= (int)m_position.x + 7; x++) {
 				a=((x-m_position.x)*(x-m_position.x))/2.0f;

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <vector>
 #include <string>
@@ -24,12 +24,13 @@
 std::vector<std::string> wordify(std::string s, char seperator, bool allowEmpty) {
 	std::vector<std::string> list;
 	size_t pos=0,oldpos=0;
-	
+
 	while((pos = s.find(seperator, oldpos)) != std::string::npos) {
-		if(pos != oldpos || allowEmpty) list.push_back(s.substr(oldpos,(pos-oldpos)));
+		if(pos != oldpos || allowEmpty)
+			list.push_back(s.substr(oldpos,(pos-oldpos)));
 		oldpos = pos+1;
 	}
-	
+
 	list.push_back(s.substr(oldpos)); //Stuff in the last word
 	return list;
 }

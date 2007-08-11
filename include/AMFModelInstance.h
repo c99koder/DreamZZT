@@ -5,7 +5,7 @@ class AMFModelInstance {
 public:
 	AMFModelInstance(const string modelName, const Vector& position, const Vector& color, const int height);
 	void draw() const;
-	
+
 	Vector position;
 
 private:

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #define ZZT_ENERGIZER_SHAPE 0x7F
 #define ZZT_ENERGIZER_NAME "energizer"
@@ -51,19 +51,19 @@ class Inventory : public ZZTObject {
 public:
 	Inventory(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
 		switch(type) {
-			case ZZT_TORCH:
-				m_modelName = "torch.amf";
-				m_fg = YELLOW;
-				m_bg = 0;
-				break;
-			case ZZT_GEM:
-				m_modelName = "gem.amf";
-				break;
-			case ZZT_DOOR:
-				m_fg = WHITE | HIGH_INTENSITY;
-				m_shape=8;
-				m_color=&m_bg;
-				break;
+		case ZZT_TORCH:
+			m_modelName = "torch.amf";
+			m_fg = YELLOW;
+			m_bg = 0;
+			break;
+		case ZZT_GEM:
+			m_modelName = "gem.amf";
+			break;
+		case ZZT_DOOR:
+			m_fg = WHITE | HIGH_INTENSITY;
+			m_shape=8;
+			m_color=&m_bg;
+			break;
 		}
 	}
 	void create();

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #include <Tiki/tiki.h>
 #include <Tiki/hid.h>
@@ -34,17 +34,25 @@ using namespace Tiki::Audio;
 extern ZZTMusicStream *zm;
 
 void Pusher::update() {
-	if(m_step.x==1) move(RIGHT);
-	if(m_step.y==1) move(DOWN);
-	if(m_step.x==-1) move(LEFT);
-	if(m_step.y==-1) move(UP);
+	if(m_step.x==1)
+		move(RIGHT);
+	if(m_step.y==1)
+		move(DOWN);
+	if(m_step.x==-1)
+		move(LEFT);
+	if(m_step.y==-1)
+		move(UP);
 	//zm->setTune("t--f");
 	//zm->start();
 }
 
 void Pusher::create() {
-	if(m_step.x==1) m_shape=0x10;
-	if(m_step.y==1) m_shape=0x1f;
-	if(m_step.x==-1) m_shape=0x11;
-	if(m_step.y==-1) m_shape=0x1e;
+	if(m_step.x==1)
+		m_shape=0x10;
+	if(m_step.y==1)
+		m_shape=0x1f;
+	if(m_step.x==-1)
+		m_shape=0x11;
+	if(m_step.y==-1)
+		m_shape=0x1e;
 }

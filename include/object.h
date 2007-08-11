@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #ifndef _OBJECT_H
 #define _OBJECT_H
@@ -31,90 +31,178 @@ enum direction { IDLE, LEFT, RIGHT, UP, DOWN, SHOOTING=128 };
 class ZZTObject {
 public:
 	ZZTObject(int type, int x, int y, int shape, int flags, std::string name);
-	virtual ~ZZTObject() { 
-		m_isValid = false; 
+	virtual ~ZZTObject() {
+		m_isValid = false;
 		//if(m_model) { delete m_model; m_model = NULL }
 	}
 	void inherit(ZZTObject *o);
-	
+
 	direction opposite(enum direction dir);
 	direction toward(ZZTObject *them);
 	direction clockwise(direction dir);
 	direction str_to_direction(std::string s);
-	
-	bool isValid() { return m_isValid; }
-	
+
+	bool isValid() {
+		return m_isValid;
+	}
+
 	int str_to_color(std::string color);
 	std::string int_to_color(int color);
-	
+
 	int distance(ZZTObject *them);
 	int dist_x(ZZTObject *them);
 	int dist_y(ZZTObject *them);
 	bool move(direction d, bool trying=false, bool origin=true);
 	bool is_empty(direction d, bool ignorePlayer=false);
 	ZZTObject *create_object(int type, direction d);
-	ZZTObject *get(direction d);
-	void remove();
-	Vector position() { return m_position; }
-	void setPosition(Vector p) { m_position = p; }
-	Vector step() { return m_step; }
-	void setStep(Vector s) { m_step = s; }
-	char shape() { return m_shape; }
-	void setShape(int s) { m_shape = s; }
-	int color() { return *m_color; }
-	void setColor(int c) { 
+	ZZTObject *get
+	(direction d);
+	void remove
+		();
+	Vector position() {
+		return m_position;
+	}
+	void setPosition(Vector p) {
+		m_position = p;
+	}
+	Vector step() {
+		return m_step;
+	}
+	void setStep(Vector s) {
+		m_step = s;
+	}
+	char shape() {
+		return m_shape;
+	}
+	void setShape(int s) {
+		m_shape = s;
+	}
+	int color() {
+		return *m_color;
+	}
+	void setColor(int c) {
 		if(m_color == &m_bg && c > 7) { //Force background to low-intensity
 			c -= 8;
 		}
-		*m_color = c; 
+		*m_color = c;
 	}
 	void setColor(int fg, int bg) {
 		m_fg = fg;
 		m_bg = bg;
 	}
-	int type() { return m_type; }
-	int fg() { return m_fg; }
-	void setFg(int f) { m_fg = f; }
-	int bg() { return m_bg; }
-	void setBg(int b) { m_bg = b; }
-	std::string name() { return m_name; }
-	void setName(std::string name) { m_name = name; }
-	bool updated() { return m_updated; }
-	void setUpdated(bool u) { m_updated = u; }
-	bool pushed() { return m_pushed; }
-	void setPushed(bool p) { m_pushed = p; }
-	short cycle() { return m_cycle; }
-	void setCycle(short c) { m_cycle = c; }
-	int tick() { return m_tick; }
-	void setTick(int t) { m_tick = t; }
-	int flags() { return m_flags; }
-	int flag(int f) { return m_flags & f; }
-	void setFlag(int flag) { m_flags |= flag; }
-	void setFlags(int flags) { m_flags = flags; }
-	void clearFlag(int flag) { m_flags&=~flag; }
-	void setProg(std::string prog, int len, int pos) { m_prog=prog; m_proglen = len; m_progpos = pos; }
-	void setHeading(direction h) { m_heading = h; }
-	direction heading() { return m_heading; }
-	std::string prog() { return m_prog; }
-	int progLen() { return m_proglen; }
-	int progPos() { return m_progpos; }
-	unsigned char height() { return m_height; }
-	void setHeight(unsigned char height) { m_height = height; }
-	void setHighlighted(bool h) { m_flash = 0; m_highlighted = h; }
-	bool highlighted() { return m_highlighted; }
-	
+	int type() {
+		return m_type;
+	}
+	int fg() {
+		return m_fg;
+	}
+	void setFg(int f) {
+		m_fg = f;
+	}
+	int bg() {
+		return m_bg;
+	}
+	void setBg(int b) {
+		m_bg = b;
+	}
+	std::string name() {
+		return m_name;
+	}
+	void setName(std::string name) {
+		m_name = name;
+	}
+	bool updated() {
+		return m_updated;
+	}
+	void setUpdated(bool u) {
+		m_updated = u;
+	}
+	bool pushed() {
+		return m_pushed;
+	}
+	void setPushed(bool p) {
+		m_pushed = p;
+	}
+	short cycle() {
+		return m_cycle;
+	}
+	void setCycle(short c) {
+		m_cycle = c;
+	}
+	int tick() {
+		return m_tick;
+	}
+	void setTick(int t) {
+		m_tick = t;
+	}
+	int flags() {
+		return m_flags;
+	}
+	int flag(int f) {
+		return m_flags & f;
+	}
+	void setFlag(int flag) {
+		m_flags |= flag;
+	}
+	void setFlags(int flags) {
+		m_flags = flags;
+	}
+	void clearFlag(int flag) {
+		m_flags&=~flag;
+	}
+	void setProg(std::string prog, int len, int pos) {
+		m_prog=prog;
+		m_proglen = len;
+		m_progpos = pos;
+	}
+	void setHeading(direction h) {
+		m_heading = h;
+	}
+	direction heading() {
+		return m_heading;
+	}
+	std::string prog() {
+		return m_prog;
+	}
+	int progLen() {
+		return m_proglen;
+	}
+	int progPos() {
+		return m_progpos;
+	}
+	unsigned char height() {
+		return m_height;
+	}
+	void setHeight(unsigned char height) {
+		m_height = height;
+	}
+	void setHighlighted(bool h) {
+		m_flash = 0;
+		m_highlighted = h;
+	}
+	bool highlighted() {
+		return m_highlighted;
+	}
+
 	void draw();
 	void edit();
-	virtual void addEditWidgets(TUIWindow *w) { };
-	
-	virtual void setParam(int arg, unsigned char val) { };
-	virtual unsigned char param(int arg) { return 0; }
-	virtual void update() { };
-	virtual void message(ZZTObject *from, std::string msg) { };
-	virtual void create() { };
-	
+	virtual void addEditWidgets(TUIWindow *w) { }
+	;
+
+	virtual void setParam(int arg, unsigned char val) { }
+	;
+	virtual unsigned char param(int arg) {
+		return 0;
+	}
+	virtual void update() { }
+	;
+	virtual void message(ZZTObject *from, std::string msg) { }
+	;
+	virtual void create() { }
+	;
+
 	void shoot(direction d);
-	
+
 protected:
 	Vector m_position;
 	Vector m_step;
@@ -126,7 +214,7 @@ protected:
 	direction m_heading;
 	int m_type;
 	unsigned char m_shape;
-	std::string m_name; 
+	std::string m_name;
 	int m_flags;
 	std::string m_prog;
 	short m_proglen;

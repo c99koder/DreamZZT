@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- */ 
+ */
 
 #ifndef __SOUND_H
 #define __SOUND_H
@@ -28,31 +28,39 @@
 
 class ZZTMusicStream : public Tiki::Audio::Stream {
 public:
-			ZZTMusicStream();
-			virtual ~ZZTMusicStream();
-				
-			void setTune(std::string tune);
-			void appendTune(std::string tune);
-			
-			void lock() { m_locked = true; }
-			void unlock() { m_locked = false; }
-			bool isLocked() { return m_locked; }
-			bool hasTune() { return m_tune.length() > 0; }
-			virtual GetDataResult getData(uint16 * buffer, int * numSamples);
+	ZZTMusicStream();
+	virtual ~ZZTMusicStream();
+
+	void setTune(std::string tune);
+	void appendTune(std::string tune);
+
+	void lock() {
+		m_locked = true;
+	}
+	void unlock() {
+		m_locked = false;
+	}
+	bool isLocked() {
+		return m_locked;
+	}
+	bool hasTune() {
+		return m_tune.length() > 0;
+	}
+	virtual GetDataResult getData(uint16 * buffer, int * numSamples);
 
 private:
-			float m_note_table[128];
-			double m_note_len;
-			float m_note_freq;
-			float m_note_duration;
-			int m_octave;
-			int osc;
-			std::string m_tune;
-			int m_tune_idx;
-			int m_hfreq;
-			bool m_locked;
-			int m_drum_idx;
-			uint16 *m_drum;
+	float m_note_table[128];
+	double m_note_len;
+	float m_note_freq;
+	float m_note_duration;
+	int m_octave;
+	int osc;
+	std::string m_tune;
+	int m_tune_idx;
+	int m_hfreq;
+	bool m_locked;
+	int m_drum_idx;
+	uint16 *m_drum;
 };
 
 #endif	/* __SOUND_H */
