@@ -31,15 +31,10 @@ clean:
 install: dreamzzt
 	install -d $(BIN) $(DATA) $(PIXMAPS) $(ICONS)/48x48/mimetypes $(APPLICATIONS) $(DOC)
 	install -s dreamzzt $(BIN)
-	install -m644 resources/* $(DATA)
+	install -m644 resources/*.zzt resources/*.szt resources/*.png $(DATA)
 	install -m644 dreamzzt.png $(PIXMAPS)
 	install -m644 application-x-zzt-*.png $(ICONS)/48x48/mimetypes
 	install -m644 dreamzzt.desktop $(APPLICATIONS)
 	install -m644 ChangeLog doc/* $(DOC)
-
-package: dreamzzt
-	strip dreamzzt
-	cp dreamzzt loki/bin/Linux/x86/glibc-2.1 
-	~/loki_setup/makeself/makeself.sh --follow loki dreamzzt-$(VERSION).run dreamzzt ./setup.sh
 
 include $(TIKI_DIR)/$(TIKI_PLAT)/Makefile.rules
