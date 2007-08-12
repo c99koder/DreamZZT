@@ -3,7 +3,7 @@
 DESTDIR=dreamzzt-3.1.`svnversion .`
 
 dummy:
-	echo "Please specify a platform: dc, linux, nds, osx, setup"
+	echo "Please specify a platform: dc, linux, nds, mac, setup"
 
 dc: data
 	sh-elf-objcopy -R .stack -O binary dreamzzt dreamzzt.bin
