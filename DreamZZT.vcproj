@@ -591,7 +591,16 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h&#x0D;&#x0A;"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h"
+						Outputs="include\version.h"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h"
 						Outputs="include\version.h"
 					/>
 				</FileConfiguration>
@@ -646,7 +655,16 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc&#x0D;&#x0A;"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc"
+						Outputs="dreamzzt.rc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc"
 						Outputs="dreamzzt.rc"
 					/>
 				</FileConfiguration>

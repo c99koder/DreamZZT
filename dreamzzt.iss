@@ -13,7 +13,7 @@ AppSupportURL=http://forums.c99.org/
 AppUpdatesURL=http://dev.c99.org/DreamZZT/
 DefaultDirName={pf}\DreamZZT
 DefaultGroupName=DreamZZT
-OutputBaseFilename=DreamZZT-{#Version()}-setup
+OutputBaseFilename=dreamzzt-{#Version()}-setup
 Compression=lzma
 SolidCompression=true
 MinVersion=4.1.2222,5.0.2195
@@ -28,6 +28,7 @@ VersionInfoTextVersion={#Version()}
 VersionInfoCopyright=Copyright (C) 2000 - 2007 Sam Steele, All Rights Reserved.
 InternalCompressLevel=max
 InfoBeforeFile=ChangeLog
+OutputDir=dist
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl

@@ -28,6 +28,7 @@ VersionInfoTextVersion={#Version()}
 VersionInfoCopyright=Copyright (C) 2000 - 2007 Sam Steele, All Rights Reserved.
 InternalCompressLevel=max
 InfoBeforeFile=ChangeLog
+OutputDir=dist
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
