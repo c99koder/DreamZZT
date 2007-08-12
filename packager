@@ -23,7 +23,7 @@ linux:
 	mkdir -p dist 
 	~/loki_setup/makeself/makeself.sh --follow loki dist/dreamzzt-3.1.`svnversion .`-linux.run dreamzzt ./setup.sh
 
-osx: data
+mac: data
 	cp -R build/Deployment/DreamZZT.app ${DESTDIR}
 	zip -r dist/${DESTDIR}-mac.zip ${DESTDIR}/*
 	rm -rf ${DESTDIR}
