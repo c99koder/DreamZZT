@@ -39,3 +39,5 @@ data:
 	mkdir -p dist/3.1.`svnversion .`
 	cp resources/*.zzt resources/*.szt resources/zzt-ascii.png ${DESTDIR}
 	cp doc/* COPYING ChangeLog ${DESTDIR}
+
+.PHONY: dc nds mac data linux win32 win32-lite
