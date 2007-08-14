@@ -8,24 +8,24 @@ dummy:
 dc: data
 	sh-elf-objcopy -R .stack -O binary dreamzzt dreamzzt.bin
 	cp dreamzzt.bin ${DESTDIR}
-	zip snapshots/${DESTDIR}-dc.zip ${DESTDIR}/*
+	zip dist/3.1.`svnversion .`/${DESTDIR}-dc.zip ${DESTDIR}/*
 	rm -rf ${DESTDIR}
 
 nds: data
 	cp dreamzzt.nds dreamzzt.ds.gba ${DESTDIR}
-	zip snapshots/${DESTDIR}-nds.zip ${DESTDIR}/*
+	zip dist/3.1.`svnversion .`/${DESTDIR}-nds.zip ${DESTDIR}/*
 	rm -rf ${DESTDIR}
 
 linux:
 	sed "s/\$$WCREV\\$$/`svnversion .`/" < loki/setup.data/setup.xml.in > loki/setup.data/setup.xml
 	strip dreamzzt
 	cp dreamzzt loki/bin/Linux/x86/glibc-2.1
-	mkdir -p snapshots 
-	~/loki_setup/makeself/makeself.sh --follow loki snapshots/dreamzzt-3.1.`svnversion .`-linux.run dreamzzt ./setup.sh
+	mkdir -p dist/3.1.`svnversion .`
+	~/loki_setup/makeself/makeself.sh --follow loki dist/3.1.`svnversion .`/dreamzzt-3.1.`svnversion .`-linux.run dreamzzt ./setup.sh
 
 mac: data
 	cp -R build/Deployment/DreamZZT.app ${DESTDIR}
-	zip -r snapshots/${DESTDIR}-mac.zip ${DESTDIR}/*
+	zip -r dist/3.1.`svnversion .`/${DESTDIR}-mac.zip ${DESTDIR}/*
 	rm -rf ${DESTDIR}
 
 win32:
@@ -36,6 +36,6 @@ win32-lite:
 
 data:
 	mkdir -p ${DESTDIR}
-	mkdir -p snapshots
+	mkdir -p dist/3.1.`svnversion .`
 	cp resources/*.zzt resources/*.szt resources/zzt-ascii.png ${DESTDIR}
 	cp doc/* COPYING ChangeLog ${DESTDIR}
