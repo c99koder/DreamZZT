@@ -3,7 +3,7 @@
 DESTDIR=dreamzzt-3.1.`svnversion .`
 
 dummy:
-	echo "Please specify a platform: dc, linux, nds, mac, setup"
+	echo "Please specify a platform: dc, linux, nds, mac, win32"
 
 dc: data
 	sh-elf-objcopy -R .stack -O binary dreamzzt dreamzzt.bin
@@ -28,8 +28,10 @@ mac: data
 	zip -r dist/${DESTDIR}-mac.zip ${DESTDIR}/*
 	rm -rf ${DESTDIR}
 
-setup:
+win32:
 	-"/cygdrive/c/program files/inno setup 5/iscc.exe" dreamzzt.iss
+
+win32-lite:
 	-"/cygdrive/c/program files/inno setup 5/iscc.exe" dreamzzt-lite.iss
 
 data:
