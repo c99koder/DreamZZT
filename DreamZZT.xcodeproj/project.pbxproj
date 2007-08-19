@@ -11,7 +11,6 @@
 		2210BF900C28434700F393B1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		2210BF920C28434700F393B1 /* tutorial.zzt in Resources */ = {isa = PBXBuildFile; fileRef = 2242FF290A0C442100F4BDF2 /* tutorial.zzt */; };
 		2210BF930C28434700F393B1 /* zzt-ascii.png in Resources */ = {isa = PBXBuildFile; fileRef = 2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */; };
-		2210BF940C28434700F393B1 /* genobjects.sh in Resources */ = {isa = PBXBuildFile; fileRef = 229B98290A1F6F4400E85BB8 /* genobjects.sh */; };
 		2210BF950C28434700F393B1 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 22EC1AC10A2B3FD600DEE79D /* icon.icns */; };
 		2210BF960C28434700F393B1 /* doc_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 226F41BB0B19024300FC07AE /* doc_icon.icns */; };
 		2210BF970C28434700F393B1 /* sav_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 226F41C90B1909D800FC07AE /* sav_icon.icns */; };
@@ -123,7 +122,6 @@
 		228ED2880C1E2EE2006D6823 /* models in Resources */ = {isa = PBXBuildFile; fileRef = 228ED27B0C1E2EE2006D6823 /* models */; };
 		22907D680A1A947800B9BB6D /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22907D660A1A947800B9BB6D /* debug.cpp */; };
 		2296D4F70A0D338E00BD96D2 /* zzt-ascii.png in Resources */ = {isa = PBXBuildFile; fileRef = 2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */; };
-		229B982A0A1F6F4400E85BB8 /* genobjects.sh in Resources */ = {isa = PBXBuildFile; fileRef = 229B98290A1F6F4400E85BB8 /* genobjects.sh */; };
 		229B9BA30A20CC5D00E85BB8 /* conveyer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */; };
 		229DC8160B2E2F86004C0FF9 /* task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229DC8150B2E2F86004C0FF9 /* task.cpp */; };
 		22ABAB4E0A31145600B9C077 /* centipede.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22ABAB4D0A31145600B9C077 /* centipede.cpp */; };
@@ -267,7 +265,6 @@
 		22907D650A1A947800B9BB6D /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/debug.h; sourceTree = "<group>"; };
 		22907D660A1A947800B9BB6D /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debug.cpp; path = src/debug.cpp; sourceTree = "<group>"; };
 		2296D4F60A0D338E00BD96D2 /* zzt-ascii.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "zzt-ascii.png"; path = "resources/zzt-ascii.png"; sourceTree = "<group>"; };
-		229B98290A1F6F4400E85BB8 /* genobjects.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = genobjects.sh; path = src/genobjects.sh; sourceTree = "<group>"; };
 		229B9BA20A20CC5D00E85BB8 /* conveyer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = conveyer.cpp; path = src/objects/conveyer.cpp; sourceTree = "<group>"; };
 		229DC8150B2E2F86004C0FF9 /* task.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = task.cpp; path = src/task.cpp; sourceTree = "<group>"; };
 		229DC8170B2E2F9B004C0FF9 /* task.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = task.h; path = include/task.h; sourceTree = "<group>"; };
@@ -542,7 +539,6 @@
 				223A59B30C137375008370C5 /* pluto.c */,
 				22C84C3E0C13AB21004F5B6D /* lua */,
 				22F3FC370C11306000B3F65F /* libtolua++ */,
-				229B98290A1F6F4400E85BB8 /* genobjects.sh */,
 				32CA4F630368D1EE00C91783 /* DreamZZT_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
@@ -647,7 +643,6 @@
 				2210BF900C28434700F393B1 /* InfoPlist.strings in Resources */,
 				2210BF920C28434700F393B1 /* tutorial.zzt in Resources */,
 				2210BF930C28434700F393B1 /* zzt-ascii.png in Resources */,
-				2210BF940C28434700F393B1 /* genobjects.sh in Resources */,
 				2210BF950C28434700F393B1 /* icon.icns in Resources */,
 				2210BF960C28434700F393B1 /* doc_icon.icns in Resources */,
 				2210BF970C28434700F393B1 /* sav_icon.icns in Resources */,
@@ -666,7 +661,6 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				2242FF2A0A0C442100F4BDF2 /* tutorial.zzt in Resources */,
 				2296D4F70A0D338E00BD96D2 /* zzt-ascii.png in Resources */,
-				229B982A0A1F6F4400E85BB8 /* genobjects.sh in Resources */,
 				22EC1AC20A2B3FD700DEE79D /* icon.icns in Resources */,
 				226F41BC0B19024300FC07AE /* doc_icon.icns in Resources */,
 				226F41CA0B1909D800FC07AE /* sav_icon.icns in Resources */,

@@ -82,6 +82,7 @@ static int pop_message (lua_State *L) {
 		return 2;
 	}
 #endif
+	return 0;
 }
 
 ZZTLUA::ZZTLUA() {
