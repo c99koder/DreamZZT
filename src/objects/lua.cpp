@@ -43,7 +43,9 @@ extern Player *player;
 
 extern "C" {
 #include "lualib.h"
+#if 0
 #include "zzt_lua.h"
+#endif
 #include "pluto.h"
 }
 
@@ -66,6 +68,7 @@ int base64_decode(const char *src, unsigned char **outptr);
 
 
 static int pop_message (lua_State *L) {
+#if 0
 	ZZTLUA *me = ((ZZTLUA*)  tolua_tousertype(L,1,0));
 	ZZTLUA::message_queue_item i;
 
@@ -78,9 +81,14 @@ static int pop_message (lua_State *L) {
 		lua_pushstring(L, i.message.c_str());
 		return 2;
 	}
+#endif
 }
 
-ZZTLUA::ZZTLUA(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
+ZZTLUA::ZZTLUA() {
+	m_shape = 0x01;
+	m_name = "lua";
+	m_flags = F_OBJECT | F_PUSHER;
+
 	m_luaVM = lua_open();
 
 #ifdef LUA_VERSION_NUM
@@ -94,7 +102,7 @@ ZZTLUA::ZZTLUA(int type, int x, int y, int shape, int flags, std::string name) :
 	luaopen_math(m_luaVM);
 #endif
 
-	tolua_zzt_open(m_luaVM);
+	//tolua_zzt_open(m_luaVM);
 	pluto_open(m_luaVM);
 	lua_pushcfunction(m_luaVM, ::pop_message);
 	lua_setglobal(m_luaVM, "pop_message");
@@ -107,6 +115,7 @@ ZZTLUA::~ZZTLUA() {
 }
 
 void ZZTLUA::create() {
+#if 0
 	tolua_pushusertype(m_luaVM,(void*)this,"ZZTObject");
 	lua_setglobal(m_luaVM, "me");
 
@@ -138,6 +147,7 @@ void ZZTLUA::create() {
 		printf("LUA error: %s\n",lua_tostring (m_luaVM, -1));
 		lua_pop(m_luaVM, 1);
 	}
+#endif
 }
 
 void ZZTLUA::setParam(int arg, unsigned char val) {
@@ -179,11 +189,11 @@ unsigned char ZZTLUA::param(int arg) {
 }
 
 void ZZTLUA::update() {
-	tolua_pushusertype(m_luaVM,(void*)this,"ZZTObject");
+	/*tolua_pushusertype(m_luaVM,(void*)this,"ZZTObject");
 	lua_setglobal(m_luaVM, "me");
 
 	tolua_pushusertype(m_luaVM,(void*)player,"ZZTObject");
-	lua_setglobal(m_luaVM, "player");
+	lua_setglobal(m_luaVM, "player");*/
 
 	lua_getglobal(m_luaVM, "wake");
 

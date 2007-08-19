@@ -39,7 +39,7 @@ extern struct board_info_node *currentbrd;
 extern struct world_header world;
 
 void Bomb::message(ZZTObject *them, std::string message) {
-	if(them->type()==ZZT_PLAYER && message == "touch" && m_shape==ZZT_BOMB_SHAPE) {
+	if(them->type()==ZZT_PLAYER && message == "touch" && m_shape==0x0B) {
 		m_shape='9';
 		m_cycle=10;
 		m_flags|=F_PUSHABLE;
@@ -89,8 +89,8 @@ void Bomb::update() {
 					if(x>=0 && y >= 0 && x<BOARD_X && y<BOARD_Y) {
 						them=currentbrd->board[x][y].obj;
 						if(them->type()==ZZT_BREAKABLE || ::is_empty(currentbrd,x,y)) {
-							o=::create_object(ZZT_EXPLOSION,x,y);
-							put(o);
+							o=::create_object(ZZT_EXPLOSION);
+							put(o,x,y);
 						} else if(them!=NULL) {
 							them->message(this,"bombed");
 						}
@@ -109,7 +109,7 @@ void Bomb::create() {
 	if(m_start > 0)
 		m_shape=m_start + '0';
 	else
-		m_shape=ZZT_BOMB_SHAPE;
+		m_shape=0x0B;
 }
 
 void Explosion::create() {

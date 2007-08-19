@@ -17,54 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
-#define ZZT_LION_SHAPE 0xea
-#define ZZT_LION_NAME "lion"
-#define ZZT_LION_FLAGS F_PUSHABLE|F_OBJECT
-#define ZZT_LION_CLASS Lion
-
-#define ZZT_SHARK_SHAPE '^'
-#define ZZT_SHARK_NAME "shark"
-#define ZZT_SHARK_FLAGS F_PUSHABLE|F_OBJECT
-#define ZZT_SHARK_CLASS Lion
-
-#define ZZT_BEAR_SHAPE ((world.magic == 65535) ? 0x99 : 0xEB)
-#define ZZT_BEAR_NAME "bear"
-#define ZZT_BEAR_FLAGS F_PUSHABLE|F_OBJECT
-#define ZZT_BEAR_CLASS Bear
-
-#define ZZT_RUFFIAN_SHAPE 0x05
-#define ZZT_RUFFIAN_NAME "ruffian"
-#define ZZT_RUFFIAN_FLAGS F_PUSHABLE|F_OBJECT
-#define ZZT_RUFFIAN_CLASS Ruffian
-
-#define ZZT_TIGER_SHAPE 0xe3
-#define ZZT_TIGER_NAME "tiger"
-#define ZZT_TIGER_FLAGS F_PUSHABLE|F_OBJECT
-#define ZZT_TIGER_CLASS Tiger
-
-#define ZZT_SPINNING_GUN_SHAPE 0x18
-#define ZZT_SPINNING_GUN_NAME "spinning-gun"
-#define ZZT_SPINNING_GUN_FLAGS F_OBJECT
-#define ZZT_SPINNING_GUN_CLASS SpinningGun
-
-#define ZZT_CENTIPEDE_HEAD_SHAPE 0xE9
-#define ZZT_CENTIPEDE_HEAD_NAME "centipede-head"
-#define ZZT_CENTIPEDE_HEAD_FLAGS F_OBJECT
-#define ZZT_CENTIPEDE_HEAD_CLASS Centipede
-
-#define ZZT_CENTIPEDE_BODY_SHAPE 'O'
-#define ZZT_CENTIPEDE_BODY_NAME "centipede-body"
-#define ZZT_CENTIPEDE_BODY_FLAGS F_OBJECT
-#define ZZT_CENTIPEDE_BODY_CLASS Centipede
-
-#define ZZT_SLIME_SHAPE '*'
-#define ZZT_SLIME_NAME "slime"
-#define ZZT_SLIME_FLAGS F_OBJECT
-#define ZZT_SLIME_CLASS Slime
-
 class Enemy : public ZZTObject {
 public:
-	Enemy(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
+	Enemy() {
 		m_intel = 4;
 		m_bg = 0;
 	}
@@ -94,17 +49,39 @@ protected:
 
 class Lion : public Enemy {
 public:
-	Lion(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) { }
+	Lion() {
+		m_shape = 0xEA;
+		m_name = "lion";
+		m_flags = F_PUSHABLE|F_OBJECT;
+	}
 	void update();
+	int type() { return ZZT_LION; }
+	ZZTObject *alloc() {
+		return new Lion();
+	}
+};
+
+class Shark : public Lion {
+public:
+	Shark() {
+		m_shape = '^';
+		m_name = "shark";
+		m_flags = F_PUSHABLE|F_OBJECT;
+	}
+	int type() { return ZZT_SHARK; }
+	ZZTObject *alloc() {
+		return new Shark();
+	}
 };
 
 class Bear : public Enemy {
 public:
-	Bear(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) {
-		m_intel = 8;
-	}
+	Bear();
 	void update();
-
+	int type() { return ZZT_BEAR; }
+	ZZTObject *alloc() {
+		return new Bear();
+	}
 	void addEditWidgets(TUIWindow *w) {
 		w->addWidget(new TUISlider("Sensitivity          ",&m_intel));
 	}
@@ -112,7 +89,10 @@ public:
 
 class Ruffian : public Enemy {
 public:
-	Ruffian(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) {
+	Ruffian() {
+		m_shape = 0x05;
+		m_name = "ruffian";
+		m_flags = F_PUSHABLE|F_OBJECT;
 		m_rest=4;
 		m_restCounter=0;
 		m_moveCounter=0;
@@ -120,6 +100,10 @@ public:
 	void setParam(int arg, unsigned char val);
 	unsigned char param(int arg);
 	void update();
+	int type() { return ZZT_RUFFIAN; }
+	ZZTObject *alloc() {
+		return new Ruffian();
+	}
 	void addEditWidgets(TUIWindow *w) {
 		Enemy::addEditWidgets(w);
 		w->addWidget(new TUISlider("Rest Time            ",&m_rest));
@@ -130,12 +114,19 @@ private:
 
 class Tiger : public Lion {
 public:
-	Tiger(int type, int x, int y, int shape, int flags, std::string name) : Lion(type, x, y, shape, flags, name) {
+	Tiger() {
+		m_shape = 0xE3;
+		m_name = "tiger";
+		m_flags = F_PUSHABLE|F_OBJECT;
 		m_rate = 4;
 	}
 	void setParam(int arg, unsigned char val);
 	unsigned char param(int arg);
 	void update();
+	int type() { return ZZT_TIGER; }
+	ZZTObject *alloc() {
+		return new Tiger();
+	}
 	void addEditWidgets(TUIWindow *w) {
 		Enemy::addEditWidgets(w);
 		w->addWidget(new TUISlider("Firing Rate          ",&m_rate));
@@ -146,13 +137,20 @@ private:
 
 class SpinningGun : public Enemy {
 public:
-	SpinningGun(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) {
+	SpinningGun() {
+		m_shape = 0x18;
+		m_name = "spinning-gun";
+		m_flags = F_OBJECT;
 		m_rate = 4;
 		m_animIndex = 0;
 	}
 	void setParam(int arg, unsigned char val);
 	unsigned char param(int arg);
 	void update();
+	int type() { return ZZT_SPINNING_GUN; }
+	ZZTObject *alloc() {
+		return new SpinningGun();
+	}
 	void addEditWidgets(TUIWindow *w) {
 		Enemy::addEditWidgets(w);
 		w->addWidget(new TUISlider("Firing Rate          ",&m_rate));
@@ -163,7 +161,8 @@ private:
 
 class Centipede : public Enemy {
 public:
-	Centipede(int type, int x, int y, int shape, int flags, std::string name) : Enemy(type, x, y, shape, flags, name) {
+	Centipede() {
+		m_flags = F_OBJECT;
 		m_nextHeading = IDLE;
 		m_discovery = false;
 		m_next = m_prev = NULL;
@@ -176,7 +175,11 @@ public:
 		if(m_next != NULL)
 			m_next->unlinkPrev();
 	}
-
+	
+	virtual ZZTObject *alloc() {
+		return NULL;
+	}
+	int type() { return (m_shape==0xE9)?ZZT_CENTIPEDE_HEAD:ZZT_CENTIPEDE_BODY; }
 	bool isDiscovered() {
 		return !(m_next==NULL && m_prev==NULL);
 	}
@@ -212,14 +215,43 @@ private:
 	int m_deviance;
 };
 
+class CentipedeHead : public Centipede {
+public:
+	CentipedeHead() {
+		m_shape = 0xE9;
+		m_name = "centipede-head";
+	}
+	ZZTObject *alloc() {
+		return new CentipedeHead(); 
+	}	
+};
+
+class CentipedeBody : public Centipede {
+public:
+	CentipedeBody() {
+		m_shape = 'O';
+		m_name = "centipede-body";
+	}
+	ZZTObject *alloc() {
+		return new CentipedeBody(); 
+	}
+};
+
 class Slime : public ZZTObject {
 public:
-	Slime(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
+	Slime() {
+		m_shape = '*';
+		m_name = "slime";
+		m_flags = F_OBJECT;
 		m_rate = m_counter = 4;
 		m_cycle = 3;
 	}
 
 	~Slime() { }
+	int type() { return ZZT_SLIME; }
+	ZZTObject *alloc() {
+		return new Slime();
+	}
 	void create();
 	void update();
 	void message(ZZTObject *them, std::string msg);

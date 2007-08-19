@@ -875,7 +875,7 @@ complete this game.\r\
 		switch_board(0);
 		titlePlayer = player;
 		if(world.magic == 65535) {
-			player->setShape(ZZT_EMPTY_SHAPE);
+			player->setShape(' ');
 			player->setColor(0,0);
 			player=NULL;
 		}
@@ -968,7 +968,7 @@ complete this game.\r\
 	switchbrd=-1;
 
 	if(titlePlayer != NULL) {
-		titlePlayer->setShape(ZZT_PLAYER_SHAPE);
+		titlePlayer->setShape(0x02);
 		titlePlayer->setColor(15,1);
 		titlePlayer->setHeading(IDLE);
 	}

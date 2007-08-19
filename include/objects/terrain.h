@@ -17,183 +17,324 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
-//BOULDER
-#define ZZT_BOULDER_SHAPE 0xFE
-#define ZZT_BOULDER_NAME "boulder"
-#define ZZT_BOULDER_FLAGS F_PUSHABLE
-#define ZZT_BOULDER_CLASS Terrain
-
-//LINE
-#define ZZT_LINE_SHAPE 0xFA
-#define ZZT_LINE_NAME "line"
-#define ZZT_LINE_FLAGS F_NONE
-#define ZZT_LINE_CLASS Terrain
-
-//NORMAL
-#define ZZT_NORMAL_SHAPE 0xB2
-#define ZZT_NORMAL_NAME "normal"
-#define ZZT_NORMAL_FLAGS F_NONE
-#define ZZT_NORMAL_CLASS Terrain
-
-//SOLID
-#define ZZT_SOLID_SHAPE 0xDB
-#define ZZT_SOLID_NAME "solid"
-#define ZZT_SOLID_FLAGS F_NONE
-#define ZZT_SOLID_CLASS Terrain
-
-//EMPTY
-#define ZZT_EMPTY_SHAPE 32
-#define ZZT_EMPTY_NAME "empty"
-#define ZZT_EMPTY_FLAGS F_EMPTY
-#define ZZT_EMPTY_CLASS Terrain
-
-//FAKE
-#define ZZT_FAKE_SHAPE 0xB2
-#define ZZT_FAKE_NAME "fake"
-#define ZZT_FAKE_FLAGS F_EMPTY
-#define ZZT_FAKE_CLASS Terrain
-
-//FLOOR
-#define ZZT_FLOOR_SHAPE 0xB0
-#define ZZT_FLOOR_NAME "floor"
-#define ZZT_FLOOR_FLAGS F_EMPTY
-#define ZZT_FLOOR_CLASS Terrain
-
-//BREAKABLE
-#define ZZT_BREAKABLE_SHAPE 0xB1
-#define ZZT_BREAKABLE_NAME "breakable"
-#define ZZT_BREAKABLE_FLAGS F_NONE
-#define ZZT_BREAKABLE_CLASS Terrain
-
-//FOREST
-#define ZZT_FOREST_SHAPE 0xb0
-#define ZZT_FOREST_NAME "forest"
-#define ZZT_FOREST_FLAGS F_ITEM
-#define ZZT_FOREST_CLASS Terrain
-
-//WATER
-#define ZZT_WATER_SHAPE 0xb0
-#define ZZT_WATER_NAME "water"
-#define ZZT_WATER_FLAGS F_NONE
-#define ZZT_WATER_CLASS Water
-
-//WATER (N)
-#define ZZT_WATER_N_SHAPE 0x1e
-#define ZZT_WATER_N_NAME "water-n"
-#define ZZT_WATER_N_FLAGS F_EMPTY
-#define ZZT_WATER_N_CLASS Water
-
-//WATER (S)
-#define ZZT_WATER_S_SHAPE 0x1f
-#define ZZT_WATER_S_NAME "water-s"
-#define ZZT_WATER_S_FLAGS F_EMPTY
-#define ZZT_WATER_S_CLASS Water
-
-//WATER (E)
-#define ZZT_WATER_E_SHAPE 0x10
-#define ZZT_WATER_E_NAME "water-e"
-#define ZZT_WATER_E_FLAGS F_EMPTY
-#define ZZT_WATER_E_CLASS Water
-
-//WATER (W)
-#define ZZT_WATER_W_SHAPE 0x11
-#define ZZT_WATER_W_NAME "water-w"
-#define ZZT_WATER_W_FLAGS F_EMPTY
-#define ZZT_WATER_W_CLASS Water
-
-//INVISIBLE
-#define ZZT_INVISIBLE_SHAPE ' '
-#define ZZT_INVISIBLE_NAME "invisible"
-#define ZZT_INVISIBLE_FLAGS F_NONE
-#define ZZT_INVISIBLE_CLASS Terrain
-
-//BLINK
-#define ZZT_BLINK_SHAPE 206
-#define ZZT_BLINK_NAME "blink"
-#define ZZT_BLINK_FLAGS F_OBJECT
-#define ZZT_BLINK_CLASS Blink
-
-//VERTICAL LASER
-#define ZZT_VERTICAL_BLINK_SHAPE 0xBA
-#define ZZT_VERTICAL_BLINK_NAME "vertical blink"
-#define ZZT_VERTICAL_BLINK_FLAGS F_OBJECT
-#define ZZT_VERTICAL_BLINK_CLASS Laser
-
-//HORIZONTAL LASER
-#define ZZT_HORIZONTAL_BLINK_SHAPE 0xCD
-#define ZZT_HORIZONTAL_BLINK_NAME "horizontal blink"
-#define ZZT_HORIZONTAL_BLINK_FLAGS F_OBJECT
-#define ZZT_HORIZONTAL_BLINK_CLASS Laser
-
-//BLUE
-#define ZZT_BLUE_TEXT_SHAPE 0xB2
-#define ZZT_BLUE_TEXT_NAME "text"
-#define ZZT_BLUE_TEXT_FLAGS F_NONE
-#define ZZT_BLUE_TEXT_CLASS Text
-
-//GREEN
-#define ZZT_GREEN_TEXT_SHAPE 0xB2
-#define ZZT_GREEN_TEXT_NAME "text"
-#define ZZT_GREEN_TEXT_FLAGS F_NONE
-#define ZZT_GREEN_TEXT_CLASS Text
-
-//CYAN
-#define ZZT_CYAN_TEXT_SHAPE 0xB2
-#define ZZT_CYAN_TEXT_NAME "text"
-#define ZZT_CYAN_TEXT_FLAGS F_NONE
-#define ZZT_CYAN_TEXT_CLASS Text
-
-//RED
-#define ZZT_RED_TEXT_SHAPE 0xB2
-#define ZZT_RED_TEXT_NAME "text"
-#define ZZT_RED_TEXT_FLAGS F_NONE
-#define ZZT_RED_TEXT_CLASS Text
-
-//PURPLE
-#define ZZT_PURPLE_TEXT_SHAPE 0xB2
-#define ZZT_PURPLE_TEXT_NAME "text"
-#define ZZT_PURPLE_TEXT_FLAGS F_NONE
-#define ZZT_PURPLE_TEXT_CLASS Text
-
-//YELLOW
-#define ZZT_YELLOW_TEXT_SHAPE 0xB2
-#define ZZT_YELLOW_TEXT_NAME "text"
-#define ZZT_YELLOW_TEXT_FLAGS F_NONE
-#define ZZT_YELLOW_TEXT_CLASS Text
-
-//WHITE
-#define ZZT_WHITE_TEXT_SHAPE 0xB2
-#define ZZT_WHITE_TEXT_NAME "text"
-#define ZZT_WHITE_TEXT_FLAGS F_NONE
-#define ZZT_WHITE_TEXT_CLASS Text
-
-class Terrain : public ZZTObject {
+class Boulder : public ZZTObject {
 public:
-	Terrain(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
-		m_modelName = "block.amf";
+	Boulder() {
+		m_shape = 0xFE;
+		m_name = "boulder";
+		m_flags = F_PUSHABLE;
 	}
-	void create();
-	void message(ZZTObject *them, std::string msg);
+	int type() { return ZZT_BOULDER; }
+	ZZTObject *alloc() {
+		return new Boulder();
+	}
 };
 
-class Water : public Terrain {
+class Line : public ZZTObject {
 public:
-	Water(int type, int x, int y, int shape, int flags, std::string name) : Terrain(type, x, y, shape, flags, name) {
+	Line() {
+		m_shape = 0xFA;
+		m_name = "line";
+		m_flags = F_NONE;
+	}
+	int type() { return ZZT_LINE; }
+	ZZTObject *alloc() {
+		return new Line();
+	}
+};
+
+class Normal : public ZZTObject {
+public:
+	Normal() {
+		m_shape = 0xB2;
+		m_name = "normal";
+		m_flags = F_NONE;
+	}
+	int type() { return ZZT_NORMAL; }
+	ZZTObject *alloc() {
+		return new Normal();
+	}
+};
+
+class Solid : public ZZTObject {
+public:
+	Solid() {
+		m_shape = 0xDB;
+		m_name = "solid";
+		m_flags = F_NONE;
+	}
+	int type() { return ZZT_SOLID; }
+	ZZTObject *alloc() {
+		return new Solid();
+	}
+};
+
+class Empty : public ZZTObject {
+public:
+	Empty() {
+		m_shape = ' ';
+		m_name = "empty";
+		m_flags = F_EMPTY;
+	}
+	void create() {
+		m_shape=32;
+		m_fg=0;
+		m_bg=0;
+	}	
+	int type() { return ZZT_EMPTY; }
+	ZZTObject *alloc() {
+		return new Empty();
+	}
+};
+
+class Fake : public ZZTObject {
+public:
+	Fake() {
+		m_shape = 0xB2;
+		m_name = "fake";
+		m_flags = F_EMPTY;
+	}
+	int type() { return ZZT_FAKE; }
+	ZZTObject *alloc() {
+		return new Fake();
+	}
+};
+
+class Floor : public ZZTObject {
+public:
+	Floor() {
+		m_shape = 0xB0;
+		m_name = "floor";
+		m_flags = F_EMPTY;
+	}
+	int type() { return SZT_FLOOR; }
+	ZZTObject *alloc() {
+		return new Floor();
+	}
+};
+
+class Breakable : public ZZTObject {
+public:
+	Breakable() {
+		m_shape = 0xB1;
+		m_name = "breakable";
+		m_flags = F_NONE;
+	}
+	int type() { return ZZT_BREAKABLE; }
+	ZZTObject *alloc() {
+		return new Breakable();
+	}
+};
+
+class Forest : public ZZTObject {
+public:
+	Forest() {
+		m_shape = 0xB0;
+		m_name = "forest";
+		m_flags = F_ITEM;
+	}
+	int type() { return ZZT_FOREST; }
+	ZZTObject *alloc() {
+		return new Forest();
+	}
+	void message(ZZTObject *them, std::string message);
+};
+
+class Water : public ZZTObject {
+public:
+	Water() {
+		m_shape = 0xB0;
+		m_flags = F_NONE;
+		m_name = "water";
 		m_counter = 0;
 		m_cstep = 0;
 	}
+	int type() { return ZZT_WATER; }
+	ZZTObject *alloc() {
+		return new Water();
+	}
 	void update();
+	void message(ZZTObject *them, std::string message);
 private:
 	int m_counter, m_cstep;
 };
 
+class RiverN : public ZZTObject {
+public:
+	RiverN()  {
+		m_shape = 0x1E;
+		m_name = "water-n";
+		m_flags = F_EMPTY;
+	}
+	int type() {
+		return SZT_WATER_N;
+	}
+	ZZTObject *alloc() {
+		return new RiverN();
+	}
+};
+
+class RiverS : public ZZTObject {
+public:
+	RiverS()  {
+		m_shape = 0x1F;
+		m_name = "water-s";
+		m_flags = F_EMPTY;
+	}
+	int type() {
+		return SZT_WATER_S;
+	}
+	ZZTObject *alloc() {
+		return new RiverS();
+	}
+};
+
+class RiverE : public ZZTObject {
+public:
+	RiverE()  {
+		m_shape = 0x10;
+		m_name = "water-e";
+		m_flags = F_EMPTY;
+	}
+	int type() {
+		return SZT_WATER_E;
+	}
+	ZZTObject *alloc() {
+		return new RiverE();
+	}
+};
+
+class RiverW : public ZZTObject {
+public:
+	RiverW()  {
+		m_shape = 0x11;
+		m_name = "water-w";
+		m_flags = F_EMPTY;
+	}
+	int type() {
+		return SZT_WATER_W;
+	}
+	ZZTObject *alloc() {
+		return new RiverW();
+	}
+};
+
+class Invisible : public ZZTObject {
+public:
+	Invisible() {
+		m_shape = ' ';
+		m_name = "invisible";
+		m_flags = F_NONE;
+	}
+	int type() { return ((m_shape == ' ')?ZZT_INVISIBLE:ZZT_NORMAL); }
+	ZZTObject *alloc() {
+		return new Invisible();
+	}
+	void message(ZZTObject *them, std::string message);
+};
+
+class Text : public ZZTObject {
+public:
+	Text() {
+		m_name = "text";
+		m_textcolor = m_bg = BLACK;
+	}
+	void create();
+protected:
+	char m_textcolor;
+};
+
+class BlueText : public Text {
+public:
+	BlueText() {
+		m_textcolor = m_bg = BLUE;
+	}
+	int type();
+	ZZTObject *alloc() {
+		return new BlueText();
+	}
+};
+
+class GreenText : public Text {
+public:
+	GreenText() {
+		m_textcolor = m_bg = GREEN;
+	}
+	int type();
+	ZZTObject *alloc() {
+		return new GreenText();
+	}
+};
+
+class CyanText : public Text {
+public:
+	CyanText() {
+		m_textcolor = m_bg = CYAN;
+	}
+	int type();
+	ZZTObject *alloc() {
+		return new CyanText();
+	}
+};
+
+class RedText : public Text {
+public:
+	RedText() {
+		m_textcolor = m_bg = RED;
+	}
+	int type();
+	ZZTObject *alloc() {
+		return new RedText();
+	}
+};
+
+class PurpleText : public Text {
+public:
+	PurpleText() {
+		m_textcolor = m_bg = MAGENTA;
+	}
+	int type();
+	ZZTObject *alloc() {
+		return new PurpleText();
+	}
+};
+
+class YellowText : public Text {
+public:
+	YellowText() {
+		m_textcolor = m_bg = YELLOW;
+	}
+	int type();
+	ZZTObject *alloc() {
+		return new YellowText();
+	}
+};
+
+class WhiteText : public Text {
+public:
+	WhiteText() {
+		m_textcolor = m_bg = BLACK;
+	}
+	int type();
+	ZZTObject *alloc() {
+		return new WhiteText();
+	}
+};
+
 class Blink : public ZZTObject {
 public:
-	Blink(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
+	Blink() {
+		m_shape = 206;
+		m_name = "blink";
+		m_flags = F_OBJECT;
 		m_step.x=0;
 		m_step.y=-1;
 		m_start = 4;
 		m_fire = 4;
+	}
+	int type() { return ZZT_BLINK; }
+	ZZTObject *alloc() {
+		return new Blink();
 	}
 	void setParam(int arg, unsigned char val);
 	unsigned char param(int arg);
@@ -210,7 +351,7 @@ private:
 
 class Laser : public ZZTObject {
 public:
-	Laser(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
+	Laser() {
 		m_time = 0;
 	}
 	void setParam(int arg, unsigned char val);
@@ -220,9 +361,28 @@ private:
 	int m_time;
 };
 
-class Text : public ZZTObject {
+class HorizontalLaser : public Laser {
 public:
-	Text(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) { }
-	void create();
+	HorizontalLaser() {
+		m_shape = 0xCD;
+		m_name = "horizontal blink";
+		m_flags = F_OBJECT;
+	}
+	int type();
+	ZZTObject *alloc() {
+		return new HorizontalLaser();
+	}
 };
 
+class VerticalLaser : public Laser {
+public:
+	VerticalLaser() {
+		m_shape = 0xBA;
+		m_name = "vertical blink";
+		m_flags = F_OBJECT;
+	}
+	int type();
+	ZZTObject *alloc() {
+		return new VerticalLaser();
+	}
+};

@@ -91,6 +91,7 @@ void draw_main() {
 }
 
 void draw_item() {
+#if 0
 	ct->color(15,1);
 	ct->clear();
 	dzzt_logo();
@@ -160,9 +161,11 @@ void draw_item() {
 	st->locate(1,20);
 	*st << "\x1b[0;30;47m 2 \x1b[1;37;44m Counter ";
 	st->setANSI(false);
+#endif
 }
 
 void draw_creature() {
+#if 0
 	ct->color(15,1);
 	ct->clear();
 	dzzt_logo();
@@ -225,9 +228,11 @@ void draw_creature() {
 	st->locate(1,20);
 	*st << "\x1b[0;30;47m S \x1b[1;37;44m Segment ";
 	st->setANSI(false);
+#endif
 }
 
 void draw_terrain() {
+#if 0
 	ct->color(15,1);
 	ct->clear();
 	dzzt_logo();
@@ -305,6 +310,7 @@ void draw_terrain() {
 	*st << (char)ZZT_RICOCHET_SHAPE;
 
 	st->setANSI(false);
+#endif
 }
 
 void draw_color(int fg, int bg) {
@@ -336,6 +342,7 @@ void draw_pattern(ZZTObject *pattern[5], int pat) {
 }
 
 void edit_zzt() {
+#if 0
 	EventCollector ec;
 	Event evt;
 	int edit_x=BOARD_X/2;
@@ -817,4 +824,5 @@ void edit_zzt() {
 	} while(edit_loop && switchbrd != -2);
 	world.editing=0;
 	currentbrd->board[edit_x][edit_y].obj->setHighlighted(false);
+#endif
 }

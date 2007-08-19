@@ -88,71 +88,6 @@ direction ZZTObject::clockwise(direction dir) {
 	return IDLE;
 }
 
-direction ZZTObject::str_to_direction(string s) {
-	int neg=0;
-	direction res=IDLE;
-
-	transform(s.begin(), s.end(), s.begin(), ::tolower);
-
-	vector<string> words = wordify(s, ' ');
-	vector<string>::iterator words_iter;
-
-	for(words_iter = words.begin(); words_iter != words.end(); words_iter++) {
-		if((*words_iter) == "opp") {
-			neg=1;
-		} else if((*words_iter) == "cw") {
-			neg=2;
-		} else if((*words_iter) == "ccw") {
-			neg=3;
-		} else if((*words_iter) == "rndp") {
-			if(rand()%2==0) {
-				neg=2;
-			} else {
-				neg=3;
-			}
-		} else if((*words_iter) == "flow") {
-			res=m_heading;
-		} else if((*words_iter) == "seek") {
-			res=toward(player);
-		} else if((*words_iter) == "rndns") {
-			if(rand()%2==1) {
-				res=UP;
-			} else {
-				res=DOWN;
-			}
-		} else if((*words_iter) == "rndne") {
-			if(rand()%2==1) {
-				res=UP;
-			} else {
-				res=RIGHT;
-			}
-			break;
-		} else if((*words_iter) == "n" || (*words_iter) == "north") {
-			res = UP;
-			break;
-		} else if((*words_iter) == "s" || (*words_iter) == "south") {
-			res = DOWN;
-			break;
-		} else if((*words_iter) == "e" || (*words_iter) == "east") {
-			res = RIGHT;
-			break;
-		} else if((*words_iter) == "w" || (*words_iter) == "west") {
-			res = LEFT;
-			break;
-		}
-	}
-	if(neg==1) {
-		res=opposite(res);
-	}
-	if(neg==2) {
-		res=clockwise(res);
-	}
-	if(neg==3) {
-		res=opposite(clockwise(res));
-	}
-	return res;
-}
-
 direction ZZTObject::toward(ZZTObject *them) {
 	//relative direction between me and them
 	direction dirx=IDLE,diry=IDLE;
@@ -252,17 +187,25 @@ bool ZZTObject::is_empty(direction d, bool ignorePlayer) {
 }
 
 ZZTObject *ZZTObject::create_object(int type, direction d) {
+	ZZTObject *o = ::create_object(type);
 	switch(d) {
 	case UP:
-		return ::create_object(type, (int)m_position.x, (int)m_position.y - 1);
+		o->setPosition(m_position + Vector(0, -1, 0));
+		break;
 	case DOWN:
-		return ::create_object(type, (int)m_position.x, (int)m_position.y + 1);
+		o->setPosition(m_position + Vector(0, 1, 0));
+		break;
 	case LEFT:
-		return ::create_object(type, (int)m_position.x - 1, (int)m_position.y);
+		o->setPosition(m_position + Vector(-1, 0, 0));
+		break;
 	case RIGHT:
-		return ::create_object(type, (int)m_position.x + 1, (int)m_position.y);
+		o->setPosition(m_position + Vector(1, 0, 0));
+		break;
+	default:
+		delete o;
+		o = NULL;
 	}
-	return false;
+	return o;
 }
 
 ZZTObject *ZZTObject::get
@@ -298,8 +241,7 @@ ZZTObject *ZZTObject::get
 	return NULL;
 }
 
-void ZZTObject::remove
-	() {
+void ZZTObject::remove() {
 	remove_from_board(m_board, this);
 }
 
@@ -365,7 +307,8 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 		}
 		m_board->board[oldx][oldy].under=NULL;
 		if(m_board->board[oldx][oldy].obj==NULL || !m_board->board[oldx][oldy].obj->isValid()) {
-			m_board->board[oldx][oldy].obj=::create_object(ZZT_EMPTY,oldx,oldy);
+			m_board->board[oldx][oldy].obj=::create_object(ZZT_EMPTY);
+			m_board->board[oldx][oldy].obj->setPosition(Vector(oldx, oldy, 0));
 		}
 		m_board->board[x][y].obj->draw();
 		m_board->board[oldx][oldy].obj->draw();
@@ -373,13 +316,13 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	} else {
 		them=m_board->board[x][y].obj;
 		if(them!=NULL && them!=this && them->isValid() == 1) {
-			if(them->flags()&F_ITEM && m_type==ZZT_PLAYER) {
+			if(them->flags()&F_ITEM && m_name == "player") {
 				them->message(this,"get");
 				if(is_empty(dir)) {
 					suc=1;
 					task_get(them);
 				}
-			} else if(suc==0 && them->flags()&F_PUSHABLE && m_type!=ZZT_BULLET && (m_flags&F_PUSHER || !origin) ) {
+			} else if(suc==0 && them->flags()&F_PUSHABLE && m_name!="bullet" && (m_flags&F_PUSHER || !origin) ) {
 				if(them->move(dir,trying,false)) {
 					suc=1;
 				} else {
@@ -407,28 +350,6 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	}
 
 	return !!suc;
-}
-
-int ZZTObject::str_to_color(std::string color) {
-	if(color.find("black") == 0) {
-		return 0;
-	} else if(color.find("blue") == 0) {
-		return 9;
-	} else if(color.find("green") == 0) {
-		return 10;
-	} else if(color.find("cyan") == 0) {
-		return 11;
-	} else if(color.find("red") == 0) {
-		return 12;
-	} else if(color.find("purple") == 0) {
-		return 13;
-	} else if(color.find("yellow") == 0) {
-		return 14;
-	} else if(color.find("white") == 0) {
-		return 15;
-	} else {
-		return -1;
-	}
 }
 
 std::string ZZTObject::int_to_color(int color) {
@@ -469,21 +390,20 @@ std::string ZZTObject::int_to_color(int color) {
 	return "unknown";
 }
 
-ZZTObject::ZZTObject(int type, int x, int y, int shape, int flags, std::string name) {
-	m_position.x = (float)x;
-	m_position.y = (float)y;
+ZZTObject::ZZTObject() {
+	m_position.x = 0.0f;
+	m_position.y = 0.0f;
 	m_step.x = 0.0f;
 	m_step.y = 0.0f;
 	m_heading = IDLE;
-	m_type = type;
+	m_type = 0;
 	m_cycle=0;
-	m_tick=0;
-	m_flags=flags;
-	m_shape=shape;
+	m_flags=0;
+	m_shape='!';
 	m_color=&m_fg;
 	m_fg=15;
 	m_bg=0;
-	m_name=name;
+	m_name="";
 	m_updated=0;
 	m_pushed=0;
 	m_progpos=0;
@@ -635,4 +555,85 @@ void ZZTObject::edit() {
 	create();
 }
 
-#include "objdb" //autogenerated functions
+std::map <int, ZZTObject *> ZZTObjectTypes;
+
+void buildZZTObjectTypes() {
+	ZZTObjectTypes[ZZT_EMPTY] = new Empty;//00
+	ZZTObjectTypes[ZZT_EDGE] = NULL;//01
+	ZZTObjectTypes[ZZT_EXPLOSION] = new Explosion;//02
+	ZZTObjectTypes[ZZT_PLAYER] = new Player;//04
+	ZZTObjectTypes[ZZT_AMMO] = new Ammo;//05
+	ZZTObjectTypes[ZZT_TORCH] = new Torch;//06
+	ZZTObjectTypes[ZZT_GEM] = new Gem;//07
+	ZZTObjectTypes[ZZT_KEY] = new Key;//08
+	ZZTObjectTypes[ZZT_DOOR] = new Door;//09
+	ZZTObjectTypes[ZZT_SCROLL] = new Scroll;//0A
+	ZZTObjectTypes[ZZT_PASSAGE] = new Passage;//0B
+	ZZTObjectTypes[ZZT_DUPLICATOR] = new Duplicator;//0C
+	ZZTObjectTypes[ZZT_BOMB] = new Bomb;//0D
+	ZZTObjectTypes[ZZT_ENERGIZER] = new Energizer;//0E
+	ZZTObjectTypes[ZZT_STAR] = NULL;//0F
+	ZZTObjectTypes[ZZT_CONVEYER_CW] = new ConveyerCW; //10
+	ZZTObjectTypes[ZZT_CONVEYER_CCW] = new ConveyerCCW; //11
+	ZZTObjectTypes[ZZT_BULLET] = new Bullet; //12, 45
+	ZZTObjectTypes[ZZT_WATER] = new Water;//13
+	ZZTObjectTypes[ZZT_FOREST] = new Forest;//14
+	ZZTObjectTypes[ZZT_SOLID] = new Solid;//15
+	ZZTObjectTypes[ZZT_NORMAL] = new Normal;//16
+	ZZTObjectTypes[ZZT_BREAKABLE] = new Breakable;//17
+	ZZTObjectTypes[ZZT_BOULDER] = new Boulder;//18
+	ZZTObjectTypes[ZZT_SLIDER_NS] = new SliderNS;//19
+	ZZTObjectTypes[ZZT_SLIDER_EW] = new SliderEW;//1A
+	ZZTObjectTypes[ZZT_FAKE] = new Fake;//1B
+	ZZTObjectTypes[ZZT_INVISIBLE] = new Invisible;//1C
+	ZZTObjectTypes[ZZT_BLINK] = new Blink;//1D
+	ZZTObjectTypes[ZZT_TRANSPORTER] = new Transporter;//1E
+	ZZTObjectTypes[ZZT_LINE] = new Line;//1F
+	ZZTObjectTypes[ZZT_RICOCHET] = new Ricochet;//20
+	ZZTObjectTypes[ZZT_HORIZONTAL_BLINK] = new HorizontalLaser;//21, 46
+	ZZTObjectTypes[ZZT_BEAR] = new Bear;//22
+	ZZTObjectTypes[ZZT_RUFFIAN] = new Ruffian;//23
+	ZZTObjectTypes[ZZT_OBJECT] = new ZZTOOP;//24
+	ZZTObjectTypes[ZZT_SLIME] = new Slime;//25
+	ZZTObjectTypes[ZZT_SHARK] = new Shark;//26
+	ZZTObjectTypes[ZZT_SPINNING_GUN] = new SpinningGun;//27
+	ZZTObjectTypes[ZZT_PUSHER] = new Pusher;//28
+	ZZTObjectTypes[ZZT_LION] = new Lion;//29
+	ZZTObjectTypes[ZZT_TIGER] = new Tiger;//2A
+	ZZTObjectTypes[ZZT_VERTICAL_BLINK] = new VerticalLaser;//2B, 47
+	ZZTObjectTypes[ZZT_CENTIPEDE_HEAD] = new CentipedeHead;//2C
+	ZZTObjectTypes[ZZT_CENTIPEDE_BODY] = new CentipedeBody;//2D
+	if(world.magic == MAGIC_SZT) {
+		ZZTObjectTypes[SZT_FLOOR]= new Floor;//FF)
+		ZZTObjectTypes[SZT_WATER_N] = new RiverN;//FF)
+		ZZTObjectTypes[SZT_WATER_S] = new RiverS;//FF)
+		ZZTObjectTypes[SZT_WATER_W] = new RiverW;//FF)
+		ZZTObjectTypes[SZT_WATER_E] = new RiverE;//FF)
+	}
+	ZZTObjectTypes[ZZT_BLUE_TEXT] = new BlueText;//2F :] = new //49)
+	ZZTObjectTypes[ZZT_GREEN_TEXT] = new GreenText;//30 :] = new //4A)
+	ZZTObjectTypes[ZZT_CYAN_TEXT] = new CyanText;//31 :] = new //4B)
+	ZZTObjectTypes[ZZT_RED_TEXT] = new RedText;//32 :] = new //4C)
+	ZZTObjectTypes[ZZT_PURPLE_TEXT] = new PurpleText;//33 :] = new //4D)
+	ZZTObjectTypes[ZZT_YELLOW_TEXT] = new YellowText;//34 :] = new //4E)
+	ZZTObjectTypes[ZZT_WHITE_TEXT] = new WhiteText;//35 :] = new //4F)
+/*	ZZTObjectTypes[ZZT_EMPTY] = new //36	 | (set in colour byte) | White blinking text
+	ZZTObjectTypes[ZZT_EMPTY] = new //37	 | (set in colour byte) | Blue blinking text
+	ZZTObjectTypes[ZZT_EMPTY] = new //38	 | (set in colour byte) | Green blinking text
+	ZZTObjectTypes[ZZT_EMPTY] = new //39	 | (set in colour byte) | Cyan blinking text
+	ZZTObjectTypes[ZZT_EMPTY] = new //3A	 | (set in colour byte) | Red blinking text
+	ZZTObjectTypes[ZZT_EMPTY] = new //3B	 | (set in colour byte) | Purple blinking text
+	ZZTObjectTypes[ZZT_EMPTY] = new //3C	 | (set in colour byte) | Yellow blinking text
+	ZZTObjectTypes[ZZT_EMPTY] = new //3D	 | (set in colour byte) | Grey blinking text*/
+	ZZTObjectTypes[ZZT_LUA] = new ZZTLUA;//60
+}
+
+ZZTObject *create_object(int type) {
+	if(ZZTObjectTypes.empty()) buildZZTObjectTypes();
+	
+	if(ZZTObjectTypes.find(type) != ZZTObjectTypes.end()) {
+		return ZZTObjectTypes[type]->alloc();
+	} else {
+		return NULL;
+	}
+}

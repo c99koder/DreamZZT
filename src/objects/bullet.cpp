@@ -151,7 +151,7 @@ void ZZTObject::shoot(enum direction dir) {
 		bullet->setParam(1,m_type==ZZT_PLAYER?0:1);
 		bullet->setHeading(dir);
 		bullet->setCycle(1);
-		put(bullet);
+		put(bullet, bullet->position().x, bullet->position().y);
 		if(zm != NULL && !zm->isPlaying()) {
 			if(m_type==ZZT_PLAYER) {
 				if(zm!=NULL)
@@ -181,3 +181,5 @@ void ZZTObject::shoot(enum direction dir) {
 		}
 	}
 }
+
+int Bullet::type() { return ZZT_BULLET; }

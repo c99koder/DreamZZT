@@ -49,6 +49,13 @@ void Lion::update() {
 	}
 }
 
+Bear::Bear() {
+	m_shape = ((world.magic == MAGIC_SZT) ? 0xEB : 0x99);
+	m_name = "bear";
+	m_flags = F_PUSHABLE|F_OBJECT;
+	m_intel = 8;
+}
+
 void Bear::update() {
 	if(player != NULL && (dist_x(player) < (9-m_intel) || dist_y(player) < (9-m_intel))) {
 		move(toward(player));
@@ -209,7 +216,8 @@ void Slime::message(ZZTObject *them, std::string message) {
 			zm->start();
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
 		currentbrd->board[(int)m_position.x][(int)m_position.y].under=this;
-		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE, (int)m_position.x, (int)m_position.y);
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE);
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj->setPosition(m_position);
 		currentbrd->board[(int)m_position.x][(int)m_position.y].obj->setColor(m_fg, m_bg);
 		setFlag(F_DELETED);
 	}
@@ -229,11 +237,12 @@ void Slime::update() {
 				s->setParam(2,m_rate);
 				s->setCycle(m_cycle);
 				s->setColor(m_fg,m_bg);
-				put(s);
+				put(s, s->position().x, s->position().y);
 			}
 		}
 		currentbrd->board[(int)m_position.x][(int)m_position.y].under=this;
-		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE, (int)m_position.x, (int)m_position.y);
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj=::create_object(ZZT_BREAKABLE);
+		currentbrd->board[(int)m_position.x][(int)m_position.y].obj->setPosition(m_position);
 		currentbrd->board[(int)m_position.x][(int)m_position.y].obj->setColor(m_fg, m_bg);
 		setFlag(F_DELETED);
 	}

@@ -25,6 +25,9 @@
 #define BOARD_X world.board_x
 #define BOARD_Y world.board_y
 
+#define MAGIC_ZZT 65535
+#define MAGIC_SZT 65534
+
 struct board_data {
 	ZZTObject *obj;
 	ZZTObject *under;
@@ -111,7 +114,7 @@ void update_brd();
 void free_world();
 void new_world();
 int new_board(char *title);
-void put(ZZTObject *o, bool ignoreUnder=false);
+void put(ZZTObject *o, int x, int y, bool ignoreUnder=false);
 int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer=false);
 int block_bg(int x, int y);
 void draw_block(int x, int y);
@@ -136,3 +139,5 @@ void render();
 void connect_lines(board_info_node *board);
 void decompress(board_info_node *board, bool silent=false);
 void compress(board_info_node *board, bool silent=false);
+
+extern struct world_header world;

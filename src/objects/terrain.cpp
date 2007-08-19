@@ -58,6 +58,9 @@ void Laser::update() {
 	}
 }
 
+int HorizontalLaser::type() { return ZZT_HORIZONTAL_BLINK; }
+int VerticalLaser::type() { return ZZT_VERTICAL_BLINK; }
+
 void Blink::setParam(int arg, unsigned char val) {
 	if(arg==1)
 		m_start = val;
@@ -96,15 +99,15 @@ void Blink::update() {
 					remove_from_board(currentbrd,currentbrd->board[x][y].obj);
 				}
 				if(m_step.y!=0) {
-					tmp=::create_object(ZZT_VERTICAL_BLINK,x,y);
+					tmp=::create_object(ZZT_VERTICAL_BLINK);
 				} else {
-					tmp=::create_object(ZZT_HORIZONTAL_BLINK,x,y);
+					tmp=::create_object(ZZT_HORIZONTAL_BLINK);
 				}
 				tmp->setParam(1,m_fire*2);
 				tmp->setFg(m_fg);
 				tmp->setBg(m_bg);
 				tmp->setCycle(m_cycle);
-				put(tmp);
+				put(tmp,x,y);
 			} else {
 				if(currentbrd->board[x][y].obj!=NULL) {
 					currentbrd->board[x][y].obj->message(this,"shot");
@@ -122,29 +125,21 @@ void Text::create() {
 		m_bg=0;
 		m_color=&m_fg;
 	} else {
-		m_bg=(m_type-ZZT_BLUE_TEXT)+1;
+		m_bg=m_textcolor;
 		m_color=&m_bg;
 	}
 }
 
-void Terrain::create() {
-	/*if(!m_model) {
-		m_model = new AMFModelInstance("block.amf", m_position, Vector(1.0f, 0.0f, 0.0f));
-		gl->insert(m_model);
-	}*/
-
-	switch(m_type) {
-	case ZZT_EMPTY:
-		m_shape=32;
-		m_fg=0;
-		m_bg=0;
-		break;
-	case ZZT_WATER:
-		//m_bg=1;
-		//m_fg=15;
-		m_cycle=1;
-		currentbrd->objects.push_back(this);
-		break;
+void Water::message(ZZTObject *them, std::string message) {
+	if(message == "touch" && them->type() == ZZT_PLAYER) {
+		if(watermsg==0) {
+			set_msg("Your path is blocked by water.");
+			watermsg=1;
+		}
+		if(zm!=NULL)
+			zm->setTune("t+c+c");
+		if(zm!=NULL)
+			zm->start();
 	}
 }
 
@@ -183,53 +178,47 @@ void Water::update() {
 	}
 }
 
-void Terrain::message(ZZTObject *them, std::string message) {
-	if((message == "touch" || message == "get") && them->type()==ZZT_PLAYER) {
-		switch(m_type) {
-		case ZZT_FOREST:
-			if(forestmsg==0) {
-				if(world.magic == 65534)
-					set_msg("A path is cleared\rthrough the forest.");
-				else
-					set_msg("A path is cleared through the forest.");
-				forestmsg=1;
-			}
-			if(zm!=NULL)
-				zm->setTune("ta");
-			if(zm!=NULL)
-				zm->start();
-			//remove_from_board(m_board,this,(world.magic==65534)?true:false);
-			remove
-				();
-			if(world.magic == 65534 && currentbrd == m_board) {
-				ZZTObject *o = ::create_object(SZT_FLOOR, (int)m_position.x, (int)m_position.y);
-				o->setColor(GREEN, BLACK);
-				put(o,true);
-			}
-			//them->move(them->toward(this));
-			break;
-		case ZZT_INVISIBLE:
-			if(invismsg==0) {
-				set_msg("You are blocked by an invisible wall.");
-				invismsg=1;
-			}
-			if(zm!=NULL)
-				zm->setTune("t--dc");
-			if(zm!=NULL)
-				zm->start();
-			m_type=ZZT_NORMAL;
-			m_shape=ZZT_NORMAL_SHAPE;
-			draw();
-			break;
-		case ZZT_WATER:
-			if(watermsg==0) {
-				set_msg("Your path is blocked by water.");
-				watermsg=1;
-			}
-			if(zm!=NULL)
-				zm->setTune("t+c+c");
-			if(zm!=NULL)
-				zm->start();
+void Forest::message(ZZTObject *them, std::string message) {
+	if(message == "get") {
+		if(forestmsg==0) {
+			if(world.magic == MAGIC_SZT)
+				set_msg("A path is cleared\rthrough the forest.");
+			else
+				set_msg("A path is cleared through the forest.");
+			forestmsg=1;
+		}
+		if(zm!=NULL)
+			zm->setTune("ta");
+		if(zm!=NULL)
+			zm->start();
+		remove();
+		if(world.magic == MAGIC_SZT && currentbrd == m_board) {
+			ZZTObject *o = ::create_object(SZT_FLOOR);
+			o->setColor(GREEN, BLACK);
+			put(o,m_position.x, m_position.y, true);
 		}
 	}
 }
+
+void Invisible::message(ZZTObject *them, std::string message) {
+	if(message == "touch" && them->type() == ZZT_PLAYER) {
+		if(invismsg==0) {
+			set_msg("You are blocked by an invisible wall.");
+			invismsg=1;
+		}
+		if(zm!=NULL)
+			zm->setTune("t--dc");
+		if(zm!=NULL)
+			zm->start();
+		m_shape=0xB2;
+		draw();
+	}
+}
+
+int BlueText::type() { return ZZT_BLUE_TEXT; }
+int GreenText::type() { return ZZT_GREEN_TEXT; }
+int CyanText::type() { return ZZT_CYAN_TEXT; }
+int RedText::type() { return ZZT_RED_TEXT; }
+int PurpleText::type() { return ZZT_PURPLE_TEXT; }
+int YellowText::type() { return ZZT_YELLOW_TEXT; }
+int WhiteText::type() { return ZZT_WHITE_TEXT; }

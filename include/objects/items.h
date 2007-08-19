@@ -17,56 +17,104 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
-#define ZZT_ENERGIZER_SHAPE 0x7F
-#define ZZT_ENERGIZER_NAME "energizer"
-#define ZZT_ENERGIZER_FLAGS F_ITEM
-#define ZZT_ENERGIZER_CLASS Inventory
-
-#define ZZT_KEY_SHAPE 0x0c
-#define ZZT_KEY_NAME "key"
-#define ZZT_KEY_FLAGS F_PUSHABLE | F_ITEM
-#define ZZT_KEY_CLASS Inventory
-
-#define ZZT_GEM_SHAPE 0x04
-#define ZZT_GEM_NAME "gem"
-#define ZZT_GEM_FLAGS F_PUSHABLE | F_ITEM
-#define ZZT_GEM_CLASS Inventory
-
-#define ZZT_TORCH_SHAPE 0x9d
-#define ZZT_TORCH_NAME "torch"
-#define ZZT_TORCH_FLAGS F_ITEM | F_GLOW
-#define ZZT_TORCH_CLASS Inventory
-
-#define ZZT_AMMO_SHAPE 0x84
-#define ZZT_AMMO_NAME "ammo"
-#define ZZT_AMMO_FLAGS F_ITEM
-#define ZZT_AMMO_CLASS Inventory
-
-#define ZZT_DOOR_SHAPE 0x08
-#define ZZT_DOOR_NAME "door"
-#define ZZT_DOOR_FLAGS F_ITEM
-#define ZZT_DOOR_CLASS Inventory
-
 class Inventory : public ZZTObject {
 public:
-	Inventory(int type, int x, int y, int shape, int flags, std::string name) : ZZTObject(type, x, y, shape, flags, name) {
-		switch(type) {
-		case ZZT_TORCH:
-			m_modelName = "torch.amf";
-			m_fg = YELLOW;
-			m_bg = 0;
-			break;
-		case ZZT_GEM:
-			m_modelName = "gem.amf";
-			break;
-		case ZZT_DOOR:
-			m_fg = WHITE | HIGH_INTENSITY;
-			m_shape=8;
-			m_color=&m_bg;
-			break;
-		}
+	Inventory() {
 	}
-	void create();
+	virtual bool get() { return false; }
+
 	void message(ZZTObject *them, std::string msg);
 };
 
+class Energizer : public Inventory {
+public:
+	Energizer() {
+		m_shape = 0x07;
+		m_flags = F_ITEM;
+		m_name = "energizer";
+	}
+	ZZTObject *alloc() {
+		return new Energizer();
+	}
+	bool get();
+	int type() { return ZZT_ENERGIZER; }
+};
+
+class Key : public Inventory {
+public:
+	Key() {
+		m_shape = 0x0C;
+		m_flags = F_PUSHABLE | F_ITEM;
+		m_name = "key";
+	}
+	ZZTObject *alloc() {
+		return new Key();
+	}
+	bool get();
+	int type() { return ZZT_KEY; }
+};
+
+class Gem : public Inventory {
+public:
+	Gem() {
+		m_modelName = "gem.amf";
+		m_shape = 0x04;
+		m_flags = F_PUSHABLE | F_ITEM;
+		m_name = "gem";
+	}
+	ZZTObject *alloc() {
+		return new Gem();
+	}
+	bool get();
+	int type() { return ZZT_GEM; }
+};
+
+
+class Torch : public Inventory {
+public:
+	Torch() {
+		m_modelName = "torch.amf";
+		m_fg = YELLOW;
+		m_bg = BLACK;
+		m_shape = 0x9D;
+		m_flags = F_PUSHABLE | F_ITEM;
+		m_name = "torch";
+	}
+	ZZTObject *alloc() {
+		return new Torch();
+	}	
+	bool get();
+	int type() { return ZZT_TORCH; }
+};
+
+class Ammo : public Inventory {
+public:
+	Ammo() {
+		m_fg = CYAN;
+		m_bg = BLACK;
+		m_shape = 0x84;
+		m_flags = F_ITEM;
+		m_name = "ammo";
+	}
+	ZZTObject *alloc() {
+		return new Ammo();
+	}
+	bool get();
+	int type() { return ZZT_AMMO; }
+};
+
+class Door : public Inventory {
+public:
+	Door() {
+		m_fg = WHITE | HIGH_INTENSITY;
+		m_color=&m_bg;
+		m_shape = 0x08;
+		m_flags = F_ITEM;
+		m_name = "door";
+	}
+	ZZTObject *alloc() {
+		return new Door();
+	}
+	bool get();
+	int type() { return ZZT_DOOR; }
+};

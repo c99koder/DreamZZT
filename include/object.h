@@ -30,23 +30,21 @@ enum direction { IDLE, LEFT, RIGHT, UP, DOWN, SHOOTING=128 };
 
 class ZZTObject {
 public:
-	ZZTObject(int type, int x, int y, int shape, int flags, std::string name);
+	ZZTObject();
 	virtual ~ZZTObject() {
 		m_isValid = false;
-		//if(m_model) { delete m_model; m_model = NULL }
 	}
 	void inherit(ZZTObject *o);
-
+	virtual ZZTObject *alloc() { return NULL; };
+	virtual int type() { return -1; }
 	direction opposite(enum direction dir);
 	direction toward(ZZTObject *them);
 	direction clockwise(direction dir);
-	direction str_to_direction(std::string s);
 
 	bool isValid() {
 		return m_isValid;
 	}
 
-	int str_to_color(std::string color);
 	std::string int_to_color(int color);
 
 	int distance(ZZTObject *them);
@@ -55,10 +53,9 @@ public:
 	bool move(direction d, bool trying=false, bool origin=true);
 	bool is_empty(direction d, bool ignorePlayer=false);
 	ZZTObject *create_object(int type, direction d);
-	ZZTObject *get
-	(direction d);
-	void remove
-		();
+	ZZTObject *get(direction d);
+	void remove();
+	
 	Vector position() {
 		return m_position;
 	}
@@ -89,9 +86,6 @@ public:
 	void setColor(int fg, int bg) {
 		m_fg = fg;
 		m_bg = bg;
-	}
-	int type() {
-		return m_type;
 	}
 	int fg() {
 		return m_fg;
@@ -128,12 +122,6 @@ public:
 	}
 	void setCycle(short c) {
 		m_cycle = c;
-	}
-	int tick() {
-		return m_tick;
-	}
-	void setTick(int t) {
-		m_tick = t;
 	}
 	int flags() {
 		return m_flags;
@@ -187,19 +175,13 @@ public:
 	void draw();
 	void edit();
 	virtual void addEditWidgets(TUIWindow *w) { }
-	;
-
 	virtual void setParam(int arg, unsigned char val) { }
-	;
 	virtual unsigned char param(int arg) {
 		return 0;
 	}
 	virtual void update() { }
-	;
 	virtual void message(ZZTObject *from, std::string msg) { }
-	;
 	virtual void create() { }
-	;
 
 	void shoot(direction d);
 
@@ -207,7 +189,6 @@ protected:
 	Vector m_position;
 	Vector m_step;
 	unsigned short m_cycle;
-	int m_tick;
 	int m_fg;
 	int m_bg;
 	int *m_color;
@@ -305,7 +286,6 @@ private:
 #define SZT_WATER_W 0x32
 #define SZT_WATER_E 0x33
 
-
 #define F_NONE 0
 #define F_EMPTY 1
 #define F_PUSHABLE 2
@@ -321,10 +301,6 @@ private:
 #include "objects/items.h"
 #include "objects/enemy.h"
 
-ZZTObject *create_object(int type, int x, int y);
-ZZTObject *create_copy(ZZTObject *source);
-int str_to_obj(std::string str);
-int str_to_color(char *color);
-std::string int_to_color(int col);
+ZZTObject *create_object(int type);
 #endif
 

@@ -35,7 +35,7 @@ extern struct board_info_node *currentbrd;
 extern char spin_anim[4];
 char moved[3][3];
 
-int Conveyer::cw(ZZTObject *them) {
+int ConveyerCW::cw(ZZTObject *them) {
 	if(!(them->flags()&F_PUSHABLE) || them->pushed())
 		return 0;
 
@@ -91,7 +91,7 @@ int Conveyer::cw(ZZTObject *them) {
 	return 0;
 }
 
-int Conveyer::ccw(ZZTObject *them) {
+int ConveyerCCW::ccw(ZZTObject *them) {
 	if(!(them->flags()&F_PUSHABLE) || them->pushed())
 		return 0;
 
@@ -147,16 +147,10 @@ int Conveyer::ccw(ZZTObject *them) {
 	return 0;
 }
 
-void Conveyer::update() {
+void ConveyerCW::update() {
 	int x,y;
-	if(m_type==ZZT_CONVEYER_CW) {
-		m_animIndex++;
-		m_animIndex%=4;
-	} else {
-		if(m_animIndex==0)
-			m_animIndex=4;
-		m_animIndex--;
-	}
+	m_animIndex++;
+	m_animIndex%=4;
 	m_shape=spin_anim[m_animIndex];
 	draw();
 
@@ -170,13 +164,34 @@ void Conveyer::update() {
 		for(x=0;x<3;x++) {
 			if(moved[x][y]==0 && !(x==1 && y==1)) {
 				if(currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj!=NULL) {
-					if(m_type==ZZT_CONVEYER_CW) {
-						if(cw(currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj))
-							currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj->setPushed(1);
-					} else if(m_type==ZZT_CONVEYER_CCW) {
-						if(ccw(currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj))
-							currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj->setPushed(1);
-					}
+					if(cw(currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj))
+						currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj->setPushed(1);
+				}
+			}
+		}
+	}
+}
+
+void ConveyerCCW::update() {
+	int x,y;
+	if(m_animIndex==0)
+		m_animIndex=4;
+	m_animIndex--;
+	m_shape=spin_anim[m_animIndex];
+	draw();
+
+	for(y=0;y<3;y++) {
+		for(x=0;x<3;x++) {
+			moved[x][y]=0;
+		}
+	}
+
+	for(y=0;y<3;y++) {
+		for(x=0;x<3;x++) {
+			if(moved[x][y]==0 && !(x==1 && y==1)) {
+				if(currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj!=NULL) {
+					if(ccw(currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj))
+						currentbrd->board[(int)m_position.x+(x-1)][(int)m_position.y+(y-1)].obj->setPushed(1);
 				}
 			}
 		}

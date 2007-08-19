@@ -37,8 +37,6 @@ extern ZZTMusicStream *zm;
 extern Player *player;
 extern struct board_info_node *currentbrd;
 
-char cgun[5] = {'0',27,26,24,25};
-
 void Centipede::create() {
 	m_discovery = true;
 }
@@ -60,7 +58,7 @@ unsigned char Centipede::param(int arg) {
 void Centipede::update() {
 	int x=0;
 
-	if(m_type==ZZT_CENTIPEDE_HEAD) {
+	if(m_shape==0xE9) {
 		if(m_discovery) {
 			discover(NULL);
 			if(m_next!=NULL) {
@@ -83,14 +81,11 @@ void Centipede::update() {
 		doMove(m_heading);
 	} else {
 		if(!m_discovery && m_prev==NULL) { //become a head
-			m_type = ZZT_CENTIPEDE_HEAD;
 			m_heading = m_nextHeading = direction((rand() % 4) + 1);
-			m_shape = ZZT_CENTIPEDE_HEAD_SHAPE;
+			m_shape = 0xE9;
 		}
 	}
 	m_discovery = false;
-
-	//m_shape = cgun[(int)m_nextHeading];
 }
 
 void Centipede::discover(Centipede *prev) {
@@ -129,7 +124,7 @@ void Centipede::doMove(direction d) {
 }
 
 void Centipede::message(ZZTObject *them, std::string msg) {
-	if(m_type == ZZT_CENTIPEDE_HEAD && msg=="thud" && them->type() != ZZT_PLAYER) {
+	if(m_shape == 0xE9 && msg=="thud" && them->type() != ZZT_PLAYER) {
 		if(player!=NULL && rand()%10 < m_intel && is_empty(toward(player))) {
 			m_heading = m_nextHeading = toward(player);
 		} else {
@@ -145,8 +140,7 @@ void Centipede::message(ZZTObject *them, std::string msg) {
 			doMove(m_heading);
 		} else {
 			reverse();
-			m_type = ZZT_CENTIPEDE_BODY;
-			m_shape = ZZT_CENTIPEDE_BODY_SHAPE;
+			m_shape = 'O';
 		}
 	} else if(msg == "thud" || (msg == "shot" && them->param(1) == 0) || msg == "bombed" || (msg == "touch" && them->type() == ZZT_PLAYER)) {
 		if(m_prev != NULL)

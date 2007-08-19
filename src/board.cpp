@@ -123,17 +123,18 @@ void free_world() {
 	currentbrd=NULL;
 }
 
-void put(ZZTObject *o, bool ignoreUnder) {
+void put(ZZTObject *o, int x, int y, bool ignoreUnder) {
 	if(!ignoreUnder) {
-		if(currentbrd->board[(int)o->position().x][(int)o->position().y].under != NULL)
-			delete currentbrd->board[(int)o->position().x][(int)o->position().y].under;
+		if(currentbrd->board[x][y].under != NULL)
+			delete currentbrd->board[x][y].under;
 
 		if(o->flags() & F_OBJECT)
-			currentbrd->board[(int)o->position().x][(int)o->position().y].under = currentbrd->board[(int)o->position().x][(int)o->position().y].obj;
+			currentbrd->board[x][y].under = currentbrd->board[x][y].obj;
 		else
-			currentbrd->board[(int)o->position().x][(int)o->position().y].under = NULL;
+			currentbrd->board[x][y].under = NULL;
 	}
-	currentbrd->board[(int)o->position().x][(int)o->position().y].obj = o;
+	currentbrd->board[x][y].obj = o;
+	o->setPosition(Vector(x,y,0));
 	o->create();
 	o->draw();
 	if(o->flag(F_OBJECT) && find(currentbrd->objects.begin(), currentbrd->objects.end(), o) == currentbrd->objects.end())
@@ -181,10 +182,13 @@ int new_board(char *title) {
 	for(int y=0; y<BOARD_Y; y++) {
 		for(int x=0; x<BOARD_X; x++) {
 			if(x == BOARD_X/2 && y == BOARD_Y/2) {
-				current->board[x][y].obj = create_object(ZZT_PLAYER,x,y);
-				current->board[x][y].under = create_object(ZZT_EMPTY,x,y);
+				current->board[x][y].obj = create_object(ZZT_PLAYER);
+				current->board[x][y].obj->setPosition(Vector(x,y,0));
+				current->board[x][y].under = create_object(ZZT_EMPTY);
+				current->board[x][y].under->setPosition(Vector(x,y,0));
 			} else {
-				current->board[x][y].obj = create_object(ZZT_EMPTY,x,y);
+				current->board[x][y].obj = create_object(ZZT_EMPTY);
+				current->board[x][y].obj->setPosition(Vector(x,y,0));
 				current->board[x][y].under = NULL;
 			}
 		}
@@ -388,23 +392,28 @@ void remove_from_board(struct board_info_node *brd, ZZTObject *me, bool ignoreUn
 	if(!ignoreUnder) {
 		if(brd->board[(int)pos.x][(int)pos.y].under==NULL || !brd->board[(int)pos.x][(int)pos.y].under->isValid() || brd->board[(int)pos.x][(int)pos.y].under->flag(F_DELETED)) {
 			if(world.magic == 65534 && brd->board[(int)pos.x+1][(int)pos.y].obj->type() == SZT_FLOOR) {
-				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR);
+				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x+1][(int)pos.y].obj->fg());
 				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x+1][(int)pos.y].obj->bg());
 			} else if(world.magic == 65534 && brd->board[(int)pos.x-1][(int)pos.y].obj->type() == SZT_FLOOR) {
-				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR);
+				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x-1][(int)pos.y].obj->fg());
 				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x-1][(int)pos.y].obj->bg());
 			} else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y+1].obj->type() == SZT_FLOOR) {
-				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR);
+				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y+1].obj->fg());
 				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y+1].obj->bg());
 			} else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y-1].obj->type() == SZT_FLOOR) {
-				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR, (int)pos.x, (int)pos.y);
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR);
+				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y-1].obj->fg());
 				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y-1].obj->bg());
 			} else {
-				brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY, (int)pos.x, (int)pos.y);
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object((world.magic == MAGIC_SZT)?SZT_FLOOR:ZZT_EMPTY);
+				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 			}
 			brd->board[(int)pos.x][(int)pos.y].obj->create();
 		} else {
@@ -840,13 +849,15 @@ void decompress(board_info_node *board, bool silent) {
 			}
 			board->board[x][y].obj=NULL;
 			board->board[x][y].under=NULL;
-			curobj=board->board[x][y].obj=create_object((*rle_iter).cod,x,y);
+			curobj=board->board[x][y].obj=create_object((*rle_iter).cod);
 			if(curobj!=NULL) {
+				curobj->setPosition(Vector(x,y,0));
 				curobj->setFg((*rle_iter).col%16);
 				curobj->setBg((*rle_iter).col/16);
 			} else {
 				Debug::printf("Unknown type encountered at (%i, %i): %i\n",x,y,(*rle_iter).cod);
-				board->board[x][y].obj=create_object(ZZT_EMPTY,x,y);
+				board->board[x][y].obj=create_object(ZZT_EMPTY);
+				board->board[x][y].obj->setPosition(Vector(x,y,0));
 			}
 			x++;
 		}
@@ -867,12 +878,14 @@ void decompress(board_info_node *board, bool silent) {
 			curobj->setParam(2,(*param_iter).data[1]);
 			curobj->setParam(3,(*param_iter).data[2]);
 			curobj->setProg((*param_iter).prog,(*param_iter).proglen,(*param_iter).progpos);
-			board->board[(*param_iter).x][(*param_iter).y].under=create_object((*param_iter).ut,(*param_iter).x,(*param_iter).y);
+			board->board[(*param_iter).x][(*param_iter).y].under=create_object((*param_iter).ut);
 			if(board->board[(*param_iter).x][(*param_iter).y].under != NULL) {
+				board->board[(*param_iter).x][(*param_iter).y].under->setPosition(Vector((*param_iter).x,(*param_iter).y,0));
 				board->board[(*param_iter).x][(*param_iter).y].under->setFg((*param_iter).uc%16);
 				board->board[(*param_iter).x][(*param_iter).y].under->setBg((*param_iter).uc/16);
 			} else {
-				board->board[(*param_iter).x][(*param_iter).y].under=create_object(ZZT_EMPTY,x,y);
+				board->board[(*param_iter).x][(*param_iter).y].under=create_object(ZZT_EMPTY);
+				board->board[(*param_iter).x][(*param_iter).y].under->setPosition(Vector((*param_iter).x,(*param_iter).y,0));
 			}
 		} else {
 			Debug::printf("Invalid object at: (%i,%i)\n",x,y);

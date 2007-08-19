@@ -71,9 +71,9 @@ void Duplicator::update() {
 				currentbrd->board[x][y].obj->move(UP);
 		}
 		if(::is_empty(currentbrd,x,y)) {
-			obj2=create_copy(obj);
-			obj2->setPosition(Vector((float)x,(float)y,0));
-			put(obj2);
+			obj2=obj->alloc();
+			obj2->inherit(obj);
+			put(obj2, x, y);
 			if(zm!=NULL)
 				zm->setTune("scdefg");
 			if(zm!=NULL)
