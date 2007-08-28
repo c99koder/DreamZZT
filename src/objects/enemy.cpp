@@ -152,34 +152,46 @@ void Tiger::update() {
 	}
 }
 
-void Enemy::create() {
-	switch(m_type) {
-	case ZZT_LION:
-		m_fg = 12;
-		break;
-	case ZZT_TIGER:
-		m_fg = 11;
-		break;
-	case ZZT_BEAR:
-		m_fg = ((world.magic == 65535) ? 6 : 2);
-		break;
-	case ZZT_RUFFIAN:
-		m_fg = 13;
-		break;
-	case ZZT_SHARK:
-		m_fg = 7;
-		break;
+void Lion::create() {
+	m_fg = 12;
+}
+
+void Tiger::create() {
+	m_fg = 11;
+}
+
+void Bear::create() {
+	m_fg = ((world.magic == 65535) ? 6 : 2);
+}
+
+void Ruffian::create() {
+	m_fg = 13;
+}
+
+void Shark::create() {
+	m_fg = 7;
+}
+
+void Bear::message(ZZTObject *them, std::string message) {
+	Enemy::message(them, message);
+	if(them->type() == ZZT_BREAKABLE) {
+		remove_from_board(currentbrd,them);
+		remove_from_board(currentbrd,this);
+		if(zm!=NULL)
+			zm->setTune("t+c-c-c");
+		if(zm!=NULL)
+			zm->start();
 	}
 }
 
 void Enemy::message(ZZTObject *them, std::string message) {
-	if((
-	            (message == "shot" && them->type() == ZZT_BULLET && them->param(1) == 0)
-	            || them->type()==ZZT_PLAYER || message == "bombed") && m_type != ZZT_SPINNING_GUN) {
+	if(them->type() == ZZT_PLAYER || them->type() == ZZT_BULLET) Debug::printf("Enemy: %s from %s\n", message.c_str(), them->name().c_str());
+
+	if(((message == "shot" && them->type() == ZZT_BULLET && them->param(1) == 0) || them->type()==ZZT_PLAYER || message == "bombed")) {
 		if(message == "touch" || message == "thud") {
 			them->message(this,"shot");
 		} else {
-			give_score((m_type==ZZT_BEAR)?1:2);
+			give_score((m_shape==((world.magic == MAGIC_SZT) ? 0xEB : 0x99))?1:2);
 			draw_score();
 		}
 		if(zm!=NULL)
@@ -189,14 +201,6 @@ void Enemy::message(ZZTObject *them, std::string message) {
 		debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was killed.\n",m_name.c_str());
 		task_kill(this);
 		remove_from_board(currentbrd,this);
-	}
-	if(m_type == ZZT_BEAR && them->type() == ZZT_BREAKABLE) {
-		remove_from_board(currentbrd,them);
-		remove_from_board(currentbrd,this);
-		if(zm!=NULL)
-			zm->setTune("t+c-c-c");
-		if(zm!=NULL)
-			zm->start();
 	}
 	if(message == "crush") {
 		if(zm!=NULL)

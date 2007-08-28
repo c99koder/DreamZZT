@@ -148,7 +148,7 @@ void ZZTObject::shoot(enum direction dir) {
 			draw_ammo();
 		}
 		bullet=create_object(ZZT_BULLET,dir);
-		bullet->setParam(1,m_type==ZZT_PLAYER?0:1);
+		bullet->setParam(1,m_name=="player"?0:1);
 		bullet->setHeading(dir);
 		bullet->setCycle(1);
 		put(bullet, bullet->position().x, bullet->position().y);

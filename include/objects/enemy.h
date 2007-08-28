@@ -25,7 +25,6 @@ public:
 	}
 
 	virtual ~Enemy() { }
-	void create();
 
 	void setParam(int arg, unsigned char val) {
 		if(arg==1)
@@ -37,7 +36,7 @@ public:
 		else
 			return 0;
 	}
-	void message(ZZTObject *them, std::string msg);
+	virtual void message(ZZTObject *them, std::string msg);
 
 	void addEditWidgets(TUIWindow *w) {
 		w->addWidget(new TUISlider("Intelligence         ",&m_intel));
@@ -55,6 +54,7 @@ public:
 		m_flags = F_PUSHABLE|F_OBJECT;
 	}
 	void update();
+	void create();
 	int type() { return ZZT_LION; }
 	ZZTObject *alloc() {
 		return new Lion();
@@ -69,6 +69,7 @@ public:
 		m_flags = F_PUSHABLE|F_OBJECT;
 	}
 	int type() { return ZZT_SHARK; }
+	void create();
 	ZZTObject *alloc() {
 		return new Shark();
 	}
@@ -82,9 +83,11 @@ public:
 	ZZTObject *alloc() {
 		return new Bear();
 	}
+	void create();
 	void addEditWidgets(TUIWindow *w) {
 		w->addWidget(new TUISlider("Sensitivity          ",&m_intel));
 	}
+	void message(ZZTObject *them, std::string message);
 };
 
 class Ruffian : public Enemy {
@@ -100,6 +103,7 @@ public:
 	void setParam(int arg, unsigned char val);
 	unsigned char param(int arg);
 	void update();
+	void create();
 	int type() { return ZZT_RUFFIAN; }
 	ZZTObject *alloc() {
 		return new Ruffian();
@@ -123,6 +127,7 @@ public:
 	void setParam(int arg, unsigned char val);
 	unsigned char param(int arg);
 	void update();
+	void create();
 	int type() { return ZZT_TIGER; }
 	ZZTObject *alloc() {
 		return new Tiger();
