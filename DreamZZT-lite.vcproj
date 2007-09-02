@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;include;C:\libcurl\include;c:\SDL\include;lua"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;include;c:\SDL\include;lua"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;DEBUG;NET;_CRT_SECURE_NO_DEPRECATE;USE_SDL;USE_CURL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib SDL.lib SDLmain.lib"
+				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib SDL.lib SDLmain.lib"
 				OutputFile="$(OutDir)/DreamZZT-lite.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;..\tiki\win32\Debug;c:\libcurl;c:\sdl\lib"
@@ -122,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;include;C:\libcurl\include;c:\SDL\include;lua"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;include;c:\SDL\include;lua"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NET;_CRT_SECURE_NO_DEPRECATE;USE_SDL;USE_CURL"
 				RuntimeLibrary="2"
 				DefaultCharIsUnsigned="true"
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib shfolder.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib SDL.lib SDLmain.lib"
+				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib shfolder.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib SDL.lib SDLmain.lib"
 				OutputFile="$(OutDir)/DreamZZT-lite.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="C:\libcurl;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;..\tiki\win32\Release&quot;;c:\SDL\lib"
@@ -208,10 +208,6 @@
 			</File>
 			<File
 				RelativePath=".\src\editor.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\http.cpp"
 				>
 			</File>
 			<File
@@ -541,15 +537,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\bugreport.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\console.h"
 				>
 			</File>
 			<File
 				RelativePath=".\include\editor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\http.h"
 				>
 			</File>
 			<File

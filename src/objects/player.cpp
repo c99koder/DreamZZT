@@ -35,7 +35,6 @@ using namespace Tiki::Thread;
 #include "console.h"
 #include "object.h"
 #include "board.h"
-#include "http.h"
 #include "status.h"
 #include "sound.h"
 

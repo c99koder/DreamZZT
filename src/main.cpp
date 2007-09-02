@@ -17,24 +17,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
-#include <iostream>
-#include <string>
-#include <sstream>
-
 #include <Tiki/tiki.h>
-#include <Tiki/plxcompat.h>
-#include <Tiki/gl.h>
-#include <Tiki/hid.h>
-#include <Tiki/eventcollector.h>
-#include <Tiki/tikitime.h>
-#include <Tiki/thread.h>
-
 #ifdef NET
 #include <Tiki/net.h>
 #include <Tiki/net/http/useragent.h>
 #include <Tiki/net/http/request.h>
 #include <Tiki/net/util/base64.h>
 #endif
+#include <Tiki/plxcompat.h>
+#include <Tiki/gl.h>
+#include <Tiki/hid.h>
+#include <Tiki/eventcollector.h>
+#include <Tiki/tikitime.h>
+#include <Tiki/thread.h>
+#include <iostream>
+#include <string>
+#include <sstream>
 #include <string.h>
 #include <time.h>
 #include "console.h"
@@ -52,7 +50,6 @@ using namespace Tiki::Net::Util;
 #endif
 
 #if TIKI_PLAT == TIKI_WIN32
-#include <wininet.h>
 #include <shlobj.h>
 #endif
 
@@ -63,7 +60,6 @@ using namespace Tiki::Net::Util;
 #include "debug.h"
 #include "editor.h"
 #include "os.h"
-#include "http.h"
 #include "task.h"
 #include "word.h"
 #include "bugreport.h"
@@ -220,12 +216,6 @@ std::string ToString(T aValue) {
 void check_updates() {
 #if (TIKI_PLAT != TIKI_OSX && defined(NET) && !defined(USE_SYSTEM_UPDATE_MANAGER) && !defined(BETA_VERSION))
 	std::string ver;
-#if TIKI_PLAT == TIKI_WIN32
-
-	DWORD flags;
-	if(!InternetGetConnectedState(&flags,0))
-		return;
-#endif
 
 	ver = http_get_string("http://dev.c99.org/DreamZZT/LATEST");
 

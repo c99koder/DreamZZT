@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;lua;&quot;src\libtolua++&quot;;lua\lib;include;C:\libcurl\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;lua;&quot;src\libtolua++&quot;;lua\lib;include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;DEBUG;NET;_CRT_SECURE_NO_DEPRECATE;USE_OPENGL;USE_CURL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,10 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib"
+				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib"
 				OutputFile="$(OutDir)/DreamZZT.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;..\tiki\win32\Debug&quot;;c:\libcurl"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;..\tiki\win32\Debug"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/DreamZZT.pdb"
 				SubSystem="2"
@@ -121,7 +121,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;&quot;src\libtolua++&quot;;lua\lib;lua;include;C:\libcurl\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;;..\tiki\win32\include;..\tiki\include;&quot;src\libtolua++&quot;;lua\lib;lua;include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NET;_CRT_SECURE_NO_DEPRECATE;USE_OPENGL;USE_CURL"
 				RuntimeLibrary="2"
 				DefaultCharIsUnsigned="true"
@@ -141,10 +141,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib shfolder.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib libcurl.lib"
+				AdditionalDependencies="gdi32.lib kernel32.lib user32.lib shfolder.lib opengl32.lib glu32.lib comdlg32.lib wsock32.lib wininet.lib"
 				OutputFile="$(OutDir)/DreamZZT.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\libcurl;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;..\tiki\win32\Release&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;..\tiki\win32\Release&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -219,10 +219,6 @@
 			</File>
 			<File
 				RelativePath=".\src\GraphicsLayer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\http.cpp"
 				>
 			</File>
 			<File
@@ -560,10 +556,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\http.h"
-				>
-			</File>
-			<File
 				RelativePath=".\include\object.h"
 				>
 			</File>
@@ -591,7 +583,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h&#x0D;&#x0A;"
 						Outputs="include\version.h"
 					/>
 				</FileConfiguration>
@@ -600,7 +592,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . include\version.h.in include\version.h&#x0D;&#x0A;"
 						Outputs="include\version.h"
 					/>
 				</FileConfiguration>
@@ -655,7 +647,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc&#x0D;&#x0A;"
 						Outputs="dreamzzt.rc"
 					/>
 				</FileConfiguration>
@@ -664,7 +656,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc"
+						CommandLine="&quot;c:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot; . dreamzzt.rc.in dreamzzt.rc&#x0D;&#x0A;"
 						Outputs="dreamzzt.rc"
 					/>
 				</FileConfiguration>

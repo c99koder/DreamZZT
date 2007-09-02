@@ -35,7 +35,6 @@ using namespace Tiki::Hid;
 #include "object.h"
 #include "task.h"
 #include "status.h"
-#include "http.h"
 
 extern ConsoleText *ct;
 extern Player *player;

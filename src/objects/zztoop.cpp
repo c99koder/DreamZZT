@@ -37,7 +37,6 @@ using namespace std;
 #include "word.h"
 #include "board.h"
 #include "status.h"
-#include "http.h"
 #include "debug.h"
 #include "window.h"
 #include "task.h"
