@@ -54,9 +54,12 @@ using namespace Tiki::Hid;
 #include "vmu.h"
 #include "window.h"
 #include "board.h"
+#include <malloc.h>
 
 extern ConsoleText *ct;
 extern world_header world;
+
+KOS_INIT_FLAGS(INIT_DEFAULT | INIT_MALLOCSTATS);
 #endif
 
 #if TIKI_PLAT == TIKI_DC || TIKI_PLAT == TIKI_NDS
@@ -241,6 +244,8 @@ std::string os_select_file(std::string title, std::string filter) {
 	uint32 d;
 	TUIWindow t(title);
 	std::string tmp = title + std::string(":\n");
+
+	malloc_stats();
 
 	if(filter == "sav") {
 		d = fs_open("/vmu/a1",O_RDONLY|O_DIR);

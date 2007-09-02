@@ -63,10 +63,6 @@ inline void ByteSwap(void * b, int n) {
 #endif
 }
 
-int base64_encode(const void *inp, int insize, char **outptr);
-int base64_decode(const char *src, unsigned char **outptr);
-
-
 static int pop_message (lua_State *L) {
 #if 0
 	ZZTLUA *me = ((ZZTLUA*)  tolua_tousertype(L,1,0));
@@ -178,10 +174,10 @@ unsigned char ZZTLUA::param(int arg) {
 
 			pluto_persist(m_luaVM, bufwriter, &wi);
 
-			base64_encode(wi.buf, wi.buflen, &out);
+			//base64_encode(wi.buf, wi.buflen, &out);
 			m_prog = out;
 			m_proglen = m_prog.length();
-			free(out);
+			//free(out);
 			m_serialized = true;
 		}
 		return m_serialized;

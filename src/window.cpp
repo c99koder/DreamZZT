@@ -1276,14 +1276,14 @@ void TUIWindow::doMenu(bool canClose) {
 	BG0_X0 = 0;
 	BG1_X0 = 0;
 
-	SUB_BG0_X0 = -48;
-	SUB_BG1_X0 = -48;
+	//SUB_BG0_X0 = -48;
+	//SUB_BG1_X0 = -48;
 
 	lcdMainOnBottom();
-	st->color(15,1);
+	/*st->color(15,1);
 	st->clear();
 	st->draw();
-	dzzt_logo();
+	dzzt_logo();*/
 #endif
 
 	if(playerEventCollector != NULL && !playerEventCollector->listening()) {

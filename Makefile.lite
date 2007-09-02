@@ -7,7 +7,7 @@ ICONS = $(DESTDIR)/usr/share/icons/hicolor
 DOC = $(DESTDIR)/usr/share/doc/dreamzzt
 APPLICATIONS = $(DESTDIR)/usr/share/applications
 
-CFLAGS = -I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -I/usr/include/SDL -Iinclude -Ilua -Ilua/lib -DDATA_PATH="\"$(DATA)\"" -DNET -DUSE_SDL -DUSE_CURL
+CFLAGS = -I$(TIKI_DIR)/$(TIKI_PLAT)/include -I$(TIKI_DIR)/include -I/usr/include/SDL -Iinclude -Ilua -Ilua/lib -DDATA_PATH="\"$(DATA)\"" -DNET -DUSE_SDL
 OBJS = src/DreamZZT.o src/debug.o src/sound.o src/http.o src/word.o src/main.o src/window.o src/board.o src/console_sdl.o src/task.o src/status.o src/object.o src/editor.o src/bugreport.o \
 src/objects/passage.o src/objects/terrain.o src/objects/bullet.o src/objects/enemy.o \
 src/objects/dup.o src/objects/zztoop.o src/objects/pusher.o src/objects/bomb.o src/objects/items.o \
@@ -23,7 +23,7 @@ VERSION:
 	sed "s/\$$WCREV\\$$/`svnversion .`/" < include/version.h.in > include/version.h
 
 dreamzzt: include/version.h $(OBJS)
-	$(CXX) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -lalut -lqt-mt `curl-config --libs` -o dreamzzt
+	$(CXX) -L$(TIKI_DIR)/$(TIKI_PLAT) $(OBJS) $(TIKI_BASE_LIBS) -lalut -lqt-mt -o dreamzzt
 	
 clean:
 	-rm -f $(OBJS) dreamzzt

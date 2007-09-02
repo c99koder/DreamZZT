@@ -68,6 +68,7 @@ extern Texture *zzt_font;
 #if defined(USE_SDL)
 #define SCREEN_Y 400
 #elif TIKI_PLAT == TIKI_DC
+#include <malloc.h>
 #define SCREEN_Y 424
 #else
 #define SCREEN_Y 480
@@ -688,9 +689,11 @@ void switch_board(int num) {
 	if(currentbrd->dark && world.torch_cycle<1) {
 		set_msg("Room is dark - you need to light a torch!");
 	}
-	zm->unlock();
-	zm->setTune("xxxx");
-	zm->start();
+	if(zm!=NULL) {
+		zm->unlock();
+		zm->setTune("xxxx");
+		zm->start();
+	}
 }
 
 struct world_header *get_world() {
@@ -860,6 +863,7 @@ void decompress(board_info_node *board, bool silent) {
 				board->board[x][y].obj->setPosition(Vector(x,y,0));
 			}
 			x++;
+			//malloc_stats();
 		}
 	}
 

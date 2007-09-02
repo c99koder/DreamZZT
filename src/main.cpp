@@ -28,11 +28,15 @@
 #include <Tiki/eventcollector.h>
 #include <Tiki/tikitime.h>
 #include <Tiki/thread.h>
+
+#ifdef NET
+#include <Tiki/net.h>
+#include <Tiki/net/http/useragent.h>
+#include <Tiki/net/http/request.h>
+#include <Tiki/net/util/base64.h>
+#endif
 #include <string.h>
 #include <time.h>
-#ifdef NET
-#include <curl/curl.h>
-#endif
 #include "console.h"
 #include <Tiki/oggvorbis.h>
 
@@ -41,6 +45,11 @@ using namespace Tiki::GL;
 using namespace Tiki::Hid;
 using namespace Tiki::Audio;
 using namespace Tiki::Thread;
+#ifdef NET
+using namespace Tiki::Net;
+using namespace Tiki::Net::Http;
+using namespace Tiki::Net::Util;
+#endif
 
 #if TIKI_PLAT == TIKI_WIN32
 #include <wininet.h>
@@ -83,6 +92,20 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 Mutex zzt_screen_mutex;
 #endif
 
+#if TIKI_PLAT == TIKI_SDL
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Linux)")).c_str()
+#elif TIKI_PLAT == TIKI_WIN32
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Windows)")).c_str()
+#elif TIKI_PLAT == TIKI_OSX
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Macintosh)")).c_str()
+#elif TIKI_PLAT == TIKI_DC
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Dreamcast)")).c_str()
+#elif TIKI_PLAT == TIKI_NDS
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Nintendo DS)")).c_str()
+#else
+#define USER_AGENT (std::string("DreamZZT/") + std::string(VERSION) + std::string(" (Unknown)")).c_str()
+#endif
+
 extern struct world_header world;
 extern struct board_info_node *currentbrd;
 bool gameFrozen;
@@ -96,7 +119,7 @@ extern struct board_info_node *board_list;
 int switchbrd=-1;
 extern Player *player;
 extern EventCollector *playerEventCollector;
-extern std::string curl_auth_string;
+char http_auth[256];
 ZZTMusicStream *zm = NULL;
 Tiki::Thread::Thread *render_thread;
 #if defined(USE_SDL)
@@ -176,10 +199,6 @@ Jason Costa\r\
 http://www.necrocosm.com/\r\r\
 Chris 'Kilokahn' Haslage\r\
 http://www.kkwow.net/\r\r\
-$cURL File Transfer Library\r\
-Copyright (c) 1996 - 2006\r\
-Daniel Stenberg\r\
-All Rights Reserved.\r\r\
 $Simple DirectMedia Layer\r\
 This software may be linked\r\
 with libSDL, an LGPL licensed\r\
@@ -503,12 +522,12 @@ void render() {
 	SDL_UpdateRect(screen, 0, 0, SCREEN_X, SCREEN_Y);
 #elif TIKI_PLAT == TIKI_NDS
 
-	st->draw();
+	//st->draw();
 	if(mt!=NULL)
 		mt->draw();
 	else
 		ct->draw();
-	swiWaitForVBlank();
+	//swiWaitForVBlank();
 #elif defined(USE_OPENGL)
 
 	Frame::begin();
@@ -583,12 +602,8 @@ extern "C" int tiki_main(int argc, char **argv) {
 	//Hid::callbackReg(tkCallback, NULL);
 
 #ifdef NET
-#ifdef USE_CURL
+	Tiki::Net::init();
 
-	curl_global_init(CURL_GLOBAL_ALL);
-#endif
-
-	char authtmp[256];
 	std::string filename;
 	File f;
 #if TIKI_PLAT == TIKI_WIN32
@@ -607,10 +622,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 
 	f.open(filename.c_str(),"rb");
 	if(f.isValid()) {
-		int len = f.read(authtmp,256);
+		int len = f.read(http_auth,256);
 		if(len > 0) {
-			authtmp[len]='\0';
-			curl_auth_string = authtmp;
+			http_auth[len]='\0';
 		}
 		f.close();
 	}
@@ -627,7 +641,9 @@ extern "C" int tiki_main(int argc, char **argv) {
 	zzt_vmu_init();
 #endif
 
+#if TIKI_PLAT != TIKI_DC
 	zm = new ZZTMusicStream;
+#endif
 	if(zm!=NULL)
 		zm->setVolume(0.4f);
 
@@ -770,7 +786,7 @@ extern "C" int tiki_main(int argc, char **argv) {
 
 	f.open(filename.c_str(),"wb");
 	if(f.isValid()) {
-		f.write(curl_auth_string.c_str(),(int)curl_auth_string.length()+1);
+		f.write(http_auth,strlen(http_auth));
 		f.close();
 	}
 #endif
@@ -798,7 +814,13 @@ void play_zzt(const char *filename, bool tempFile) {
 	Event evt;
 	TUISlider sm("", &speedmod);
 	TUISlider vm("", &volmod);
+#ifdef NET
+	HttpUserAgent ua;
+	Request *r = NULL;
+	Response *response = NULL;
 
+	ua.setUserAgentName(USER_AGENT);
+#endif
 	switchbrd=-1;
 	if(load_zzt(filename,0)==-1) {
 		TUIWindow t("Error");
@@ -974,7 +996,13 @@ complete this game.\r\
 	}
 #ifdef NET
 	if(world.online==1) {
-		tmp = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + world.title);
+		r = new Request;
+		r->setHeaderParam("Authorization", std::string("Basic ") + std::string(http_auth));
+		r->setUrl(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=Tasks&GameID=") + world.title);
+		response = ua.get(r);
+		tmp = std::string((char *)(response->getContentPart(DEFAULT_CONTENT_PART)->getData()));
+		delete r;
+		delete response;
 		tasks = wordify(tmp,'\n');
 		for(tasks_iter=tasks.begin(); tasks_iter!=tasks.end(); tasks_iter++) {
 			params = wordify((*tasks_iter),'|');
@@ -1126,14 +1154,26 @@ complete this game.\r\
 #endif
 
 				save_game(filename.c_str());
-				std::string s = http_post_file(filename,"application/x-zzt-save", DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=ProcessSave"));
-				if(s!="OK") {
+				
+				File f(filename.c_str(), "rb");
+				Buffer *b = new Buffer(f,"application/x-zzt-save","File");
+				f.close();
+				
+				r = new Request;
+				r->setHeaderParam("Authorization", std::string("Basic ") + std::string(http_auth));			
+				r->setForcedMultiPartUpload(true);
+				r->addContentPart(b, "File");
+				r->setUrl( DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=ProcessSave") );
+				response = ua.post(r);
+
+				if(std::string((char *)(response->getContentPart(DEFAULT_CONTENT_PART)->getData()))!="OK") {
 					TUIWindow t("");
-					t.buildFromString(s);
+					t.buildFromString(std::string((char *)(response->getContentPart(DEFAULT_CONTENT_PART)->getData())));
 					t.doMenu();
 				}
+				delete response;
+				delete r;
 #endif
-
 			} else {
 				std::string s = os_save_file("Save a game",world.title + ".sav","sav");
 				if(s!="") {
@@ -1172,7 +1212,11 @@ complete this game.\r\
 		std::string url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=SubmitScore";
 		url += "&GameID=" +world.title;
 		url += "&Score=" + ToString((int)world.score);
-		std::string tmp = http_get_string(url);
+		r = new Request;
+		r->setHeaderParam("Authorization", std::string("Basic ") + std::string(http_auth));
+		r->setUrl(url);
+		response = ua.get(r);
+		tmp = std::string((char *)(response->getContentPart(DEFAULT_CONTENT_PART)->getData()));
 		if(tmp!="OK") {
 			TUIWindow *t;
 			std::string title;
@@ -1186,29 +1230,57 @@ complete this game.\r\
 			t->buildFromString(tmp);
 			t->doMenu();
 		}
+		delete r;
+		delete response;
 	}
 #endif
-	zm->unlock();
-	zm->setTune("xxxx");
-	zm->start();
+	if(zm!=NULL) {
+		zm->unlock();
+		zm->setTune("xxxx");
+		zm->start();
+	}
 	free_world();
 }
 
 void net_menu() {
 #ifdef NET
+	TUIWindow *t;
 	File f;
 	std::string url = DZZTNET_HOST + DZZTNET_HOME;
 	std::string tmp,filename;
 
-	if(curl_auth_string != "") {
-		url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
-		tmp = http_get_string(url);
-		if(tmp!="OK") {
-			curl_auth_string = "";
+#if TIKI_PLAT == TIKI_NDS
+	if(Wifi_AssocStatus() != ASSOCSTATUS_ASSOCIATED) { // simple WFC connect:
+		ct->locate(0,0);
+		ct->color(15,1);
+		ct->printf("Connecting via WFC data...\n");
+		render();
+		int i;
+		Wifi_AutoConnect(); // request connect
+		while(1) {
+			i=Wifi_AssocStatus(); // check status
+			if(i==ASSOCSTATUS_ASSOCIATED) {
+				ct->printf("Connected successfully!\n");
+				render();
+				break;
+			}
+			if(i==ASSOCSTATUS_CANNOTCONNECT) {
+				ct->printf("Could not connect!\n");
+				render();
+				return;
+				break;
+			}
 		}
-	}
-	if(curl_auth_string == "") {
-		TUIWindow *t;
+	} // if connected, you can now use the berkley sockets interface to connect to the internet!
+#endif
+
+	HttpUserAgent ua;
+	Request *r = NULL;
+	Response *response = NULL;
+
+	ua.setUserAgentName(USER_AGENT);
+
+	if(http_auth[0] == '\0') {
 		t = new TUIWindow("DreamZZT Online");
 		t->buildFromString(
 "DreamZZT Online allows you\n\
@@ -1220,112 +1292,11 @@ You'll need a C99.ORG forums\n\
 account to access DreamZZT\n\
 Online.\n\
 \n\
-!Create;Create new account\n\
-!Existing;Use existing acount\n");
+!Ok;Ok\n");
 		t->doMenu();
-		if(switchbrd==-2 || t->getLabel() == "")
+		delete t;
+		if(switchbrd==-2)
 			return;
-
-		if(t->getLabel() == "Existing") {
-			do {
-				std::string user="",pass="";
-				delete t;
-				t = new TUIWindow("DreamZZT Online");
-				t->addWidget(new TUILabel("Please enter your C99.ORG"));
-				t->addWidget(new TUILabel("username and password."));
-				t->addWidget(new TUIWidget());
-				t->addWidget(new TUITextInput("  Username: ",&user));
-				t->addWidget(new TUIPasswordInput("  Password: ",&pass));
-				t->addWidget(new TUIWidget());
-				t->addWidget(new TUIHyperLink("login","Login to C99.ORG"));
-				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
-				t->doMenu();
-				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "")
-					return;
-				curl_auth_string = user + std::string(":") + pass;
-				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
-				tmp = http_get_string(url);
-				if(tmp!="OK") {
-					delete t;
-					std::string title;
-					if(tmp[0]=='$') { //The first line of the document is the window title
-						title = tmp.substr(1,tmp.find("\n"));
-						tmp.erase(0,tmp.find("\n")+1);
-					} else {
-						title = "Authentication Error";
-					}
-					t = new TUIWindow(title);
-					t->buildFromString(tmp);
-					t->doMenu();
-					if(switchbrd==-2)
-						return;
-				}
-			} while(tmp != "OK" && switchbrd != -2);
-		} else if(t->getLabel() == "Create") {
-			std::string user="",first="",last="",pass1="",pass2="",email="";
-			bool useEmail=false,useName=false,acceptTOS=false;
-			do {
-				delete t;
-				t = new TUIWindow("DreamZZT Online");
-				t->addWidget(new TUILabel        ("Desired username:"));
-				t->addWidget(new TUITextInput    ("",&user));
-				t->addWidget(new TUILabel        ("Desired password:"));
-				t->addWidget(new TUIPasswordInput("",&pass1));
-				t->addWidget(new TUILabel        ("Confirm password:"));
-				t->addWidget(new TUIPasswordInput("",&pass2));
-				t->addWidget(new TUILabel        ("Email address:"));
-				t->addWidget(new TUITextInput    ("",&email));
-				t->addWidget(new TUILabel        ("First name: (optional)"));
-				t->addWidget(new TUITextInput    ("",&first));
-				t->addWidget(new TUILabel        ("Last name: (optional)"));
-				t->addWidget(new TUITextInput    ("",&last));
-				t->addWidget(new TUICheckBox	 ("Display full name",&useName));
-				t->addWidget(new TUICheckBox	 ("Display email address",&useEmail));
-				t->addWidget(new TUICheckBox	 ("I accept the terms",&acceptTOS));
-				t->addWidget(new TUILabel        ("      of service",true,true));
-				t->addWidget(new TUIWidget());
-				t->addWidget(new TUIHyperLink("register","Register account"));
-				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
-				t->addWidget(new TUIWidget());
-				t->addWidget(new TUILabel(" The terms of service can be",true));
-				t->addWidget(new TUILabel("          viewed at",true));
-				t->addWidget(new TUILabel("    http://forums.c99.org/",true,true));
-				t->doMenu();
-				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "")
-					return;
-				url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=Register";
-				url += "&Name=" + user;
-				url += "&NewPassword=" + pass1;
-				url += "&ConfirmPassword=" + pass2;
-				url += "&Email=" + email;
-				url += "&FirstName=" + first;
-				url += "&LastName=" + last;
-				url += "&ShowName=" + ToString((int)useName);
-				url += "&UtilizeEmail=" + ToString((int)useEmail);
-				url += "&AgreeToTerms=" + ToString((int)acceptTOS);
-
-				tmp = http_get_string(url);
-				if(tmp!="OK") {
-					delete t;
-					std::string title;
-					if(tmp[0]=='$') { //The first line of the document is the window title
-						title = tmp.substr(1,tmp.find("\n"));
-						tmp.erase(0,tmp.find("\n")+1);
-					} else {
-						title = "Registration Error";
-					}
-					t = new TUIWindow(title);
-					t->buildFromString(tmp);
-					t->doMenu();
-					if(switchbrd==-2)
-						return;
-				}
-			} while(tmp != "OK" && switchbrd != -2);
-			if(tmp=="OK")
-				curl_auth_string = user + ":" + pass1;
-		} else {
-			return;
-		}
 	}
 
 #if TIKI_PLAT == TIKI_WIN32
@@ -1343,7 +1314,7 @@ Online.\n\
 
 	f.open(filename.c_str(),"wb");
 	if(f.isValid()) {
-		f.write(curl_auth_string.c_str(),(int)curl_auth_string.length()+1);
+		f.write(http_auth, strlen(http_auth));
 		f.close();
 	}
 
@@ -1354,6 +1325,119 @@ Online.\n\
 		ct->clear();
 		menu_background();
 		dzzt_logo();
+		delete r;
+		r = new Request;
+		r->setHeaderParam("Authorization", std::string("Basic ") + std::string(http_auth));
+		r->setUrl(url);
+		
+		delete response;
+		response = ua.get(r);
+
+		if(response->getResultCode() == 401) {
+			std::string user="",first="",last="",pass="",pass2="",email="";
+			bool useEmail=false,useName=false,acceptTOS=false;
+			do {
+				Buffer *auth;
+				t = new TUIWindow("DreamZZT Online");
+				t->addWidget(new TUILabel("Please enter your C99.ORG"));
+				t->addWidget(new TUILabel("username and password."));
+				t->addWidget(new TUIWidget());
+				t->addWidget(new TUITextInput("  Username: ",&user));
+				t->addWidget(new TUIPasswordInput("  Password: ",&pass));
+				t->addWidget(new TUIWidget());
+				t->addWidget(new TUIHyperLink("login","Login to C99.ORG"));
+				t->addWidget(new TUIHyperLink("register","Create a new account"));
+				t->addWidget(new TUIHyperLink("cancel","Return to menu"));
+				t->doMenu();
+				if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "")
+					return;
+				if(t->getLabel() == "register") {
+					delete t;
+					t = new TUIWindow("DreamZZT Online");
+					t->addWidget(new TUILabel        ("Desired username:"));
+					t->addWidget(new TUITextInput    ("",&user));
+					t->addWidget(new TUILabel        ("Desired password:"));
+					t->addWidget(new TUIPasswordInput("",&pass));
+					t->addWidget(new TUILabel        ("Confirm password:"));
+					t->addWidget(new TUIPasswordInput("",&pass2));
+					t->addWidget(new TUILabel        ("Email address:"));
+					t->addWidget(new TUITextInput    ("",&email));
+					t->addWidget(new TUILabel        ("First name: (optional)"));
+					t->addWidget(new TUITextInput    ("",&first));
+					t->addWidget(new TUILabel        ("Last name: (optional)"));
+					t->addWidget(new TUITextInput    ("",&last));
+					t->addWidget(new TUICheckBox	 ("Display full name",&useName));
+					t->addWidget(new TUICheckBox	 ("Display email address",&useEmail));
+					t->addWidget(new TUICheckBox	 ("I accept the terms",&acceptTOS));
+					t->addWidget(new TUILabel        ("      of service",true,true));
+					t->addWidget(new TUIWidget());
+					t->addWidget(new TUIHyperLink("register","Register account"));
+					t->addWidget(new TUIHyperLink("cancel","Return to menu"));
+					t->addWidget(new TUIWidget());
+					t->addWidget(new TUILabel(" The terms of service can be",true));
+					t->addWidget(new TUILabel("          viewed at",true));
+					t->addWidget(new TUILabel("    http://forums.c99.org/",true,true));
+					t->doMenu();
+					if(switchbrd==-2 || t->getLabel() == "cancel" || t->getLabel() == "")
+						return;
+					url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=Register";
+					url += "&Name=" + user;
+					url += "&NewPassword=" + pass;
+					url += "&ConfirmPassword=" + pass2;
+					url += "&Email=" + email;
+					url += "&FirstName=" + first;
+					url += "&LastName=" + last;
+					url += "&ShowName=" + ToString((int)useName);
+					url += "&UtilizeEmail=" + ToString((int)useEmail);
+					url += "&AgreeToTerms=" + ToString((int)acceptTOS);
+				} else {
+					url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=AuthTest";
+				}
+				Base64 b64;
+				std::string auth_string = user + std::string(":") + pass;
+				Buffer *auth_buffer = new Buffer(auth_string.length(), (uint8 *)auth_string.c_str(), "text/plain");
+				auth = b64.encode(auth_buffer);
+				strcpy(http_auth, (const char *)auth->getData());
+				delete auth_buffer;
+				delete auth;
+
+				r->removeHeaderParam("Authorization");
+				r->setHeaderParam("Authorization", std::string("Basic ") + std::string(http_auth));
+				r->setUrl(url);
+				delete response;
+				response = ua.get(r);
+				
+				if(std::string((char *)(response->getContentPart(DEFAULT_CONTENT_PART)->getData())) != "OK") {
+					delete t;
+					std::string title;
+					if(tmp[0]=='$') { //The first line of the document is the window title
+						title = tmp.substr(1,tmp.find("\n"));
+						tmp.erase(0,tmp.find("\n")+1);
+					} else {
+						title = "Authentication Error";
+					}
+					t = new TUIWindow(title);
+					t->buildFromString((char *)(response->getContentPart(DEFAULT_CONTENT_PART)->getData()));
+					t->doMenu();
+					if(switchbrd==-2)
+						return;
+				} else {
+					url = DZZTNET_HOST + DZZTNET_HOME;
+				}
+			} while(std::string((char *)(response->getContentPart(DEFAULT_CONTENT_PART)->getData())) != "OK" && switchbrd != -2);
+			continue;
+		} else if(response->getResultCode() != 200) {
+			t = new TUIWindow("Service Unavailable");
+			t->buildFromString(
+"DreamZZT Online is currently\n\
+unavailable.  Please try again\n\
+Later.\n\
+\n\
+Error code: " + ToString(response->getResultCode()) +"\n");
+			t->doMenu();
+			delete t;
+			return;
+		}
 
 		if((url.find(".zzt") != std::string::npos) || (url.find(".ZZT") != std::string::npos) || (url.find(".sav") != std::string::npos) || (url.find(".SAV") != std::string::npos)) {
 #ifdef DEBUG
@@ -1372,7 +1456,9 @@ Online.\n\
 			filename = "/tmp/dzzthttp";
 #endif
 
-			http_get_file(filename, url);
+			f.open(filename, "wb+");
+			response->getContentPart(DEFAULT_CONTENT_PART)->write(f);
+			f.close();
 			world.online=1;
 			play_zzt(filename.c_str());
 			world.online=0;
@@ -1390,9 +1476,8 @@ Online.\n\
 #ifdef DEBUG
 			Debug::printf("Loading: %s\n", url.c_str());
 #endif
-
-			tmp = http_get_string(url);
-			if(tmp != "") {
+			if(response->getResultCode() == 200) {
+				tmp = std::string((char *)(response->getContentPart(DEFAULT_CONTENT_PART)->getData()));
 				std::string title;
 				if(tmp[0]=='$') { //The first line of the document is the window title
 					title = tmp.substr(1,tmp.find("\n"));
@@ -1400,40 +1485,51 @@ Online.\n\
 				} else {
 					title = "Online Content";
 				}
-				TUIWindow t(title);
-				t.buildFromString(tmp);
-				t.doMenu();
-				url = t.getLabel();
+				t = new TUIWindow(title);
+				t->buildFromString(tmp);
+				t->doMenu();
+				url = t->getLabel();
+				delete t;
 				if(url != "") {
 					if(url[0] == '/') {
 						url = DZZTNET_HOST + url;
 					} else if(url == "logout") {
-						curl_auth_string="";
+						http_auth[0] = '\0';
 						url = "";
 					} else {
 						url = DZZTNET_HOST + DZZTNET_HOME + "?PostBackAction=" + url;
 					}
 				}
 			} else {
-				while(1)
-					;
+				//something went wrong
 				break;
 			}
 		}
+		//delete response;
 	} while(url != "" && switchbrd != -2);
+	
+	delete r;
+	delete response;
 #endif
 }
 
 void check_tasks() {
 #ifdef NET
+	RefPtr<HttpUserAgent> ua = new HttpUserAgent;
+	RefPtr<Request> r = new Request;
+	RefPtr<Response> response;
 	std::list<Task*>::iterator task_iter;
+
+	ua->setUserAgentName(USER_AGENT);
+	r->setHeaderParam("Authorization", std::string("Basic ") + std::string(http_auth));
 
 	for(task_iter = taskList.begin(); task_iter != taskList.end(); task_iter++) {
 		if(!((*task_iter)->getComplete())) {
 			if(((*task_iter)->getBoard()==0 || (*task_iter)->getBoard()==currentbrd->num) && (*task_iter)->check()) {
 				Debug::printf("Task complete: %s\n",(*task_iter)->getTitle().c_str());
-				std::string s = http_get_string(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=CompleteTask&TaskID=") + ToString((*task_iter)->getID()));
-				if(s=="OK") {
+				r->setUrl(DZZTNET_HOST + DZZTNET_HOME + std::string("?PostBackAction=CompleteTask&TaskID=") + ToString((*task_iter)->getID()));
+				response = ua->get(r);
+				if(std::string((char *)(response->getContentPart(DEFAULT_CONTENT_PART)->getData()))=="OK") {
 					world.task_points += (*task_iter)->getValue();
 					draw_score();
 					TUIWindow t("Task Complete");
@@ -1449,8 +1545,11 @@ You've earned a bonus of " + ToString((*task_iter)->getValue()) + " points.\r");
 					t.buildFromString("The task may already be complete or\nhas been removed from the server.\n\nThis may also indicate an invalid\nusername or password.\n\nTaskID: " + ToString((*task_iter)->getID()) + "\n");
 					t.doMenu();
 				}
+				//delete response;
 			}
 		}
 	}
+	//delete ua;
+	//delete r;
 #endif
 }
