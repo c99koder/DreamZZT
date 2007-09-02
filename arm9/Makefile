@@ -2,7 +2,7 @@ TIKI_DIR = ../../tiki
 TIKI_PLAT = nds
 DEPSDIR = ../.deps
 
-OBJS = ../src/DreamZZT.o ../src/main.o ../src/console_nds.o ../src/debug.o ../src/sound.o ../src/task.o ../src/word.o ../src/bugreport.o ../src/http-nds.o \
+OBJS = ../src/DreamZZT.o ../src/main.o ../src/console_nds.o ../src/debug.o ../src/sound.o ../src/task.o ../src/word.o ../src/bugreport.o \
 ../src/window.o ../src/board.o ../src/status.o ../src/object.o ../src/editor.o \
 ../src/objects/passage.o ../src/objects/terrain.o ../src/objects/bullet.o ../src/objects/enemy.o \
 ../src/objects/dup.o ../src/objects/zztoop.o ../src/objects/pusher.o ../src/objects/bomb.o ../src/objects/items.o \
