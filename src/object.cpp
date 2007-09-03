@@ -561,65 +561,66 @@ void clearZZTObjectTypes() {
 }
 
 void buildZZTObjectTypes() {
-	ZZTObjectTypes[ZZT_EMPTY] = new Empty;//00
-	ZZTObjectTypes[ZZT_EDGE] = NULL;//01
-	ZZTObjectTypes[ZZT_EXPLOSION] = new Explosion;//02
-	ZZTObjectTypes[ZZT_PLAYER] = new Player;//04
-	ZZTObjectTypes[ZZT_AMMO] = new Ammo;//05
-	ZZTObjectTypes[ZZT_TORCH] = new Torch;//06
-	ZZTObjectTypes[ZZT_GEM] = new Gem;//07
-	ZZTObjectTypes[ZZT_KEY] = new Key;//08
-	ZZTObjectTypes[ZZT_DOOR] = new Door;//09
-	ZZTObjectTypes[ZZT_SCROLL] = new Scroll;//0A
-	ZZTObjectTypes[ZZT_PASSAGE] = new Passage;//0B
-	ZZTObjectTypes[ZZT_DUPLICATOR] = new Duplicator;//0C
-	ZZTObjectTypes[ZZT_BOMB] = new Bomb;//0D
-	ZZTObjectTypes[ZZT_ENERGIZER] = new Energizer;//0E
-	ZZTObjectTypes[ZZT_STAR] = NULL;//0F
-	ZZTObjectTypes[ZZT_CONVEYER_CW] = new ConveyerCW; //10
-	ZZTObjectTypes[ZZT_CONVEYER_CCW] = new ConveyerCCW; //11
-	ZZTObjectTypes[ZZT_BULLET] = new Bullet; //12, 45
-	ZZTObjectTypes[ZZT_WATER] = new Water;//13
-	ZZTObjectTypes[ZZT_FOREST] = new Forest;//14
-	ZZTObjectTypes[ZZT_SOLID] = new Solid;//15
-	ZZTObjectTypes[ZZT_NORMAL] = new Normal;//16
-	ZZTObjectTypes[ZZT_BREAKABLE] = new Breakable;//17
-	ZZTObjectTypes[ZZT_BOULDER] = new Boulder;//18
-	ZZTObjectTypes[ZZT_SLIDER_NS] = new SliderNS;//19
-	ZZTObjectTypes[ZZT_SLIDER_EW] = new SliderEW;//1A
-	ZZTObjectTypes[ZZT_FAKE] = new Fake;//1B
-	ZZTObjectTypes[ZZT_INVISIBLE] = new Invisible;//1C
-	ZZTObjectTypes[ZZT_BLINK] = new Blink;//1D
-	ZZTObjectTypes[ZZT_TRANSPORTER] = new Transporter;//1E
-	ZZTObjectTypes[ZZT_LINE] = new Line;//1F
-	ZZTObjectTypes[ZZT_RICOCHET] = new Ricochet;//20
-	ZZTObjectTypes[ZZT_HORIZONTAL_BLINK] = new HorizontalLaser;//21, 46
-	ZZTObjectTypes[ZZT_BEAR] = new Bear;//22
-	ZZTObjectTypes[ZZT_RUFFIAN] = new Ruffian;//23
-	ZZTObjectTypes[ZZT_OBJECT] = new ZZTOOP;//24
-	ZZTObjectTypes[ZZT_SLIME] = new Slime;//25
-	ZZTObjectTypes[ZZT_SHARK] = new Shark;//26
-	ZZTObjectTypes[ZZT_SPINNING_GUN] = new SpinningGun;//27
-	ZZTObjectTypes[ZZT_PUSHER] = new Pusher;//28
-	ZZTObjectTypes[ZZT_LION] = new Lion;//29
-	ZZTObjectTypes[ZZT_TIGER] = new Tiger;//2A
-	ZZTObjectTypes[ZZT_VERTICAL_BLINK] = new VerticalLaser;//2B, 47
-	ZZTObjectTypes[ZZT_CENTIPEDE_HEAD] = new CentipedeHead;//2C
-	ZZTObjectTypes[ZZT_CENTIPEDE_BODY] = new CentipedeBody;//2D
+	ZZTObjectTypes[ZZT_EMPTY] = new Empty;
+	ZZTObjectTypes[ZZT_EDGE] = NULL;
+	ZZTObjectTypes[ZZT_EXPLOSION] = new Explosion;
+	ZZTObjectTypes[ZZT_PLAYER] = new Player;
+	ZZTObjectTypes[ZZT_AMMO] = new Ammo;
+	ZZTObjectTypes[ZZT_TORCH] = new Torch;
+	ZZTObjectTypes[ZZT_GEM] = new Gem;
+	ZZTObjectTypes[ZZT_KEY] = new Key;
+	ZZTObjectTypes[ZZT_DOOR] = new Door;
+	ZZTObjectTypes[ZZT_SCROLL] = new Scroll;
+	ZZTObjectTypes[ZZT_PASSAGE] = new Passage;
+	ZZTObjectTypes[ZZT_DUPLICATOR] = new Duplicator;
+	ZZTObjectTypes[ZZT_BOMB] = new Bomb;
+	ZZTObjectTypes[ZZT_ENERGIZER] = new Energizer;
+	ZZTObjectTypes[ZZT_STAR] = NULL;
+	ZZTObjectTypes[ZZT_CONVEYER_CW] = new ConveyerCW;
+	ZZTObjectTypes[ZZT_CONVEYER_CCW] = new ConveyerCCW;
+	ZZTObjectTypes[ZZT_BULLET] = new Bullet;
+	ZZTObjectTypes[ZZT_WATER] = new Water;
+	ZZTObjectTypes[ZZT_FOREST] = new Forest;
+	ZZTObjectTypes[ZZT_SOLID] = new Solid;
+	ZZTObjectTypes[ZZT_NORMAL] = new Normal;
+	ZZTObjectTypes[ZZT_BREAKABLE] = new Breakable;
+	ZZTObjectTypes[ZZT_BOULDER] = new Boulder;
+	ZZTObjectTypes[ZZT_SLIDER_NS] = new SliderNS;
+	ZZTObjectTypes[ZZT_SLIDER_EW] = new SliderEW;
+	ZZTObjectTypes[ZZT_FAKE] = new Fake;
+	ZZTObjectTypes[ZZT_INVISIBLE] = new Invisible;
+	ZZTObjectTypes[ZZT_BLINK] = new Blink;
+	ZZTObjectTypes[ZZT_TRANSPORTER] = new Transporter;
+	ZZTObjectTypes[ZZT_LINE] = new Line;
+	ZZTObjectTypes[ZZT_RICOCHET] = new Ricochet;
+	ZZTObjectTypes[ZZT_HORIZONTAL_BLINK] = new HorizontalLaser;
+	ZZTObjectTypes[ZZT_BEAR] = new Bear;
+	ZZTObjectTypes[ZZT_RUFFIAN] = new Ruffian;
+	ZZTObjectTypes[ZZT_OBJECT] = new ZZTOOP;
+	ZZTObjectTypes[ZZT_SLIME] = new Slime;
+	ZZTObjectTypes[ZZT_SHARK] = new Shark;
+	ZZTObjectTypes[ZZT_SPINNING_GUN] = new SpinningGun;
+	ZZTObjectTypes[ZZT_PUSHER] = new Pusher;
+	ZZTObjectTypes[ZZT_LION] = new Lion;
+	ZZTObjectTypes[ZZT_TIGER] = new Tiger;
+	ZZTObjectTypes[ZZT_VERTICAL_BLINK] = new VerticalLaser;
+	ZZTObjectTypes[ZZT_CENTIPEDE_HEAD] = new CentipedeHead;
+	ZZTObjectTypes[ZZT_CENTIPEDE_BODY] = new CentipedeBody;
 	if(world.magic == MAGIC_SZT) {
-		ZZTObjectTypes[SZT_FLOOR]= new Floor;//FF)
-		ZZTObjectTypes[SZT_WATER_N] = new RiverN;//FF)
-		ZZTObjectTypes[SZT_WATER_S] = new RiverS;//FF)
-		ZZTObjectTypes[SZT_WATER_W] = new RiverW;//FF)
-		ZZTObjectTypes[SZT_WATER_E] = new RiverE;//FF)
+		ZZTObjectTypes[SZT_FLOOR] = new Floor;
+		ZZTObjectTypes[SZT_WATER_N] = new RiverN;
+		ZZTObjectTypes[SZT_WATER_S] = new RiverS;
+		ZZTObjectTypes[SZT_WATER_W] = new RiverW;
+		ZZTObjectTypes[SZT_WATER_E] = new RiverE;
+		ZZTObjectTypes[SZT_STONE] = new Stone;
 	}
-	ZZTObjectTypes[ZZT_BLUE_TEXT] = new BlueText;//2F :] = new //49)
-	ZZTObjectTypes[ZZT_GREEN_TEXT] = new GreenText;//30 :] = new //4A)
-	ZZTObjectTypes[ZZT_CYAN_TEXT] = new CyanText;//31 :] = new //4B)
-	ZZTObjectTypes[ZZT_RED_TEXT] = new RedText;//32 :] = new //4C)
-	ZZTObjectTypes[ZZT_PURPLE_TEXT] = new PurpleText;//33 :] = new //4D)
-	ZZTObjectTypes[ZZT_YELLOW_TEXT] = new YellowText;//34 :] = new //4E)
-	ZZTObjectTypes[ZZT_WHITE_TEXT] = new WhiteText;//35 :] = new //4F)
+	ZZTObjectTypes[ZZT_BLUE_TEXT] = new BlueText;
+	ZZTObjectTypes[ZZT_GREEN_TEXT] = new GreenText;
+	ZZTObjectTypes[ZZT_CYAN_TEXT] = new CyanText;
+	ZZTObjectTypes[ZZT_RED_TEXT] = new RedText;
+	ZZTObjectTypes[ZZT_PURPLE_TEXT] = new PurpleText;
+	ZZTObjectTypes[ZZT_YELLOW_TEXT] = new YellowText;
+	ZZTObjectTypes[ZZT_WHITE_TEXT] = new WhiteText;
 /*	ZZTObjectTypes[ZZT_EMPTY] = new //36	 | (set in colour byte) | White blinking text
 	ZZTObjectTypes[ZZT_EMPTY] = new //37	 | (set in colour byte) | Blue blinking text
 	ZZTObjectTypes[ZZT_EMPTY] = new //38	 | (set in colour byte) | Green blinking text
@@ -628,7 +629,7 @@ void buildZZTObjectTypes() {
 	ZZTObjectTypes[ZZT_EMPTY] = new //3B	 | (set in colour byte) | Purple blinking text
 	ZZTObjectTypes[ZZT_EMPTY] = new //3C	 | (set in colour byte) | Yellow blinking text
 	ZZTObjectTypes[ZZT_EMPTY] = new //3D	 | (set in colour byte) | Grey blinking text*/
-	ZZTObjectTypes[ZZT_LUA] = new ZZTLUA;//60
+	ZZTObjectTypes[ZZT_LUA] = new ZZTLUA;
 }
 
 ZZTObject *create_object(int type) {

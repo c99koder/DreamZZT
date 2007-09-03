@@ -34,6 +34,7 @@ using namespace Tiki::Hid;
 #include "console.h"
 #include "board.h"
 #include "object.h"
+#include "status.h"
 #ifdef USE_3DMODEL
 #include "GraphicsLayer.h"
 
@@ -149,10 +150,10 @@ void give_time(int count) {
 }
 
 void draw_ammo() {
-	st->putColor(2,(world.magic == 65534)?10:9, HIGH_INTENSITY | CYAN | (BLUE << 8));
-	st->putChar(2,(world.magic == 65534)?10:9,0x84);
+	st->putColor(2,(world.magic == MAGIC_SZT)?10:9, HIGH_INTENSITY | CYAN | (BLUE << 8));
+	st->putChar(2,(world.magic == MAGIC_SZT)?10:9,0x84);
 
-	st->locate(3, (world.magic == 65534)?10:9);
+	st->locate(3, (world.magic == MAGIC_SZT)?10:9);
 	st->color(14,1);
 	st->printf("    Ammo:%i   ",world.ammo);
 }
@@ -179,7 +180,7 @@ void draw_health() {
 
 	st->locate(3,8);
 	st->color(14,1);
-	if(world.magic == 65534) {
+	if(world.magic == MAGIC_SZT) {
 		*st << "  Health:";
 		m.draw(st);
 	} else {
@@ -200,8 +201,36 @@ void give_health(int count) {
 	draw_health();
 }
 
+void draw_z() {
+	if(world.magic == MAGIC_SZT && world.z != -1) {
+		if(world.z < 0) world.z = 0;
+		for(int i=0; i < 16; i++) {
+			if(world.flags[i][0] == 'Z') {
+				st->locate(3,9);
+				st->color(14,1);
+				*st << (char *)(world.flags[i].c_str() + 1);
+				st->locate(3+8,9);
+				*st << ":" << world.z << "   ";
+			}
+		}
+	}
+}
+
+void take_z(int count) {
+	if(world.z<count)
+		world.z=0;
+	else
+		world.z-=count;
+	draw_z();
+}
+
+void give_z(int count) {
+	world.z+=count;
+	draw_z();
+}
+
 void draw_torch() {
-	if(world.magic == 65534)
+	if(world.magic == MAGIC_SZT)
 		return;
 	unsigned int t = world.torch_cycle;
 	TUIMeter m(&t, 200, 4);
@@ -314,6 +343,7 @@ void draw_hud_ingame() {
 	draw_health();
 	draw_ammo();
 	draw_torch();
+	draw_z();
 	draw_gems();
 	draw_score();
 	draw_keys();
@@ -324,7 +354,7 @@ void draw_hud_ingame() {
 	st->color(0,7);
 	st->printf(" X ");
 	st->color(15,1);
-	if(world.magic == 65534)
+	if(world.magic == MAGIC_SZT)
 		st->printf(" Hint");
 	else
 		st->printf(" Torch");
@@ -357,12 +387,12 @@ void draw_hud_ingame() {
 
 	st->locate(9,15);
 	st->color(0,7);
-	if(world.magic == 65534)
+	if(world.magic == MAGIC_SZT)
 		st->printf(" H ");
 	else
 		st->printf(" T ");
 	st->color(15,1);
-	if(world.magic == 65534)
+	if(world.magic == MAGIC_SZT)
 		st->printf(" Hint");
 	else
 		st->printf(" Torch");

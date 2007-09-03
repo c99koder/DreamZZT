@@ -1016,8 +1016,9 @@ int load_szt(const char *filename, int titleonly) {
 		world.flags[i] = pad;
 		printf("Flag %i: %s\n", i, pad);
 	}
-	fd.read(pad,3);
+	fd.read(pad,4);
 	fd.read(&world.saved, 1);
+	fd.readle16(&world.z,1);
 	world.editing = 0;
 	world.task_points = 0;
 
@@ -1037,6 +1038,7 @@ int load_szt(const char *filename, int titleonly) {
 	printf("Health: %i\n",world.health);
 	printf("Start: %i\n",world.start);
 	printf("Title: %s\n",world.title.c_str());
+	printf("Saved: %i\n",world.saved);
 #endif
 
 	fd.seek(0x400,SEEK_SET); //seek to the first board
@@ -1073,15 +1075,15 @@ int load_szt(const char *filename, int titleonly) {
 		current->num=q;
 		current->compressed=true;
 		fd.read(&current->maxshots,1);
-		fd.read(&current->dark,1);
 		fd.read(&current->board_up,1);
 		fd.read(&current->board_down,1);
 		fd.read(&current->board_left,1);
 		fd.read(&current->board_right,1);
 		fd.read(&current->reenter,1);
 		current->msgcount=0;
+		current->dark=0;
 		current->message[0]='\0';
-		fd.read(pad,5);
+		fd.read(pad,6);
 		fd.readle16(&current->time,1);
 #ifdef DEBUG
 

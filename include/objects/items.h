@@ -22,7 +22,7 @@ public:
 	Inventory() {
 	}
 	virtual bool get() { return false; }
-
+	virtual void update() { }
 	void message(ZZTObject *them, std::string msg);
 };
 
@@ -117,4 +117,21 @@ public:
 	}
 	bool get();
 	int type() { return ZZT_DOOR; }
+};
+
+class Stone : public Inventory {
+public:
+	Stone() {
+		m_fg = 9 + (rand() % 8);
+		m_bg = BLACK;
+		m_shape = 'A' + (rand() % 26);
+		m_flags = F_ITEM;
+		m_name = "stone";
+	}
+	ZZTObject *alloc() {
+		return new Stone();
+	}
+	bool get();
+	void update();
+	int type() { return SZT_STONE; }
 };

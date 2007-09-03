@@ -99,6 +99,7 @@ struct world_header {
 	std::string flags[16];
 	unsigned short int time;
 	unsigned char saved;
+	short int z;
 	unsigned char editing;
 	unsigned char online;
 	unsigned short int task_points;

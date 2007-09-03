@@ -55,6 +55,7 @@ enum kwds {
 	kwdHealth,
 	kwdScore,
 	kwdTime,
+	kwdZ = SZT_STONE,
 //logic flags
 	kwdAny,
 	kwdAligned,
@@ -177,6 +178,7 @@ void buildSyntaxMap() {
 	Inventorys["score"] = kwdScore;
 	Inventorys["torches"] = kwdTorch;
 	Inventorys["time"] = kwdTime;
+	Inventorys["z"] = kwdZ;
 	
 	for(std::map<int, ZZTObject *>::iterator o = ZZTObjectTypes.begin(); o != ZZTObjectTypes.end(); o++) {
 		if(o->second != NULL) ZZTObjects[o->second->name()] = o->first;
@@ -737,6 +739,9 @@ void ZZTOOP::exec(std::string text) {
 					case kwdTime:
 						give_time(keywords[2].value);
 						break;
+					case kwdZ:
+						give_z(keywords[2].value);
+						break;
 				}
 				goagain=1;
 				break;
@@ -984,6 +989,12 @@ void ZZTOOP::exec(std::string text) {
 							zzt_goto(keywords[3].word);
 						} else
 							take_time(keywords[2].value);
+						break;
+					case kwdZ:
+						if(keywords.size() > 3 && world.z<keywords[2].value) {
+							zzt_goto(keywords[3].word);
+						} else
+							take_z(keywords[2].value);
 						break;
 				}
 				goagain=1;

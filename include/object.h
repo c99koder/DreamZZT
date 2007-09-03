@@ -284,6 +284,7 @@ private:
 #define SZT_WATER_S 0x31
 #define SZT_WATER_W 0x32
 #define SZT_WATER_E 0x33
+#define SZT_STONE 0x40
 
 #define F_NONE 0
 #define F_EMPTY 1

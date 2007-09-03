@@ -190,6 +190,24 @@ bool Torch::get() {
 	return true;
 }
 
+bool Stone::get() {
+	give_z(1);
+	set_msg("You have found a\rStone of Power!");
+	if(zm!=NULL)
+		zm->setTune("tcase");
+	if(zm!=NULL)
+		zm->start();
+	return true;
+}
+
+void Stone::update() {
+	m_fg++;
+	if(m_fg>15)
+		m_fg=9;
+	m_shape = 'A' + rand() % 26;
+	draw();
+}
+
 bool Key::get() {
 	char tmp[128];
 	if(world.keys[(m_fg%8)-1]==1) {

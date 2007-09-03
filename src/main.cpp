@@ -1117,6 +1117,7 @@ complete this game.\r\
 #endif
 
 					switch_board(world.start);
+					draw_hud_ingame();
 				}
 			} else if(t.getLabel() == "save") {
 				switchbrd = -4;
