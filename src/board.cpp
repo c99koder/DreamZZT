@@ -122,6 +122,7 @@ void free_world() {
 	}
 	board_list=NULL;
 	currentbrd=NULL;
+	clearZZTObjectTypes();
 }
 
 void put(ZZTObject *o, int x, int y, bool ignoreUnder) {

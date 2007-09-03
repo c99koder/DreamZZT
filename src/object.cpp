@@ -556,6 +556,10 @@ void ZZTObject::edit() {
 
 std::map <int, ZZTObject *> ZZTObjectTypes;
 
+void clearZZTObjectTypes() {
+	ZZTObjectTypes.clear();
+}
+
 void buildZZTObjectTypes() {
 	ZZTObjectTypes[ZZT_EMPTY] = new Empty;//00
 	ZZTObjectTypes[ZZT_EDGE] = NULL;//01

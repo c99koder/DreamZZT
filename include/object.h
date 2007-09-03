@@ -301,5 +301,6 @@ private:
 #include "objects/enemy.h"
 
 ZZTObject *create_object(int type);
+void clearZZTObjectTypes();
 #endif
 
