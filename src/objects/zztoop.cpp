@@ -574,6 +574,8 @@ void ZZTOOP::exec(std::string text) {
 	if(m_watch)
 		debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
 
+	printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
+
 	if(keywords[0].type == ktypeDirection) {
 		move((direction)keywords[0].value, true);
 	} else if(keywords[0].type == ktypeCommand) {
@@ -1068,6 +1070,8 @@ void ZZTOOP::update() {
 			}
 			m_progpos += (y-1);
 
+			transform(text.begin(), text.end(), text.begin(), ::tolower);
+
 			if(m_watch)
 				debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
 
@@ -1081,6 +1085,9 @@ void ZZTOOP::update() {
 				text += m_prog[y+x];
 				y++;
 			}
+			
+			transform(text.begin(), text.end(), text.begin(), ::tolower);
+			
 			if(m_watch)
 				debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
 
