@@ -222,7 +222,7 @@ void *process_debug(void *) {
 		} else if(debug_cmdline == "edit") {
 			switchbrd=-5;
 		} else if(debug_cmdline == "flags") {
-			for(int i=0; i<10; i++) {
+			for(int i=0; i<((world.magic == MAGIC_SZT)?16:10); i++) {
 				debug("%i: %s\n",i,world.flags[i].c_str());
 			}
 		} else if(debug_cmdline == "warp") {

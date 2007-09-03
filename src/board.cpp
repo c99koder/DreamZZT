@@ -1006,12 +1006,12 @@ int load_szt(const char *filename, int titleonly) {
 	fd.readle16(&world.pad1,1);
 	fd.readle16(&world.energizer_cycle,1);
 	fd.read(&len,1);
-	fd.read(pad,21);
+	fd.read(pad,20);
 	pad[len] = '\0';
 	world.title = pad;
 	for(int i=0; i< 16; i++) {
 		fd.read(&len,1);
-		fd.read(pad,21);
+		fd.read(pad,20);
 		pad[len] = '\0';
 		world.flags[i] = pad;
 		printf("Flag %i: %s\n", i, pad);
@@ -1374,14 +1374,14 @@ void save_game(const char *filename) {
 	}
 	x=world.title.length();
 	fd.write(&x,1);
-	world.title.resize((world.magic==65534)?21:20);
-	fd.write(world.title.c_str(),(world.magic==65534)?21:20);
+	world.title.resize(20);
+	fd.write(world.title.c_str(),20);
 	world.title.resize(x);
 	for(int i=0; i<((world.magic==65534)?16:10); i++) {
 		x=world.flags[i].length();
 		fd.write(&x,1);
-		world.flags[i].resize((world.magic==65534)?21:20);
-		fd.write(world.flags[i].c_str(),(world.magic==65534)?21:20);
+		world.flags[i].resize(20);
+		fd.write(world.flags[i].c_str(),20);
 		world.flags[i].resize(x);
 	}
 	fd.writele16(&world.time,1); //FIXME: This should be total game time, not current board time remaining
