@@ -121,13 +121,7 @@ void Blink::update() {
 void Text::create() {
 	m_shape=m_bg*16+m_fg;
 	m_fg=15;
-	if(m_type==ZZT_WHITE_TEXT) {
-		m_bg=0;
-		m_color=&m_fg;
-	} else {
-		m_bg=m_textcolor;
-		m_color=&m_bg;
-	}
+	m_color=&m_bg;
 }
 
 void Water::message(ZZTObject *them, std::string message) {

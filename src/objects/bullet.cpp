@@ -135,7 +135,7 @@ void ZZTObject::shoot(enum direction dir) {
 		return;
 	}
 
-	if(m_type==ZZT_PLAYER) {
+	if(m_name=="player") {
 		if(world.ammo<1) {
 			//sprintf(buf,"You don't have any %s",ammo_name);
 			set_msg("You don't have any ammo");
@@ -143,7 +143,7 @@ void ZZTObject::shoot(enum direction dir) {
 		}
 	}
 	if(is_empty(dir) || currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->type() == ZZT_WATER) {
-		if(m_type==ZZT_PLAYER) {
+		if(m_name=="player") {
 			world.ammo--;
 			draw_ammo();
 		}
@@ -153,7 +153,7 @@ void ZZTObject::shoot(enum direction dir) {
 		bullet->setCycle(1);
 		put(bullet, bullet->position().x, bullet->position().y);
 		if(zm != NULL && !zm->isPlaying()) {
-			if(m_type==ZZT_PLAYER) {
+			if(m_name=="player") {
 				if(zm!=NULL)
 					zm->setTune("t+c-c-c");
 			} else {
@@ -164,8 +164,7 @@ void ZZTObject::shoot(enum direction dir) {
 				zm->start();
 		}
 	} else {
-		ZZTObject *o = get
-			               (dir);
+		ZZTObject *o = get(dir);
 		if(o!=NULL) {
 			if(o->type()==ZZT_BREAKABLE) {
 				remove_from_board(currentbrd,o);
@@ -173,7 +172,7 @@ void ZZTObject::shoot(enum direction dir) {
 				o->message(this,"shot");
 			}
 			if(is_empty(dir)) {
-				if(m_type==ZZT_PLAYER) {
+				if(m_name=="player") {
 					world.ammo--;
 					draw_ammo();
 				}

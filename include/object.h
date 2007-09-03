@@ -193,7 +193,6 @@ protected:
 	int m_bg;
 	int *m_color;
 	direction m_heading;
-	int m_type;
 	unsigned char m_shape;
 	std::string m_name;
 	int m_flags;

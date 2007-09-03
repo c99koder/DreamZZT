@@ -250,10 +250,10 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	ZZTObject *them=NULL;
 	int x,y,oldx,oldy,suc=0;
 
-	if(m_type==ZZT_SLIDER_NS&&(dir==LEFT||dir==RIGHT)) {
+	if(m_name=="sliderns"&&(dir==LEFT||dir==RIGHT)) {
 		return 0;
 	}
-	if(m_type==ZZT_SLIDER_EW&&(dir==UP||dir==DOWN)) {
+	if(m_name=="sliderew"&&(dir==UP||dir==DOWN)) {
 		return 0;
 	}
 	oldx = (int)m_position.x;
@@ -291,7 +291,7 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	if(y>=BOARD_Y) {
 		y=BOARD_Y-1;
 	}
-	if((m_type != ZZT_SHARK && is_empty(dir)) || ((m_type==ZZT_BULLET || m_type==ZZT_SHARK) && m_board->board[x][y].obj->type()==ZZT_WATER)) {
+	if((m_name != "shark" && is_empty(dir)) || ((m_name=="bullet" || m_name=="shark") && m_board->board[x][y].obj->type()==ZZT_WATER)) {
 		m_position.x = (float)x;
 		m_position.y = (float)y;
 		m_heading = dir;
@@ -336,7 +336,7 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 			if(suc==0) {
 				if(!trying && !(m_flags & F_SLEEPING))
 					message(them,"thud");
-				if(!trying && !(them->flags() & F_SLEEPING) && m_type != ZZT_BULLET) {
+				if(!trying && !(them->flags() & F_SLEEPING) && m_name != "bullet") {
 					them->message(this,"touch");
 					task_touch(them);
 				}
@@ -396,7 +396,6 @@ ZZTObject::ZZTObject() {
 	m_step.x = 0.0f;
 	m_step.y = 0.0f;
 	m_heading = IDLE;
-	m_type = 0;
 	m_cycle=0;
 	m_flags=0;
 	m_shape='!';
@@ -444,7 +443,7 @@ void ZZTObject::draw() {
 	if(m_position.x - disp_off_x < 0 || m_position.x - disp_off_x >= ct->getCols() || m_position.y - disp_off_y < 0 || m_position.y - disp_off_y >= ct->getRows())
 		return;
 
-	if(m_type == ZZT_OBJECT && debug_show_objects) {
+	if(m_name == "object" && debug_show_objects) {
 		ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, (HIGH_INTENSITY | ((rand() % 6)+1)));
 		ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, (rand()%125) + 129);
 		return;
@@ -501,7 +500,7 @@ void ZZTObject::draw() {
 		if(m_position.x > BOARD_X) {
 			int color = ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8);
 			st->putColor((int)m_position.x - BOARD_X, (int)m_position.y, color);
-			if(world.editing==1 && m_type == ZZT_INVISIBLE) {
+			if(world.editing==1 && m_name == "invisible") {
 #ifdef USE_3DMODEL
 				if(!gl->put((int)m_position.x - BOARD_X, (int)m_position.y, color, m_height, m_modelName, m_highlighted && (m_flash < 30)))
 #endif
@@ -517,7 +516,7 @@ void ZZTObject::draw() {
 		} else {
 			int color = ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8);
 			ct->putColor((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, ((m_fg > 7) ? HIGH_INTENSITY : 0) | (m_fg%8) | (m_bg << 8));
-			if(world.editing==1 && m_type == ZZT_INVISIBLE) {
+			if(world.editing==1 && m_name == "invisible") {
 				ct->putChar((int)m_position.x - disp_off_x, (int)m_position.y - disp_off_y, 0xB0);
 			} else {
 #ifdef USE_3DMODEL
