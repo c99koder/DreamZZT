@@ -574,7 +574,7 @@ void ZZTOOP::exec(std::string text) {
 	if(m_watch)
 		debug("\x1b[1;37m%s: \x1b[0;37m%s\n",get_zztobj_name().c_str(), text.c_str());
 
-	printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
+	//printf("%s: %s\n",get_zztobj_name().c_str(), text.c_str());
 
 	if(keywords[0].type == ktypeDirection) {
 		move((direction)keywords[0].value, true);
@@ -595,6 +595,8 @@ void ZZTOOP::exec(std::string text) {
 						k.word = "empty";
 						keywords.push_back(k);
 					}
+				} else {
+					color = -1;
 				}
 				if(keywords[1].value < 0) {
 					set_msg("ERR: undefined item");

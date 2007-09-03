@@ -185,8 +185,6 @@ void Bear::message(ZZTObject *them, std::string message) {
 }
 
 void Enemy::message(ZZTObject *them, std::string message) {
-	if(them->type() == ZZT_PLAYER || them->type() == ZZT_BULLET) Debug::printf("Enemy: %s from %s\n", message.c_str(), them->name().c_str());
-
 	if(((message == "shot" && them->type() == ZZT_BULLET && them->param(1) == 0) || them->type()==ZZT_PLAYER || message == "bombed")) {
 		if(message == "touch" || message == "thud") {
 			them->message(this,"shot");

@@ -414,7 +414,7 @@ void remove_from_board(struct board_info_node *brd, ZZTObject *me, bool ignoreUn
 				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y-1].obj->fg());
 				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y-1].obj->bg());
 			} else {
-				brd->board[(int)pos.x][(int)pos.y].obj=create_object((world.magic == MAGIC_SZT)?SZT_FLOOR:ZZT_EMPTY);
+				brd->board[(int)pos.x][(int)pos.y].obj=create_object(ZZT_EMPTY);
 				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 			}
 			brd->board[(int)pos.x][(int)pos.y].obj->create();
