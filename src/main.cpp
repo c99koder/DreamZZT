@@ -318,7 +318,24 @@ bool submit_bug(std::string email, std::string summary, std::string description)
 #endif
 
 		}
+		TUIWindow w("Bug Report");
+		w.buildFromString("Ticket #" + ToString(bug.getNum()) + " has been opened\r\
+for this issue.  You can track the\r\
+progress of this ticket at:\r\
+\r\
+$http://dev.c99.org/DreamZZT/query\r\
+\r\
+If you provided a valid email address,\r\
+you will be notified of updates to\r\
+this ticket.\r");
+		w.doMenu();
+
 		return true;
+	} else {
+		TUIWindow w("Bug Report");
+		w.buildFromString("There was a problem submitting\r\
+your bug report.  Please try again.\r");
+		w.doMenu();
 	}
 #endif
 	return false;
