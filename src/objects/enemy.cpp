@@ -152,6 +152,33 @@ void Tiger::update() {
 	}
 }
 
+void Roton::setParam(int arg, unsigned char val) {
+	if(arg == 2)
+		m_rate = val;
+
+	Enemy::setParam(arg,val);
+}
+
+unsigned char Roton::param(int arg) {
+	if(arg == 2)
+		return m_rate;
+
+	return Enemy::param(arg);
+}
+
+void Roton::update() {
+	if(m_rate == 0) return;
+	m_counter++;
+	if(m_counter > (9 - m_rate) || m_heading == IDLE) {
+		m_heading = toward(player);
+		if(rand()%18 < (9-m_intel)) {
+			m_heading = opposite(clockwise(m_heading));
+		}
+		m_counter = 0;
+	}
+	move(m_heading);
+}
+
 void Lion::create() {
 	m_fg = 12;
 }

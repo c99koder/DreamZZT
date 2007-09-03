@@ -61,6 +61,30 @@ public:
 	}
 };
 
+class Roton : public Enemy {
+public:
+	Roton() {
+		m_shape = 0x94;
+		m_name = "roton";
+		m_flags = F_PUSHABLE|F_OBJECT;
+		m_rate = 4;
+		m_counter = 0;
+	}
+	void update();
+	int type() { return SZT_ROTON; }
+	ZZTObject *alloc() {
+		return new Roton();
+	}
+	void setParam(int arg, unsigned char val);
+	unsigned char param(int arg);
+	void addEditWidgets(TUIWindow *w) {
+		Enemy::addEditWidgets(w);
+		w->addWidget(new TUISlider("Switch Rate          ",&m_rate));
+	}
+private:
+	int m_rate,m_counter;
+};
+
 class Shark : public Lion {
 public:
 	Shark() {

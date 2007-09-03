@@ -613,6 +613,7 @@ void buildZZTObjectTypes() {
 		ZZTObjectTypes[SZT_WATER_W] = new RiverW;
 		ZZTObjectTypes[SZT_WATER_E] = new RiverE;
 		ZZTObjectTypes[SZT_STONE] = new Stone;
+		ZZTObjectTypes[SZT_ROTON] = new Roton;
 	}
 	ZZTObjectTypes[ZZT_BLUE_TEXT] = new BlueText;
 	ZZTObjectTypes[ZZT_GREEN_TEXT] = new GreenText;
