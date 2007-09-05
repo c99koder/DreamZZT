@@ -75,7 +75,7 @@ ifeq ($(TIKI_PLAT),dc)
 CFLAGS += -I$(KOS_BASE)/../kos-ports/lua/src -I$(KOS_BASE)/../kos-ports/lua/include -Iinclude
 CXXFLAGS += -I$(KOS_BASE)/../kos-ports/lua/src -I$(KOS_BASE)/../kos-ports/lua/include
 else
-CFLAGS += -Ilua -Ilua/lib
+CFLAGS += -Ilua -Ilua/lib -Iinclude
 CXXFLAGS += -Ilua -Ilua/lib -DNET
 endif
 
