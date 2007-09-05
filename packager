@@ -6,7 +6,7 @@ dummy:
 	echo "Please specify a platform: dc, linux, nds, mac, win32"
 
 dc: data
-	sh-elf-objcopy -R .stack -O binary dreamzzt dreamzzt.bin
+	sh-elf-objcopy -R .stack -O binary dreamzzt.elf dreamzzt.bin
 	cp dreamzzt.bin ${DESTDIR}
 	zip dist/3.1.`svnversion .`/${DESTDIR}-dc.zip ${DESTDIR}/*
 	rm -rf ${DESTDIR}
