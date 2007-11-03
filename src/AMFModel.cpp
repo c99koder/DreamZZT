@@ -9,7 +9,7 @@
 
 #include "AMFModel.h"
 
-extern ConsoleText *ct;
+extern Console *ct;
 
 AMFModel::AMFModel(void) {
 	isValid = false;

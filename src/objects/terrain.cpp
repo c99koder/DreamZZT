@@ -34,7 +34,7 @@ using namespace Tiki::Audio;
 #include "sound.h"
 
 extern ZZTMusicStream *zm;
-extern ConsoleText *ct;
+extern Console *ct;
 
 extern struct board_info_node *currentbrd;
 extern struct world_header world;

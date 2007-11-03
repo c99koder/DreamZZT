@@ -56,7 +56,7 @@ using namespace Tiki::Hid;
 #include "board.h"
 #include <malloc.h>
 
-extern ConsoleText *ct;
+extern Console *ct;
 extern world_header world;
 
 KOS_INIT_FLAGS(INIT_DEFAULT | INIT_MALLOCSTATS);
@@ -411,7 +411,7 @@ std::string os_save_file(std::string title, std::string filename, std::string fi
 
 #include "board.h"
 
-extern ConsoleText *ct;
+extern Console *ct;
 extern struct world_header world;
 extern "C" int tiki_main(int argc, char *argv[]);
 

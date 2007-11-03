@@ -33,7 +33,7 @@ public:
 
 	virtual ~TUIWidget() {}
 
-	virtual void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {}
+	virtual void draw(Console *ct, int top=0, int bottom=1, int y_pos=0) {}
 	;
 	virtual void focus(bool f);
 	void update();
@@ -74,7 +74,7 @@ public:
 
 	~TUILabel() {}
 
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {
+	void draw(Console *ct, int top=0, int bottom=1, int y_pos=0) {
 		ct->color((m_bold?WHITE:YELLOW)|HIGH_INTENSITY,m_bg);
 		if(m_ansi)
 			ct->setANSI(true);
@@ -98,7 +98,7 @@ public:
 		focus(false);
 	}
 	void focus(bool f);
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+	void draw(Console *ct, int top=0, int bottom=1, int y_pos=0);
 	const std::string getHelpText() {
 		return "Use keyboard to edit text";
 	}
@@ -121,7 +121,7 @@ protected:
 class TUIPasswordInput : public TUITextInput {
 public:
 	TUIPasswordInput(std::string label, std::string *text) : TUITextInput(label,text) { }
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+	void draw(Console *ct, int top=0, int bottom=1, int y_pos=0);
 };
 
 class TUICheckBox : public TUIWidget {
@@ -138,7 +138,7 @@ public:
 		m_checked_uc=checked;
 	}
 
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {
+	void draw(Console *ct, int top=0, int bottom=1, int y_pos=0) {
 		ct->color(WHITE|HIGH_INTENSITY,m_bg);
 		if(m_checked_b != NULL)
 			*ct << "  [" << ((*m_checked_b)?"\xfb":" ") << "] " << m_text;
@@ -176,7 +176,7 @@ public:
 		m_options.push_back(text);
 	}
 
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+	void draw(Console *ct, int top=0, int bottom=1, int y_pos=0);
 	const std::string getHelpText() {
 		return "Press LEFT or RIGHT to change this";
 	}
@@ -212,7 +212,7 @@ public:
 	TUINumericInput(std::string text, unsigned short int *num, int min, int max, int step=1);
 	TUINumericInput(std::string text, float *num, int min, int max, int step=1);
 	TUINumericInput(std::string text, unsigned char *num, int min, int max, int step=1);
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+	void draw(Console *ct, int top=0, int bottom=1, int y_pos=0);
 	const std::string getHelpText() {
 		return "Press LEFT or RIGHT to change this";
 	}
@@ -234,7 +234,7 @@ public:
 		m_blink = false;
 	}
 
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+	void draw(Console *ct, int top=0, int bottom=1, int y_pos=0);
 private:
 	bool m_blink;
 	int m_blinkTimer;
@@ -248,7 +248,7 @@ public:
 		m_width = width;
 	}
 
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0);
+	void draw(Console *ct, int top=0, int bottom=1, int y_pos=0);
 private:
 	unsigned int *m_val;
 	int m_max, m_width;
@@ -261,7 +261,7 @@ public:
 		m_label=label;
 	}
 
-	void draw(ConsoleText *ct, int top=0, int bottom=1, int y_pos=0) {
+	void draw(Console *ct, int top=0, int bottom=1, int y_pos=0) {
 		ct->color(MAGENTA|HIGH_INTENSITY,m_bg);
 		*ct << " \x10 ";
 #if TIKI_PLAT != TIKI_NDS
@@ -335,7 +335,7 @@ private:
 	bool m_dirty;
 };
 
-void draw_shadow(ConsoleText *console, int x, int y);
-void draw_box(ConsoleText *console, int x, int y, int w, int h, int fg, int bg, bool shadow=true);
+void draw_shadow(Console *console, int x, int y);
+void draw_box(Console *console, int x, int y, int w, int h, int fg, int bg, bool shadow=true);
 
 #endif

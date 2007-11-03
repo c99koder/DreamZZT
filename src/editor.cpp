@@ -18,7 +18,6 @@
  */
 
 #include <Tiki/tiki.h>
-#include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/eventcollector.h>
@@ -44,8 +43,8 @@ std::string os_select_file(std::string title, std::string filter);
 std::string os_save_file(std::string title, std::string filename, std::string filter);
 #endif
 
-extern ConsoleText *ct;
-extern ConsoleText *st;
+extern Console *ct;
+extern Console *st;
 
 extern struct world_header world;
 extern struct board_info_node *board_list;

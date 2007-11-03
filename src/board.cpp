@@ -18,7 +18,6 @@
  */
 
 #include <Tiki/tiki.h>
-#include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/eventcollector.h>
@@ -49,9 +48,9 @@ extern int disp_off_x, disp_off_y;
 
 extern ZZTMusicStream *zm;
 
-extern ConsoleText *ct;
-extern ConsoleText *dt;
-extern ConsoleText *st;
+extern Console *ct;
+extern Console *dt;
+extern Console *st;
 
 struct world_header world;
 struct board_info_node *board_list=NULL;
@@ -1146,10 +1145,10 @@ int load_szt(const char *filename, int titleonly) {
 	delete ct;
 #if TIKI_PLAT == TIKI_NDS
 
-	ct = new ConsoleText(32, 24, false);
+	ct = new Console(32, 24, false);
 #else
 
-	ct = new ConsoleText(30, 25, zzt_font);
+	ct = new Console(30, 25, zzt_font);
 #endif
 
 	ct->setSize(30 * 16, SCREEN_Y);

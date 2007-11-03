@@ -18,7 +18,6 @@
  */
 
 #include <Tiki/tiki.h>
-#include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/tikitime.h>
@@ -40,8 +39,8 @@ using namespace Tiki::Hid;
 
 extern GraphicsLayer *gl;
 #endif
-ConsoleText *st;
-extern ConsoleText *ct;
+Console *st;
+extern Console *ct;
 extern struct board_info_node *currentbrd;
 extern unsigned char zztascii[55];
 extern struct world_header world;

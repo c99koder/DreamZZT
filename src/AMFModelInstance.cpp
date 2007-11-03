@@ -4,8 +4,6 @@
 using namespace std;
 using namespace Tiki;
 using namespace Tiki::GL;
-using namespace Tiki::GL::Plxcompat;
-
 
 AMFModelInstance::AMFModelInstance(const string modelName, const Vector& position, const Vector& color, const int height) {
 	model = modelManager.getModel(modelName);

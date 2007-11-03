@@ -59,9 +59,9 @@ extern Texture *zzt_font;
 #define SCREEN_Y 480
 #endif
 
-ConsoleText *dt=NULL;
-extern ConsoleText *ct;
-extern ConsoleText *st;
+Console *dt=NULL;
+extern Console *ct;
+extern Console *st;
 
 int debug_hidCookie=-1;
 extern Player *player;
@@ -268,7 +268,7 @@ void *process_debug(void *) {
 		} else if(debug_cmdline.find("viewport ") == 0) {
 			std::vector<std::string> args = wordify(debug_cmdline,' ');
 			delete ct;
-			ct = new ConsoleText(atoi(args[1].c_str()), atoi(args[2].c_str()), zzt_font);
+			ct = new Console(atoi(args[1].c_str()), atoi(args[2].c_str()), zzt_font);
 			ct->setSize(30 * 16, SCREEN_Y / 2);
 			ct->translate(Vector(30 * 8, SCREEN_Y / 2 * 3,0));
 			draw_board();
@@ -357,7 +357,7 @@ void debug_hidCallback(const Event & evt, void * data) {
 
 void debug_init() {
 #if TIKI_PLAT != TIKI_NDS
-	dt = new ConsoleText(60,25,zzt_font);
+	dt = new Console(60,25,zzt_font);
 	dt->setSize(60*8,240);
 	dt->setTranslate(Vector(1024,360,0));
 	dt->setANSI(true);

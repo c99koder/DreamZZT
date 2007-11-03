@@ -18,7 +18,6 @@
  */
 
 #include <Tiki/tiki.h>
-#include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/tikitime.h>
@@ -39,9 +38,9 @@ using namespace Tiki::Thread;
 #include "sound.h"
 
 extern ZZTMusicStream *zm;
-extern ConsoleText *ct;
-extern ConsoleText *dt;
-extern ConsoleText *st;
+extern Console *ct;
+extern Console *dt;
+extern Console *st;
 extern Mutex zzt_screen_mutex;
 
 extern int switchbrd;

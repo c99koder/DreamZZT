@@ -18,7 +18,6 @@
  */
 
 #include <Tiki/tiki.h>
-#include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/eventcollector.h>
@@ -44,7 +43,7 @@ using namespace Tiki::Thread;
 extern GraphicsLayer *gl;
 #endif
 
-extern ConsoleText *st;
+extern Console *st;
 const unsigned char lowercasekbd[946] = {
                                             0x1b, 0x5b, 0x30, 0x3b, 0x33, 0x37, 0x3b, 0x34,
                                             0x30, 0x6d, 0x1b, 0x5b, 0x32, 0x4a, 0x1b, 0x5b,
@@ -295,7 +294,7 @@ extern Player *player;
 extern int switchbrd;
 extern struct board_info_node *board_list;
 extern float zoom;
-ConsoleText *mt = NULL;
+Console *mt = NULL;
 #if defined(USE_SDL)
 extern SDL_Surface *zzt_font;
 #elif defined(USE_OPENGL)
@@ -356,7 +355,7 @@ TUIRadioGroup::TUIRadioGroup(std::string text, unsigned char *selected) {
 	m_selectedc=selected;
 }
 
-void TUIRadioGroup::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
+void TUIRadioGroup::draw(Console *ct, int top, int bottom, int y_pos) {
 	std::list<std::string>::iterator options_iter;
 	int i=0;
 	if(m_selectedi!=NULL)
@@ -518,7 +517,7 @@ TUINumericInput::TUINumericInput(std::string text, unsigned char *num, int min, 
 	m_numc=num;
 }
 
-void TUINumericInput::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
+void TUINumericInput::draw(Console *ct, int top, int bottom, int y_pos) {
 	int i=0;
 	if(m_numi!=NULL)
 		m_val=(*m_numi);
@@ -577,7 +576,7 @@ int TUITextInput::YtoX(int y) {
 	return oldpos;
 }
 
-void TUITextInput::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
+void TUITextInput::draw(Console *ct, int top, int bottom, int y_pos) {
 	int i=0;
 	std::vector<std::string> lines = wordify(*m_text, '\r', true);
 
@@ -739,7 +738,7 @@ void TUITextInput::processHidEvent(const Hid::Event &evt) {
 	}
 }
 
-void TUIPasswordInput::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
+void TUIPasswordInput::draw(Console *ct, int top, int bottom, int y_pos) {
 	ct->color(YELLOW|HIGH_INTENSITY,m_bg);
 	*ct << m_label;
 
@@ -760,7 +759,7 @@ void TUIPasswordInput::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
 	}
 }
 
-void TUISlider::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
+void TUISlider::draw(Console *ct, int top, int bottom, int y_pos) {
 	int i=0;
 	if(m_numi!=NULL)
 		m_val=(*m_numi);
@@ -800,7 +799,7 @@ void TUISlider::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
 	}
 }
 
-void TUIMeter::draw(ConsoleText *ct, int top, int bottom, int y_pos) {
+void TUIMeter::draw(Console *ct, int top, int bottom, int y_pos) {
 	int x;
 	int val = (*m_val > m_max) ? m_max : (*m_val);
 
@@ -1029,11 +1028,11 @@ void TUIWindow::buildFromString(std::string s, bool ANSI) {
 	} while (i < (int)s.length());
 }
 
-void draw_shadow(ConsoleText *console, int x, int y) {
+void draw_shadow(Console *console, int x, int y) {
 	console->putColor(x,y, BLACK|HIGH_INTENSITY);
 }
 
-void draw_box(ConsoleText *console, int x, int y,int w,int h,int fg,int bg, bool shadow) {
+void draw_box(Console *console, int x, int y,int w,int h,int fg,int bg, bool shadow) {
 	int i,j;
 	//draw a box using IBM extended ASCII
 	console->putColor(x,y,fg | (bg << 8));
@@ -1162,10 +1161,10 @@ void TUIWindow::doMenu(bool canClose) {
 	st->setANSI(true);
 	st->clear();
 	*st << (const char *)lowercasekbd;
-	mt = new ConsoleText(m_w+2, m_h+2, false);
+	mt = new Console(m_w+2, m_h+2, false);
 #else
 
-	mt = new ConsoleText(m_w+2, m_h+2, zzt_font);
+	mt = new Console(m_w+2, m_h+2, zzt_font);
 #endif
 #if defined(USE_SDL)
 

@@ -24,7 +24,6 @@
 #include <Tiki/net/http/request.h>
 #include <Tiki/net/util/base64.h>
 #endif
-#include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/eventcollector.h>
@@ -106,11 +105,11 @@ extern struct world_header world;
 extern struct board_info_node *currentbrd;
 bool gameFrozen;
 extern int debug_visible;
-ConsoleText *ct;
+Console *ct;
 
-extern ConsoleText *dt;
-extern ConsoleText *st;
-extern ConsoleText *mt;
+extern Console *dt;
+extern Console *st;
+extern Console *mt;
 extern struct board_info_node *board_list;
 int switchbrd=-1;
 extern Player *player;
@@ -669,10 +668,10 @@ extern "C" int tiki_main(int argc, char **argv) {
 	powerOFF(POWER_3D_CORE);
 	powerOFF(POWER_MATRIX);
 
-	ct = new ConsoleText(32, 24, false);
+	ct = new Console(32, 24, false);
 #else
 
-	ct = new ConsoleText(60, 25, zzt_font);
+	ct = new Console(60, 25, zzt_font);
 #endif
 
 	ct->setSize(60 * 8, SCREEN_Y);
@@ -686,13 +685,13 @@ extern "C" int tiki_main(int argc, char **argv) {
 
 #if TIKI_PLAT == TIKI_NDS
 
-	st = new ConsoleText(64, 24, true);
+	st = new Console(64, 24, true);
 
 	SUB_BG0_X0 = -48;
 	SUB_BG1_X0 = -48;
 #else
 
-	st = new ConsoleText(20, 25, zzt_font);
+	st = new Console(20, 25, zzt_font);
 #endif
 
 	st->setSize(20 * 8, SCREEN_Y);

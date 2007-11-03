@@ -6,8 +6,8 @@
  Copyright (C)2001 - 2006 Sam Steele
  */
 
-#ifndef __TIKI_DRW_CONSOLETEXT_H
-#define __TIKI_DRW_CONSOLETEXT_H
+#ifndef __TIKI_DRW_Console_H
+#define __TIKI_DRW_Console_H
 
 #include "Tiki/gl.h"
 #include "Tiki/drawable.h"
@@ -48,21 +48,21 @@ enum ConsoleColor {
     INVISIBLE = 0xA000
 };
 
-/** ConsoleText -- ConsoleText displays an array of fixed width characters. */
-class ConsoleText : public Drawable {
+/** Console -- Console displays an array of fixed width characters. */
+class Console : public Drawable {
 public:
 #if TIKI_PLAT == TIKI_NDS
 
-	ConsoleText(int cols, int rows, bool sub);
+	Console(int cols, int rows, bool sub);
 #elif defined(USE_SDL)
 
-	ConsoleText(int cols, int rows, SDL_Surface * font);
+	Console(int cols, int rows, SDL_Surface * font);
 #elif defined(USE_OPENGL)
 
-	ConsoleText(int cols, int rows, Texture * texture);
+	Console(int cols, int rows, Texture * texture);
 #endif
 
-	virtual ~ConsoleText();
+	virtual ~Console();
 
 	void setSize(float w, float h);
 
@@ -116,55 +116,55 @@ public:
 		m_colorData[(y*m_cols) + x] = attr;
 	}
 
-	ConsoleText& operator <<(std::string input) {
+	Console& operator <<(std::string input) {
 		printf("%s",input.c_str());
 
 		return *this;
 	}
 
-	ConsoleText& operator <<(const char *input) {
+	Console& operator <<(const char *input) {
 		printf("%s",input);
 
 		return *this;
 	}
 
-	ConsoleText& operator <<(int input) {
+	Console& operator <<(int input) {
 		printf("%i",input);
 
 		return *this;
 	}
 
-	ConsoleText& operator <<(double input) {
+	Console& operator <<(double input) {
 		printf("%d",input);
 
 		return *this;
 	}
 
-	ConsoleText& operator <<(long long input) {
+	Console& operator <<(long long input) {
 		printf("%lld",input);
 
 		return *this;
 	}
 
-	ConsoleText& operator <<(unsigned long long input) {
+	Console& operator <<(unsigned long long input) {
 		printf("%llu",input);
 
 		return *this;
 	}
 
-	ConsoleText& operator <<(long input) {
+	Console& operator <<(long input) {
 		printf("%l",input);
 
 		return *this;
 	}
 
-	ConsoleText& operator <<(char input) {
+	Console& operator <<(char input) {
 		printf("%c",input);
 
 		return *this;
 	}
 
-	ConsoleText& operator <<(float input) {
+	Console& operator <<(float input) {
 		printf("%f",input);
 
 		return *this;
@@ -181,7 +181,9 @@ public:
 	void renderBackground(float x, float y, float w, float h, int color);
 #endif
 
-	Tiki::Math::Vector getSize() const;
+	Tiki::Math::Vector getSize() const {
+		return Tiki::Math::Vector(m_w, m_h, 0.0f);
+	}
 	Color getConsoleColor(const int colorNumber) const;
 protected:
 #if TIKI_PLAT == TIKI_NDS
@@ -215,5 +217,5 @@ private:
 };
 };
 
-#endif	// __TIKI_DRW_CONSOLETEXT_H
+#endif	// __TIKI_DRW_Console_H
 

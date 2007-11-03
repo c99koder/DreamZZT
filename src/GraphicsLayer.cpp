@@ -8,7 +8,7 @@ using namespace std;
 
 #include "board.h"
 
-extern ConsoleText *ct;
+extern Console *ct;
 extern struct world_header world;
 
 GraphicsLayer::GraphicsLayer() {

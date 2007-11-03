@@ -18,7 +18,6 @@
  */
 
 #include <Tiki/tiki.h>
-#include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/hid.h>
 #include <Tiki/tikitime.h>
@@ -36,7 +35,7 @@ using namespace Tiki::Hid;
 #include "task.h"
 #include "status.h"
 
-extern ConsoleText *ct;
+extern Console *ct;
 extern Player *player;
 extern struct board_info_node *currentbrd;
 extern struct world_header world;

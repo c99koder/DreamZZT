@@ -32,7 +32,7 @@ extern const u32 zztascii_bin_size;
 // Macro for palette selecting
 #define TILE_PALETTE(n)    ((n)<<12)
 
-ConsoleText::ConsoleText(int cols, int rows, bool sub) {
+Console::Console(int cols, int rows, bool sub) {
 	m_rows = rows;
 	m_cols = cols;
 	m_sub = sub;
@@ -101,17 +101,14 @@ ConsoleText::ConsoleText(int cols, int rows, bool sub) {
 	clear();
 }
 
-ConsoleText::~ConsoleText() {}
+Console::~Console() {}
 
-void ConsoleText::setSize(float w, float h) {
+void Console::setSize(float w, float h) {
 	m_w = w;
 	m_h = h;
 }
-Tiki::Math::Vector ConsoleText::getSize() const {
-	return Tiki::Math::Vector(m_w, m_h, 0.0f);
-}
 
-Color ConsoleText::getConsoleColor(const int colorNumber) const {
+Color Console::getConsoleColor(const int colorNumber) const {
 	Color color = m_palette[colorNumber%8];
 	if(colorNumber > 7) {
 		color += Color(0.25f, 0.25f, 0.25f);
@@ -119,7 +116,7 @@ Color ConsoleText::getConsoleColor(const int colorNumber) const {
 	return color;
 }
 
-void ConsoleText::clear() {
+void Console::clear() {
 	int x;
 
 	for(x=0; x<m_rows*m_cols; x++) {
@@ -133,7 +130,7 @@ void ConsoleText::clear() {
 	ansiptr = 0;
 }
 
-void ConsoleText::scroll(int rows, int top, int left, int bottom, int right) {
+void Console::scroll(int rows, int top, int left, int bottom, int right) {
 	assert(top >= 0 && left >= 0 && bottom < m_rows && right < m_cols);
 
 	for(int y=top; y<=bottom; y++) {
@@ -149,16 +146,16 @@ void ConsoleText::scroll(int rows, int top, int left, int bottom, int right) {
 	}
 }
 
-void ConsoleText::scroll(int rows) {
+void Console::scroll(int rows) {
 	scroll(rows,0,0,m_rows-1,m_cols-1);
 }
 
-void ConsoleText::locate(int x, int y) {
+void Console::locate(int x, int y) {
 	m_cursor_x = x;
 	m_cursor_y = y;
 }
 
-void ConsoleText::color(int fg, int bg) {
+void Console::color(int fg, int bg) {
 	m_attr = 0x0000;
 	if(fg > 7 && fg <= 16) { //Old style high intensity
 		m_attr |= HIGH_INTENSITY;
@@ -168,7 +165,7 @@ void ConsoleText::color(int fg, int bg) {
 	m_attr |= (bg << 8);
 }
 
-void ConsoleText::printf(const char *fmt, ...) {
+void Console::printf(const char *fmt, ...) {
 	char buf[1024];
 	va_list args;
 
@@ -228,7 +225,7 @@ void ConsoleText::printf(const char *fmt, ...) {
 	}
 }
 
-void ConsoleText::draw() {
+void Console::draw() {
 	int x=0,y=0,fg,bg;
 	Vector pos = getPosition() - Vector(m_w/2, m_h/2, 0);
 	u16 *bg0Map, *bg1Map;
@@ -241,7 +238,7 @@ void ConsoleText::draw() {
 	}
 
 	for(y=0; y<m_rows; y++) {
-		for(x=0; x<m_cols; x++) {
+		for(x=0; x<m_cols && x<32; x++) {
 			if(m_colorData[y*(m_cols) + x] & HIGH_INTENSITY) {
 				fg = 8;
 			} else {
@@ -250,18 +247,25 @@ void ConsoleText::draw() {
 			fg += m_colorData[y*(m_cols) + x] & 0x07;
 			bg = (m_colorData[y*(m_cols) + x] >> 8) & 0x07;
 
-			if(x<32) {
-				bg1Map[(y * 32) + x] = 219 | TILE_PALETTE(bg);
-				bg0Map[(y * 32) + x] = m_charData[(y * m_cols) + x] | TILE_PALETTE(fg);
+			bg1Map[(y * 32) + x] = 219 | TILE_PALETTE(bg);
+			bg0Map[(y * 32) + x] = m_charData[(y * m_cols) + x] | TILE_PALETTE(fg);
+		}
+		for(x=32; x<m_cols; x++) {
+			if(m_colorData[y*(m_cols) + x] & HIGH_INTENSITY) {
+				fg = 8;
 			} else {
-				bg1Map[(y * 32) + (x-32) + 1024] = 219 | TILE_PALETTE(bg);
-				bg0Map[(y * 32) + (x-32) + 1024] = m_charData[(y * m_cols) + x] | TILE_PALETTE(fg);
+				fg = 0;
 			}
+			fg += m_colorData[y*(m_cols) + x] & 0x07;
+			bg = (m_colorData[y*(m_cols) + x] >> 8) & 0x07;
+
+			bg1Map[(y * 32) + (x-32) + 1024] = 219 | TILE_PALETTE(bg);
+			bg0Map[(y * 32) + (x-32) + 1024] = m_charData[(y * m_cols) + x] | TILE_PALETTE(fg);
 		}
 	}
 }
 
-void ConsoleText::processAnsiString() {
+void Console::processAnsiString() {
 	if(ansistr[1] == '[') {
 		int args[11], argptr = 0, ptr = 2, tempptr = 0;
 		char cmd, temp[11];

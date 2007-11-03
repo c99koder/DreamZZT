@@ -47,8 +47,8 @@ extern int zztascii[];
 extern Player *player;
 extern ZZTMusicStream *zm;
 extern struct world_header world;
-extern ConsoleText *ct;
-extern ConsoleText *st;
+extern Console *ct;
+extern Console *st;
 extern struct board_info_node *currentbrd;
 
 int dir_to_delta[5] = { 0,-1,1,-1,1 };

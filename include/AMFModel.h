@@ -3,7 +3,6 @@
 #include <vector>
 
 #include <Tiki/tiki.h>
-#include <Tiki/plxcompat.h>
 #include <Tiki/gl.h>
 #include <Tiki/texture.h>
 

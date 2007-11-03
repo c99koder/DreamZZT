@@ -23,9 +23,8 @@
 #include <stdarg.h>
 
 using namespace Tiki::GL;
-using namespace Tiki::GL::Plxcompat;
 
-ConsoleText::ConsoleText(int cols, int rows, SDL_Surface * font) {
+Console::Console(int cols, int rows, SDL_Surface * font) {
 	m_font = font;
 	m_rows = rows;
 	m_cols = cols;
@@ -54,17 +53,17 @@ ConsoleText::ConsoleText(int cols, int rows, SDL_Surface * font) {
 	clear();
 }
 
-ConsoleText::~ConsoleText() {}
+Console::~Console() {}
 
-void ConsoleText::setSize(float w, float h) {
+void Console::setSize(float w, float h) {
 	m_w = w;
 	m_h = h;
 }
-Tiki::Math::Vector ConsoleText::getSize() const {
+Tiki::Math::Vector Console::getSize() const {
 	return Tiki::Math::Vector(m_w, m_h, 0.0f);
 }
 
-Color ConsoleText::getConsoleColor(const int colorNumber) const {
+Color Console::getConsoleColor(const int colorNumber) const {
 	Color color = m_palette[colorNumber%8];
 	if(colorNumber > 7) {
 		color += Color(0.25f, 0.25f, 0.25f);
@@ -72,7 +71,7 @@ Color ConsoleText::getConsoleColor(const int colorNumber) const {
 	return color;
 }
 
-void ConsoleText::clear() {
+void Console::clear() {
 	int x;
 
 	for(x=0; x<m_rows*m_cols; x++) {
@@ -86,7 +85,7 @@ void ConsoleText::clear() {
 	ansiptr = 0;
 }
 
-void ConsoleText::scroll(int rows, int top, int left, int bottom, int right) {
+void Console::scroll(int rows, int top, int left, int bottom, int right) {
 	assert(top >= 0 && left >= 0 && bottom < m_rows && right < m_cols);
 
 	for(int y=top; y<=bottom; y++) {
@@ -102,16 +101,16 @@ void ConsoleText::scroll(int rows, int top, int left, int bottom, int right) {
 	}
 }
 
-void ConsoleText::scroll(int rows) {
+void Console::scroll(int rows) {
 	scroll(rows,0,0,m_rows-1,m_cols-1);
 }
 
-void ConsoleText::locate(int x, int y) {
+void Console::locate(int x, int y) {
 	m_cursor_x = x;
 	m_cursor_y = y;
 }
 
-void ConsoleText::color(int fg, int bg) {
+void Console::color(int fg, int bg) {
 	m_attr = 0x0000;
 	if(fg > 7 && fg <= 16) { //Old style high intensity
 		m_attr |= HIGH_INTENSITY;
@@ -121,7 +120,7 @@ void ConsoleText::color(int fg, int bg) {
 	m_attr |= (bg << 8);
 }
 
-void ConsoleText::printf(const char *fmt, ...) {
+void Console::printf(const char *fmt, ...) {
 	char buf[1024];
 	va_list args;
 
@@ -189,7 +188,7 @@ void putpixel(SDL_Surface *screen, int x, int y, int color) {
 	}
 }
 
-void ConsoleText::draw(SDL_Surface *screen) {
+void Console::draw(SDL_Surface *screen) {
 	int x=0,y=0;
 	float x_step=(m_w / m_cols);
 	float y_step=(m_h / m_rows);
@@ -234,7 +233,7 @@ void ConsoleText::draw(SDL_Surface *screen) {
 	}
 }
 
-void ConsoleText::processAnsiString() {
+void Console::processAnsiString() {
 	if(ansistr[1] == '[') {
 		int args[11], argptr = 0, ptr = 2, tempptr = 0;
 		char cmd, temp[11];

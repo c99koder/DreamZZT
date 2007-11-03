@@ -43,7 +43,7 @@ using namespace std;
 
 extern struct world_header world;
 extern Player *player;
-extern ConsoleText *ct;
+extern Console *ct;
 extern ZZTMusicStream *zm;
 
 extern std::map <int, ZZTObject *> ZZTObjectTypes;
