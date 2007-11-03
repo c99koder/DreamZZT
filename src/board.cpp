@@ -122,6 +122,15 @@ void free_world() {
 	board_list=NULL;
 	currentbrd=NULL;
 	clearZZTObjectTypes();
+	if(world.magic == MAGIC_SZT) {
+#if TIKI_PLAT == TIKI_NDS
+		ct = new Console(32, 24, false);
+#else
+		ct = new Console(60, 25, zzt_font);
+#endif
+		ct->setSize(60 * 8, SCREEN_Y);
+		ct->translate(Vector(60 * 4, ((TIKI_PLAT==TIKI_DC)?480:SCREEN_Y) / 2,0));
+	}
 }
 
 void put(ZZTObject *o, int x, int y, bool ignoreUnder) {
@@ -1144,7 +1153,6 @@ int load_szt(const char *filename, int titleonly) {
 	current=NULL;
 	delete ct;
 #if TIKI_PLAT == TIKI_NDS
-
 	ct = new Console(32, 24, false);
 #else
 
