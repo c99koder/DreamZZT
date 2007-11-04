@@ -38,14 +38,16 @@ extern ZZTMusicStream *zm;
 extern struct board_info_node *currentbrd;
 extern struct world_header world;
 
-extern char ammo_name[100];
+int countPlayerBullets() {
+	int cnt=0;
 
-void bullet_sound_init() {
-#ifdef DREAMCAST
-	if(sound_id==-1) {
-		sound_id=snd_sfx_load("/cd/fire.wav");
+	for(std::list<ZZTObject *>::iterator obj_iter = currentbrd->objects.begin(); obj_iter != currentbrd->objects.end(); obj_iter++) {
+		if((*obj_iter)->name() == "bullet" && (*obj_iter)->param(1) == 0) {
+			cnt++;
+		}
 	}
-#endif
+	
+	return cnt;
 }
 
 void Bullet::setParam(int arg, unsigned char val) {
@@ -141,6 +143,7 @@ void ZZTObject::shoot(enum direction dir) {
 			set_msg("You don't have any ammo");
 			return;
 		}
+		if(countPlayerBullets() >= currentbrd->maxshots) return;
 	}
 	if(is_empty(dir) || currentbrd->board[(int)m_position.x+dx][(int)m_position.y+dy].obj->type() == ZZT_WATER) {
 		if(m_name=="player") {

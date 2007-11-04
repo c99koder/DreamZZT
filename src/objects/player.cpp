@@ -159,7 +159,7 @@ void Player::processEvent(const Event & evt) {
 			break;
 		case 32:
 			if(currentbrd->maxshots==0) {
-				set_msg("Can't shoot in here");
+				set_msg("Can't shoot in this place!");
 			} else {
 				m_shoot=m_heading;
 			}
