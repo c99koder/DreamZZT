@@ -1173,7 +1173,7 @@ void TUIWindow::doMenu(bool canClose) {
 #else
 
 	mt->setSize((m_w+2) * 8, (m_h+2) * 20);
-	mt->translate(Vector(m_x*8,m_y*20,0.8) + Vector((m_w+2)*4 , (m_h+2)*10, 0));
+	mt->translate(Vector(m_x*8,m_y*20,0.8) + Vector((m_w+2)*4 , (m_h+2)*10, 0.1));
 #endif
 
 	zoom = 1;
