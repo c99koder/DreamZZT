@@ -309,8 +309,8 @@ void Player::update() {
 
 	switch(m_move) {
 	case UP:
-		if(m_position.y==0&&board_up()>0) {
-			brd=get_board(board_up());
+		if(m_position.y==0&&currentbrd->board_up>0) {
+			brd=get_board(currentbrd->board_up);
 			decompress(brd);
 			obj=get_obj_by_type(brd,ZZT_PLAYER);
 			if(!::is_empty(brd, m_position.x, BOARD_Y-1, true)) {
@@ -332,7 +332,7 @@ void Player::update() {
 					delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
 				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
 				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
-				switchbrd=board_up();
+				switchbrd=currentbrd->board_up;
 			} else {
 				if(brd != currentbrd)
 					compress(brd);
@@ -343,8 +343,8 @@ void Player::update() {
 			m_move=IDLE;
 		break;
 	case DOWN:
-		if(m_position.y>=BOARD_Y-1&&board_down()>0) {
-			brd=get_board(board_down());
+		if(m_position.y>=BOARD_Y-1&&currentbrd->board_down>0) {
+			brd=get_board(currentbrd->board_down);
 			decompress(brd);
 			obj=get_obj_by_type(brd,ZZT_PLAYER);
 			if(!::is_empty(brd, m_position.x, 0, true)) {
@@ -366,7 +366,7 @@ void Player::update() {
 					delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
 				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
 				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
-				switchbrd=board_down();
+				switchbrd=currentbrd->board_down;
 			} else {
 				if(brd != currentbrd)
 					compress(brd);
@@ -377,8 +377,8 @@ void Player::update() {
 			m_move=IDLE;
 		break;
 	case LEFT:
-		if(m_position.x==0&&board_left()>0) {
-			brd=get_board(board_left());
+		if(m_position.x==0&&currentbrd->board_left>0) {
+			brd=get_board(currentbrd->board_left);
 			decompress(brd);
 			obj=get_obj_by_type(brd,ZZT_PLAYER);
 			if(!::is_empty(brd, BOARD_X-1, m_position.y, true)) {
@@ -400,7 +400,7 @@ void Player::update() {
 					delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
 				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
 				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
-				switchbrd=board_left();
+				switchbrd=currentbrd->board_left;
 			} else {
 				if(brd != currentbrd)
 					compress(brd);
@@ -411,8 +411,8 @@ void Player::update() {
 			m_move=IDLE;
 		break;
 	case RIGHT:
-		if(m_position.x>=BOARD_X-1&&board_right()>0) {
-			brd=get_board(board_right());
+		if(m_position.x>=BOARD_X-1&&currentbrd->board_right>0) {
+			brd=get_board(currentbrd->board_right);
 			decompress(brd);
 			obj=get_obj_by_type(brd,ZZT_PLAYER);
 			if(!::is_empty(brd, 0, m_position.y, true)) {
@@ -434,7 +434,7 @@ void Player::update() {
 					delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
 				brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
 				brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
-				switchbrd=board_right();
+				switchbrd=currentbrd->board_right;
 			} else {
 				if(brd != currentbrd)
 					compress(brd);
@@ -446,11 +446,7 @@ void Player::update() {
 		break;
 	}
 	if(m_move!=IDLE) {
-		//gl->remove(m_model);
 		move(m_move);
-		//m_model = new AMFModelInstance("block.amf", m_position, Vector(0,1,0));
-		//gl->insert(m_model);
-		//m_model->position = m_position;
 	}
 
 	if(switchbrd!=-1)

@@ -73,9 +73,6 @@ extern Texture *zzt_font;
 #define SCREEN_Y 480
 #endif
 
-struct board_info_node *get_current_board() {
-	return currentbrd;
-}
 int world_sec=10;
 extern float zoom;
 
@@ -436,10 +433,6 @@ void remove_from_board(struct board_info_node *brd, ZZTObject *me, bool ignoreUn
 	brd->board[(int)pos.x][(int)pos.y].under=me;
 }
 
-struct board_info_node *get_board_list() {
-	return board_list;
-}
-
 struct board_info_node *get_board(int num) {
 	struct board_info_node *current=board_list;
 	while(current!=NULL && current->num<num)
@@ -703,26 +696,6 @@ void switch_board(int num) {
 		zm->setTune("xxxx");
 		zm->start();
 	}
-}
-
-struct world_header *get_world() {
-	return &world;
-}
-
-int board_up() {
-	return currentbrd->board_up;
-}
-
-int board_down() {
-	return currentbrd->board_down;
-}
-
-int board_left() {
-	return currentbrd->board_left;
-}
-
-int board_right() {
-	return currentbrd->board_right;
 }
 
 void compress(board_info_node *board, bool silent) {
