@@ -1560,10 +1560,7 @@ void update_brd() {
 
 	cycle++;
 
-	for(std::vector< std::vector<board_data> >::iterator y = currentbrd->
-	        board.begin();
-	        y != currentbrd->board.end();
-	        y++) {
+	for(std::vector< std::vector<board_data> >::iterator y = currentbrd->board.begin(); y != currentbrd->board.end(); y++) {
 		for(std::vector<board_data>::iterator x = (*y).begin(); x != (*y).end() ; x++) {
 			if((*x).obj != NULL) {
 				(*x).obj->setUpdated(false);

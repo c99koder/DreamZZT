@@ -297,6 +297,10 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 		m_heading = dir;
 		if(!m_board->board[x][y].obj->isValid())
 			printf("Warning: putting invalid object under %i,%i\n",x,y);
+		if(m_board->board[x][y].under != NULL) {
+			currentbrd->objects.remove(m_board->board[x][y].under);
+			delete m_board->board[x][y].under;
+		}
 		m_board->board[x][y].under=m_board->board[x][y].obj;
 		m_board->board[x][y].obj=this;
 		m_bg=m_board->board[x][y].under->bg();
