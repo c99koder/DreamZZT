@@ -84,7 +84,7 @@ void Transporter::message(ZZTObject *them, std::string message) {
 			x += (int)m_step.x;
 			y += (int)m_step.y;
 
-			if(x<=0 || y<=0 || x>=BOARD_X || y>=BOARD_Y) {
+			if(x<=0 || y<=0 || x>=BOARD_X || y>=BOARD_Y || ::is_empty(currentbrd,(m_position + m_step).x,(m_position + m_step).y)) {
 				remove_from_board(currentbrd, them);
 				them->clearFlag(F_DELETED);
 				currentbrd->board[(int)them->position().x][(int)them->position().y].under = NULL;
@@ -92,8 +92,8 @@ void Transporter::message(ZZTObject *them, std::string message) {
 				put(them, them->position().x, them->position().y);
 				break;
 			} else if(currentbrd->board[x][y].obj->type()==ZZT_TRANSPORTER &&
-			          (currentbrd->board[x][y].obj->step().x==m_step.x*-1 ||
-			           currentbrd->board[x][y].obj->step().y==m_step.y*-1)) {
+					  currentbrd->board[x][y].obj->step().x==m_step.x*-1 &&
+					  currentbrd->board[x][y].obj->step().y==m_step.y*-1) {
 				remove_from_board(currentbrd, them);
 				them->clearFlag(F_DELETED);
 				currentbrd->board[(int)them->position().x][(int)them->position().y].under = NULL;
