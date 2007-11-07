@@ -18,8 +18,6 @@ src/libtolua++/tolua_event.o src/libtolua++/tolua_push.o src/libtolua++/tolua_is
 
 ifeq ($(TIKI_PLAT),nds)
 OBJS += src/console_nds.o resources/zztascii.bin.o
-else
-OBJS += src/console.o
 endif
 
 ifeq ($(TIKI_PLAT),dc)

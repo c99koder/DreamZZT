@@ -44,7 +44,6 @@ using namespace Tiki::Thread;
 #if TIKI_PLAT == TIKI_DC
 #include <Tiki/hid.h>
 #include <Tiki/eventcollector.h>
-#include <Tiki/drawables/console.h>
 
 using namespace Tiki;
 using namespace Tiki::GL;
