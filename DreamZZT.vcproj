@@ -186,23 +186,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\src\AMFModel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\AMFModelInstance.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\board.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\src\bugreport.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\console.cpp"
 				>
 			</File>
 			<File
@@ -218,15 +206,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\GraphicsLayer.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ModelManager.cpp"
 				>
 			</File>
 			<File
