@@ -59,9 +59,6 @@ void Console::setSize(float w, float h) {
 	m_w = w;
 	m_h = h;
 }
-Tiki::Math::Vector Console::getSize() const {
-	return Tiki::Math::Vector(m_w, m_h, 0.0f);
-}
 
 Color Console::getConsoleColor(const int colorNumber) const {
 	Color color = m_palette[colorNumber%8];
