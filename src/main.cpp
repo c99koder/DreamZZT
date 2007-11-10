@@ -528,7 +528,7 @@ void render() {
 	SDL_UpdateRect(screen, 0, 0, SCREEN_X, SCREEN_Y);
 #elif TIKI_PLAT == TIKI_NDS
 
-	//st->draw();
+	st->draw();
 	if(mt!=NULL)
 		mt->draw();
 	else
