@@ -72,10 +72,10 @@ void Player::processEvent(const Event & evt) {
 				send("all:hint");
 			} else {
 				if(world.torches>0) {
-					if(currentbrd->dark==1) {
+					if(currentbrd->dark==1 && world.torch_cycle == 0) {
 						world.torch_cycle=200;
 						take_torch(1);
-					} else {
+					} else if(currentbrd->dark==0) {
 						set_msg("Don't need torch - room is not dark!");
 					}
 				} else {
