@@ -137,6 +137,8 @@ void ZZTObject::shoot(enum direction dir) {
 		return;
 	}
 
+	if(m_position.x+dx < 0 || m_position.x+dx >= world.board_x || m_position.y+dy < 0 || m_position.y+dy >= world.board_y) return;
+	
 	if(m_name=="player") {
 		if(world.ammo<1) {
 			//sprintf(buf,"You don't have any %s",ammo_name);
