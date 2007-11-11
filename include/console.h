@@ -5,6 +5,9 @@
  
  Copyright (C)2001 - 2006 Sam Steele
  */
+#if !(TIKI_PLAT == TIKI_NDS || TIKI_PLAT == TIKI_NDS)
+#include <Tiki/drawables/console.h>
+#else
 
 #ifndef __TIKI_DRW_Console_H
 #define __TIKI_DRW_Console_H
@@ -112,7 +115,8 @@ public:
 	}
 
 	void putColor(int x, int y, int attr) {
-		assert(x<m_cols && y<m_rows);
+		assert(x<m_cols);
+		assert(y<m_rows);
 		m_colorData[(y*m_cols) + x] = attr;
 	}
 
@@ -218,4 +222,4 @@ private:
 };
 
 #endif	// __TIKI_DRW_Console_H
-
+#endif
