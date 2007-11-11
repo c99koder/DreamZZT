@@ -312,8 +312,8 @@ void debug_hidCallback(const Event & evt, void * data) {
 				debug_cmdline += '\r';
 			}
 		} else {
-			if(evt.key == '`') {
-				if(debug_visible==0 && world.online == 0) {
+			if(evt.key == '`' && world.online == 0) {
+				if(debug_visible==0) {
 					debug_visible = 1;
 					ct->setSize(ct->getSize().x, ct->getSize().y/2);
 					dt->setSize(ct->getSize().x, ct->getSize().y);
@@ -392,9 +392,5 @@ void debug(const char *fmt, ...) {
 	dt->color(WHITE | HIGH_INTENSITY, BLUE);
 	dt->locate(0,0);
 	*dt << "                    DreamZZT Debug Console                  ";
-	dt->locate(0,24);
-	dt->locate(0,24);
-	dt->color(GREY | HIGH_INTENSITY, BLACK);
-	*dt << "> \x1b[1;32m" << debug_cmdline.c_str() << "\x1b[k"; //clear EOL
 	*dt << "\x1b[u"; // Restore cursor position
 }
