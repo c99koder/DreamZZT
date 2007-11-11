@@ -260,7 +260,8 @@ void Inventory::message(ZZTObject *them, std::string message) {
 			debug("\x1b[0;37mA \x1b[1;37m%s\x1b[0;37m was picked up.\n",m_name.c_str());
 			remove();
 		}
-	} else if(message == "shot" && type() == ZZT_GEM) {
+	} else if(message == "shot" && type() == ZZT_GEM && (them->name() == "player" || (them->name() == "bullet" && them->param(1) == 0))) {
+		printf("Shot by %s\n",them->name().c_str());
 		remove();
 	}
 }
