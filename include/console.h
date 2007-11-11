@@ -5,7 +5,7 @@
  
  Copyright (C)2001 - 2006 Sam Steele
  */
-#if !(TIKI_PLAT == TIKI_NDS || TIKI_PLAT == TIKI_NDS)
+#if defined(USE_OPENGL)
 #include <Tiki/drawables/console.h>
 #else
 
