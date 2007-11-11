@@ -196,7 +196,7 @@ void Forest::message(ZZTObject *them, std::string message) {
 }
 
 void Invisible::message(ZZTObject *them, std::string message) {
-	if(message == "touch" && them->type() == ZZT_PLAYER) {
+	if(message == "touch" && them->type() == ZZT_PLAYER && m_shape != 0xB2) {
 		if(invismsg==0) {
 			set_msg("You are blocked by an invisible wall.");
 			invismsg=1;
