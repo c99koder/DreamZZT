@@ -90,7 +90,6 @@ void draw_main() {
 }
 
 void draw_item() {
-#if 0
 	ct->color(15,1);
 	ct->clear();
 	dzzt_logo();
@@ -160,11 +159,9 @@ void draw_item() {
 	st->locate(1,20);
 	*st << "\x1b[0;30;47m 2 \x1b[1;37;44m Counter ";
 	st->setANSI(false);
-#endif
 }
 
 void draw_creature() {
-#if 0
 	ct->color(15,1);
 	ct->clear();
 	dzzt_logo();
@@ -227,11 +224,9 @@ void draw_creature() {
 	st->locate(1,20);
 	*st << "\x1b[0;30;47m S \x1b[1;37;44m Segment ";
 	st->setANSI(false);
-#endif
 }
 
 void draw_terrain() {
-#if 0
 	ct->color(15,1);
 	ct->clear();
 	dzzt_logo();
@@ -309,7 +304,6 @@ void draw_terrain() {
 	*st << (char)ZZT_RICOCHET_SHAPE;
 
 	st->setANSI(false);
-#endif
 }
 
 void draw_color(int fg, int bg) {
@@ -341,7 +335,6 @@ void draw_pattern(ZZTObject *pattern[5], int pat) {
 }
 
 void edit_zzt() {
-#if 0
 	EventCollector ec;
 	Event evt;
 	int edit_x=BOARD_X/2;
@@ -356,11 +349,11 @@ void edit_zzt() {
 
 	enum { NONE, ITEM, CREATURE, TERRAIN, TEXT } edit_menu_mode = NONE;
 
-	pattern[0] = create_object(ZZT_SOLID,0,0);
-	pattern[1] = create_object(ZZT_NORMAL,0,0);
-	pattern[2] = create_object(ZZT_EMPTY,0,0);
-	pattern[3] = create_object(ZZT_LINE,0,0);
-	pattern[4] = create_object(ZZT_EMPTY,0,0);
+	pattern[0] = create_object(ZZT_SOLID);
+	pattern[1] = create_object(ZZT_NORMAL);
+	pattern[2] = create_object(ZZT_EMPTY);
+	pattern[3] = create_object(ZZT_LINE);
+	pattern[4] = create_object(ZZT_EMPTY);
 
 	world.editing=1;
 
@@ -452,15 +445,30 @@ void edit_zzt() {
 				case 32:
 					if(edit_pat<4)
 						pattern[edit_pat]->setColor(edit_fg, edit_bg);
-					o=create_copy(pattern[edit_pat]);
+					o=pattern[edit_pat]->alloc();
+					o->inherit(pattern[edit_pat]);
 					o->setPosition(Vector((float)edit_x, (float)edit_y, 0.0f));
-					put(o);
+					put(o, o->position().x, o->position().y);
 					break;
 				case 13:
 					if(currentbrd->board[edit_x][edit_y].obj->flags() & F_OBJECT) {
 						ec.stop();
 						currentbrd->board[edit_x][edit_y].obj->edit();
 						ec.start();
+						switch(edit_menu_mode) {
+							case ITEM:
+								draw_item();
+								break;
+							case CREATURE:
+								draw_creature();
+								break;
+							case TERRAIN:
+								draw_terrain();
+								break;
+							default:
+								draw_main();
+								break;
+						}
 					}
 					pattern[4]=currentbrd->board[edit_x][edit_y].obj;
 					break;
@@ -529,7 +537,6 @@ void edit_zzt() {
 							t.addWidget(new TUILabel(""));
 							t.addWidget(new TUICheckBox    ("Saved Game", &world.saved));
 #ifdef USE_3DMODEL
-
 							t.addWidget(new TUICheckBox    ("Use 3D Models", &world.use_3d));
 #endif
 
@@ -559,17 +566,13 @@ void edit_zzt() {
 							TUIRadioGroup *rg;
 
 							rg=new TUIRadioGroup						("          Board is dark: ",&currentbrd->dark);
-							rg->add
-							("No");
-							rg->add
-							("Yes");
+							rg->add("No");
+							rg->add("Yes");
 							t.addWidget(rg);
 
 							rg=new TUIRadioGroup						("   Re-Enter When Zapped: ",&currentbrd->reenter);
-							rg->add
-							("No");
-							rg->add
-							("Yes");
+							rg->add("No");
+							rg->add("Yes");
 							t.addWidget(rg);
 
 							t.addWidget(new TUINumericInput("             Re-Enter X: ",&currentbrd->reenter_x,0,254));
@@ -578,10 +581,8 @@ void edit_zzt() {
 							t.addWidget(new TUINumericInput("          Maximum Shots: ",&currentbrd->maxshots,0,254));
 
 							rg=new TUIRadioGroup           ("         Animated Water: ",&currentbrd->animatedWater);
-							rg->add
-							("Disabled");
-							rg->add
-							("Enabled");
+							rg->add("Disabled");
+							rg->add("Enabled");
 							t.addWidget(rg);
 
 							t.addWidget(new TUIWidget());
@@ -618,62 +619,62 @@ void edit_zzt() {
 				if(edit_menu_mode==ITEM) {
 					switch(evt.key) {
 					case 'z':
-						o=pattern[4]=create_object(ZZT_PLAYER,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_PLAYER);
 						o->setCycle(1);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'a':
-						o=pattern[4]=create_object(ZZT_AMMO,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_AMMO);
 						o->setColor(CYAN,BLACK);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 't':
-						o=pattern[4]=create_object(ZZT_TORCH,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_TORCH);
 						o->setColor(YELLOW,BLACK);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'g':
-						o=pattern[4]=create_object(ZZT_GEM,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_GEM);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'k':
-						o=pattern[4]=create_object(ZZT_KEY,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_KEY);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'd':
-						o=pattern[4]=create_object(ZZT_DOOR,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_DOOR);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 's':
-						o=pattern[4]=create_object(ZZT_SCROLL,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_SCROLL);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'p':
-						o=pattern[4]=create_object(ZZT_PASSAGE,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_PASSAGE);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'u':
-						o=pattern[4]=create_object(ZZT_DUPLICATOR,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_DUPLICATOR);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'b':
-						o=pattern[4]=create_object(ZZT_BOMB,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_BOMB);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'e':
-						o=pattern[4]=create_object(ZZT_ENERGIZER,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_ENERGIZER);
 						o->setColor(MAGENTA,BLACK);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					}
 				}
@@ -681,65 +682,65 @@ void edit_zzt() {
 				if(edit_menu_mode==CREATURE) {
 					switch(evt.key) {
 					case 'b':
-						o=pattern[4]=create_object(ZZT_BEAR,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_BEAR);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'r':
-						o=pattern[4]=create_object(ZZT_RUFFIAN,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_RUFFIAN);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'o':
-						o=pattern[4]=create_object(ZZT_OBJECT,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_OBJECT);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'v':
-						o=pattern[4]=create_object(ZZT_SLIME,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_SLIME);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'y':
-						o=pattern[4]=create_object(ZZT_SHARK,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_SHARK);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'g':
-						o=pattern[4]=create_object(ZZT_SPINNING_GUN,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_SPINNING_GUN);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'p':
-						o=pattern[4]=create_object(ZZT_PUSHER,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_PUSHER);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'l':
-						o=pattern[4]=create_object(ZZT_LION,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_LION);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 't':
-						o=pattern[4]=create_object(ZZT_TIGER,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_TIGER);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'h':
-						o=pattern[4]=create_object(ZZT_CENTIPEDE_HEAD,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_CENTIPEDE_HEAD);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 's':
-						o=pattern[4]=create_object(ZZT_CENTIPEDE_BODY,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_CENTIPEDE_BODY);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					}
 				}
@@ -747,71 +748,71 @@ void edit_zzt() {
 				if(edit_menu_mode==TERRAIN) {
 					switch(evt.key) {
 					case 'w':
-						o=pattern[4]=create_object(ZZT_WATER,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_WATER);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(1);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'f':
-						o=pattern[4]=create_object(ZZT_FOREST,edit_x,edit_y);
-						put(o);
+						o=pattern[4]=create_object(ZZT_FOREST);
+						put(o,edit_x,edit_y);
 						break;
 					case 's':
-						o=pattern[4]=create_object(ZZT_SOLID,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_SOLID);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'n':
-						o=pattern[4]=create_object(ZZT_NORMAL,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_NORMAL);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'b':
-						o=pattern[4]=create_object(ZZT_BREAKABLE,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_BREAKABLE);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'o':
-						o=pattern[4]=create_object(ZZT_BOULDER,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_BOULDER);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case '1':
-						o=pattern[4]=create_object(ZZT_SLIDER_NS,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_SLIDER_NS);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case '2':
-						o=pattern[4]=create_object(ZZT_SLIDER_EW,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_SLIDER_EW);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'a':
-						o=pattern[4]=create_object(ZZT_FAKE,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_FAKE);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'i':
-						o=pattern[4]=create_object(ZZT_INVISIBLE,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_INVISIBLE);
 						o->setColor(edit_fg, edit_bg);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'l':
-						o=pattern[4]=create_object(ZZT_BLINK,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_BLINK);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 't':
-						o=pattern[4]=create_object(ZZT_TRANSPORTER,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_TRANSPORTER);
 						o->setColor(edit_fg, edit_bg);
 						o->setCycle(3);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					case 'r':
-						o=pattern[4]=create_object(ZZT_RICOCHET,edit_x,edit_y);
+						o=pattern[4]=create_object(ZZT_RICOCHET);
 						o->setColor(GREEN|HIGH_INTENSITY, BLACK);
-						put(o);
+						put(o,edit_x,edit_y);
 						break;
 					}
 				}
@@ -823,5 +824,4 @@ void edit_zzt() {
 	} while(edit_loop && switchbrd != -2);
 	world.editing=0;
 	currentbrd->board[edit_x][edit_y].obj->setHighlighted(false);
-#endif
 }

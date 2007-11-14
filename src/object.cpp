@@ -550,6 +550,7 @@ void ZZTObject::edit() {
 
 	w.doMenu();
 	if(w.getLabel() == "editprog") {
+		if(world.editing) st->clear();
 		TUIWindow e("Edit Program");
 		e.addWidget(new TUITextInput("",&m_prog,false,true));
 		e.doMenu();
