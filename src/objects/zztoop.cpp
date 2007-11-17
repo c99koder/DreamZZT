@@ -358,7 +358,7 @@ std::string ZZTOOP::get_zztobj_name() {
 
 	if((m_name=="object" || m_name=="scroll") && m_prog[0]=='@') {
 		y=1;
-		while(m_prog[y]!='\r' && y < m_proglen) {
+		while(m_prog[y]!='\r' && m_prog[y]!=' ' && y < m_proglen) {
 			name += m_prog[y];
 			y++;
 		}
