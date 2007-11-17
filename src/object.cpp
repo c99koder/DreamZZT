@@ -205,11 +205,14 @@ ZZTObject *ZZTObject::create_object(int type, direction d) {
 		delete o;
 		o = NULL;
 	}
+	if(o->position().x < 1 || o->position().x > BOARD_X || o->position().y < 1 || o->position().y > BOARD_Y) {
+		delete o;
+		o=NULL;
+	}
 	return o;
 }
 
-ZZTObject *ZZTObject::get
-	(direction d) {
+ZZTObject *ZZTObject::get(direction d) {
 	int dx=0,dy=0;
 
 	switch(d) {
@@ -234,7 +237,7 @@ ZZTObject *ZZTObject::get
 		return NULL;
 	}
 
-	if(m_position.x + dx >= 0 && m_position.x + dx < BOARD_X && m_position.y + dy >= 0 && m_position.y + dy < BOARD_Y) {
+	if(m_position.x + dx > 1 && m_position.x + dx <= BOARD_X && m_position.y + dy > 1 && m_position.y + dy <= BOARD_Y) {
 		return currentbrd->board[(int)m_position.x + dx][(int)m_position.y + dy].obj;
 	}
 
@@ -285,11 +288,11 @@ bool ZZTObject::move(enum direction dir, bool trying, bool origin) {
 	if(y<0) {
 		y=0;
 	}
-	if(x>=BOARD_X) {
-		x=BOARD_X-1;
+	if(x>BOARD_X+1) {
+		x=BOARD_X+1;
 	}
-	if(y>=BOARD_Y) {
-		y=BOARD_Y-1;
+	if(y>BOARD_Y+1) {
+		y=BOARD_Y+1;
 	}
 	if((m_name != "shark" && is_empty(dir)) || ((m_name=="bullet" || m_name=="shark") && m_board->board[x][y].obj->type()==ZZT_WATER)) {
 		m_position.x = (float)x;
@@ -567,7 +570,7 @@ void clearZZTObjectTypes() {
 
 void buildZZTObjectTypes() {
 	ZZTObjectTypes[ZZT_EMPTY] = new Empty;
-	ZZTObjectTypes[ZZT_EDGE] = NULL;
+	ZZTObjectTypes[ZZT_EDGE] = new Edge;
 	ZZTObjectTypes[ZZT_EXPLOSION] = new Explosion;
 	ZZTObjectTypes[ZZT_PLAYER] = new Player;
 	ZZTObjectTypes[ZZT_AMMO] = new Ammo;

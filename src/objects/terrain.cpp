@@ -39,6 +39,141 @@ extern Console *ct;
 extern struct board_info_node *currentbrd;
 extern struct world_header world;
 int forestmsg=0,invismsg=0,watermsg=0;
+extern int switchbrd;
+
+void Edge::message(ZZTObject *them, std::string message) {
+	struct board_info_node *brd;
+	ZZTObject *obj;
+	printf("Edge has been touched!\n");
+	if(them->name()=="player") {
+		switch(them->toward(this)) {
+			case UP:
+				if(currentbrd->board_up>0) {
+					brd=get_board(currentbrd->board_up);
+					decompress(brd);
+					obj=get_obj_by_type(brd,ZZT_PLAYER);
+					if(!::is_empty(brd, them->position().x, BOARD_Y, true)) {
+						if(brd->board[(int)them->position().x][(int)BOARD_Y].obj->flag(F_ITEM)) {
+							brd->board[(int)them->position().x][(int)BOARD_Y].obj->message(obj, "get");
+						} else {
+							if(brd->board[(int)them->position().x][(int)BOARD_Y].obj->flag(F_PUSHABLE)) {
+								brd->board[(int)them->position().x][(int)BOARD_Y].obj->move(UP);
+							} else if(brd == currentbrd) {
+								brd->board[(int)them->position().x][(int)BOARD_Y].obj->message(obj, "touch");
+							}
+						}
+					}
+					if(::is_empty(brd, them->position().x, BOARD_Y, true)) {
+						brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+						brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
+						obj->setPosition(Vector(them->position().x, BOARD_Y,0));
+						if(brd->board[(int)obj->position().x][(int)obj->position().y].under != NULL)
+							delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
+						brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+						brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
+						switchbrd=currentbrd->board_up;
+					} else {
+						if(brd != currentbrd)
+							compress(brd);
+					}
+				}
+				break;
+			case DOWN:
+				if(currentbrd->board_down>0) {
+					brd=get_board(currentbrd->board_down);
+					decompress(brd);
+					obj=get_obj_by_type(brd,ZZT_PLAYER);
+					if(!::is_empty(brd, them->position().x, 1, true)) {
+						if(brd->board[(int)them->position().x][1].obj->flag(F_ITEM)) {
+							brd->board[(int)them->position().x][1].obj->message(obj, "get");
+						} else {
+							if(brd->board[(int)them->position().x][1].obj->flag(F_PUSHABLE)) {
+								brd->board[(int)them->position().x][1].obj->move(DOWN,false,false);
+							} else if(brd == currentbrd) {
+								brd->board[(int)them->position().x][1].obj->message(obj, "touch");
+							}
+						}
+					}
+					if(::is_empty(brd, them->position().x, 1, true)) {
+						brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+						brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
+						obj->setPosition(Vector(them->position().x,1,0));
+						if(brd->board[(int)obj->position().x][(int)obj->position().y].under != NULL)
+							delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
+						brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+						brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
+						switchbrd=currentbrd->board_down;
+					} else {
+						if(brd != currentbrd)
+							compress(brd);
+					}
+				}
+				break;
+			case LEFT:
+				if(currentbrd->board_left>0) {
+					brd=get_board(currentbrd->board_left);
+					decompress(brd);
+					obj=get_obj_by_type(brd,ZZT_PLAYER);
+					if(!::is_empty(brd, BOARD_X, them->position().y, true)) {
+						if(brd->board[BOARD_X][(int)them->position().y].obj->flag(F_ITEM)) {
+							brd->board[(int)BOARD_X][(int)them->position().y].obj->message(obj, "get");
+						} else {
+							if(brd->board[BOARD_X][(int)them->position().y].obj->flag(F_PUSHABLE)) {
+								brd->board[(int)BOARD_X][(int)them->position().y].obj->move(LEFT,false,false);
+							} else if(currentbrd == brd) {
+								brd->board[(int)BOARD_X][(int)them->position().y].obj->message(obj, "touch");
+							}
+						}
+					}
+					if(::is_empty(brd, BOARD_X, them->position().y, true)) {
+						brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+						brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
+						obj->setPosition(Vector(BOARD_X, them->position().y,0));
+						if(brd->board[(int)obj->position().x][(int)obj->position().y].under != NULL)
+							delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
+						brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+						brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
+						switchbrd=currentbrd->board_left;
+					} else {
+						if(brd != currentbrd)
+							compress(brd);
+					}
+				}
+				break;
+			case RIGHT:
+				if(currentbrd->board_right>0) {
+					brd=get_board(currentbrd->board_right);
+					decompress(brd);
+					obj=get_obj_by_type(brd,ZZT_PLAYER);
+					if(!::is_empty(brd, 1, them->position().y, true)) {
+						if(brd->board[1][(int)them->position().y].obj->flag(F_ITEM)) {
+							brd->board[1][(int)them->position().y].obj->message(obj, "get");
+						} else {
+							if(brd->board[1][(int)them->position().y].obj->flag(F_PUSHABLE)) {
+								brd->board[1][(int)them->position().y].obj->move(RIGHT,false,false);
+							} else if(brd == currentbrd) {
+								brd->board[1][(int)them->position().y].obj->message(obj, "touch");
+							}
+						}
+					}
+					if(::is_empty(brd, 1, them->position().y, true)) {
+						brd->board[(int)obj->position().x][(int)obj->position().y].obj=brd->board[(int)obj->position().x][(int)obj->position().y].under;
+						brd->board[(int)obj->position().x][(int)obj->position().y].under = NULL;
+						obj->setPosition(Vector(1,them->position().y,0));
+						if(brd->board[(int)obj->position().x][(int)obj->position().y].under != NULL)
+							delete brd->board[(int)obj->position().x][(int)obj->position().y].under;
+						brd->board[(int)obj->position().x][(int)obj->position().y].under=brd->board[(int)obj->position().x][(int)obj->position().y].obj;
+						brd->board[(int)obj->position().x][(int)obj->position().y].obj=obj;
+						switchbrd=currentbrd->board_right;
+					} else {
+						if(brd != currentbrd)
+							compress(brd);
+					}
+				}
+				break;
+		}
+	}
+}
 
 void Laser::setParam(int arg, unsigned char val) {
 	if(arg==1)

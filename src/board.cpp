@@ -78,8 +78,8 @@ extern float zoom;
 
 char spin_anim[4]={'|','/','-','\\'};
 
-int disp_off_x = 0;
-int disp_off_y = 0;
+int disp_off_x = 1;
+int disp_off_y = 1;
 
 extern int switchbrd;
 
@@ -186,13 +186,17 @@ int new_board(char *title) {
 
 	current->board.resize(BOARD_X, std::vector<board_data>::vector(BOARD_Y));
 
-	for(int y=0; y<BOARD_Y; y++) {
-		for(int x=0; x<BOARD_X; x++) {
+	for(int y=0; y<=BOARD_Y+1; y++) {
+		for(int x=0; x<=BOARD_X+1; x++) {
 			if(x == BOARD_X/2 && y == BOARD_Y/2) {
 				current->board[x][y].obj = create_object(ZZT_PLAYER);
 				current->board[x][y].obj->setPosition(Vector(x,y,0));
 				current->board[x][y].under = create_object(ZZT_EMPTY);
 				current->board[x][y].under->setPosition(Vector(x,y,0));
+			} else if(x==0 || y==0 || x==BOARD_X+1 || y==BOARD_Y+1) {
+				current->board[x][y].obj = create_object(ZZT_EDGE);
+				current->board[x][y].obj->setPosition(Vector(x,y,0));
+				current->board[x][y].under = NULL;
 			} else {
 				current->board[x][y].obj = create_object(ZZT_EMPTY);
 				current->board[x][y].obj->setPosition(Vector(x,y,0));
@@ -284,7 +288,7 @@ void spinner_clear() {
 }
 
 int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer) {
-	if(x<0 || y<0 || x>=BOARD_X || y >= BOARD_Y)
+	if(x<1 || y<1 || x>BOARD_X || y>BOARD_Y)
 		return 0;
 	if(curbrd->board[x][y].obj!=NULL && !(curbrd->board[x][y].obj->flags()&F_EMPTY)) {
 		if(ignorePlayer && curbrd->board[x][y].obj->type() == ZZT_PLAYER)
@@ -296,15 +300,15 @@ int is_empty(struct board_info_node *curbrd, int x, int y, bool ignorePlayer) {
 
 struct board_data *get_block_by_type(int type, int &x, int &y) {
 	int i,j;
-	for(j=y;j>=0;j--) {
-		for(i=BOARD_X-1;i>=0;i--) {
-			if(i==BOARD_X-1&&j==y)
+	for(j=y;j>=1;j--) {
+		for(i=BOARD_X;i>=1;i--) {
+			if(i==BOARD_X&&j==y)
 				i=x;
-			if(i<0) {
-				i=BOARD_X-1;
+			if(i<1) {
+				i=BOARD_X;
 				j--;
 			}
-			if(j<0)
+			if(j<1)
 				break;
 			if(currentbrd->board[i][j].obj!=NULL) {
 				if(currentbrd->board[i][j].obj->type() == type) {
@@ -320,15 +324,15 @@ struct board_data *get_block_by_type(int type, int &x, int &y) {
 
 ZZTObject *get_obj_by_type(int type, int &x, int &y) {
 	int i,j;
-	for(j=y;j>=0;j--) {
-		for(i=BOARD_X-1;i>=0;i--) {
-			if(i==BOARD_X-1&&j==y)
+	for(j=y;j>=1;j--) {
+		for(i=BOARD_X;i>=1;i--) {
+			if(i==BOARD_X&&j==y)
 				i=x;
-			if(i<0) {
-				i=BOARD_X-1;
+			if(i<1) {
+				i=BOARD_X;
 				j--;
 			}
-			if(j<0)
+			if(j<1)
 				break;
 			if(currentbrd->board[i][j].obj!=NULL) {
 				if(currentbrd->board[i][j].obj->type() == type) {
@@ -345,8 +349,8 @@ ZZTObject *get_obj_by_type(int type, int &x, int &y) {
 ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color) {
 	int x,y;
 
-	for(y=BOARD_Y-1;y>=0;y--) {
-		for(x=BOARD_X-1;x>=0;x--) {
+	for(y=BOARD_Y;y>0;y--) {
+		for(x=BOARD_X;x>0;x--) {
 			if(board->board[x][y].obj->type()==type && board->board[x][y].obj->color()==color)
 				return board->board[x][y].obj;
 		}
@@ -357,8 +361,8 @@ ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int color) 
 ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int fg, int bg) {
 	int x,y;
 
-	for(y=BOARD_Y-1;y>=0;y--) {
-		for(x=BOARD_X-1;x>=0;x--) {
+	for(y=BOARD_Y;y>0;y--) {
+		for(x=BOARD_X;x>0;x--) {
 			if(board->board[x][y].obj->type()==type && board->board[x][y].obj->fg()==fg &&
 			        board->board[x][y].obj->type()==type && board->board[x][y].obj->bg()==bg) {
 				return board->board[x][y].obj;
@@ -371,8 +375,8 @@ ZZTObject *get_obj_by_color(struct board_info_node *board, int type, int fg, int
 ZZTObject *get_obj_by_type(struct board_info_node *board, int type) {
 	int x,y;
 
-	for(y=BOARD_Y-1;y>=0;y--) {
-		for(x=BOARD_X-1;x>=0;x--) {
+	for(y=BOARD_Y;y>0;y--) {
+		for(x=BOARD_X;x>0;x--) {
 			if(board->board[x][y].obj!=NULL && board->board[x][y].obj->type()==type)
 				return board->board[x][y].obj;
 		}
@@ -383,8 +387,8 @@ ZZTObject *get_obj_by_type(struct board_info_node *board, int type) {
 ZZTObject *get_obj_by_name(struct board_info_node *board, std::string name) {
 	int x,y;
 
-	for(y=BOARD_Y-1;y>=0;y--) {
-		for(x=BOARD_X-1;x>=0;x--) {
+	for(y=BOARD_Y;y>0;y--) {
+		for(x=BOARD_X;x>0;x--) {
 			if(board->board[x][y].obj!=NULL && board->board[x][y].obj->type()==ZZT_OBJECT && ((ZZTOOP *)board->board[x][y].obj)->get_zztobj_name() == name)
 				return board->board[x][y].obj;
 		}
@@ -398,22 +402,22 @@ void remove_from_board(struct board_info_node *brd, ZZTObject *me, bool ignoreUn
 
 	if(!ignoreUnder) {
 		if(brd->board[(int)pos.x][(int)pos.y].under==NULL || !brd->board[(int)pos.x][(int)pos.y].under->isValid() || brd->board[(int)pos.x][(int)pos.y].under->flag(F_DELETED)) {
-			if(world.magic == 65534 && brd->board[(int)pos.x+1][(int)pos.y].obj->type() == SZT_FLOOR) {
+			if(world.magic == MAGIC_SZT && brd->board[(int)pos.x+1][(int)pos.y].obj->type() == SZT_FLOOR) {
 				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR);
 				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x+1][(int)pos.y].obj->fg());
 				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x+1][(int)pos.y].obj->bg());
-			} else if(world.magic == 65534 && brd->board[(int)pos.x-1][(int)pos.y].obj->type() == SZT_FLOOR) {
+			} else if(world.magic == MAGIC_SZT && brd->board[(int)pos.x-1][(int)pos.y].obj->type() == SZT_FLOOR) {
 				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR);
 				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x-1][(int)pos.y].obj->fg());
 				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x-1][(int)pos.y].obj->bg());
-			} else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y+1].obj->type() == SZT_FLOOR) {
+			} else if(world.magic == MAGIC_SZT && brd->board[(int)pos.x][(int)pos.y+1].obj->type() == SZT_FLOOR) {
 				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR);
 				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y+1].obj->fg());
 				brd->board[(int)pos.x][(int)pos.y].obj->setBg(brd->board[(int)pos.x][(int)pos.y+1].obj->bg());
-			} else if(world.magic == 65534 && brd->board[(int)pos.x][(int)pos.y-1].obj->type() == SZT_FLOOR) {
+			} else if(world.magic == MAGIC_SZT && brd->board[(int)pos.x][(int)pos.y-1].obj->type() == SZT_FLOOR) {
 				brd->board[(int)pos.x][(int)pos.y].obj=create_object(SZT_FLOOR);
 				brd->board[(int)pos.x][(int)pos.y].obj->setPosition(Vector((int)pos.x, (int)pos.y, 0));
 				brd->board[(int)pos.x][(int)pos.y].obj->setFg(brd->board[(int)pos.x][(int)pos.y-1].obj->fg());
@@ -482,26 +486,26 @@ void boardTransition(direction d, board_info_node *newbrd) {
 	float a,b;
 	Vector dist;
 	struct board_info_node *board=newbrd;
-	bool changed[MAX_BOARD_X][MAX_BOARD_Y] = {0};
+	bool changed[MAX_BOARD_X+1][MAX_BOARD_Y+1] = {0};
 
 	if(playerEventCollector != NULL && playerEventCollector->listening())
 		playerEventCollector->stop();
 
 	if(BOARD_X > ct->getCols() || BOARD_Y > ct->getRows()) {
-		disp_off_x = (player->position().x - (ct->getCols() - ((world.magic == 65534) ? 6 : 0)) / 2);
-		disp_off_y = (player->position().y - (ct->getRows() - ((world.magic == 65534) ? 5 : 0)) / 2);
+		disp_off_x = (player->position().x - (ct->getCols() - ((world.magic == MAGIC_SZT) ? 6 : 0)) / 2);
+		disp_off_y = (player->position().y - (ct->getRows() - ((world.magic == MAGIC_SZT) ? 5 : 0)) / 2);
 	}
 
-	if(disp_off_x < 0)
-		disp_off_x = 0;
-	if(disp_off_x > (BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0)))
-		disp_off_x = BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0);
-	if(disp_off_y < 0)
-		disp_off_y = 0;
-	if(disp_off_y > (BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0)))
-		disp_off_y = BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0);
-
-	if(world.magic == 65534) {
+	if(disp_off_x < 1)
+		disp_off_x = 1;
+	if(disp_off_x > ((BOARD_X+1) - ct->getCols() + ((world.magic == MAGIC_SZT) ? 6 : 0)))
+		disp_off_x = (BOARD_X+1) - ct->getCols() + ((world.magic == MAGIC_SZT) ? 6 : 0);
+	if(disp_off_y < 1)
+		disp_off_y = 1;
+	if(disp_off_y > ((BOARD_Y+1) - ct->getRows() + ((world.magic == MAGIC_SZT) ? 5 : 0)))
+		disp_off_y = (BOARD_Y+1) - ct->getRows() + ((world.magic == MAGIC_SZT) ? 5 : 0);
+	
+	if(world.magic == MAGIC_SZT) {
 		disp_off_x -= 3;
 		disp_off_y -= 2;
 	}
@@ -522,12 +526,12 @@ void boardTransition(direction d, board_info_node *newbrd) {
 				changed[x][y]=true;
 				x+=disp_off_x;
 				y+=disp_off_y;
-				if(x-disp_off_x>=ct->getCols() || y-disp_off_y>=ct->getRows() || x >= BOARD_X || y >= BOARD_Y)
+				if(x-disp_off_x>ct->getCols() || y-disp_off_y>ct->getRows() || x > BOARD_X || y > BOARD_Y)
 					continue;
 				o = newbrd->board[x][y].obj;
 				o->draw();
 			}
-			if(world.magic == 65534)
+			if(world.magic == MAGIC_SZT)
 				draw_szt_frame();
 			render();
 			Time::sleep(20000);
@@ -535,9 +539,9 @@ void boardTransition(direction d, board_info_node *newbrd) {
 		break;
 	case UP:
 		for(i=1; i<= ct->getRows(); i+=1+int(ct->getRows() / 30)) {
-			for(y=0; y<BOARD_Y; y++) {
-				for(x=0; x<BOARD_X; x++) {
-					if(y < i) {
+			for(y=1; y<=BOARD_Y; y++) {
+				for(x=1; x<=BOARD_X; x++) {
+					if(y <= i) {
 						o=newbrd->board[x][BOARD_Y+y-i].obj;
 						disp_off_y += ct->getRows() - i;
 						o->draw();
@@ -552,7 +556,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 			}
-			if(world.magic == 65534)
+			if(world.magic == MAGIC_SZT)
 				draw_szt_frame();
 			render();
 			Time::sleep(8000);
@@ -560,9 +564,9 @@ void boardTransition(direction d, board_info_node *newbrd) {
 		break;
 	case DOWN:
 		for(i=ct->getRows()-1; i>=0; i-=1+int(ct->getRows() / 30)) {
-			for(y=0; y<BOARD_Y; y++) {
-				for(x=0; x<BOARD_X; x++) {
-					if(y < i) {
+			for(y=1; y<=BOARD_Y; y++) {
+				for(x=1; x<=BOARD_X; x++) {
+					if(y <= i) {
 						o=currentbrd->board[x][BOARD_Y+y-i].obj;
 						if(o->type() == ZZT_PLAYER)
 							o=currentbrd->board[x][BOARD_Y+y-i].under;
@@ -577,7 +581,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 			}
-			if(world.magic == 65534)
+			if(world.magic == MAGIC_SZT)
 				draw_szt_frame();
 			render();
 			Time::sleep(8000);
@@ -585,9 +589,9 @@ void boardTransition(direction d, board_info_node *newbrd) {
 		break;
 	case LEFT:
 		for(i=1; i<= ct->getCols(); i+=1+int(ct->getCols() / 30)) {
-			for(y=0; y<BOARD_Y; y++) {
-				for(x=0; x<BOARD_X; x++) {
-					if(x < i) {
+			for(y=1; y<=BOARD_Y; y++) {
+				for(x=1; x<=BOARD_X; x++) {
+					if(x <= i) {
 						o=newbrd->board[BOARD_X+x-i][y].obj;
 						disp_off_x += ct->getCols() - i;
 						o->draw();
@@ -602,7 +606,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 			}
-			if(world.magic == 65534)
+			if(world.magic == MAGIC_SZT)
 				draw_szt_frame();
 			render();
 			Time::sleep(8000);
@@ -610,9 +614,9 @@ void boardTransition(direction d, board_info_node *newbrd) {
 		break;
 	case RIGHT:
 		for(i=ct->getCols()-1; i>=0; i-=1+int(ct->getCols() / 30)) {
-			for(y=0; y<BOARD_Y; y++) {
-				for(x=0; x<BOARD_X; x++) {
-					if(x < i) {
+			for(y=1; y<=BOARD_Y; y++) {
+				for(x=1; x<=BOARD_X; x++) {
+					if(x <= i) {
 						o=currentbrd->board[BOARD_X+x-i][y].obj;
 						if(o->type() == ZZT_PLAYER)
 							o=currentbrd->board[BOARD_X+x-i][y].under;
@@ -627,7 +631,7 @@ void boardTransition(direction d, board_info_node *newbrd) {
 					}
 				}
 			}
-			if(world.magic == 65534)
+			if(world.magic == MAGIC_SZT)
 				draw_szt_frame();
 			render();
 			Time::sleep(8000);
@@ -644,7 +648,7 @@ void switch_board(int num) {
 	direction h = (player==NULL)?IDLE:player->heading();
 #if TIKI_PLAT == TIKI_NDS
 
-	if(world.magic == 65534) { //SuperZZT boards are too big to fit 2 in RAM on the DS
+	if(world.magic == MAGIC_SZT) { //SuperZZT boards are too big to fit 2 in RAM on the DS
 		if(currentbrd != NULL)
 			compress(currentbrd);
 		h=IDLE;
@@ -666,20 +670,20 @@ void switch_board(int num) {
 		currentbrd->reenter_y = (unsigned char)player->position().y;
 
 		if(BOARD_X > ct->getCols() || BOARD_Y > ct->getRows()) {
-			disp_off_x = (player->position().x - (ct->getCols() - ((world.magic == 65534) ? 6 : 0)) / 2);
-			disp_off_y = (player->position().y - (ct->getRows() - ((world.magic == 65534) ? 5 : 0)) / 2);
+			disp_off_x = (player->position().x - (ct->getCols() - ((world.magic == MAGIC_SZT) ? 6 : 0)) / 2);
+			disp_off_y = (player->position().y - (ct->getRows() - ((world.magic == MAGIC_SZT) ? 5 : 0)) / 2);
 		}
 
-		if(disp_off_x < 0)
-			disp_off_x = 0;
-		if(disp_off_x > (BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0)))
-			disp_off_x = BOARD_X - ct->getCols() + ((world.magic == 65534) ? 6 : 0);
-		if(disp_off_y < 0)
-			disp_off_y = 0;
-		if(disp_off_y > (BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0)))
-			disp_off_y = BOARD_Y - ct->getRows() + ((world.magic == 65534) ? 5 : 0);
+		if(disp_off_x < 1)
+			disp_off_x = 1;
+		if(disp_off_x > ((BOARD_X+1) - ct->getCols() + ((world.magic == MAGIC_SZT) ? 6 : 0)))
+			disp_off_x = (BOARD_X+1) - ct->getCols() + ((world.magic == MAGIC_SZT) ? 6 : 0);
+		if(disp_off_y < 1)
+			disp_off_y = 1;
+		if(disp_off_y > ((BOARD_Y+1) - ct->getRows() + ((world.magic == MAGIC_SZT) ? 5 : 0)))
+			disp_off_y = (BOARD_Y+1) - ct->getRows() + ((world.magic == MAGIC_SZT) ? 5 : 0);
 
-		if(world.magic == 65534) {
+		if(world.magic == MAGIC_SZT) {
 			disp_off_x -= 3;
 			disp_off_y -= 2;
 		}
@@ -731,8 +735,8 @@ void compress(board_info_node *board, bool silent) {
 
 	board->size=139;
 
-	for(int y=0;y<BOARD_Y;y++) {
-		for(int x=0;x<BOARD_X;x++) {
+	for(int y=1;y<=BOARD_Y;y++) {
+		for(int x=1;x<=BOARD_X;x++) {
 			obj=board->board[x][y].obj;
 			under=board->board[x][y].under;
 
@@ -762,8 +766,7 @@ void compress(board_info_node *board, bool silent) {
 				board->size += param.proglen + 33;
 				if(!foundPlayer) {
 					foundPlayer = true;
-					x=BOARD_Y;
-					y=-1;
+					y=0;
 					break;
 				}
 			}
@@ -807,7 +810,7 @@ void compress(board_info_node *board, bool silent) {
 }
 
 void decompress(board_info_node *board, bool silent) {
-	int x=0,y=0,z=0;
+	int x=1,y=1,z=0;
 	ZZTObject *curobj=NULL;
 	ZZTObject *prev=NULL;
 	std::list<rle_block>::iterator rle_iter;
@@ -823,13 +826,13 @@ void decompress(board_info_node *board, bool silent) {
 	Debug::printf("Decompressing board...\n");
 #endif
 
-	board->board.resize(BOARD_X, std::vector<board_data>::vector(BOARD_Y));
+	board->board.resize(BOARD_X+2, std::vector<board_data>::vector(BOARD_Y+2));
 	currentbrd = board;
 
 	for(rle_iter=board->rle_data.begin(); rle_iter != board->rle_data.end(); rle_iter++) {
 		for(z=0; z<(*rle_iter).len; z++) {
-			if(x==BOARD_X) {
-				x=0;
+			if(x==BOARD_X+1) {
+				x=1;
 				y++;
 			}
 			board->board[x][y].obj=NULL;
@@ -850,7 +853,7 @@ void decompress(board_info_node *board, bool silent) {
 	}
 
 	for(param_iter=board->params.begin(); param_iter != board->params.end(); param_iter++) {
-		if((*param_iter).x < BOARD_X && (*param_iter).y < BOARD_Y) {
+		if((*param_iter).x <= BOARD_X && (*param_iter).y <= BOARD_Y) {
 			curobj = board->board[(*param_iter).x][(*param_iter).y].obj;
 		} else {
 			Debug::printf("Params out of bounds: %i, %i\n",(*param_iter).x,(*param_iter).y);
@@ -878,8 +881,13 @@ void decompress(board_info_node *board, bool silent) {
 		}
 	}
 
-	for(y = 0; y < BOARD_Y; y++) {
-		for(x = 0; x < BOARD_X; x++) {
+	for(y = 0; y <= BOARD_Y+1; y++) {
+		for(x = 0; x <= BOARD_X+1; x++) {
+			if(x==0 || y==0 || x==BOARD_X+1 || y==BOARD_Y+1) {
+				board->board[x][y].obj = create_object(ZZT_EDGE);
+				board->board[x][y].obj->setPosition(Vector(x,y,0));
+				board->board[x][y].under = NULL;
+			}
 			if(board->board[x][y].obj!=NULL)
 				board->board[x][y].obj->create();
 			if(board->board[x][y].under!=NULL)
@@ -969,7 +977,7 @@ int load_szt(const char *filename, int titleonly) {
 
 	spinner("Loading");
 	fd.readle16(&world.magic,1);
-	if(world.magic!=65534) {
+	if(world.magic!=MAGIC_SZT) {
 		printf("Invalid magic: %i\n", world.magic);
 		spinner_clear();
 		return -1;
@@ -1089,9 +1097,7 @@ int load_szt(const char *filename, int titleonly) {
 
 		for(z=0;z<=c;z++) {
 			fd.read(&param.x,1);
-			param.x--;
 			fd.read(&param.y,1);
-			param.y--;
 			fd.readle16(&param.xstep,1);
 			fd.readle16(&param.ystep,1);
 			fd.readle16(&param.cycle,1);
@@ -1152,7 +1158,7 @@ int load_zzt(const char *filename, int titleonly) {
 
 	spinner("Loading");
 	fd.readle16(&world.magic,1);
-	if(world.magic == 65534) {
+	if(world.magic == MAGIC_SZT) {
 		fd.close();
 		return load_szt(filename, titleonly);
 	} else if(world.magic!=65535) {
@@ -1254,9 +1260,7 @@ int load_zzt(const char *filename, int titleonly) {
 			current->message[len]='\0';
 			//printf("Message: %s\n",current->message);
 			fd.read(&current->reenter_x,1);
-			current->reenter_x--;
 			fd.read(&current->reenter_y,1);
-			current->reenter_y--;
 			fd.readle16(&current->time,1);
 			fd.read(&current->animatedWater,1);
 			for(x=0;x<15;x++) {
@@ -1272,9 +1276,7 @@ int load_zzt(const char *filename, int titleonly) {
 
 			for(z=0;z<=c;z++) {
 				fd.read(&param.x,1);
-				param.x--;
 				fd.read(&param.y,1);
-				param.y--;
 				fd.readle16(&param.xstep,1);
 				fd.readle16(&param.ystep,1);
 				fd.readle16(&param.cycle,1);
@@ -1343,14 +1345,14 @@ void save_game(const char *filename) {
 	fd.write(world.keys,7);
 	fd.writele16(&world.health,1);
 	fd.writele16(&world.start,1);
-	if(world.magic != 65534) {
+	if(world.magic != MAGIC_SZT) {
 		fd.writele16(&world.torches,1);
 		fd.writele16(&world.torch_cycle,1);
 		fd.writele16(&world.energizer_cycle,1);
 	}
 	fd.writele16(&world.pad1,1);
 	fd.writele16(&world.score,1);
-	if(world.magic == 65534) {
+	if(world.magic == MAGIC_SZT) {
 		fd.writele16(&world.pad1,1);
 		fd.writele16(&world.energizer_cycle,1);
 	}
@@ -1359,7 +1361,7 @@ void save_game(const char *filename) {
 	world.title.resize(20);
 	fd.write(world.title.c_str(),20);
 	world.title.resize(x);
-	for(int i=0; i<((world.magic==65534)?16:10); i++) {
+	for(int i=0; i<((world.magic==MAGIC_SZT)?16:10); i++) {
 		x=world.flags[i].length();
 		fd.write(&x,1);
 		world.flags[i].resize(20);
@@ -1367,11 +1369,11 @@ void save_game(const char *filename) {
 		world.flags[i].resize(x);
 	}
 	fd.writele16(&world.time,1); //FIXME: This should be total game time, not current board time remaining
-	if(world.magic == 65534)
+	if(world.magic == MAGIC_SZT)
 		fd.writele16(&world.pad1,1);
 	fd.write(&world.saved,1);
 
-	fd.seek((world.magic==65534)?0x400:0x200,SEEK_SET);
+	fd.seek((world.magic==MAGIC_SZT)?0x400:0x200,SEEK_SET);
 	/*for(i=0; i<249; i++) {
 		fd.write(&x,1);
 	}*/
@@ -1389,7 +1391,7 @@ void save_game(const char *filename) {
 		x = (unsigned char)strlen(curbrd->title);
 		fd.write(&x,1);
 		fd.write(curbrd->title,34);
-		for(x=0;x<((world.magic==65534)?26:16);x++) {
+		for(x=0;x<((world.magic==MAGIC_SZT)?26:16);x++) {
 			fd.write("\0",1);
 		}
 
@@ -1409,7 +1411,7 @@ void save_game(const char *filename) {
 		fd.write(&curbrd->board_left,1);
 		fd.write(&curbrd->board_right,1);
 		fd.write(&curbrd->reenter,1);
-		if(world.magic == 65534) {
+		if(world.magic == MAGIC_SZT) {
 			for(x=0;x<5;x++) {
 				fd.write("\0",1);
 			}
@@ -1422,7 +1424,7 @@ void save_game(const char *filename) {
 		}
 		fd.writele16(&curbrd->time,1);
 		fd.write(&curbrd->animatedWater,1);
-		for(x=0;x<((world.magic==65534)?13:15);x++)
+		for(x=0;x<((world.magic==MAGIC_SZT)?13:15);x++)
 			fd.write("\0",1);
 
 		i = (unsigned char)curbrd->params.size() - 1;
@@ -1432,12 +1434,8 @@ void save_game(const char *filename) {
 		i = 0;
 
 		for(params_iter = curbrd->params.begin(); params_iter != curbrd->params.end(); params_iter++) {
-			(*params_iter).x++;
 			fd.write(&(*params_iter).x,1);
-			(*params_iter).x--;
-			(*params_iter).y++;
 			fd.write(&(*params_iter).y,1);
-			(*params_iter).y--;
 			fd.writele16((uint16 *)&(*params_iter).xstep,1);
 			fd.writele16((uint16 *)&(*params_iter).ystep,1);
 			fd.writele16(&(*params_iter).cycle,1);
@@ -1450,7 +1448,7 @@ void save_game(const char *filename) {
 			fd.write("\0\0\0\0",4);
 			fd.writele16(&(*params_iter).progpos,1);
 			fd.writele16((uint16 *)&(*params_iter).proglen,1);
-			if(world.magic != 65534)
+			if(world.magic != MAGIC_SZT)
 				fd.write("\0\0\0\0\0\0\0\0",8);
 			if((*params_iter).proglen>0)
 				fd.write((*params_iter).prog.c_str(),(*params_iter).proglen);
@@ -1576,7 +1574,7 @@ void update_brd() {
 }
 
 void draw_block(int x, int y) {
-	if(x>=BOARD_X||y>=BOARD_Y||x<0||y<0||currentbrd->board[x][y].obj==NULL)
+	if(x>BOARD_X||y>BOARD_Y||x<1||y<1||currentbrd->board[x][y].obj==NULL)
 		return;
 	currentbrd->board[x][y].obj->draw();
 }
@@ -1585,17 +1583,13 @@ void draw_board(bool all) {
 	if(currentbrd->compressed)
 		return;
 
-	for(std::vector< std::vector<board_data> >::iterator y = currentbrd->
-	        board.begin();
-	        y != currentbrd->board.end();
-	        y++) {
+	for(std::vector< std::vector<board_data> >::iterator y = currentbrd->board.begin(); y != currentbrd->board.end(); y++) {
 		for(std::vector<board_data>::iterator x = (*y).begin(); x != (*y).end() ; x++) {
 			(*x).obj->draw();
 		}
 	}
 
-	if(world.magic == 65534) {
-		draw_szt_frame()
-		;
+	if(world.magic == MAGIC_SZT) {
+		draw_szt_frame();
 	}
 }

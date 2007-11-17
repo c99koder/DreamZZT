@@ -17,6 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
+class Edge : public ZZTObject {
+public:
+	Edge() {
+		m_shape = 0x00;
+		m_name = "green";
+		m_flags = F_NONE;
+	}
+	int type() { return ZZT_EDGE; }
+	ZZTObject *alloc() {
+		return new Edge();
+	}
+	void message(ZZTObject *them, std::string message);
+};
+
 class Boulder : public ZZTObject {
 public:
 	Boulder() {

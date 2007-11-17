@@ -906,13 +906,15 @@ void ZZTOOP::exec(std::string text) {
 					if(o!=NULL && o->flags() & F_PUSHABLE)
 						o->move((direction)keywords[1].value,true);
 					o=create_object(keywords[2].value,(direction)keywords[1].value);
-					o->inherit(get((direction)keywords[1].value));
-					if(color!=-1)
-						o->setColor(color);
-					if(o->bg()>7)
-						o->setBg(o->bg() - 8);
-					remove_from_board(currentbrd,get((direction)keywords[1].value));
-					put(o, o->position().x, o->position().y);
+					if(o!=NULL) {
+						o->inherit(get((direction)keywords[1].value));
+						if(color!=-1)
+							o->setColor(color);
+						if(o->bg()>7)
+							o->setBg(o->bg() - 8);
+						remove_from_board(currentbrd,get((direction)keywords[1].value));
+						put(o, o->position().x, o->position().y);
+					}
 				}
 				goagain=1;
 				break;
