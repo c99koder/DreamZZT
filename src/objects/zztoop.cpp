@@ -908,12 +908,12 @@ void ZZTOOP::exec(std::string text) {
 					o=create_object(keywords[2].value,(direction)keywords[1].value);
 					if(o!=NULL) {
 						o->inherit(get((direction)keywords[1].value));
+						remove_from_board(currentbrd,get((direction)keywords[1].value));
+						put(o, o->position().x, o->position().y);
 						if(color!=-1)
 							o->setColor(color);
 						if(o->bg()>7)
 							o->setBg(o->bg() - 8);
-						remove_from_board(currentbrd,get((direction)keywords[1].value));
-						put(o, o->position().x, o->position().y);
 					}
 				}
 				goagain=1;

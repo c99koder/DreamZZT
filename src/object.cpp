@@ -431,7 +431,6 @@ void ZZTObject::inherit(ZZTObject *o) {
 		setFg(o->fg());
 		setBg(o->bg());
 		setCycle(o->cycle());
-		setColor(o->color());
 	}
 	if(o->type()==ZZT_OBJECT) {
 		setShape(o->shape());
